@@ -286,7 +286,7 @@ main.content
         :isBasicMode="isBasicMode"
         :clearZoom="clearZoom"
         :sampleModel="model"
-        :classifyVariantSymbolFunc="model.relationship == 'known-variants' ? model.classifyByClinvar : model.classifyByImpact"
+        :classifyVariantSymbolFunc="model.relationship === 'known-variants' ? model.classifyByClinvar : model.classifyByImpact"
         :variantTooltip="variantTooltip"
         :selectedGene="selectedGene"
         :selectedTranscript="analyzedTranscript"
