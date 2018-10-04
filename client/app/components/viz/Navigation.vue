@@ -380,7 +380,7 @@ nav.toolbar
       <div id="side-panel-container">
 
         <flagged-variants-card
-         v-if="leftDrawerContents == 'flagged-variants'"
+         v-if="leftDrawerContents === 'flagged-variants'"
          ref="flaggedVariantsRef"
          :isEduMode="isEduMode"
          :isBasicMode="isBasicMode"
