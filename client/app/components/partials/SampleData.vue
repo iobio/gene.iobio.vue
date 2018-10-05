@@ -43,10 +43,10 @@
 <template>
 
     <v-layout id="sample-data-form" row wrap
-              :class="{'ml-2': true,   'mt-3' : modelInfo.relationship !== 'proband', 'mt-1' : modelInfo.relationship === 'proband'}">
+              :class="{'ml-2': true, 'mt-3' : modelInfo.isTumor, 'mt-1' : !modelInfo.isTumor}">
         <v-flex xs12 class="sample-label">
-            <span> {{ modelInfo.relationship }} </span>
-            <v-switch label="Affected" hide-details @change="onIsAffected" v-model="isAffected"></v-switch>
+            <span> {{ modelInfo.name }} </span>
+            <v-switch label="Tumor" hide-details @change="onIsAffected" v-model="isTumor"></v-switch>
         </v-flex>
         <v-flex xs12 class="ml-3" style="margin-top: -15px">
             <sample-data-file
@@ -120,7 +120,7 @@
                 },
                 samples: [],
                 sample: null,
-                isAffected: true
+                isTumor: true
 
             }
         },
@@ -166,7 +166,7 @@
                         if (self.modelInfo.sample && self.samples.indexOf(self.modelInfo.sample) >= 0) {
                             self.sample = self.modelInfo.sample;
                             self.modelInfo.model.sampleName = self.modelInfo.sample;
-                        } else if (self.samples.length == 1) {
+                        } else if (self.samples.length === 1) {
                             self.sample = self.samples[0];
                             self.modelInfo.sample = self.sample;
                             self.modelInfo.model.sampleName = self.sample;
@@ -183,8 +183,7 @@
                     })
             },
             onIsAffected: function () {
-                this.modelInfo.isAffected = this.isAffected;
-                this.modelInfo.affectedStatus = this.isAffected ? 'affected' : 'unaffected';
+                this.modelInfo.isTumor = this.isTumor;
                 this.modelInfo.model.affectedStatus = this.modelInfo.affectedStatus;
             },
             updateSamples: function (samples, sampleToSelect) {
@@ -233,7 +232,7 @@
         },
         mounted: function () {
             this.samples = this.modelInfo.samples;
-            this.isAffected = this.modelInfo.isAffected;
+            this.isTumor = this.modelInfo.isTumor;
             if (this.modelInfo.vcf) {
                 this.onVcfUrlEntered(this.modelInfo.vcf, this.modelInfo.tbi);
             }

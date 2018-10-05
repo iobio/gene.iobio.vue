@@ -407,6 +407,8 @@ class CohortModel {
             let vm = new SampleModel(self.globalApp);
             vm.init(self);
             vm.id = modelInfo.id;
+            vm.name = modelInfo.name;
+            vm.order = modelInfo.order;
             vm.isTumor = modelInfo.isTumor;
             vm.isBasicMode = self.isBasicMode;
             vm.isEduMode = self.isEduMode;
@@ -427,7 +429,7 @@ class CohortModel {
                         vcfReject(error);
                     });
             } else {
-                vm.name = null;
+                //vm.name = null;
                 vcfPromise = Promise.resolve();
             }
 

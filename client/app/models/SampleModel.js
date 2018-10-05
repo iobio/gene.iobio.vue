@@ -722,19 +722,19 @@ class SampleModel {
         this.tumorStatus = status;
     }
 
-    setSampleName(sampleName) {
-        this.sampleName = sampleName;
-    }
+    // setSampleName(sampleName) {
+    //     this.sampleName = sampleName;
+    // }
 
     setGeneratedSampleName(sampleName) {
         this.sampleName = sampleName;
         this.isGeneratedSampleName = true;
     }
 
-
-    getSampleName() {
-        return this.sampleName;
-    }
+    //
+    // getSampleName() {
+    //     return this.sampleName;
+    // }
 
     getVcfSampleName() {
         // Returns a sample name if provided in the vcf header; otherwise returns null.

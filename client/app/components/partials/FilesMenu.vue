@@ -111,7 +111,6 @@
                 </v-flex>
 
 
-                <!--// TODO: make this for each sample in samples - start w/ 2 - one tumor one normal-->
                 <v-flex xs12
                         v-for="sample in samples"
                         :key="sample"
@@ -130,7 +129,13 @@
 
                 </v-flex>
 
-                <v-flex xs12 class="mt-2 text-xs-right">
+                <v-flex xs6 class="mt-2 text-xs-left">
+                    <v-btn small outline fab color="appColor"
+                        @click="onAdd">
+                        <v-icon>add</v-icon>
+                    </v-btn>
+                </v-flex>
+                <v-flex xs6 class="mt-2 text-xs-right">
                     <div class="loader" v-show="inProgress">
                         <img src="../../../assets/images/wheel.gif">
                     </div>
@@ -145,10 +150,6 @@
                     </v-btn>
                 </v-flex>
             </v-layout>
-            <!--<draggable v-model="inputSamples" @start="drag=true" @end="drag=false">-->
-                <!--<div v-for="sample in inputSamples" :key="sample.id">{{sample.name}}</div>-->
-            <!--</draggable>-->
-
         </v-form>
 
     </v-menu>
@@ -197,6 +198,10 @@
             }
         },
         methods: {
+            onAdd: function() {
+                let self = this;
+
+            },
             onLoad: function () {
                 let self = this;
                 self.inProgress = true;
@@ -260,7 +265,7 @@
                                     theModel.name = theModel.sampleName;
                                     self.validate();
                                 }
-                            })
+                            });
                             theModel.onBamUrlEntered(theModelInfo.bam, null, function (success) {
                                 self.validate();
                                 if (success) {
@@ -316,25 +321,34 @@
                 if (self.cohortModel && self.cohortModel.getCanonicalModels().length > 0) {
                     self.initModelInfo();
                 } else {
+                    let promises = [];
+
                     let normalModelInfo = {};
                     normalModelInfo.id = 'n0';
                     normalModelInfo.name = 'normal';
                     normalModelInfo.vcf = null;
                     normalModelInfo.bam = null;
                     normalModelInfo.order = 0;
-                    normalModelInfo.isTumor = true;
-                    self.cohortModel.promiseAddSample(normalModelInfo);
+                    normalModelInfo.isTumor = false;
                     self.modelInfoMap['n0'] = normalModelInfo;
+                    let normP = self.cohortModel.promiseAddSample(normalModelInfo);
+                    promises.push(normP);
 
                     let tumorModelInfo = {};
-                    normalModelInfo.name = 'tumor';
                     tumorModelInfo.id = 't0';
+                    tumorModelInfo.name = 'tumor';
                     tumorModelInfo.vcf = null;
                     tumorModelInfo.bam = null;
                     tumorModelInfo.order = 1;
                     tumorModelInfo.isTumor = true;
-                    self.cohortModel.promiseAddSample(tumorModelInfo);
                     self.modelInfoMap['t0'] = tumorModelInfo;
+                    let tumorP = self.cohortModel.promiseAddSample(tumorModelInfo);
+                    promises.push(tumorP);
+
+                    Promise.all(promises)
+                        .then(() => {
+                            self.initModelInfo();
+                        })
                 }
             },
             initModelInfo: function () {
@@ -342,7 +356,7 @@
                 self.separateUrlForIndex = false;
                 self.timeSeries = false;
                 self.cohortModel.getCanonicalModels().forEach(function (model) {
-                    let modelInfo = self.modelInfoMap[model.name];
+                    let modelInfo = self.modelInfoMap[model.id];
                     if (modelInfo == null) {
                         modelInfo = {};
                         modelInfo.id = model.getId();

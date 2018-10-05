@@ -26,7 +26,11 @@ Vue.use(Typeahead);
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.css'
 import '../assets/css/siteVuetify.css'
-Vue.use(Vuetify);
+Vue.use(Vuetify, {
+    theme: {
+        appColor: "#7f1010"
+    }
+});
 
 import Sortable from 'vue-sortable'
 Vue.use(Sortable);
@@ -182,7 +186,6 @@ Vue.mixin({
     created: function () {
         this.utility.globalApp = this.globalApp;
         this.globalApp.utility = this.utility;
-
     }
 })
 

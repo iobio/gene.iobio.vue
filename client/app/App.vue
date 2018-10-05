@@ -1,5 +1,5 @@
 <style lang="sass">
-@import "../assets/sass/site.sass";
+@import "../assets/sass/site.sass"
 
 .container
   margin-top: 0px
