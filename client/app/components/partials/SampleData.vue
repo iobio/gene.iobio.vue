@@ -41,7 +41,6 @@
 
 </style>
 <template>
-
     <v-layout id="sample-data-form" row wrap
               :class="{'ml-2': true, 'mt-3': true}">
         <v-flex xs3 class="sample-label">
@@ -171,8 +170,7 @@
                                 self.modelInfo.sample = null;
                                 self.modelInfo.model.sampleName = null;
                             }
-                            self.$emit("samples-available", self.modelInfo.relationship, self.samples);
-
+                            self.$emit("samples-available", self.modelInfo.id, self.samples);
                         }
                         self.$emit("sample-data-changed");
                     })

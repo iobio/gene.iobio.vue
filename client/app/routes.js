@@ -35,9 +35,6 @@ Vue.use(Vuetify, {
 import Sortable from 'vue-sortable'
 Vue.use(Sortable);
 
-// import draggable from 'vuedraggable'
-// Vue.use(draggable);
-
 import VTooltip from 'v-tooltip'
 import '../assets/css/v-tooltip.css'
 Vue.use(VTooltip);

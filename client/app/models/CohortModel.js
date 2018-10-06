@@ -455,8 +455,7 @@ class CohortModel {
                     let theModel = {'model': vm};
                     self.sampleModels.push(vm);
                     self.sampleMap[modelInfo.id] = theModel;
-
-                    resolve();
+                    resolve(vm);
                 })
 
         })

@@ -111,28 +111,30 @@
                 </v-flex>
 
 
-                <v-flex xs12
-                        v-for="sample in samples"
-                        :key="sample"
-                        :id="sample"
-                        v-if="modelInfoMap && modelInfoMap[sample] && Object.keys(modelInfoMap[sample]).length > 0">
+                <draggable>
+                    <v-flex xs12
+                            v-for="sample in samples"
+                            :key="sample"
+                            :id="sample"
+                            v-if="modelInfoMap && modelInfoMap[sample] && Object.keys(modelInfoMap[sample]).length > 0">
 
-                    <sample-data
-                            ref="sampleDataRef"
-                            v-if="modelInfoMap && modelInfoMap[sample] && Object.keys(modelInfoMap[sample]).length > 0"
-                            :modelInfo="modelInfoMap[sample]"
-                            :separateUrlForIndex="separateUrlForIndex"
-                            @sample-data-changed="validate"
-                            @samples-available="onSamplesAvailable"
-                            @remove-sample="removeSample"
-                    >
-                    </sample-data>
+                        <sample-data
+                                ref="sampleDataRef"
+                                v-if="modelInfoMap && modelInfoMap[sample] && Object.keys(modelInfoMap[sample]).length > 0"
+                                :modelInfo="modelInfoMap[sample]"
+                                :separateUrlForIndex="separateUrlForIndex"
+                                @sample-data-changed="validate"
+                                @samples-available="onSamplesAvailable"
+                                @remove-sample="removeSample"
+                        >
+                        </sample-data>
 
-                </v-flex>
+                    </v-flex>
+                </draggable>
 
                 <v-flex xs6 class="mt-2 text-xs-left">
                     <v-btn small outline fab color="appColor"
-                        @click="onAdd">
+                           @click="onAdd">
                         <v-icon>add</v-icon>
                     </v-btn>
                 </v-flex>
@@ -197,22 +199,21 @@
                     this.init();
                 }
             },
-            timeSeriesMode: function() {
+            timeSeriesMode: function () {
                 this.onModeChanged();
             }
         },
         methods: {
-            onAdd: function() {
+            onAdd: function () {
                 let self = this;
 
                 // Add entry to list of sample ids
-                debugger;
                 let currSampleNum = self.samples.length;
                 let newId = 's' + currSampleNum;
                 self.samples.push(newId);
 
                 // Add entry to map
-                let newInfo = {'isTumor' : true};   // Default to adding another tumor sample
+                let newInfo = {'isTumor': true};   // Default to adding another tumor sample
                 newInfo.id = newId;
                 newInfo.name = '';
                 newInfo.vcf = null;
@@ -223,7 +224,10 @@
                 self.modelInfoMap[newId] = newInfo;
 
                 // Add sample model for new entry
-                self.cohortModel.promiseAddSample(newInfo);
+                self.cohortModel.promiseAddSample(newInfo)
+                    .then((model) => {
+                        newInfo.model = model;
+                    });
             },
             onLoad: function () {
                 let self = this;
@@ -312,21 +316,22 @@
                     this.isValid &= (this.modelInfoMap[currKey] != null && this.modelInfoMap[currKey].model.isReadyToLoad());
                 }
             },
-            // TODO: what is this and when is it called?
-            onSamplesAvailable: function (relationship, samples) {
-                if (relationship === 'proband') {
-                    this.probandSamples = samples;
-                    if (this.cohortModel.sampleMapSibs.affected && this.cohortModel.sampleMapSibs.affected.length > 0) {
-                        this.affectedSibs = this.cohortModel.sampleMapSibs.affected.map(function (sampleModel) {
-                            return sampleModel.sampleName;
-                        })
-                    }
-                    if (this.cohortModel.sampleMapSibs.unaffected && this.cohortModel.sampleMapSibs.unaffected.length > 0) {
-                        this.unaffectedSibs = this.cohortModel.sampleMapSibs.unaffected.map(function (sampleModel) {
-                            return sampleModel.sampleName;
-                        })
-                    }
-                }
+            onSamplesAvailable: function (id, samples) {
+
+                // TODO: mapping samples to each slot
+                // if (relationship === 'proband') {
+                //     this.probandSamples = samples;
+                //     if (this.cohortModel.sampleMapSibs.affected && this.cohortModel.sampleMapSibs.affected.length > 0) {
+                //         this.affectedSibs = this.cohortModel.sampleMapSibs.affected.map(function (sampleModel) {
+                //             return sampleModel.sampleName;
+                //         })
+                //     }
+                //     if (this.cohortModel.sampleMapSibs.unaffected && this.cohortModel.sampleMapSibs.unaffected.length > 0) {
+                //         this.unaffectedSibs = this.cohortModel.sampleMapSibs.unaffected.map(function (sampleModel) {
+                //             return sampleModel.sampleName;
+                //         })
+                //     }
+                // }
             },
             getModel: function (id) {
                 let theModel = null;
@@ -398,21 +403,39 @@
                     }
                 })
             },
-            promiseInitMoreTumors: function() {
+            promiseInitMoreTumors: function () {
+                let self = this;
 
+                if (self.samples.length === 2) {
+                    for (let i = 0; i < 3; i++) {
+                        self.onAdd();
+                    }
+                }
             },
-            removeSample: function(sampleId) {
+            removeMoreTumors: function () {
+                let self = this;
+
+                for (let i = self.samples.length - 1; i > 1; i--) {
+                    let key = 's' + i;
+                    let currInfo = self.modelInfoMap[key];
+                    if (currInfo != null && currInfo.name === '' &&
+                        currInfo.vcf == null && currInfo.bam == null) {
+                        self.removeSample(currInfo.id);
+                    }
+                }
+            },
+            removeSample: function (sampleId) {
                 let self = this;
                 let removeIndex = self.modelInfoMap[sampleId].order;
-                let lastIndex = self.samples.length-1;
+                let lastIndex = self.samples.length - 1;
 
                 console.log(self.samples.join(','));
                 // If we're removing a middle record
                 if (lastIndex > removeIndex) {
                     for (let i = removeIndex; i < lastIndex; i++) {
                         // Decrement index and order
-                        let nextInfo = self.modelInfoMap['s' + (i+1)];           // Get next info
-                        nextInfo.order = nextInfo.order-1;                       // Overwrite value params
+                        let nextInfo = self.modelInfoMap['s' + (i + 1)];           // Get next info
+                        nextInfo.order = nextInfo.order - 1;                       // Overwrite value params
                         nextInfo.id = 's' + i;
                         self.modelInfoMap[('s' + i)] = nextInfo;                 // Overwrite previous
                     }
