@@ -43,12 +43,30 @@
 <template>
 
     <v-layout id="sample-data-form" row wrap
-              :class="{'ml-2': true, 'mt-3' : modelInfo.isTumor, 'mt-1' : !modelInfo.isTumor}">
-        <v-flex xs12 class="sample-label">
-            <span> {{ modelInfo.name }} </span>
-            <v-switch label="Tumor" hide-details @change="onIsAffected" v-model="isTumor"></v-switch>
+              :class="{'ml-2': true, 'mt-3': true}">
+        <v-flex xs3 class="sample-label">
+            <v-text-field class="pt-1"
+                    color="appColor"
+                    placeholder="Enter sample name"
+                    hide-details
+                    v-model="modelInfo.name"
+                    @change="onNameEntered"
+            ></v-text-field>
         </v-flex>
-        <v-flex xs12 class="ml-3" style="margin-top: -15px">
+        <v-flex xs2 class="pl-2">
+            <v-switch label="Tumor" class="pt-1"hide-details @change="onIsAffected" v-model="isTumor"></v-switch>
+        </v-flex>
+        <v-flex xs6></v-flex>
+        <v-flex xs1>
+            <v-btn right fab small flat icon
+                   v-if="modelInfo.order > 1"
+                    @click="removeSample">
+                <v-icon color="appColor">
+                    clear
+                </v-icon>
+            </v-btn>
+        </v-flex>
+        <v-flex xs12 class="ml-3" style="margin-top: -5px">
             <sample-data-file
                     :defaultUrl="modelInfo.vcf"
                     :defaultIndexUrl="modelInfo.tbi"
@@ -127,6 +145,11 @@
         computed: {},
         watch: {},
         methods: {
+            onNameEntered: function() {
+                if (self.modelInfo && self.modelInfo.model) {
+                    self.modelInfo.model.setName(self.modelInfo.name);
+                }
+            },
             onVcfUrlEntered: function (vcfUrl, tbiUrl) {
                 let self = this;
                 self.$set(self, "sample", null);
@@ -139,7 +162,7 @@
                             if (self.modelInfo.sample && self.samples.indexOf(self.modelInfo.sample) >= 0) {
                                 self.sample = self.modelInfo.sample;
                                 self.modelInfo.model.sampleName = self.modelInfo.sample;
-                            } else if (self.samples.length == 1) {
+                            } else if (self.samples.length === 1) {
                                 self.sample = self.samples[0];
                                 self.modelInfo.sample = self.sample;
                                 self.modelInfo.model.sampleName = self.sample;
@@ -224,8 +247,10 @@
                         self.$emit("sample-data-changed");
                     })
             },
-
-
+            removeSample: function() {
+                let self = this;
+                self.$emit("remove-sample", self.modelInfo.id);
+            }
         },
         created: function () {
 

@@ -218,7 +218,7 @@
             </v-toolbar-side-icon>
 
 
-            <img src="../../../assets/animations/images/oncoIcon.svg" height="35">
+            <img src="../../../assets/animations/images/oncoIcon.svg" height="33">
             <v-toolbar-title v-text="title" style="margin-left: 1px">
             </v-toolbar-title>
 

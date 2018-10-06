@@ -29,7 +29,7 @@ class CohortModel {
         this.isLoaded = false;
 
         this.sampleModels = [];        // List of sample models correlated with this cohort
-        this.sampleMap = {};            // Relateds IDs to model objects
+        this.sampleMap = {};           // Relateds IDs to model objects
         this.numNormalSamples = 0;
         this.numTumorSamples = 0;
 
@@ -452,7 +452,7 @@ class CohortModel {
             Promise.all([vcfPromise, bamPromise])
                 .then(function () {
 
-                    let theModel = {'id': modelInfo.id, 'model': vm};
+                    let theModel = {'model': vm};
                     self.sampleModels.push(vm);
                     self.sampleMap[modelInfo.id] = theModel;
 
@@ -462,19 +462,24 @@ class CohortModel {
         })
     }
 
-    removeSample(relationship) {
+    removeSample(id) {
         let self = this;
-        delete self.sampleMap[relationship];
-        var idx = -1;
-        var i = 0;
-        self.sampleModels.forEach(function (m) {
-            if (m.relationship == relationship) {
-                idx = i;
+        let removeIndex = self.sampleMap[id].model.order;
+        let lastIndex = self.sampleModels.length-1;
+        if (lastIndex > removeIndex) {
+            for (let i = removeIndex; i < lastIndex; i++) {
+                if (self.sampleMap[('s' + (i+1))] != null) {
+                    let nextModel = self.sampleModels[i+1];
+                    nextModel.order = nextModel.order - 1;
+                    nextModel.id = ('s' + i);
+                    self.sampleMap[('s' + i)] = nextModel;
+                    self.sampleModels[i] = self.sampleModels[i+1];
+                }
             }
-            i++;
-        })
-        if (idx >= 0) {
-            self.sampleModels.splice(idx, 1);
+            delete self.sampleMap[('s' + lastIndex)];
+        } else {
+            delete self.sampleMap[id];
+            self.sampleModels.splice(lastIndex, 1);
         }
     }
 
@@ -484,8 +489,8 @@ class CohortModel {
         self.sampleMapSibs.affected = [];
         self.sampleMapSibs.unaffected = [];
 
-        if ((affectedSamples == null || affectedSamples.length == 0) &&
-            (unaffectedSamples == null || unaffectedSamples.length == 0)) {
+        if ((affectedSamples == null || affectedSamples.length === 0) &&
+            (unaffectedSamples == null || unaffectedSamples.length === 0)) {
             return Promise.resolve();
         }
 
@@ -609,7 +614,7 @@ class CohortModel {
     }
 
     getNormalModel() {
-        return this.sampleMap['n0'].model;
+        return this.sampleMap['s0'].model;
     }
 
     /* Returns model corresponding to name */

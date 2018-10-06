@@ -26,7 +26,8 @@ class SampleModel {
         this.bamFileOpened = false;
         this.getBamRefName = null;
 
-        this.id = '';       // Must be unique, format n0+, t0+
+        this.id = '';       // Must be unique, format s0, s1...
+        this.name = '';     // Display name
         this.name = '';     // Display name
         this.vcfRefNamesMap = {};
         this.isGeneratedSampleName = false;

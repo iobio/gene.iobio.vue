@@ -124,6 +124,7 @@
                             :separateUrlForIndex="separateUrlForIndex"
                             @sample-data-changed="validate"
                             @samples-available="onSamplesAvailable"
+                            @remove-sample="removeSample"
                     >
                     </sample-data>
 
@@ -179,7 +180,7 @@
                 buildName: null,
                 activeTab: null,
                 modelInfoMap: {},
-                samples: ['n0', 't0'],
+                samples: ['s0', 's1'],
                 demoActions: [
                     {'display': 'Demo WES trio', 'value': 'exome'},
                     {'display': 'Demo WGS trio', 'value': 'genome'}
@@ -195,12 +196,34 @@
                 if (this.cohortModel && this.showFilesMenu) {
                     this.init();
                 }
+            },
+            timeSeriesMode: function() {
+                this.onModeChanged();
             }
         },
         methods: {
             onAdd: function() {
                 let self = this;
 
+                // Add entry to list of sample ids
+                debugger;
+                let currSampleNum = self.samples.length;
+                let newId = 's' + currSampleNum;
+                self.samples.push(newId);
+
+                // Add entry to map
+                let newInfo = {'isTumor' : true};   // Default to adding another tumor sample
+                newInfo.id = newId;
+                newInfo.name = '';
+                newInfo.vcf = null;
+                newInfo.bam = null;
+                newInfo.tbi = null;
+                newInfo.bai = null;
+                newInfo.order = currSampleNum;
+                self.modelInfoMap[newId] = newInfo;
+
+                // Add sample model for new entry
+                self.cohortModel.promiseAddSample(newInfo);
             },
             onLoad: function () {
                 let self = this;
@@ -230,15 +253,15 @@
             onCancel: function () {
                 this.showFilesMenu = false;
             },
-            // onModeChanged: function () {
-            //     if (this.mode === 'trio' && this.cohortModel.getCanonicalModels().length < 3) {
-            //         this.promiseInitMotherFather();
-            //     } else if (this.mode === 'double' && this.cohortModel.getCanonicalModels().length > 1) {
-            //         this.removeMotherFather();
-            //     }
-            //
-            //     this.validate();
-            // },
+            onModeChanged: function () {
+                if (this.timeSeriesMode) {
+                    this.promiseInitMoreTumors();
+                } else {
+                    this.removeMoreTumors();
+                }
+
+                this.validate();
+            },
             onLoadDemoData: function () {
                 let self = this;
 
@@ -291,7 +314,7 @@
             },
             // TODO: what is this and when is it called?
             onSamplesAvailable: function (relationship, samples) {
-                if (relationship == 'proband') {
+                if (relationship === 'proband') {
                     this.probandSamples = samples;
                     if (this.cohortModel.sampleMapSibs.affected && this.cohortModel.sampleMapSibs.affected.length > 0) {
                         this.affectedSibs = this.cohortModel.sampleMapSibs.affected.map(function (sampleModel) {
@@ -324,24 +347,24 @@
                     let promises = [];
 
                     let normalModelInfo = {};
-                    normalModelInfo.id = 'n0';
+                    normalModelInfo.id = 's0';
                     normalModelInfo.name = 'normal';
                     normalModelInfo.vcf = null;
                     normalModelInfo.bam = null;
                     normalModelInfo.order = 0;
                     normalModelInfo.isTumor = false;
-                    self.modelInfoMap['n0'] = normalModelInfo;
+                    self.modelInfoMap['s0'] = normalModelInfo;
                     let normP = self.cohortModel.promiseAddSample(normalModelInfo);
                     promises.push(normP);
 
                     let tumorModelInfo = {};
-                    tumorModelInfo.id = 't0';
+                    tumorModelInfo.id = 's1';
                     tumorModelInfo.name = 'tumor';
                     tumorModelInfo.vcf = null;
                     tumorModelInfo.bam = null;
                     tumorModelInfo.order = 1;
                     tumorModelInfo.isTumor = true;
-                    self.modelInfoMap['t0'] = tumorModelInfo;
+                    self.modelInfoMap['s1'] = tumorModelInfo;
                     let tumorP = self.cohortModel.promiseAddSample(tumorModelInfo);
                     promises.push(tumorP);
 
@@ -374,6 +397,34 @@
                         self.$set(self.modelInfoMap, model.id, modelInfo);
                     }
                 })
+            },
+            promiseInitMoreTumors: function() {
+
+            },
+            removeSample: function(sampleId) {
+                let self = this;
+                let removeIndex = self.modelInfoMap[sampleId].order;
+                let lastIndex = self.samples.length-1;
+
+                console.log(self.samples.join(','));
+                // If we're removing a middle record
+                if (lastIndex > removeIndex) {
+                    for (let i = removeIndex; i < lastIndex; i++) {
+                        // Decrement index and order
+                        let nextInfo = self.modelInfoMap['s' + (i+1)];           // Get next info
+                        nextInfo.order = nextInfo.order-1;                       // Overwrite value params
+                        nextInfo.id = 's' + i;
+                        self.modelInfoMap[('s' + i)] = nextInfo;                 // Overwrite previous
+                    }
+                    delete self.modelInfoMap[('s' + lastIndex)];
+
+                    // If we're removing the last record
+                } else {
+                    delete self.modelInfoMap[sampleId];
+                }
+                self.samples.splice(lastIndex, 1);
+                self.cohortModel.removeSample(sampleId);                         // Remove actual sample
+                console.log(self.samples.join(','));
             }
         },
         computed: {
