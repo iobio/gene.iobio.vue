@@ -109,12 +109,14 @@
                             hide-details
                             label="Demo data"></v-select>
                 </v-flex>
-                <v-flex xs12
-                        v-for="sample in samples"
-                        :key="sample"
-                        :id="sample"
-                        v-if="modelInfoMap && modelInfoMap[sample] && Object.keys(modelInfoMap[sample]).length > 0">
-                    <draggable :options="{handle: '.drag-handle'}">
+                <draggable
+                        :options="{handle: '.drag-handle'}"
+                        @end="onDragEnd">
+                    <v-flex xs12
+                            v-for="sample in samples"
+                            :key="sample"
+                            :id="sample"
+                            v-if="modelInfoMap && modelInfoMap[sample] && Object.keys(modelInfoMap[sample]).length > 0">
                         <sample-data
                                 ref="sampleDataRef"
                                 v-if="modelInfoMap && modelInfoMap[sample] && Object.keys(modelInfoMap[sample]).length > 0"
@@ -124,8 +126,8 @@
                                 @samples-available="onSamplesAvailable"
                                 @remove-sample="removeSample">
                         </sample-data>
-                    </draggable>
-                </v-flex>
+                    </v-flex>
+                </draggable>
                 <v-flex xs6 class="mt-2 text-xs-left">
                     <v-btn small outline fab color="appColor"
                            @click="onAdd">
@@ -260,7 +262,7 @@
 
                 this.validate();
             },
-            endDrag: function (evt) {
+            onDragEnd: function (evt) {
                 let oldIndex = evt.oldIndex;
                 let newIndex = evt.newIndex;
                 // TODO: update orders for all files in b/w
