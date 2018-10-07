@@ -111,7 +111,8 @@
                 </v-flex>
 
 
-                <draggable>
+                <draggable
+                    @end="endDrag">
                     <v-flex xs12
                             v-for="sample in samples"
                             :key="sample"
@@ -265,6 +266,11 @@
                 }
 
                 this.validate();
+            },
+            endDrag: function(evt) {
+                let oldIndex = evt.oldIndex;
+                let newIndex = evt.newIndex;
+                // TODO: update orders for all files in b/w
             },
             onLoadDemoData: function () {
                 let self = this;
