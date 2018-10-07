@@ -32,7 +32,6 @@
       </v-layout>
 
 
-  </v-menu>
 </template>
 
 <script>

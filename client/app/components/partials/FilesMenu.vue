@@ -109,35 +109,22 @@
                             hide-details
                             label="Demo data"></v-select>
                 </v-flex>
-                <v-flex xs12>
-                    <v-layout row wrap
-                              v-for="sample in samples"
-                              :key="sample"
-                              :id="sample"
-                              v-if="modelInfoMap && modelInfoMap[sample] && Object.keys(modelInfoMap[sample]).length > 0">
-                        <v-flex d-flex xs1>
-                            <v-card flat height="100%">
-                                <v-card-text>
-                                    T
-                                </v-card-text>
-                            </v-card>
-                        </v-flex>
-                        <v-flex d-flex xs11>
-                            <draggable
-                                    :options="{handle: '.drag-handle'}"
-                                    @end="endDrag">
-                                <sample-data
-                                        ref="sampleDataRef"
-                                        v-if="modelInfoMap && modelInfoMap[sample] && Object.keys(modelInfoMap[sample]).length > 0"
-                                        :modelInfo="modelInfoMap[sample]"
-                                        :separateUrlForIndex="separateUrlForIndex"
-                                        @sample-data-changed="validate"
-                                        @samples-available="onSamplesAvailable"
-                                        @remove-sample="removeSample">
-                                </sample-data>
-                            </draggable>
-                        </v-flex>
-                    </v-layout>
+                <v-flex xs12
+                        v-for="sample in samples"
+                        :key="sample"
+                        :id="sample"
+                        v-if="modelInfoMap && modelInfoMap[sample] && Object.keys(modelInfoMap[sample]).length > 0">
+                    <draggable :options="{handle: '.drag-handle'}">
+                        <sample-data
+                                ref="sampleDataRef"
+                                v-if="modelInfoMap && modelInfoMap[sample] && Object.keys(modelInfoMap[sample]).length > 0"
+                                :modelInfo="modelInfoMap[sample]"
+                                :separateUrlForIndex="separateUrlForIndex"
+                                @sample-data-changed="validate"
+                                @samples-available="onSamplesAvailable"
+                                @remove-sample="removeSample">
+                        </sample-data>
+                    </draggable>
                 </v-flex>
                 <v-flex xs6 class="mt-2 text-xs-left">
                     <v-btn small outline fab color="appColor"
