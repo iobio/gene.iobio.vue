@@ -44,35 +44,11 @@
     .drag-handle {
         cursor: move;
     }
-    .vertical-text {
-        width:1px;
-        word-wrap: break-word;
-        color: white;
-    }
-    .rotate {
-        -webkit-transform: rotate(-90deg);
-        -moz-transform: rotate(-90deg);
-    }
 </style>
 
 <template>
     <v-layout id="sample-data-form" row wrap
               :class="{'ml-2': true, 'mt-3': true}">
-        <v-flex d-flex xs1 class="pr-4">
-            <v-card flat height="100%">
-                <v-card-text>
-                    <!--spacer-->
-                </v-card-text>
-                <v-card-text>
-                    <!--spacer-->
-                </v-card-text>
-                <v-card-text class="rotate">
-                    NORMAL
-                </v-card-text>
-            </v-card>
-        </v-flex>
-        <v-flex d-flex xs11>
-            <v-layout row wrap>
                 <v-flex d-flex xs2 class="sample-label">
                     <v-text-field class="pt-1"
                                   color="appColor"
@@ -82,10 +58,10 @@
                                   @change="onNameEntered"
                     ></v-text-field>
                 </v-flex>
-                <v-flex d-flex xs1>
+                <v-flex d-flex xs8>
                     <v-switch label="Tumor" class="pt-1" hide-details @change="onIsAffected" v-model="isTumor"></v-switch>
                 </v-flex>
-                <v-flex d-flex v-if="modelInfo.order > 1" style="padding-left: 30px">
+                <v-flex v-if="modelInfo.order > 1" style="padding-left: 30px">
                     <v-btn small flat icon style="margin: 0 !important" class="drag-handle; pl-4"
                            v-bind:ripple="false">
                         <v-icon color="appColor">reorder</v-icon>
@@ -99,7 +75,7 @@
                 </v-flex>
                 <v-flex v-else style="padding-left: 70px">
                     <v-btn small flat icon style="margin: 0px !important" class="drag-handle">
-                        <v-icon color="appColor">reorder</v-icon>
+                        <v-icon color="appColor" class="drag-spot">reorder</v-icon>
                     </v-btn>
                 </v-flex>
                 <v-flex d-flex xs12 class="ml-3" style="margin-top: -5px">
@@ -142,9 +118,6 @@
                     </sample-data-file>
                 </v-flex>
             </v-layout>
-        </v-flex>
-    </v-layout>
-
 
 </template>
 
