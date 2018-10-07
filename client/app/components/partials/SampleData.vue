@@ -44,78 +44,105 @@
     .drag-handle {
         cursor: move;
     }
+    .vert-label {
+        -webkit-transform: rotate(-90deg);
+        -moz-transform: rotate(-90deg);
+        color: #7f1010;
+        padding-top: 5px;
+        padding-left: 0;
+    }
+    .vert-border {
+        padding-left: 10px;
+        border-left: 1px solid #7f1010;
+    }
+    .cont-left {
+        padding-right: 30px !important;
+        padding-top: 25px !important;
+    }
 </style>
 
 <template>
     <v-layout id="sample-data-form" row wrap
-              :class="{'ml-2': true, 'mt-3': true}">
-        <v-flex d-flex xs2 class="sample-label">
-            <v-text-field class="pt-1"
-                          color="appColor"
-                          placeholder="Enter sample name"
-                          hide-details
-                          v-model="modelInfo.name"
-                          @change="onNameEntered"
-            ></v-text-field>
+              :class="{'mt-3': true}">
+        <v-flex d-flex xs1>
+            <v-container height="100%" class="cont-left">
+                <div class="vert-label">
+                    NORMAL
+                </div>
+            </v-container>
         </v-flex>
-        <v-flex d-flex xs8>
-            <v-switch label="Tumor" class="pt-1" hide-details @change="onIsAffected" v-model="isTumor"></v-switch>
-        </v-flex>
-        <v-flex v-if="modelInfo.order > 1" style="padding-left: 30px">
-            <v-btn small flat icon style="margin: 0 !important" class="drag-handle; pl-4"
-                   v-bind:ripple="false">
-                <v-icon color="appColor">reorder</v-icon>
-            </v-btn>
-            <v-btn small flat icon style="margin: 0 !important"
-                   @click="removeSample">
-                <v-icon color="appColor">
-                    clear
-                </v-icon>
-            </v-btn>
-        </v-flex>
-        <v-flex v-else style="padding-left: 70px">
-            <v-btn small flat icon style="margin: 0px !important" class="drag-handle">
-                <v-icon color="appColor" class="drag-spot">reorder</v-icon>
-            </v-btn>
-        </v-flex>
-        <v-flex d-flex xs12 class="ml-3" style="margin-top: -5px">
-            <sample-data-file
-                    :defaultUrl="modelInfo.vcf"
-                    :defaultIndexUrl="modelInfo.tbi"
-                    :label="`vcf`"
-                    :indexLabel="`tbi`"
-                    :filePlaceholder="filePlaceholder.vcf"
-                    :fileAccept="fileAccept.vcf"
-                    :separateUrlForIndex="separateUrlForIndex"
-                    @url-entered="onVcfUrlEntered"
-                    @file-selected="onVcfFilesSelected">
-            </sample-data-file>
-        </v-flex>
+        <v-flex d-flex xs11 style="margin-left: -17px">
+            <v-layout row wrap class="vert-border">
+                <v-flex d-flex xs2 class="sample-label">
+                    <v-text-field class="pt-1"
+                                  color="appColor"
+                                  placeholder="Enter sample name"
+                                  hide-details
+                                  v-model="modelInfo.name"
+                                  @change="onNameEntered"
+                    ></v-text-field>
+                </v-flex>
+                <v-flex d-flex xs8>
+                    <v-switch label="Tumor" class="pt-1" hide-details @change="onIsAffected"
+                              v-model="isTumor"></v-switch>
+                </v-flex>
+                <v-flex v-if="modelInfo.order > 1" style="padding-left: 30px">
+                    <v-btn small flat icon style="margin: 0 !important" class="drag-handle; pl-4"
+                           v-bind:ripple="false">
+                        <v-icon color="appColor">reorder</v-icon>
+                    </v-btn>
+                    <v-btn small flat icon style="margin: 0 !important"
+                           @click="removeSample">
+                        <v-icon color="appColor">
+                            clear
+                        </v-icon>
+                    </v-btn>
+                </v-flex>
+                <v-flex v-else style="padding-left: 70px">
+                    <v-btn small flat icon style="margin: 0px !important" class="drag-handle">
+                        <v-icon color="appColor" class="drag-spot">reorder</v-icon>
+                    </v-btn>
+                </v-flex>
+                <v-flex d-flex xs12 class="ml-3" style="margin-top: -5px">
+                    <sample-data-file
+                            :defaultUrl="modelInfo.vcf"
+                            :defaultIndexUrl="modelInfo.tbi"
+                            :label="`vcf`"
+                            :indexLabel="`tbi`"
+                            :filePlaceholder="filePlaceholder.vcf"
+                            :fileAccept="fileAccept.vcf"
+                            :separateUrlForIndex="separateUrlForIndex"
+                            @url-entered="onVcfUrlEntered"
+                            @file-selected="onVcfFilesSelected">
+                    </sample-data-file>
+                </v-flex>
 
-        <v-flex xs4 id="sample-selection">
-            <v-select
-                    v-bind:class="samples == null || samples.length === 0 ? 'hide' : ''"
-                    label="Sample"
-                    v-model="sample"
-                    :items="samples"
-                    autocomplete
-                    @input="onSampleSelected"
-                    hide-details
-            ></v-select>
-        </v-flex>
+                <v-flex xs4 id="sample-selection">
+                    <v-select
+                            v-bind:class="samples == null || samples.length === 0 ? 'hide' : ''"
+                            label="Sample"
+                            v-model="sample"
+                            :items="samples"
+                            autocomplete
+                            @input="onSampleSelected"
+                            hide-details
+                    ></v-select>
+                </v-flex>
 
-        <v-flex d-flex xs12 class="ml-3 ">
-            <sample-data-file
-                    :defaultUrl="modelInfo.bam"
-                    :defaultIndexUrl="modelInfo.bai"
-                    :label="`bam`"
-                    :indexLabel="`bai`"
-                    :filePlaceholder="filePlaceholder.bam"
-                    :fileAccept="fileAccept.bam"
-                    :separateUrlForIndex="separateUrlForIndex"
-                    @url-entered="onBamUrlEntered"
-                    @file-selected="onBamFilesSelected">
-            </sample-data-file>
+                <v-flex d-flex xs12 class="ml-3 ">
+                    <sample-data-file
+                            :defaultUrl="modelInfo.bam"
+                            :defaultIndexUrl="modelInfo.bai"
+                            :label="`bam`"
+                            :indexLabel="`bai`"
+                            :filePlaceholder="filePlaceholder.bam"
+                            :fileAccept="fileAccept.bam"
+                            :separateUrlForIndex="separateUrlForIndex"
+                            @url-entered="onBamUrlEntered"
+                            @file-selected="onBamFilesSelected">
+                    </sample-data-file>
+                </v-flex>
+            </v-layout>
         </v-flex>
     </v-layout>
 </template>

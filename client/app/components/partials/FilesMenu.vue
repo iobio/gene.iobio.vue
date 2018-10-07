@@ -65,7 +65,6 @@
             :nudge-width="500"
             v-model="showFilesMenu"
     >
-
         <v-btn id="files-menu-button" flat slot="activator">
             Files
         </v-btn>
