@@ -30,7 +30,7 @@ class CohortModel {
 
         this.sampleModels = [];        // List of sample models correlated with this cohort
         this.sampleMap = {};           // Relateds IDs to model objects
-        this.numNormalSamples = 0;
+        this.numNormalSamples = 0;``
         this.numTumorSamples = 0;
 
         this.mode = 'time';             // Indicates time-series mode
@@ -461,24 +461,41 @@ class CohortModel {
         })
     }
 
+    /* Removes a sample model corresponding to the given id */
     removeSample(id) {
         let self = this;
-        let removeIndex = self.sampleMap[id].model.order;
-        let lastIndex = self.sampleModels.length-1;
-        if (lastIndex > removeIndex) {
-            for (let i = removeIndex; i < lastIndex; i++) {
-                if (self.sampleMap[('s' + (i+1))] != null) {
-                    let nextModel = self.sampleModels[i+1];
-                    nextModel.order = nextModel.order - 1;
-                    nextModel.id = ('s' + i);
-                    self.sampleMap[('s' + i)] = nextModel;
-                    self.sampleModels[i] = self.sampleModels[i+1];
-                }
-            }
-            delete self.sampleMap[('s' + lastIndex)];
-        } else {
-            delete self.sampleMap[id];
-            self.sampleModels.splice(lastIndex, 1);
+        // Get
+
+
+        // let order = self.sampleMap[id].model.order;
+        // let lastIndex = self.sampleModels.length-1;
+        // if (lastIndex > removeIndex) {
+        //     for (let i = removeIndex; i < lastIndex; i++) {
+        //         if (self.sampleMap[('s' + (i+1))] != null) {
+        //             let nextModel = self.sampleModels[i+1];
+        //             nextModel.order = nextModel.order - 1;
+        //             nextModel.id = ('s' + i);
+        //             self.sampleMap[('s' + i)] = nextModel;
+        //             self.sampleModels[i] = self.sampleModels[i+1];
+        //         }
+        //     }
+        //     delete self.sampleMap[('s' + lastIndex)];
+        // } else {
+        //     delete self.sampleMap[id];
+        //     self.sampleModels.splice(lastIndex, 1);
+        // }
+    }
+
+    /* Coordinates order with view array */
+    updateSampleOrder(oldIndex, newIndex) {
+        let self = this;
+
+        if (oldIndex < newIndex) {
+            self.sampleModels.splice(newIndex + 1, 0, self.sampleModels[oldIndex]);
+            self.sampleModels.splice(oldIndex, 1);
+        } else if (newIndex < oldIndex) {
+            self.sampleModels.splice(newIndex, 0, self.sampleModels[oldIndex]);
+            self.sampleModels.splice(oldIndex + 1, 1);
         }
     }
 
@@ -624,7 +641,7 @@ class CohortModel {
     /* Returns all normal and tumor models */
     getCanonicalModels() {
         return this.sampleModels.filter(function (model) {
-            return model.relationship !== 'known-variants';
+            return model.id !== 'known-variants';
         })
     }
 

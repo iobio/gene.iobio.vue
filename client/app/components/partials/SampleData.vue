@@ -83,7 +83,7 @@
                                   @change="onNameEntered"
                     ></v-text-field>
                 </v-flex>
-                <v-flex d-flex xs8 v-if="modelInfo.order > 1">
+                <v-flex d-flex xs8 v-if="!isStaticSlot && !timeSeriesMode">
                     <v-switch label="Tumor" class="pt-1" hide-details @change="onIsAffected"
                               v-model="isTumor"></v-switch>
                 </v-flex>
@@ -91,7 +91,7 @@
                     <v-container>
                         <div>
                             <v-chip small outline color="appColor">
-                                {{tumorStatus}}
+                                {{chipLabel}}
                             </v-chip>
                         </div>
                     </v-container>
@@ -99,7 +99,7 @@
                 <v-flex d-flex xs8 v-else>
                     <!--space holder-->
                 </v-flex>
-                <v-flex d-flex xs2 v-if="modelInfo.order > 1" style="padding-left: 30px">
+                <v-flex d-flex xs2 v-if="!isStaticSlot" style="padding-left: 30px">
                     <v-btn small flat icon style="margin: 0 !important" class="drag-handle">
                         <v-icon color="appColor">reorder</v-icon>
                     </v-btn>
@@ -171,7 +171,8 @@
         props: {
             modelInfo: null,
             separateUrlForIndex: null,
-            timeSeriesMode: false
+            timeSeriesMode: false,
+            dragOrder: 0
         },
         data() {
             return {
@@ -187,13 +188,23 @@
                 samples: [],
                 sample: null,
                 isTumor: true,
-                rowLabel: ''
+                rowLabel: '',
+                chipLabel: '',
+                isStaticSlot: false
             }
         },
         watch: {
             timeSeriesMode: function() {
                 let self = this;
                 self.rowLabel = self.getRowLabel();
+            },
+            dragOrder: function() {
+                let self = this;
+                self.isStaticSlot = self.dragOrder < 2;
+            },
+            isTumor: function() {
+                let self = this;
+                self.chipLabel = self.isTumor ? 'TUMOR' : 'NORMAL';
             }
         },
         computed: {
@@ -232,7 +243,7 @@
                                 self.modelInfo.sample = null;
                                 self.modelInfo.model.sampleName = null;
                             }
-                            self.$emit("samples-available", self.modelInfo.id, self.samples);
+                            self.$emit("samples-available", self.modelInfo.order, self.samples);
                         }
                         self.$emit("sample-data-changed");
                     })
@@ -309,36 +320,35 @@
             },
             removeSample: function () {
                 let self = this;
-                self.$emit("remove-sample", self.modelInfo.id);
+                self.$emit("remove-sample", self.modelInfo.order);
             },
             updateOrder: function(oldIndex, newIndex) {
                 let self = this;
+
+                // Update order prop in view and model
                 if (self.modelInfo.order === oldIndex) {
                     self.modelInfo.order = newIndex;
-                    self.modelInfo.id = 's' + newIndex;
                     self.modelInfo.model.order = newIndex;
-                    self.modelInfo.model.id = 's' + newIndex;
                 } else if (oldIndex > newIndex && self.modelInfo.order >= newIndex
                     && self.modelInfo.order < oldIndex) {
                     self.modelInfo.order++;
-                    self.modelInfo.id = 's' + self.modelInfo.order;
                     self.modelInfo.model.order++;
-                    self.modelInfo.model.id = 's' + self.modelInfo.order;
                 } else if (oldIndex < newIndex && self.modelInfo.order <= newIndex
                     && self.modelInfo.order > oldIndex) {
                     self.modelInfo.order--;
-                    self.modelInfo.id = 's' + self.modelInfo.order;
-                    self.modelInfo.model.id = 's' + self.modelInfo.order;
                 }
 
+                // Enforce first slot normal, second tumor
                 if (self.modelInfo.order === 0) {
                     self.isTumor = false;
                     self.modelInfo.isTumor = false;
                     self.modelInfo.model.isTumor = false;
+                    //self.chipLabel = 'NORMAL';
                 } else if (self.modelInfo.order === 1) {
                     self.isTumor = true;
                     self.modelInfo.isTumor = true;
                     self.modelInfo.model.isTumor = true;
+                    //self.chipLabel = 'TUMOR';
                 }
 
                 self.rowLabel = self.getRowLabel();
@@ -363,6 +373,8 @@
             this.samples = this.modelInfo.samples;
             this.isTumor = this.modelInfo.isTumor;
             this.rowLabel = this.getRowLabel();
+            this.chipLabel = this.isTumor ? 'TUMOR' : 'NORMAL';
+            this.isStaticSlot = this.dragOrder < 2;
             if (this.modelInfo.vcf) {
                 this.onVcfUrlEntered(this.modelInfo.vcf, this.modelInfo.tbi);
             }

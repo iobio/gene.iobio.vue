@@ -120,6 +120,7 @@
                                 v-if="modelInfoMap && modelInfoMap[sample] && Object.keys(modelInfoMap[sample]).length > 0"
                                 :modelInfo="modelInfoMap[sample]"
                                 :timeSeriesMode="timeSeriesMode"
+                                :dragOrder="modelInfoMap[sample].order"
                                 :separateUrlForIndex="separateUrlForIndex"
                                 @sample-data-changed="validate"
                                 @samples-available="onSamplesAvailable"
@@ -129,7 +130,7 @@
                 </draggable>
                 <v-flex xs6 class="mt-2 text-xs-left">
                     <v-btn small outline fab color="appColor"
-                           @click="onAdd">
+                           @click="promiseAddSample">
                         <v-icon>add</v-icon>
                     </v-btn>
                 </v-flex>
@@ -174,7 +175,7 @@
                 buildName: null,
                 activeTab: null,
                 modelInfoMap: {},
-                samples: ['s0', 's1'],
+                samples: [],
                 demoActions: [
                     {'display': 'Demo WES trio', 'value': 'exome'},
                     {'display': 'Demo WGS trio', 'value': 'genome'}
@@ -196,30 +197,39 @@
             }
         },
         methods: {
-            onAdd: function () {
+            promiseAddSample: function (isTumor = true) {
                 let self = this;
 
-                // Add entry to list of sample ids
-                let currSampleNum = self.samples.length;
-                let newId = 's' + currSampleNum;
-                self.samples.push(newId);
+                return new Promise((resolve, reject) => {
+                    let currSampleNum = self.samples.length;
+                    let newId = 's' + currSampleNum;
+                    self.samples.push(newId);
 
-                // Add entry to map
-                let newInfo = {'isTumor': true};   // Default to adding another tumor sample
-                newInfo.id = newId;
-                newInfo.displayName = '';
-                newInfo.vcf = null;
-                newInfo.bam = null;
-                newInfo.tbi = null;
-                newInfo.bai = null;
-                newInfo.order = currSampleNum;
-                self.modelInfoMap[newId] = newInfo;
+                    // Add entry to map
+                    let newInfo = {};
+                    if (!isTumor) {
+                        newInfo.isTumor = false;
+                    } else {
+                        newInfo.isTumor = true;
+                    }
+                    newInfo.displayName = '';
+                    newInfo.vcf = null;
+                    newInfo.bam = null;
+                    newInfo.tbi = null;
+                    newInfo.bai = null;
+                    newInfo.order = currSampleNum;
+                    self.modelInfoMap[newId] = newInfo;
 
-                // Add sample model for new entry
-                self.cohortModel.promiseAddSample(newInfo)
-                    .then((model) => {
-                        newInfo.model = model;
-                    });
+                    // Add sample model for new entry
+                    self.cohortModel.promiseAddSample(newInfo)
+                        .then((model) => {
+                            newInfo.model = model;
+                            resolve();
+                        })
+                        .catch(() => {
+                            reject('There was a problem adding sample.');
+                        });
+                });
             },
             onLoad: function () {
                 let self = this;
@@ -250,17 +260,18 @@
                 this.showFilesMenu = false;
             },
             onModeChanged: function () {
-                if (this.timeSeriesMode) {
-                    this.promiseInitMoreTumors();
-                } else {
-                    this.removeMoreTumors();
-                }
+                // if (this.timeSeriesMode) {
+                //     this.promiseInitMoreTumors();
+                // } else {
+                //     this.removeMoreTumors();
+                // }
 
-                this.validate();
+                //this.validate();
             },
             onLoadDemoData: function () {
                 let self = this;
 
+                // TODO: fix this
                 self.cohortModel.demoModelInfos[self.demoAction].forEach(function (modelInfo) {
                     let id = modelInfo.id;
                     self.modelInfoMap[id] = modelInfo;
@@ -277,12 +288,16 @@
                     theModelInfo.model = theModel;
                     theModel.onVcfUrlEntered(theModelInfo.vcf, null, function (success, sampleNames) {
                         if (success) {
-                            self.$refs.sampleDataRef.forEach(function (ref) {
-                                if (ref.modelInfo.id === theModel.id) {
-                                    theModel.name = theModel.sampleName;
-                                    self.validate();
-                                }
-                            });
+                            // TODO: fix this
+                            let key = self.samples[ref.modelInfo.order];
+
+                            //self.$refs.sampleDataRef.forEach(function (ref) {
+                                // if (ref.modelInfo.id === theModel.id) {
+                                //     theModel.name = theModel.sampleName;
+                                //     self.validate();
+                                // }
+
+                            //});
                             theModel.onBamUrlEntered(theModelInfo.bam, null, function (success) {
                                 self.validate();
                                 if (success) {
@@ -300,7 +315,7 @@
             validate: function () {
                 this.isValid = true;
 
-                let keyList = Object.keys(modelInfoMap);
+                let keyList = Object.keys(self.modelInfoMap);
                 for (let i = 0; i < keyList.length; i++) {
                     let currKey = keyList[i];
                     this.isValid &= (this.modelInfoMap[currKey] != null && this.modelInfoMap[currKey].model.isReadyToLoad());
@@ -335,44 +350,13 @@
             },
             init: function () {
                 let self = this;
-                self.modelInfoMap = {};
                 if (self.cohortModel && self.cohortModel.getCanonicalModels().length > 0) {
                     self.initModelInfo();
                 } else {
-                    let promises = [];
-
-                    let normalModelInfo = {};
-                    normalModelInfo.id = 's0';
-                    normalModelInfo.displayName = '';
-                    normalModelInfo.vcf = null;
-                    normalModelInfo.bam = null;
-                    normalModelInfo.order = 0;
-                    normalModelInfo.isTumor = false;
-                    self.modelInfoMap['s0'] = normalModelInfo;
-                    let normP = self.cohortModel.promiseAddSample(normalModelInfo)
-                        .then((model) => {
-                            self.modelInfoMap['s0'].model = model;
-                        });
-                    promises.push(normP);
-
-                    let tumorModelInfo = {};
-                    tumorModelInfo.id = 's1';
-                    tumorModelInfo.displayName = '';
-                    tumorModelInfo.vcf = null;
-                    tumorModelInfo.bam = null;
-                    tumorModelInfo.order = 1;
-                    tumorModelInfo.isTumor = true;
-                    self.modelInfoMap['s1'] = tumorModelInfo;
-                    let tumorP = self.cohortModel.promiseAddSample(tumorModelInfo)
-                        .then((model) => {
-                            self.modelInfoMap['s1'].model = model;
-                        });
-                    promises.push(tumorP);
-
-                    Promise.all(promises)
+                    self.promiseAddSample(false)
                         .then(() => {
-                            self.initModelInfo();
-                        })
+                            self.promiseAddSample(true);
+                        });
                 }
             },
             initModelInfo: function () {
@@ -383,7 +367,6 @@
                     let modelInfo = self.modelInfoMap[model.id];
                     if (modelInfo == null) {
                         modelInfo = {};
-                        modelInfo.id = model.getId();
                         modelInfo.displayName = model.getDisplayName();
                         modelInfo.isTumor = model.getTumorStatus();
                         modelInfo.order = model.order;
@@ -395,7 +378,8 @@
                         if (modelInfo.tbi || modelInfo.bai) {
                             self.separateUrlForIndex = true;
                         }
-                        self.$set(self.modelInfoMap, model.id, modelInfo);
+                        let key = 's' + self.samples.length;
+                        self.$set(self.modelInfoMap, key, modelInfo);
                     }
                 })
             },
@@ -416,33 +400,16 @@
                     let currInfo = self.modelInfoMap[key];
                     if (currInfo != null && currInfo.displayName === '' &&
                         currInfo.vcf == null && currInfo.bam == null) {
-                        self.removeSample(currInfo.id);
+                        self.removeSample(key);
                     }
                 }
             },
-            removeSample: function (sampleId) {
+            removeSample: function (arrIndex) {
                 let self = this;
-                let removeIndex = self.modelInfoMap[sampleId].order;
-                let lastIndex = self.samples.length - 1;
-
-                console.log(self.samples.join(','));
-                // If we're removing a middle record
-                if (lastIndex > removeIndex) {
-                    for (let i = removeIndex; i < lastIndex; i++) {
-                        // Decrement index and order
-                        let nextInfo = self.modelInfoMap['s' + (i + 1)];           // Get next info
-                        nextInfo.order = nextInfo.order - 1;                       // Overwrite value params
-                        nextInfo.id = 's' + i;
-                        self.modelInfoMap[('s' + i)] = nextInfo;                 // Overwrite previous
-                    }
-                    delete self.modelInfoMap[('s' + lastIndex)];
-
-                    // If we're removing the last record
-                } else {
-                    delete self.modelInfoMap[sampleId];
-                }
-                self.samples.splice(lastIndex, 1);
-                self.cohortModel.removeSample(sampleId);                         // Remove actual sample
+                let id = self.samples[arrIndex];
+                self.samples.splice(arrIndex, 1);
+                delete self.modelInfoMap[id];
+                self.cohortModel.removeSample(id);
                 console.log(self.samples.join(','));
             },
             onDragEnd: function (evt) {
@@ -450,18 +417,27 @@
                 let oldIndex = evt.oldIndex;
                 let newIndex = evt.newIndex;
 
-                // Update order & id internally
+                // Update order and isTumor props
                 if (self.$refs.sampleDataRef != null) {
                     self.$refs.sampleDataRef.forEach((ref) => {
                         ref.updateOrder(oldIndex, newIndex);
                     });
                 }
+
+                // Order samples arrays for view and model accordingly
                 if (oldIndex < newIndex) {
-                    samples.splice(newIndex + 1, 0, samples[oldIndex]);
-                    samples.splice(newIndex, 1);
+                    self.samples.splice(newIndex + 1, 0, self.samples[oldIndex]);
+                    self.samples.splice(oldIndex, 1);
                 } else if (newIndex < oldIndex) {
-                    samples.splice(newIndex, 0, samples[oldIndex]);
-                    samples.splice(newIndex + 1, 1);
+                    self.samples.splice(newIndex, 0, self.samples[oldIndex]);
+                    self.samples.splice(oldIndex + 1, 1);
+                }
+                self.cohortModel.updateSampleOrder(oldIndex, newIndex);
+
+                // Debugging
+                console.log(self.samples.join(','));
+                for (let i = 0; i < self.samples.length; i++) {
+                    console.log(self.samples[i] + ':' + self.modelInfoMap[self.samples[i]].order);
                 }
             }
         },
