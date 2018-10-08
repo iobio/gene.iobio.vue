@@ -119,6 +119,7 @@
                                 ref="sampleDataRef"
                                 v-if="modelInfoMap && modelInfoMap[sample] && Object.keys(modelInfoMap[sample]).length > 0"
                                 :modelInfo="modelInfoMap[sample]"
+                                :timeSeriesMode="timeSeriesMode"
                                 :separateUrlForIndex="separateUrlForIndex"
                                 @sample-data-changed="validate"
                                 @samples-available="onSamplesAvailable"
@@ -168,7 +169,6 @@
             return {
                 showFilesMenu: false,
                 isValid: false,
-                mode: 'double',
                 speciesList: [],
                 speciesName: null,
                 buildName: null,
@@ -199,7 +199,6 @@
             onAdd: function () {
                 let self = this;
 
-                debugger;
                 // Add entry to list of sample ids
                 let currSampleNum = self.samples.length;
                 let newId = 's' + currSampleNum;
@@ -404,7 +403,7 @@
                 let self = this;
 
                 if (self.samples.length === 2) {
-                    for (let i = 0; i < 3; i++) {
+                    for (let i = 0; i < 2; i++) {
                         self.onAdd();
                     }
                 }

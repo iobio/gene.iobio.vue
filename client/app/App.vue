@@ -20,14 +20,6 @@ button
       padding-bottom: 2px
       height: 30px
 
-.chip
-  background-color:  $default-badge-color
-  .chip__content
-    color: white
-    background-color:  $default-badge-color
-    font-size: 12px
-    height: 20px
-
 .progress-linear__background.primary
   background-color: $app-gray !important
 .progress-linear__bar__indeterminate--active

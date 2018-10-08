@@ -83,9 +83,21 @@
                                   @change="onNameEntered"
                     ></v-text-field>
                 </v-flex>
-                <v-flex d-flex xs8>
-                    <v-switch v-if="modelInfo.order > 1" label="Tumor" class="pt-1" hide-details @change="onIsAffected"
+                <v-flex d-flex xs8 v-if="modelInfo.order > 1">
+                    <v-switch label="Tumor" class="pt-1" hide-details @change="onIsAffected"
                               v-model="isTumor"></v-switch>
+                </v-flex>
+                <v-flex d-flex xs8 v-else-if="timeSeriesMode === true">
+                    <v-container>
+                        <div>
+                            <v-chip small outline color="appColor">
+                                {{tumorStatus}}
+                            </v-chip>
+                        </div>
+                    </v-container>
+                </v-flex>
+                <v-flex d-flex xs8 v-else>
+                    <!--space holder-->
                 </v-flex>
                 <v-flex d-flex xs2 v-if="modelInfo.order > 1" style="padding-left: 30px">
                     <v-btn small flat icon style="margin: 0 !important" class="drag-handle">
@@ -159,7 +171,7 @@
         props: {
             modelInfo: null,
             separateUrlForIndex: null,
-            order: 0
+            timeSeriesMode: false
         },
         data() {
             return {
@@ -179,12 +191,19 @@
             }
         },
         watch: {
+            timeSeriesMode: function() {
+                let self = this;
+                self.rowLabel = self.getRowLabel();
+            }
         },
         computed: {
-            // rowLabel: function() {
-            //     let self = this;
-            //     return self.modelInfo.order;
-            // }
+            tumorStatus: function() {
+                if (this.modelInfo.order === 0) {
+                    return 'NORMAL';
+                } else {
+                    return 'TUMOR';
+                }
+            }
         },
         methods: {
             onNameEntered: function () {
@@ -248,7 +267,7 @@
             onIsAffected: function () {
                 this.modelInfo.isTumor = this.isTumor;
                 this.modelInfo.model.isTumor = this.modelInfo.affectedStatus;
-                //this.rowLabel = this.isTumor ? 'TUMOR' : 'NORMAL';
+                this.rowLabel = this.getRowLabel();
             },
             updateSamples: function (samples, sampleToSelect) {
                 this.samples = samples;
@@ -295,24 +314,45 @@
             updateOrder: function(oldIndex, newIndex) {
                 let self = this;
                 if (self.modelInfo.order === oldIndex) {
-                    self.rowLabel = newIndex;
                     self.modelInfo.order = newIndex;
                     self.modelInfo.id = 's' + newIndex;
                     self.modelInfo.model.order = newIndex;
                     self.modelInfo.model.id = 's' + newIndex;
                 } else if (oldIndex > newIndex && self.modelInfo.order >= newIndex
                     && self.modelInfo.order < oldIndex) {
-                    self.rowLabel++;
                     self.modelInfo.order++;
                     self.modelInfo.id = 's' + self.modelInfo.order;
                     self.modelInfo.model.order++;
                     self.modelInfo.model.id = 's' + self.modelInfo.order;
                 } else if (oldIndex < newIndex && self.modelInfo.order <= newIndex
                     && self.modelInfo.order > oldIndex) {
-                    self.rowLabel--;
                     self.modelInfo.order--;
                     self.modelInfo.id = 's' + self.modelInfo.order;
                     self.modelInfo.model.id = 's' + self.modelInfo.order;
+                }
+
+                if (self.modelInfo.order === 0) {
+                    self.isTumor = false;
+                    self.modelInfo.isTumor = false;
+                    self.modelInfo.model.isTumor = false;
+                } else if (self.modelInfo.order === 1) {
+                    self.isTumor = true;
+                    self.modelInfo.isTumor = true;
+                    self.modelInfo.model.isTumor = true;
+                }
+
+                self.rowLabel = self.getRowLabel();
+            },
+            getRowLabel: function() {
+                let self = this;
+                if (self.timeSeriesMode) {
+                    return 'T' + self.modelInfo.order;
+                } else {
+                    if (self.modelInfo.isTumor) {
+                        return 'TUMOR';
+                    } else {
+                        return 'NORMAL';
+                    }
                 }
             }
         },
@@ -322,7 +362,7 @@
         mounted: function () {
             this.samples = this.modelInfo.samples;
             this.isTumor = this.modelInfo.isTumor;
-            this.rowLabel = this.modelInfo.order;
+            this.rowLabel = this.getRowLabel();
             if (this.modelInfo.vcf) {
                 this.onVcfUrlEntered(this.modelInfo.vcf, this.modelInfo.tbi);
             }
