@@ -99,7 +99,7 @@
                 <v-flex d-flex xs8 v-else>
                     <!--space holder-->
                 </v-flex>
-                <v-flex d-flex xs2 v-if="!isStaticSlot" style="padding-left: 30px">
+                <v-flex d-flex xs2 v-if="!isStaticSlot && !timeSeriesMode" style="padding-left: 30px">
                     <v-btn small flat icon style="margin: 0 !important" class="drag-handle">
                         <v-icon color="appColor">reorder</v-icon>
                     </v-btn>
@@ -110,9 +110,15 @@
                         </v-icon>
                     </v-btn>
                 </v-flex>
-                <v-flex d-flex xs2 v-else style="padding-left: 70px">
+                <v-flex d-flex xs2 v-else-if="!timeSeriesMode" style="padding-left: 70px">
                     <v-btn small flat icon style="margin: 0 !important" class="drag-handle">
                         <v-icon color="appColor">reorder</v-icon>
+                    </v-btn>
+                </v-flex>
+                <v-flex d-flex xs2 v-else-if="!isStaticSlot" style="padding-left: 70px">
+                    <v-btn small flat icon style="margin: 0 !important"
+                           @click="removeSample">
+                        <v-icon color="appColor">clear</v-icon>
                     </v-btn>
                 </v-flex>
                 <v-flex d-flex xs12 class="ml-3" style="margin-top: -5px">
@@ -172,7 +178,7 @@
             modelInfo: null,
             separateUrlForIndex: null,
             timeSeriesMode: false,
-            dragOrder: 0
+            dragId: ''
         },
         data() {
             return {
@@ -196,11 +202,17 @@
         watch: {
             timeSeriesMode: function() {
                 let self = this;
-                self.rowLabel = self.getRowLabel();
-            },
-            dragOrder: function() {
-                let self = this;
-                self.isStaticSlot = self.dragOrder < 2;
+                self.updateLabel();
+
+                if (self.dragId === 's0') {
+                    self.isTumor = false;
+                    self.modelInfo.isTumor = false;
+                    self.modelInfo.model.isTumor = false;
+                } else {
+                    self.isTumor = true;
+                    self.modelInfo.isTumor = true;
+                    self.modelInfo.model.isTumor = true;
+                }
             },
             isTumor: function() {
                 let self = this;
@@ -337,21 +349,7 @@
                     && self.modelInfo.order > oldIndex) {
                     self.modelInfo.order--;
                 }
-
-                // Enforce first slot normal, second tumor
-                if (self.modelInfo.order === 0) {
-                    self.isTumor = false;
-                    self.modelInfo.isTumor = false;
-                    self.modelInfo.model.isTumor = false;
-                    //self.chipLabel = 'NORMAL';
-                } else if (self.modelInfo.order === 1) {
-                    self.isTumor = true;
-                    self.modelInfo.isTumor = true;
-                    self.modelInfo.model.isTumor = true;
-                    //self.chipLabel = 'TUMOR';
-                }
-
-                self.rowLabel = self.getRowLabel();
+                self.updateLabel();
             },
             getRowLabel: function() {
                 let self = this;
@@ -364,19 +362,24 @@
                         return 'NORMAL';
                     }
                 }
+            },
+            updateLabel: function() {
+                let self = this;
+                self.rowLabel = self.getRowLabel();
             }
         },
         created: function () {
 
         },
         mounted: function () {
-            this.samples = this.modelInfo.samples;
-            this.isTumor = this.modelInfo.isTumor;
-            this.rowLabel = this.getRowLabel();
-            this.chipLabel = this.isTumor ? 'TUMOR' : 'NORMAL';
-            this.isStaticSlot = this.dragOrder < 2;
-            if (this.modelInfo.vcf) {
-                this.onVcfUrlEntered(this.modelInfo.vcf, this.modelInfo.tbi);
+            let self = this;
+            self.samples = self.modelInfo.samples;
+            self.isTumor = self.modelInfo.isTumor;
+            self.rowLabel = self.getRowLabel();
+            self.chipLabel = self.isTumor ? 'TUMOR' : 'NORMAL';
+            self.isStaticSlot = self.dragId === 's0' || self.dragId === 's1';
+            if (self.modelInfo.vcf) {
+                self.onVcfUrlEntered(self.modelInfo.vcf, self.modelInfo.tbi);
             }
 
         }

@@ -120,7 +120,7 @@
                                 v-if="modelInfoMap && modelInfoMap[sample] && Object.keys(modelInfoMap[sample]).length > 0"
                                 :modelInfo="modelInfoMap[sample]"
                                 :timeSeriesMode="timeSeriesMode"
-                                :dragOrder="modelInfoMap[sample].order"
+                                :dragId="sample"
                                 :separateUrlForIndex="separateUrlForIndex"
                                 @sample-data-changed="validate"
                                 @samples-available="onSamplesAvailable"
@@ -201,8 +201,8 @@
                 let self = this;
 
                 return new Promise((resolve, reject) => {
-                    let currSampleNum = self.samples.length;
-                    let newId = 's' + currSampleNum;
+
+                    let newId = self.findNextAvailableId();
                     self.samples.push(newId);
 
                     // Add entry to map
@@ -217,7 +217,7 @@
                     newInfo.bam = null;
                     newInfo.tbi = null;
                     newInfo.bai = null;
-                    newInfo.order = currSampleNum;
+                    newInfo.order = self.samples.length - 1;
                     self.modelInfoMap[newId] = newInfo;
 
                     // Add sample model for new entry
@@ -230,6 +230,23 @@
                             reject('There was a problem adding sample.');
                         });
                 });
+            },
+            findNextAvailableId: function() {
+                let self = this;
+                let ids = [];
+                let arrLength = self.samples.length;
+                for (let i = 0; i < arrLength; i++) {
+                    ids.push(parseInt(self.samples[i].substring(1)));
+                }
+                ids.sort();
+                let nextVal = arrLength;
+                for (let i = 0; i < arrLength - 1; i++) {
+                    if (ids[i + 1] - ids[i] > 1) {
+                        nextVal = i + 1;
+                        break;
+                    }
+                }
+                return 's' + nextVal;
             },
             onLoad: function () {
                 let self = this;
@@ -406,11 +423,36 @@
             },
             removeSample: function (arrIndex) {
                 let self = this;
+
+                // Update order for any samples after deleted one
+                for (let i = arrIndex + 1; i < self.samples.length; i++) {
+                    let key = self.samples[i];
+                    self.modelInfoMap[key].order--;
+                    self.modelInfoMap[key].model.order--;
+                }
+
+                // Remove sample and delete info
                 let id = self.samples[arrIndex];
                 self.samples.splice(arrIndex, 1);
                 delete self.modelInfoMap[id];
                 self.cohortModel.removeSample(id);
+
+                // Update label
+                if (self.$refs.sampleDataRef != null) {
+                    self.$refs.sampleDataRef.forEach((ref) => {
+                        if (ref.modelInfo.order >= arrIndex) {
+                            ref.updateLabel();
+                        }
+                    });
+                }
+
+                // Debugging
                 console.log(self.samples.join(','));
+                let orderArr = [];
+                for (let i = 0; i < self.samples.length; i++) {
+                    orderArr.push(self.modelInfoMap[self.samples[i]].order);
+                }
+                console.log(orderArr.join(','));
             },
             onDragEnd: function (evt) {
                 let self = this;
@@ -436,9 +478,11 @@
 
                 // Debugging
                 console.log(self.samples.join(','));
+                let orderArr = [];
                 for (let i = 0; i < self.samples.length; i++) {
-                    console.log(self.samples[i] + ':' + self.modelInfoMap[self.samples[i]].order);
+                    orderArr.push(self.modelInfoMap[self.samples[i]].order);
                 }
+                console.log(orderArr.join(','));
             }
         },
         computed: {
