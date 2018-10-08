@@ -63,8 +63,7 @@
             offset-y
             :close-on-content-click="false"
             :nudge-width="500"
-            v-model="showFilesMenu"
-    >
+            v-model="showFilesMenu">
         <v-btn id="files-menu-button" flat slot="activator">
             Files
         </v-btn>
@@ -149,10 +148,8 @@
                 </v-flex>
             </v-layout>
         </v-form>
-
     </v-menu>
 </template>
-
 <script>
 
     import SampleData from '../partials/SampleData.vue'
@@ -202,6 +199,7 @@
             onAdd: function () {
                 let self = this;
 
+                debugger;
                 // Add entry to list of sample ids
                 let currSampleNum = self.samples.length;
                 let newId = 's' + currSampleNum;
@@ -210,7 +208,7 @@
                 // Add entry to map
                 let newInfo = {'isTumor': true};   // Default to adding another tumor sample
                 newInfo.id = newId;
-                newInfo.name = '';
+                newInfo.displayName = '';
                 newInfo.vcf = null;
                 newInfo.bam = null;
                 newInfo.tbi = null;
@@ -236,8 +234,8 @@
                         self.cohortModel.setTumorInfo(true);
                         self.cohortModel.isLoaded = true;
                         self.cohortModel.getCanonicalModels().forEach(function (model) {
-                            if (model.name == null || model.name.length === 0) {
-                                model.name = model.id;
+                            if (model.displayName == null || model.displayName.length === 0) {
+                                model.displayName = model.id;
                             }
                         });
                     })
@@ -261,11 +259,6 @@
 
                 this.validate();
             },
-            onDragEnd: function (evt) {
-                let oldIndex = evt.oldIndex;
-                let newIndex = evt.newIndex;
-                // TODO: update orders for all files in b/w
-            },
             onLoadDemoData: function () {
                 let self = this;
 
@@ -285,10 +278,8 @@
                     theModelInfo.model = theModel;
                     theModel.onVcfUrlEntered(theModelInfo.vcf, null, function (success, sampleNames) {
                         if (success) {
-                            //theModelInfo.samples = sampleNames;                           // TODO: do I need this?
                             self.$refs.sampleDataRef.forEach(function (ref) {
                                 if (ref.modelInfo.id === theModel.id) {
-                                    //ref.updateSamples(sampleNames, theModelInfo.sample);  // TODO: do I need this?
                                     theModel.name = theModel.sampleName;
                                     self.validate();
                                 }
@@ -353,24 +344,30 @@
 
                     let normalModelInfo = {};
                     normalModelInfo.id = 's0';
-                    normalModelInfo.name = 'normal';
+                    normalModelInfo.displayName = '';
                     normalModelInfo.vcf = null;
                     normalModelInfo.bam = null;
                     normalModelInfo.order = 0;
                     normalModelInfo.isTumor = false;
                     self.modelInfoMap['s0'] = normalModelInfo;
-                    let normP = self.cohortModel.promiseAddSample(normalModelInfo);
+                    let normP = self.cohortModel.promiseAddSample(normalModelInfo)
+                        .then((model) => {
+                            self.modelInfoMap['s0'].model = model;
+                        });
                     promises.push(normP);
 
                     let tumorModelInfo = {};
                     tumorModelInfo.id = 's1';
-                    tumorModelInfo.name = 'tumor';
+                    tumorModelInfo.displayName = '';
                     tumorModelInfo.vcf = null;
                     tumorModelInfo.bam = null;
                     tumorModelInfo.order = 1;
                     tumorModelInfo.isTumor = true;
                     self.modelInfoMap['s1'] = tumorModelInfo;
-                    let tumorP = self.cohortModel.promiseAddSample(tumorModelInfo);
+                    let tumorP = self.cohortModel.promiseAddSample(tumorModelInfo)
+                        .then((model) => {
+                            self.modelInfoMap['s1'].model = model;
+                        });
                     promises.push(tumorP);
 
                     Promise.all(promises)
@@ -388,7 +385,7 @@
                     if (modelInfo == null) {
                         modelInfo = {};
                         modelInfo.id = model.getId();
-                        modelInfo.name = model.getName();
+                        modelInfo.displayName = model.getDisplayName();
                         modelInfo.isTumor = model.getTumorStatus();
                         modelInfo.order = model.order;
                         modelInfo.vcf = model.vcf ? model.vcf.getVcfURL() : null;
@@ -418,7 +415,7 @@
                 for (let i = self.samples.length - 1; i > 1; i--) {
                     let key = 's' + i;
                     let currInfo = self.modelInfoMap[key];
-                    if (currInfo != null && currInfo.name === '' &&
+                    if (currInfo != null && currInfo.displayName === '' &&
                         currInfo.vcf == null && currInfo.bam == null) {
                         self.removeSample(currInfo.id);
                     }
@@ -448,6 +445,25 @@
                 self.samples.splice(lastIndex, 1);
                 self.cohortModel.removeSample(sampleId);                         // Remove actual sample
                 console.log(self.samples.join(','));
+            },
+            onDragEnd: function (evt) {
+                let self = this;
+                let oldIndex = evt.oldIndex;
+                let newIndex = evt.newIndex;
+
+                // Update order & id internally
+                if (self.$refs.sampleDataRef != null) {
+                    self.$refs.sampleDataRef.forEach((ref) => {
+                        ref.updateOrder(oldIndex, newIndex);
+                    });
+                }
+                if (oldIndex < newIndex) {
+                    samples.splice(newIndex + 1, 0, samples[oldIndex]);
+                    samples.splice(newIndex, 1);
+                } else if (newIndex < oldIndex) {
+                    samples.splice(newIndex, 0, samples[oldIndex]);
+                    samples.splice(newIndex + 1, 1);
+                }
             }
         },
         computed: {

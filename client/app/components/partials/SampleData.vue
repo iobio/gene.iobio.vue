@@ -67,28 +67,28 @@
         <v-flex d-flex xs1>
             <v-container height="100%" class="cont-left">
                 <div class="vert-label">
-                    NORMAL
+                    {{rowLabel}}
                 </div>
             </v-container>
         </v-flex>
-        <v-flex d-flex xs11 style="margin-left: -17px">
+        <v-flex d-flex xs11
+                :style="{'margin-left': '-17px'}">
             <v-layout row wrap class="vert-border">
                 <v-flex d-flex xs2 class="sample-label">
                     <v-text-field class="pt-1"
                                   color="appColor"
-                                  placeholder="Enter sample name"
+                                  placeholder="Enter nickname"
                                   hide-details
-                                  v-model="modelInfo.name"
+                                  v-model="modelInfo.displayName"
                                   @change="onNameEntered"
                     ></v-text-field>
                 </v-flex>
                 <v-flex d-flex xs8>
-                    <v-switch label="Tumor" class="pt-1" hide-details @change="onIsAffected"
+                    <v-switch v-if="modelInfo.order > 1" label="Tumor" class="pt-1" hide-details @change="onIsAffected"
                               v-model="isTumor"></v-switch>
                 </v-flex>
-                <v-flex v-if="modelInfo.order > 1" style="padding-left: 30px">
-                    <v-btn small flat icon style="margin: 0 !important" class="drag-handle; pl-4"
-                           v-bind:ripple="false">
+                <v-flex d-flex xs2 v-if="modelInfo.order > 1" style="padding-left: 30px">
+                    <v-btn small flat icon style="margin: 0 !important" class="drag-handle">
                         <v-icon color="appColor">reorder</v-icon>
                     </v-btn>
                     <v-btn small flat icon style="margin: 0 !important"
@@ -98,9 +98,9 @@
                         </v-icon>
                     </v-btn>
                 </v-flex>
-                <v-flex v-else style="padding-left: 70px">
-                    <v-btn small flat icon style="margin: 0px !important" class="drag-handle">
-                        <v-icon color="appColor" class="drag-spot">reorder</v-icon>
+                <v-flex d-flex xs2 v-else style="padding-left: 70px">
+                    <v-btn small flat icon style="margin: 0 !important" class="drag-handle">
+                        <v-icon color="appColor">reorder</v-icon>
                     </v-btn>
                 </v-flex>
                 <v-flex d-flex xs12 class="ml-3" style="margin-top: -5px">
@@ -116,7 +116,6 @@
                             @file-selected="onVcfFilesSelected">
                     </sample-data-file>
                 </v-flex>
-
                 <v-flex xs4 id="sample-selection">
                     <v-select
                             v-bind:class="samples == null || samples.length === 0 ? 'hide' : ''"
@@ -128,7 +127,6 @@
                             hide-details
                     ></v-select>
                 </v-flex>
-
                 <v-flex d-flex xs12 class="ml-3 ">
                     <sample-data-file
                             :defaultUrl="modelInfo.bam"
@@ -160,7 +158,8 @@
         },
         props: {
             modelInfo: null,
-            separateUrlForIndex: null
+            separateUrlForIndex: null,
+            order: 0
         },
         data() {
             return {
@@ -175,19 +174,22 @@
                 },
                 samples: [],
                 sample: null,
-                isTumor: true
-
+                isTumor: true,
+                rowLabel: ''
             }
         },
-        computed: {},
-        watch: {},
+        watch: {
+        },
+        computed: {
+            // rowLabel: function() {
+            //     let self = this;
+            //     return self.modelInfo.order;
+            // }
+        },
         methods: {
-            onDragEnd: function () {
-
-            },
             onNameEntered: function () {
                 if (self.modelInfo && self.modelInfo.model) {
-                    self.modelInfo.model.setName(self.modelInfo.name);
+                    self.modelInfo.model.setDisplayName(self.modelInfo.displayName);
                 }
             },
             onVcfUrlEntered: function (vcfUrl, tbiUrl) {
@@ -216,7 +218,6 @@
                         self.$emit("sample-data-changed");
                     })
                 }
-
             },
             onVcfFilesSelected: function (fileSelection) {
                 let self = this;
@@ -247,6 +248,7 @@
             onIsAffected: function () {
                 this.modelInfo.isTumor = this.isTumor;
                 this.modelInfo.model.isTumor = this.modelInfo.affectedStatus;
+                //this.rowLabel = this.isTumor ? 'TUMOR' : 'NORMAL';
             },
             updateSamples: function (samples, sampleToSelect) {
                 this.samples = samples;
@@ -289,6 +291,29 @@
             removeSample: function () {
                 let self = this;
                 self.$emit("remove-sample", self.modelInfo.id);
+            },
+            updateOrder: function(oldIndex, newIndex) {
+                let self = this;
+                if (self.modelInfo.order === oldIndex) {
+                    self.rowLabel = newIndex;
+                    self.modelInfo.order = newIndex;
+                    self.modelInfo.id = 's' + newIndex;
+                    self.modelInfo.model.order = newIndex;
+                    self.modelInfo.model.id = 's' + newIndex;
+                } else if (oldIndex > newIndex && self.modelInfo.order >= newIndex
+                    && self.modelInfo.order < oldIndex) {
+                    self.rowLabel++;
+                    self.modelInfo.order++;
+                    self.modelInfo.id = 's' + self.modelInfo.order;
+                    self.modelInfo.model.order++;
+                    self.modelInfo.model.id = 's' + self.modelInfo.order;
+                } else if (oldIndex < newIndex && self.modelInfo.order <= newIndex
+                    && self.modelInfo.order > oldIndex) {
+                    self.rowLabel--;
+                    self.modelInfo.order--;
+                    self.modelInfo.id = 's' + self.modelInfo.order;
+                    self.modelInfo.model.id = 's' + self.modelInfo.order;
+                }
             }
         },
         created: function () {
@@ -297,6 +322,7 @@
         mounted: function () {
             this.samples = this.modelInfo.samples;
             this.isTumor = this.modelInfo.isTumor;
+            this.rowLabel = this.modelInfo.order;
             if (this.modelInfo.vcf) {
                 this.onVcfUrlEntered(this.modelInfo.vcf, this.modelInfo.tbi);
             }

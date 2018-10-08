@@ -28,7 +28,8 @@ import 'vuetify/dist/vuetify.css'
 import '../assets/css/siteVuetify.css'
 Vue.use(Vuetify, {
     theme: {
-        appColor: "#7f1010"
+        appColor: "#7f1010",
+        altRowColor: "#c6c6c8"
     }
 });
 

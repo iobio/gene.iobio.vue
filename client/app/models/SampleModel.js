@@ -27,8 +27,7 @@ class SampleModel {
         this.getBamRefName = null;
 
         this.id = '';       // Must be unique, format s0, s1...
-        this.name = '';     // Display name
-        this.name = '';     // Display name
+        this.displayName = '';     // Display name
         this.vcfRefNamesMap = {};
         this.isGeneratedSampleName = false;
         this.defaultSampleName = null;
@@ -705,13 +704,13 @@ class SampleModel {
     }
 
     /* Returns display name for sample */
-    getName() {
-        return this.name;
+    getDisplayName() {
+        return this.displayName;
     }
 
-    setName(theName) {
+    setDisplayName(theName) {
         if (theName) {
-            this.name = theName;
+            this.displayName = theName;
         }
     }
 
