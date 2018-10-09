@@ -49,91 +49,90 @@ class CohortModel {
 
 
         this.demoVcf = {
-            'exome': "https://s3.amazonaws.com/iobio/samples/vcf/platinum-exome.vcf.gz",
-            'genome': "https://s3.amazonaws.com/iobio/gene/wgs_platinum/platinum-trio.vcf.gz"
+            'timeSeries': "https://s3.amazonaws.com/iobio/samples/vcf/platinum-exome.vcf.gz",
+            'dual': "https://s3.amazonaws.com/iobio/gene/wgs_platinum/platinum-trio.vcf.gz"
         }
         this.demoBams = {
-            'exome': {
-                'proband': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam',
-                'mother': 'https://s3.amazonaws.com/iobio/samples/bam/NA12892.exome.bam',
-                'father': 'https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam',
-                'sibling': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam'
+            'timeSeries': {
+                't0': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam',
+                't1': 'https://s3.amazonaws.com/iobio/samples/bam/NA12892.exome.bam',
+                't2': 'https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam',
+                't3': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam'
             },
-            'genome': {
-                'proband': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12878.bam',
-                'mother': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12892.bam',
-                'father': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12891.bam'
+            'dual': {
+                'normal': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12891.bam',
+                'tumor': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12878.bam'
             }
         }
-        this.demoGenes = ['RAI1', 'MYLK2', 'PDHA1', 'PDGFB', 'AIRE'];
+        this.demoGenes = ['TP53', 'APC', 'BRCA2', 'PTEN', 'RB1'];
 
 
         this.demoModelInfos = {
-            'exome': [
+            'timeSeries': [
                 {
-                    relationship: 'proband',
-                    affectedStatus: 'affected',
+                    id: 't0',
+                    isTumor: false,
                     name: 'NA12878',
                     'sample': 'NA12878',
-                    'vcf': this.demoVcf.exome,
+                    'vcf': this.demoVcf.timeSeries,
                     'tbi': null,
-                    'bam': this.demoBams.exome['proband'],
+                    'bam': this.demoBams.timeSeries['t0'],
                     'bai': null
                 },
                 {
-                    relationship: 'mother',
-                    affectedStatus: 'unaffected',
+                    id: 't1',
+                    isTumor: true,
                     name: 'NA12892',
                     'sample': 'NA12892',
-                    'vcf': this.demoVcf.exome,
+                    'vcf': this.demoVcf.timeSeries,
                     'tbi': null,
-                    'bam': this.demoBams.exome['mother'],
+                    'bam': this.demoBams.timeSeries['t1'],
                     'bai': null
                 },
                 {
-                    relationship: 'father',
-                    affectedStatus: 'unaffected',
+                    id: 't2',
+                    isTumor: true,
                     name: 'NA12891',
                     'sample': 'NA12891',
-                    'vcf': this.demoVcf.exome,
+                    'vcf': this.demoVcf.timeSeries,
                     'tbi': null,
-                    'bam': this.demoBams.exome['father'],
+                    'bam': this.demoBams.timeSeries['t2'],
                     'bai': null
                 },
+                {
+                    id: 't3',
+                    isTumor: false,
+                    name: 'NA12891',
+                    'sample': 'NA12891',
+                    'vcf': this.demoVcf.timeSeries,
+                    'tbi': null,
+                    'bam': this.demoBams.timeSeries['t3'],
+                    'bai': null
+                }
             ],
-            'genome': [
+            'dual': [
                 {
-                    relationship: 'proband',
-                    affectedStatus: 'affected',
+                    id: 't0',
+                    isTumor: false,
                     name: 'NA12878',
                     'sample': 'NA12878',
-                    'vcf': this.demoVcf.genome,
+                    'vcf': this.demoVcf.dual,
                     'tbi': null,
-                    'bam': this.demoBams.genome['proband'],
+                    'bam': this.demoBams.dual['normal'],
                     'bai': null
                 },
                 {
-                    relationship: 'mother',
-                    affectedStatus: 'unaffected',
+                    id: 't1',
+                    isTumor: true,
                     name: 'NA12892',
                     'sample': 'NA12892',
-                    'vcf': this.demoVcf.genome,
+                    'vcf': this.demoVcf.dual,
                     'tbi': null,
-                    'bam': this.demoBams.genome['mother'],
+                    'bam': this.demoBams.dual['tumor'],
                     'bai': null
-                },
-                {
-                    relationship: 'father',
-                    affectedStatus: 'unaffected',
-                    name: 'NA12891',
-                    'sample': 'NA12891',
-                    'vcf': this.demoVcf.genome,
-                    'tbi': null,
-                    'bam': this.demoBams.genome['father'],
-                    'bai': null
-                },
+                }
             ]
-        }
+        };
         this.eduTourModelInfos = {
             "1": [
                 {
