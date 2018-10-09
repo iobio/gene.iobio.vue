@@ -235,13 +235,6 @@
             }
         },
         computed: {
-            tumorStatus: function() {
-                if (this.modelInfo.order === 0) {
-                    return 'NORMAL';
-                } else {
-                    return 'TUMOR';
-                }
-            }
         },
         methods: {
             onNameEntered: function () {
@@ -381,6 +374,12 @@
             updateLabel: function() {
                 let self = this;
                 self.rowLabel = self.getRowLabel();
+            },
+            setTumorStatus: function(status) {
+                let self = this;
+                self.isTumor = status;
+                self.modelInfo.isTumor = status;
+                self.modelInfo.model.isTumor = status;
             }
         },
         created: function () {

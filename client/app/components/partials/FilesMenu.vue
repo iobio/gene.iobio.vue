@@ -287,6 +287,7 @@
                     self.promiseInitMoreTumors()
                         .then(() => {
                            self.moveNormalToFirstSlot();
+                           self.updateTumorStatusPostFirstSlot();
                         });
                 } else {
                     self.removeMoreTumors();
@@ -300,6 +301,16 @@
                     let oldIndex = self.samples.indexOf('s0');
                     let newIndex = 0;
                     self.updateSampleOrder(oldIndex, newIndex);
+                }
+            },
+            updateTumorStatusPostFirstSlot: function() {
+                let self = this;
+                if (self.$refs.sampleDataRef != null) {
+                    self.$refs.sampleDataRef.forEach((ref) => {
+                       if (ref.arrIndex > 0) {
+                           ref.setTumorStatus(true);
+                       }
+                    });
                 }
             },
             onLoadDemoData: function () {
