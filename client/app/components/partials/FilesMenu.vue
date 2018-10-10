@@ -121,7 +121,7 @@
                                 :modelInfo="modelInfoMap[sample]"
                                 :timeSeriesMode="timeSeriesMode"
                                 :dragId="sample"
-                                :arrIndex = samples.indexOf(sample)
+                                :arrIndex=samples.indexOf(sample)
                                 :separateUrlForIndex="separateUrlForIndex"
                                 @sample-data-changed="validate"
                                 @samples-available="onSamplesAvailable"
@@ -212,11 +212,7 @@
 
                     // Add entry to map
                     let newInfo = {};
-                    if (!isTumor) {
-                        newInfo.isTumor = false;
-                    } else {
-                        newInfo.isTumor = true;
-                    }
+                    newInfo.isTumor = isTumor;
                     newInfo.id = newId;
                     newInfo.selectedSample = '';
                     newInfo.samples = [];
@@ -239,7 +235,7 @@
                         });
                 });
             },
-            findNextAvailableId: function() {
+            findNextAvailableId: function () {
                 let self = this;
                 let ids = [];
                 let arrLength = self.samples.length;
@@ -289,8 +285,8 @@
                 if (self.timeSeriesMode) {
                     self.promiseInitMoreTumors()
                         .then(() => {
-                           self.moveNormalToFirstSlot();
-                           self.setTumorStatusAllSamples();
+                            self.moveNormalToFirstSlot();
+                            self.setTumorStatusAllSamples(self.demoAction != null);
                         });
                 } else {
                     self.removeMoreTumors();
@@ -299,7 +295,7 @@
                 //this.validate();  TODO: do I need to do this again when switching?
             },
             /* Moves sample 's0' to first slot of samples array */
-            moveNormalToFirstSlot: function() {
+            moveNormalToFirstSlot: function () {
                 let self = this;
                 if (self.samples[0] !== 's0') {
                     let oldIndex = self.samples.indexOf('s0');
@@ -308,36 +304,68 @@
                 }
             },
             /* Sets first entry in samples array to normal, sets remaining to tumor */
-            setTumorStatusAllSamples: function() {
+            setTumorStatusAllSamples: function (demoMode = false) {
                 let self = this;
 
-                if (self.$refs.sampleDataRef != null) {
-                    self.$refs.sampleDataRef.forEach((ref) => {
-                        if (ref.dragId === 's0') {
-                            ref.setTumorStatus(false);
-                        }
-                        else {
-                           ref.setTumorStatus(true);
-                       }
-                    });
+                if (!demoMode) {
+                    if (self.$refs.sampleDataRef != null) {
+                        self.$refs.sampleDataRef.forEach((ref) => {
+                            if (ref.dragId === 's0') {
+                                ref.setTumorStatus(false);
+                            }
+                            else {
+                                ref.setTumorStatus(true);
+                            }
+                        });
+                    }
                 }
             },
             onLoadDemoData: function () {
                 let self = this;
 
-                debugger;
+                // Flip toggle
+                if (self.demoAction === 'timeSeries') {
+                    self.timeSeriesMode = true;
+                } else {
+                    self.timeSeriesMode = false;
+                }
+
+                // Reset modelInfoMap to get rid of any added info extras
+                self.modelInfoMap = {};
+
+                // Add relevant infos to map and ids to sample array
+                let idList = [];
                 self.cohortModel.demoModelInfos[self.demoAction].forEach(function (modelInfo) {
                     let id = modelInfo.id;
+                    idList.push(id);
                     self.modelInfoMap[id] = modelInfo;
+                    if (self.samples.indexOf(id) < 0) {
+                        self.samples.push(id);
+                    }
                 });
-                self.cohortModel.getCanonicalModels().forEach(function (model) {
-                    self.promiseSetModel(model);
-                });
+
+                // Ensure models are synonymous with infos
+                self.cohortModel.removeExtraModels(idList);
+                let addPromises = [];
+                for (let i = 0; i < self.samples.length; i++) {
+                    let currKey = self.samples[i];
+                    if (self.cohortModel.getModel(currKey) == null) {
+                        let corrInfo = self.modelInfoMap[currKey];
+                        addPromises.push(self.cohortModel.promiseAddSample(corrInfo)); // Don't need to set model prop here, do below
+                    }
+                }
+
+                Promise.all(addPromises)
+                    .then(() => {
+                        self.cohortModel.getCanonicalModels().forEach(function (model) {
+                            self.promiseSetModel(model);
+                        });
+                    })
             },
             /* Sets corresponding model for each info object; */
             promiseSetModel: function (model) {
                 let self = this;
-                return new Promise(function(resolve, reject) {
+                return new Promise(function (resolve, reject) {
 
                     // Assign model prop in info object to model
                     let theModel = model;
@@ -345,14 +373,14 @@
                     theModelInfo.model = theModel;
 
                     // Trigger on vcf check in model
-                    theModel.onVcfUrlEntered(theModelInfo.vcf, null, function(success, sampleNames) {
+                    theModel.onVcfUrlEntered(theModelInfo.vcf, null, function (success, sampleNames) {
                         if (success) {
 
                             // Set samples prop
                             theModelInfo.samples = sampleNames;
-                            self.$refs.sampleDataRef.forEach(function(ref) {
+                            self.$refs.sampleDataRef.forEach(function (ref) {
+                                debugger;   // TODO: why aren't sample drop downs appearing for all samples
                                 if (ref.modelInfo.id === theModel.id) {
-
                                     // Set selected sample in model and in child cmpnt
                                     theModel.selectedSample = theModelInfo.selectedSample;
                                     ref.updateSamples(sampleNames, theModelInfo.selectedSample);
@@ -362,7 +390,7 @@
                                     self.validate();
                                 }
                             });
-                            theModel.onBamUrlEntered(theModelInfo.bam, null, function(success) {
+                            theModel.onBamUrlEntered(theModelInfo.bam, null, function (success) {
                                 self.validate();
                                 if (success) {
                                     resolve();
@@ -459,7 +487,7 @@
                     }
                     Promise.all(promises)
                         .then(() => {
-                           resolve();
+                            resolve();
                         });
                 });
             },
@@ -525,7 +553,7 @@
                 // Update order and isTumor props
                 self.updateSampleOrder(oldIndex, newIndex);
             },
-            updateSampleOrder: function(oldIndex, newIndex) {
+            updateSampleOrder: function (oldIndex, newIndex) {
                 let self = this;
                 if (self.$refs.sampleDataRef != null) {
                     self.$refs.sampleDataRef.forEach((ref) => {

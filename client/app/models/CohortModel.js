@@ -57,7 +57,7 @@ class CohortModel {
                 't0': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam',
                 't1': 'https://s3.amazonaws.com/iobio/samples/bam/NA12892.exome.bam',
                 't2': 'https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam',
-                't3': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam'
+                't3': 'https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam'
             },
             'dual': {
                 'normal': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12891.bam',
@@ -77,7 +77,8 @@ class CohortModel {
                     'vcf': this.demoVcf.timeSeries,
                     'tbi': null,
                     'bam': this.demoBams.timeSeries['t0'],
-                    'bai': null
+                    'bai': null,
+                    'order': 0
                 },
                 {
                     id: 's1',
@@ -87,7 +88,8 @@ class CohortModel {
                     'vcf': this.demoVcf.timeSeries,
                     'tbi': null,
                     'bam': this.demoBams.timeSeries['t1'],
-                    'bai': null
+                    'bai': null,
+                    'order': 1
                 },
                 {
                     id: 's2',
@@ -97,17 +99,19 @@ class CohortModel {
                     'vcf': this.demoVcf.timeSeries,
                     'tbi': null,
                     'bam': this.demoBams.timeSeries['t2'],
-                    'bai': null
+                    'bai': null,
+                    'order': 2
                 },
                 {
                     id: 's3',
-                    isTumor: false,
+                    isTumor: true,
                     displayName: 'T3 Tumor',
                     'selectedSample': 'NA12891',
                     'vcf': this.demoVcf.timeSeries,
                     'tbi': null,
                     'bam': this.demoBams.timeSeries['t3'],
-                    'bai': null
+                    'bai': null,
+                    'order': 3
                 }
             ],
             'dual': [
@@ -119,7 +123,8 @@ class CohortModel {
                     'vcf': this.demoVcf.dual,
                     'tbi': null,
                     'bam': this.demoBams.dual['normal'],
-                    'bai': null
+                    'bai': null,
+                    'order': 0
                 },
                 {
                     id: 's1',
@@ -129,7 +134,8 @@ class CohortModel {
                     'vcf': this.demoVcf.dual,
                     'tbi': null,
                     'bam': this.demoBams.dual['tumor'],
-                    'bai': null
+                    'bai': null,
+                    'order': 1
                 }
             ]
         };
@@ -406,7 +412,7 @@ class CohortModel {
             let vm = new SampleModel(self.globalApp);
             vm.init(self);
             vm.id = modelInfo.id;
-            vm.name = modelInfo.name;
+            vm.displayName = modelInfo.displayName;
             vm.order = modelInfo.order;
             vm.isTumor = modelInfo.isTumor;
             vm.isBasicMode = self.isBasicMode;
@@ -415,11 +421,14 @@ class CohortModel {
             let vcfPromise = null;
             if (modelInfo.vcf) {
                 vcfPromise = new Promise(function (vcfResolve, vcfReject) {
+                        // TODO: make sure we don't need to set selected sample field for model here...
                         vm.onVcfUrlEntered(modelInfo.vcf, modelInfo.tbi, function () {
-                            if (modelInfo.name && modelInfo.name !== "") {
-                                vm.setName(modelInfo.name);
+                            if (modelInfo.displayName && modelInfo.displayName !== '') {
+                                vm.setDisplayName(modelInfo.displayName);
+                            } else if (modelInfo.selectedSample != null) {
+                                vm.setDisplayName(modelInfo.selectedSample);
                             } else {
-                                vm.setName(modelInfo.id);
+                                vm.setDisplayName(modelInfo.id);
                             }
                             vcfResolve();
                         })
@@ -428,7 +437,7 @@ class CohortModel {
                         vcfReject(error);
                     });
             } else {
-                //vm.name = null;
+                vm.selectedSample = null;
                 vcfPromise = Promise.resolve();
             }
 
@@ -450,13 +459,11 @@ class CohortModel {
 
             Promise.all([vcfPromise, bamPromise])
                 .then(function () {
-
                     let theModel = {'model': vm};
                     self.sampleModels.push(vm);
                     self.sampleMap[modelInfo.id] = theModel;
                     resolve(vm);
-                })
-
+                });
         })
     }
 
@@ -628,20 +635,37 @@ class CohortModel {
         }
     }
 
-    getNormalModel() {
-        return this.sampleMap['s0'].model;
-    }
-
     /* Returns model corresponding to name */
-    getModel(name) {
-        return this.sampleMap[name].model;
+    getModel(id) {
+        if (this.sampleMap[id] != null) {
+            return this.sampleMap[id].model;
+        } else {
+            console.log('Could not find model for provided id');
+            return null;
+        }
     }
 
     /* Returns all normal and tumor models */
     getCanonicalModels() {
-        return this.sampleModels.filter(function (model) {
+        let models = this.sampleModels.filter(function (model) {
             return model.id !== 'known-variants';
-        })
+        });
+        debugger;
+        return models;
+    }
+
+    /* Removes any models with ids that are not on the provided list */
+    removeExtraModels(idList) {
+        let self = this;
+        let existingModels = self.getCanonicalModels();
+
+        for (let i = 0; i < existingModels.length; i++) {
+            let model = existingModels[i];
+            if (idList.indexOf(model.id) < 0) {
+                self.sampleModels.splice(i, 1);
+                delete self.sampleMap[model.id];
+            }
+        }
     }
 
 
