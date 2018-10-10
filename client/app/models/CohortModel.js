@@ -30,7 +30,7 @@ class CohortModel {
 
         this.sampleModels = [];        // List of sample models correlated with this cohort
         this.sampleMap = {};           // Relateds IDs to model objects
-        this.numNormalSamples = 0;``
+        this.numNormalSamples = 0;
         this.numTumorSamples = 0;
 
         this.mode = 'time';             // Indicates time-series mode
@@ -51,7 +51,7 @@ class CohortModel {
         this.demoVcf = {
             'timeSeries': "https://s3.amazonaws.com/iobio/samples/vcf/platinum-exome.vcf.gz",
             'dual': "https://s3.amazonaws.com/iobio/gene/wgs_platinum/platinum-trio.vcf.gz"
-        }
+        };
         this.demoBams = {
             'timeSeries': {
                 't0': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam',
@@ -63,8 +63,8 @@ class CohortModel {
                 'normal': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12891.bam',
                 'tumor': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12878.bam'
             }
-        }
-        this.demoGenes = ['TP53', 'APC', 'BRCA2', 'PTEN', 'RB1'];
+        };
+        this.demoGenes = ['TP53', 'APC', 'BRCA2', 'TGFB1', 'RB1'];
 
 
         this.demoModelInfos = {

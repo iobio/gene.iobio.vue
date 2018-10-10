@@ -204,30 +204,6 @@
             timeSeriesMode: function() {
                 let self = this;
                 self.updateLabel();
-
-                // if (self.timeSeriesMode) {
-                //     if (self.arrIndex === 0) {
-                //         self.isTumor = false;
-                //         self.modelInfo.isTumor = false;
-                //         self.modelInfo.model.isTumor = false;
-                //     } else {
-                //         self.isTumor = true;
-                //         self.modelInfo.isTumor = true;
-                //         self.modelInfo.model.isTumor = true;
-                //     }
-                // } else {
-                //     if (self.dragId === 's0') {
-                //         self.isTumor = false;
-                //         self.modelInfo.isTumor = false;
-                //         self.modelInfo.model.isTumor = false;
-                //         self.updateLabel();
-                //     } else if (self.dragId === 's1') {
-                //         self.isTumor = true;
-                //         self.modelInfo.isTumor = true;
-                //         self.modelInfo.model.isTumor = true;
-                //         self.updateLabel();
-                //     }
-                // }
             },
             isTumor: function() {
                 let self = this;

@@ -178,14 +178,15 @@
                 modelInfoMap: {},
                 samples: [],
                 demoActions: [
-                    {'display': 'Demo WES trio', 'value': 'exome'},
-                    {'display': 'Demo WGS trio', 'value': 'genome'}
+                    {'display': 'Duo', 'value': 'dual'},
+                    {'display': 'Time Series', 'value': 'timeSeries'}
                 ],
                 demoAction: null,
                 timeSeriesMode: false,
                 separateUrlForIndex: false,
                 inProgress: false,
-                stateUnchanged: true
+                stateUnchanged: true,
+                arrId: 0
             }
         },
         watch: {
@@ -206,7 +207,6 @@
                 }
 
                 return new Promise((resolve, reject) => {
-
                     let newId = self.findNextAvailableId();
                     self.samples.push(newId);
 
@@ -217,6 +217,9 @@
                     } else {
                         newInfo.isTumor = true;
                     }
+                    newInfo.id = newId;
+                    newInfo.selectedSample = '';
+                    newInfo.samples = [];
                     newInfo.displayName = '';
                     newInfo.vcf = null;
                     newInfo.bam = null;
@@ -287,7 +290,7 @@
                     self.promiseInitMoreTumors()
                         .then(() => {
                            self.moveNormalToFirstSlot();
-                           self.updateTumorStatusPostFirstSlot();
+                           self.setTumorStatusAllSamples();
                         });
                 } else {
                     self.removeMoreTumors();
@@ -303,11 +306,16 @@
                     self.updateSampleOrder(oldIndex, newIndex);
                 }
             },
-            updateTumorStatusPostFirstSlot: function() {
+            /* Sets first entry in samples array to normal, sets remaining to tumor */
+            setTumorStatusAllSamples: function() {
                 let self = this;
+
                 if (self.$refs.sampleDataRef != null) {
                     self.$refs.sampleDataRef.forEach((ref) => {
-                       if (ref.arrIndex > 0) {
+                        if (ref.dragId === 's0') {
+                            ref.setTumorStatus(false);
+                        }
+                        else {
                            ref.setTumorStatus(true);
                        }
                     });
@@ -316,46 +324,41 @@
             onLoadDemoData: function () {
                 let self = this;
 
-                // TODO: fix this
+                debugger;
                 self.cohortModel.demoModelInfos[self.demoAction].forEach(function (modelInfo) {
                     let id = modelInfo.id;
                     self.modelInfoMap[id] = modelInfo;
                 });
                 self.cohortModel.getCanonicalModels().forEach(function (model) {
                     self.promiseSetModel(model);
-                })
+                });
             },
             promiseSetModel: function (model) {
-                let self = this;
-                return new Promise(function (resolve, reject) {
-                    let theModel = model;
-                    let theModelInfo = self.modelInfoMap[theModel.id];
-                    theModelInfo.model = theModel;
-                    theModel.onVcfUrlEntered(theModelInfo.vcf, null, function (success, sampleNames) {
-                        if (success) {
-                            // TODO: fix this
-                            let key = self.samples[ref.modelInfo.order];
-
-                            //self.$refs.sampleDataRef.forEach(function (ref) {
-                                // if (ref.modelInfo.id === theModel.id) {
-                                //     theModel.name = theModel.sampleName;
-                                //     self.validate();
-                                // }
-
-                            //});
-                            theModel.onBamUrlEntered(theModelInfo.bam, null, function (success) {
-                                self.validate();
-                                if (success) {
-                                    resolve();
-                                } else {
-                                    reject();
-                                }
-                            })
-                        } else {
-                            reject();
-                        }
-                    })
-                })
+                // let self = this;
+                // return new Promise(function (resolve, reject) {
+                //     let theModel = model;
+                //     let theModelInfo = self.modelInfoMap[theModel.id];
+                //     theModelInfo.model = theModel;
+                //     theModel.onVcfUrlEntered(theModelInfo.vcf, null, function (success, sampleNames) {
+                //         if (success) {
+                //             self.$refs.sampleDataRef.forEach(function (ref) {
+                //                 if (ref.modelInfo.id === theModel.id) {
+                //                     theModel.name = theModel.sampleName;
+                //                     self.validate();
+                //                 }
+                //                 theModel.onBamUrlEntered(theModelInfo.bam, null, function (success) {
+                //                 self.validate();
+                //                 if (success) {
+                //                     resolve();
+                //                 } else {
+                //                     reject();
+                //                 }
+                //             })
+                //         } else {
+                //             reject();
+                //         }
+                //     })
+                // })
             },
             validate: function () {
                 this.isValid = true;
@@ -453,36 +456,36 @@
                     }
                 }
             },
-            removeSample: function (arrIndex, stateChanged = true) {
+            removeSample: function (sampleIndex, stateChanged = true) {
                 let self = this;
                 if (stateChanged) {
                     self.stateUnchanged = false;
                 }
 
                 // If we're deleting the first one on time series mode, must enforce next one normal
-                if (self.timeSeriesMode && arrIndex === 0) {
+                if (self.timeSeriesMode && sampleIndex === 0) {
                     let key = self.samples[1];
                     self.modelInfoMap[key].isTumor = false;
                     self.modelInfoMap[key].model.isTumor = false;
                 }
 
                 // Update order for any samples after deleted one
-                for (let i = arrIndex + 1; i < self.samples.length; i++) {
+                for (let i = sampleIndex + 1; i < self.samples.length; i++) {
                     let key = self.samples[i];
                     self.modelInfoMap[key].order--;
                     self.modelInfoMap[key].model.order--;
                 }
 
                 // Remove sample and delete info
-                let id = self.samples[arrIndex];
-                self.samples.splice(arrIndex, 1);
+                let id = self.samples[sampleIndex];
+                self.samples.splice(sampleIndex, 1);
                 delete self.modelInfoMap[id];
                 self.cohortModel.removeSample(id);
 
                 // Update label
                 if (self.$refs.sampleDataRef != null) {
                     self.$refs.sampleDataRef.forEach((ref) => {
-                        if (ref.modelInfo.order >= arrIndex) {
+                        if (ref.modelInfo.order >= sampleIndex) {
                             ref.updateLabel();
                         }
                     });
