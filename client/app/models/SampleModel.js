@@ -26,8 +26,9 @@ class SampleModel {
         this.bamFileOpened = false;
         this.getBamRefName = null;
 
-        this.id = '';       // Must be unique, format s0, s1...
-        this.displayName = '';     // Display name
+        this.id = '';               // Must be unique, format s0, s1...
+        this.displayName = '';      // Display name
+        this.selectedSample = '';   // The sample id corresponding to vcf column
         this.vcfRefNamesMap = {};
         this.isGeneratedSampleName = false;
         this.defaultSampleName = null;
@@ -115,7 +116,7 @@ class SampleModel {
     }
 
     isSampleSelected() {
-        return !this.isMultiSample || (this.sampleName && this.sampleName.length > 0);
+        return !this.isMultiSample || (this.selectedSample && this.selectedSample.length > 0);
     }
 
 

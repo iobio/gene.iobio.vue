@@ -296,8 +296,9 @@
                     self.removeMoreTumors();
                 }
 
-                //this.validate();
+                //this.validate();  TODO: do I need to do this again when switching?
             },
+            /* Moves sample 's0' to first slot of samples array */
             moveNormalToFirstSlot: function() {
                 let self = this;
                 if (self.samples[0] !== 's0') {
@@ -333,32 +334,47 @@
                     self.promiseSetModel(model);
                 });
             },
+            /* Sets corresponding model for each info object; */
             promiseSetModel: function (model) {
-                // let self = this;
-                // return new Promise(function (resolve, reject) {
-                //     let theModel = model;
-                //     let theModelInfo = self.modelInfoMap[theModel.id];
-                //     theModelInfo.model = theModel;
-                //     theModel.onVcfUrlEntered(theModelInfo.vcf, null, function (success, sampleNames) {
-                //         if (success) {
-                //             self.$refs.sampleDataRef.forEach(function (ref) {
-                //                 if (ref.modelInfo.id === theModel.id) {
-                //                     theModel.name = theModel.sampleName;
-                //                     self.validate();
-                //                 }
-                //                 theModel.onBamUrlEntered(theModelInfo.bam, null, function (success) {
-                //                 self.validate();
-                //                 if (success) {
-                //                     resolve();
-                //                 } else {
-                //                     reject();
-                //                 }
-                //             })
-                //         } else {
-                //             reject();
-                //         }
-                //     })
-                // })
+                let self = this;
+                return new Promise(function(resolve, reject) {
+
+                    // Assign model prop in info object to model
+                    let theModel = model;
+                    let theModelInfo = self.modelInfoMap[theModel.id];
+                    theModelInfo.model = theModel;
+
+                    // Trigger on vcf check in model
+                    theModel.onVcfUrlEntered(theModelInfo.vcf, null, function(success, sampleNames) {
+                        if (success) {
+
+                            // Set samples prop
+                            theModelInfo.samples = sampleNames;
+                            self.$refs.sampleDataRef.forEach(function(ref) {
+                                if (ref.modelInfo.id === theModel.id) {
+
+                                    // Set selected sample in model and in child cmpnt
+                                    theModel.selectedSample = theModelInfo.selectedSample;
+                                    ref.updateSamples(sampleNames, theModelInfo.selectedSample);
+
+                                    // Set display name in model
+                                    theModel.displayName = theModelInfo.displayName ? theModelInfo.displayName : theModelInfo.selectedSample;
+                                    self.validate();
+                                }
+                            });
+                            theModel.onBamUrlEntered(theModelInfo.bam, null, function(success) {
+                                self.validate();
+                                if (success) {
+                                    resolve();
+                                } else {
+                                    reject();
+                                }
+                            })
+                        } else {
+                            reject();
+                        }
+                    })
+                })
             },
             validate: function () {
                 this.isValid = true;
@@ -376,12 +392,12 @@
                 //     this.probandSamples = samples;
                 //     if (this.cohortModel.sampleMapSibs.affected && this.cohortModel.sampleMapSibs.affected.length > 0) {
                 //         this.affectedSibs = this.cohortModel.sampleMapSibs.affected.map(function (sampleModel) {
-                //             return sampleModel.sampleName;
+                //             return sampleModel.selectedSample;
                 //         })
                 //     }
                 //     if (this.cohortModel.sampleMapSibs.unaffected && this.cohortModel.sampleMapSibs.unaffected.length > 0) {
                 //         this.unaffectedSibs = this.cohortModel.sampleMapSibs.unaffected.map(function (sampleModel) {
-                //             return sampleModel.sampleName;
+                //             return sampleModel.selectedSample;
                 //         })
                 //     }
                 // }

@@ -192,8 +192,8 @@
                     'vcf': '.vcf.gz, .tbi',
                     'bam': '.bam, .bai'
                 },
-                samples: [],
-                sample: null,
+                samples: [],    // the available samples to choose from
+                sample: null,   // the selected sample
                 isTumor: true,
                 rowLabel: '',
                 chipLabel: '',
