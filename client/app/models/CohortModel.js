@@ -470,26 +470,10 @@ class CohortModel {
     /* Removes a sample model corresponding to the given id */
     removeSample(id) {
         let self = this;
-        // Get
 
-
-        // let order = self.sampleMap[id].model.order;
-        // let lastIndex = self.sampleModels.length-1;
-        // if (lastIndex > removeIndex) {
-        //     for (let i = removeIndex; i < lastIndex; i++) {
-        //         if (self.sampleMap[('s' + (i+1))] != null) {
-        //             let nextModel = self.sampleModels[i+1];
-        //             nextModel.order = nextModel.order - 1;
-        //             nextModel.id = ('s' + i);
-        //             self.sampleMap[('s' + i)] = nextModel;
-        //             self.sampleModels[i] = self.sampleModels[i+1];
-        //         }
-        //     }
-        //     delete self.sampleMap[('s' + lastIndex)];
-        // } else {
-        //     delete self.sampleMap[id];
-        //     self.sampleModels.splice(lastIndex, 1);
-        // }
+        let sampleIndex = self.sampleModels.indexOf(id);
+        self.sampleModels.splice(sampleIndex, 1);
+        delete self.sampleMap[id];
     }
 
     /* Coordinates order with view array */
@@ -650,7 +634,6 @@ class CohortModel {
         let models = this.sampleModels.filter(function (model) {
             return model.id !== 'known-variants';
         });
-        debugger;
         return models;
     }
 

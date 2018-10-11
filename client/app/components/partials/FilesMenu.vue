@@ -206,6 +206,11 @@
                     self.stateUnchanged = false;
                 }
 
+                // If we've loaded a demo, and they change it, deselect demo drop-down
+                if (self.demoAction != null) {
+                    self.demoAction = null;
+                }
+
                 return new Promise((resolve, reject) => {
                     let newId = self.findNextAvailableId();
                     self.samples.push(newId);
@@ -282,14 +287,16 @@
             },
             onModeChanged: function () {
                 let self = this;
-                if (self.timeSeriesMode) {
-                    self.promiseInitMoreTumors()
-                        .then(() => {
-                            self.moveNormalToFirstSlot();
-                            self.setTumorStatusAllSamples(self.demoAction != null);
-                        });
-                } else {
-                    self.removeMoreTumors();
+                if (self.demoAction == null) {
+                    if (self.timeSeriesMode) {
+                        self.promiseInitMoreTumors()
+                            .then(() => {
+                                self.moveNormalToFirstSlot();
+                                self.setTumorStatusAllSamples();
+                            });
+                    } else {
+                        self.removeMoreTumors();
+                    }
                 }
 
                 //this.validate();  TODO: do I need to do this again when switching?
@@ -304,26 +311,24 @@
                 }
             },
             /* Sets first entry in samples array to normal, sets remaining to tumor */
-            setTumorStatusAllSamples: function (demoMode = false) {
+            setTumorStatusAllSamples: function () {
                 let self = this;
 
-                if (!demoMode) {
-                    if (self.$refs.sampleDataRef != null) {
-                        self.$refs.sampleDataRef.forEach((ref) => {
-                            if (ref.dragId === 's0') {
-                                ref.setTumorStatus(false);
-                            }
-                            else {
-                                ref.setTumorStatus(true);
-                            }
-                        });
-                    }
+                if (self.$refs.sampleDataRef != null) {
+                    self.$refs.sampleDataRef.forEach((ref) => {
+                        if (ref.dragId === 's0') {
+                            ref.setTumorStatus(false);
+                        }
+                        else {
+                            ref.setTumorStatus(true);
+                        }
+                    });
                 }
             },
             onLoadDemoData: function () {
                 let self = this;
 
-                // Flip toggle
+                // Toggle switch
                 if (self.demoAction === 'timeSeries') {
                     self.timeSeriesMode = true;
                 } else {
@@ -333,16 +338,22 @@
                 // Reset modelInfoMap to get rid of any added info extras
                 self.modelInfoMap = {};
 
-                // Add relevant infos to map and ids to sample array
+                // Add relevant infos to map and ids to sample array in correct order
                 let idList = [];
+                let arrIndex = 0;
                 self.cohortModel.demoModelInfos[self.demoAction].forEach(function (modelInfo) {
                     let id = modelInfo.id;
                     idList.push(id);
                     self.modelInfoMap[id] = modelInfo;
-                    if (self.samples.indexOf(id) < 0) {
-                        self.samples.push(id);
-                    }
+                    self.samples[arrIndex] = modelInfo.id;
+                    arrIndex++;
                 });
+
+                // Get rid of any remaining extra samples names in array
+                if (self.samples.length > arrIndex) {
+                    let numToDelete = self.samples.length - arrIndex;
+                    self.samples.splice(arrIndex, numToDelete);
+                }
 
                 // Ensure models are synonymous with infos
                 self.cohortModel.removeExtraModels(idList);
@@ -379,7 +390,6 @@
                             // Set samples prop
                             theModelInfo.samples = sampleNames;
                             self.$refs.sampleDataRef.forEach(function (ref) {
-                                debugger;   // TODO: why aren't sample drop downs appearing for all samples
                                 if (ref.modelInfo.id === theModel.id) {
                                     // Set selected sample in model and in child cmpnt
                                     theModel.selectedSample = theModelInfo.selectedSample;
@@ -407,7 +417,7 @@
             validate: function () {
                 this.isValid = true;
 
-                let keyList = Object.keys(self.modelInfoMap);
+                let keyList = Object.keys(this.modelInfoMap);
                 for (let i = 0; i < keyList.length; i++) {
                     let currKey = keyList[i];
                     this.isValid &= (this.modelInfoMap[currKey] != null && this.modelInfoMap[currKey].model.isReadyToLoad());
@@ -496,14 +506,19 @@
                 if (self.stateUnchanged) {
                     let sampleLength = self.samples.length;
                     for (let i = sampleLength - 1; i > 1; i--) {
-                        self.removeSample(i, false);
+                        self.removeSample(i, false, true);
                     }
                 }
             },
-            removeSample: function (sampleIndex, stateChanged = true) {
+            removeSample: function (sampleIndex, stateChanged = true, demoCall = false) {
                 let self = this;
                 if (stateChanged) {
                     self.stateUnchanged = false;
+                }
+
+                // If we've selected a demo, and then changed it, deselect dropdown
+                if (self.demoAction != null && !demoCall) {
+                    self.demoAction = null;
                 }
 
                 // If we're deleting the first one on time series mode, must enforce next one normal
@@ -534,14 +549,6 @@
                         }
                     });
                 }
-
-                // Debugging
-                // console.log(self.samples.join(','));
-                // let orderArr = [];
-                // for (let i = 0; i < self.samples.length; i++) {
-                //     orderArr.push(self.modelInfoMap[self.samples[i]].order);
-                // }
-                // console.log(orderArr.join(','));
             },
             onDragEnd: function (evt) {
                 let self = this;
@@ -553,8 +560,13 @@
                 // Update order and isTumor props
                 self.updateSampleOrder(oldIndex, newIndex);
             },
-            updateSampleOrder: function (oldIndex, newIndex) {
+            updateSampleOrder: function (oldIndex, newIndex, demoCall = false) {
                 let self = this;
+
+                if (self.demoAction != null && !demoCall) {
+                    self.demoAction = null;
+                }
+
                 if (self.$refs.sampleDataRef != null) {
                     self.$refs.sampleDataRef.forEach((ref) => {
                         ref.updateOrder(oldIndex, newIndex);
