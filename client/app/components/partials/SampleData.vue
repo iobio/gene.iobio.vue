@@ -140,6 +140,7 @@
                             label="Sample"
                             v-model="sample"
                             :items="samples"
+                            color="appColor"
                             autocomplete
                             @input="onSampleSelected"
                             hide-details

@@ -84,6 +84,7 @@
                             hide-details
                             v-model="speciesName"
                             :items="speciesList"
+                            color="appColor"
                     ></v-select>
                 </v-flex>
 
@@ -93,6 +94,7 @@
                             hide-details
                             v-model="buildName"
                             :items="buildList"
+                            color="appColor"
                     ></v-select>
                 </v-flex>
 
@@ -101,6 +103,7 @@
                             :items="demoActions"
                             item-value="value"
                             item-text="display"
+                            color="appColor"
                             @input="onLoadDemoData"
                             v-model="demoAction"
                             overflow
