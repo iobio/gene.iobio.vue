@@ -289,7 +289,7 @@
                 self.modelInfo.sample = this.sample;
                 if (self.modelInfo.model) {
                     self.modelInfo.model.sampleName = this.modelInfo.sample;
-                    self.modelInfo.model.setName(this.modelInfo.sample);
+                    self.modelInfo.model.setSelectedSample(this.modelInfo.sample);
                 }
                 self.$emit("sample-data-changed");
             },

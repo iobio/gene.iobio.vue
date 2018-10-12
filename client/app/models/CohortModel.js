@@ -406,14 +406,14 @@ class CohortModel {
     }
 
 
-    promiseAddSample(modelInfo) {
+    promiseAddSample(modelInfo, destIndex = -1) {
         let self = this;
         return new Promise(function (resolve, reject) {
             let vm = new SampleModel(self.globalApp);
             vm.init(self);
             vm.id = modelInfo.id;
             vm.displayName = modelInfo.displayName;
-            vm.order = modelInfo.order;
+            //vm.order = modelInfo.order;
             vm.isTumor = modelInfo.isTumor;
             vm.isBasicMode = self.isBasicMode;
             vm.isEduMode = self.isEduMode;
@@ -460,7 +460,11 @@ class CohortModel {
             Promise.all([vcfPromise, bamPromise])
                 .then(function () {
                     let theModel = {'model': vm};
-                    self.sampleModels.push(vm);
+                    if (destIndex >= 0) {
+                        self.sampleModels[destIndex] = vm;
+                    } else {
+                        self.sampleModels.push(vm);
+                    }
                     self.sampleMap[modelInfo.id] = theModel;
                     resolve(vm);
                 });
@@ -471,7 +475,14 @@ class CohortModel {
     removeSample(id) {
         let self = this;
 
-        let sampleIndex = self.sampleModels.indexOf(id);
+        let sampleIndex = -1;
+        for (let i = 0; i < self.sampleModels.length; i++) {
+            let currModel = self.sampleModels[i];
+            if (currModel.id === id) {
+                sampleIndex = i;
+                break;
+            }
+        }
         self.sampleModels.splice(sampleIndex, 1);
         delete self.sampleMap[id];
     }
@@ -619,12 +630,11 @@ class CohortModel {
         }
     }
 
-    /* Returns model corresponding to name */
+    /* Returns model corresponding to name or null if DNE */
     getModel(id) {
         if (this.sampleMap[id] != null) {
             return this.sampleMap[id].model;
         } else {
-            console.log('Could not find model for provided id');
             return null;
         }
     }

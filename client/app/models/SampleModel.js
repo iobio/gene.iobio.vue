@@ -33,7 +33,7 @@ class SampleModel {
         this.isGeneratedSampleName = false;
         this.defaultSampleName = null;
         this.isTumor = true;
-        this.order = 0;     // Time series order: 0 for normal, 1+ for tumor
+        //this.order = 0;     // Time series order: 0 for normal, 1+ for tumor
 
         this.lastVcfAlertify = null;
         this.lastBamAlertify = null;
@@ -712,6 +712,12 @@ class SampleModel {
     setDisplayName(theName) {
         if (theName) {
             this.displayName = theName;
+        }
+    }
+
+    setSelectedSample(theSample) {
+        if (theSample) {
+            this.selectedSample = theSample;
         }
     }
 

@@ -111,7 +111,7 @@
                         :options="{handle: '.drag-handle'}"
                         @end="onDragEnd">
                     <v-flex xs12
-                            v-for="sample in samples"
+                            v-for="sample in sampleIds"
                             :key="sample"
                             :id="sample"
                             v-if="modelInfoMap && modelInfoMap[sample] && Object.keys(modelInfoMap[sample]).length > 0">
@@ -121,7 +121,7 @@
                                 :modelInfo="modelInfoMap[sample]"
                                 :timeSeriesMode="timeSeriesMode"
                                 :dragId="sample"
-                                :arrIndex=samples.indexOf(sample)
+                                :arrIndex=sampleIds.indexOf(sample)
                                 :separateUrlForIndex="separateUrlForIndex"
                                 @sample-data-changed="validate"
                                 @samples-available="onSamplesAvailable"
@@ -176,7 +176,7 @@
                 buildName: null,
                 activeTab: null,
                 modelInfoMap: {},
-                samples: [],
+                sampleIds: [],
                 demoActions: [
                     {'display': 'Duo', 'value': 'dual'},
                     {'display': 'Time Series', 'value': 'timeSeries'}
@@ -186,7 +186,8 @@
                 separateUrlForIndex: false,
                 inProgress: false,
                 stateUnchanged: true,
-                arrId: 0
+                arrId: 0,
+                debugMe: true
             }
         },
         watch: {
@@ -213,7 +214,7 @@
 
                 return new Promise((resolve, reject) => {
                     let newId = self.findNextAvailableId();
-                    self.samples.push(newId);
+                    self.sampleIds.push(newId);
 
                     // Add entry to map
                     let newInfo = {};
@@ -226,13 +227,19 @@
                     newInfo.bam = null;
                     newInfo.tbi = null;
                     newInfo.bai = null;
-                    newInfo.order = self.samples.length - 1;
+                    newInfo.order = self.sampleIds.length - 1;
                     self.modelInfoMap[newId] = newInfo;
 
                     // Add sample model for new entry
                     self.cohortModel.promiseAddSample(newInfo)
                         .then((model) => {
                             newInfo.model = model;
+
+                            if (self.debugMe) {
+                                console.log('adding new sample');
+                                self.debugOrder();
+                            }
+
                             resolve();
                         })
                         .catch(() => {
@@ -243,9 +250,9 @@
             findNextAvailableId: function () {
                 let self = this;
                 let ids = [];
-                let arrLength = self.samples.length;
+                let arrLength = self.sampleIds.length;
                 for (let i = 0; i < arrLength; i++) {
-                    ids.push(parseInt(self.samples[i].substring(1)));
+                    ids.push(parseInt(self.sampleIds[i].substring(1)));
                 }
                 ids.sort();
                 let nextVal = arrLength;
@@ -304,8 +311,8 @@
             /* Moves sample 's0' to first slot of samples array */
             moveNormalToFirstSlot: function () {
                 let self = this;
-                if (self.samples[0] !== 's0') {
-                    let oldIndex = self.samples.indexOf('s0');
+                if (self.sampleIds[0] !== 's0') {
+                    let oldIndex = self.sampleIds.indexOf('s0');
                     let newIndex = 0;
                     self.updateSampleOrder(oldIndex, newIndex);
                 }
@@ -345,24 +352,39 @@
                     let id = modelInfo.id;
                     idList.push(id);
                     self.modelInfoMap[id] = modelInfo;
-                    self.samples[arrIndex] = modelInfo.id;
+                    self.sampleIds[arrIndex] = modelInfo.id;
                     arrIndex++;
                 });
 
                 // Get rid of any remaining extra samples names in array
-                if (self.samples.length > arrIndex) {
-                    let numToDelete = self.samples.length - arrIndex;
-                    self.samples.splice(arrIndex, numToDelete);
+                if (self.sampleIds.length > arrIndex) {
+                    let numToDelete = self.sampleIds.length - arrIndex;
+                    self.sampleIds.splice(arrIndex, numToDelete);
                 }
 
-                // Ensure models are synonymous with infos
+                // Ensure orders are correct
+                for (let i = 0; i < self.sampleIds.length; i++) {
+                    let currInfo = self.modelInfoMap[self.sampleIds[i]];
+                    currInfo.order = i;
+                }
+
+                // Force update labels
+                self.$refs.sampleDataRef.forEach((ref) => {
+                   ref.updateLabel();
+                });
+
+                // Ensure models are synonymous with infos and in same order as view
                 self.cohortModel.removeExtraModels(idList);
                 let addPromises = [];
-                for (let i = 0; i < self.samples.length; i++) {
-                    let currKey = self.samples[i];
-                    if (self.cohortModel.getModel(currKey) == null) {
+                for (let i = 0; i < self.sampleIds.length; i++) {
+                    let currKey = self.sampleIds[i];
+                    let currModel = self.cohortModel.getModel(currKey);
+                    if (currModel == null) {
                         let corrInfo = self.modelInfoMap[currKey];
-                        addPromises.push(self.cohortModel.promiseAddSample(corrInfo)); // Don't need to set model prop here, do below
+                        let p = self.cohortModel.promiseAddSample(corrInfo, i); // Don't need to assign to map, done in promiseSetMOdel below
+                        addPromises.push(p);
+                    } else {
+                        self.cohortModel.sampleModels[i] = currModel;
                     }
                 }
 
@@ -371,6 +393,10 @@
                         self.cohortModel.getCanonicalModels().forEach(function (model) {
                             self.promiseSetModel(model);
                         });
+                        if (self.debugMe) {
+                            console.log('loading demo data');
+                            self.debugOrder();
+                        }
                     })
             },
             /* Sets corresponding model for each info object; */
@@ -386,7 +412,6 @@
                     // Trigger on vcf check in model
                     theModel.onVcfUrlEntered(theModelInfo.vcf, null, function (success, sampleNames) {
                         if (success) {
-
                             // Set samples prop
                             theModelInfo.samples = sampleNames;
                             self.$refs.sampleDataRef.forEach(function (ref) {
@@ -480,7 +505,7 @@
                         if (modelInfo.tbi || modelInfo.bai) {
                             self.separateUrlForIndex = true;
                         }
-                        let key = 's' + self.samples.length;
+                        let key = 's' + self.sampleIds.length;
                         self.$set(self.modelInfoMap, key, modelInfo);
                     }
                 })
@@ -490,7 +515,7 @@
 
                 return new Promise((resolve, reject) => {
                     let promises = [];
-                    if (self.stateUnchanged && self.samples.length === 2) {
+                    if (self.stateUnchanged && self.sampleIds.length === 2) {
                         for (let i = 0; i < 2; i++) {
                             promises.push(self.promiseAddSample(true, false));
                         }
@@ -504,7 +529,7 @@
             removeMoreTumors: function () {
                 let self = this;
                 if (self.stateUnchanged) {
-                    let sampleLength = self.samples.length;
+                    let sampleLength = self.sampleIds.length;
                     for (let i = sampleLength - 1; i > 1; i--) {
                         self.removeSample(i, false, true);
                     }
@@ -523,21 +548,21 @@
 
                 // If we're deleting the first one on time series mode, must enforce next one normal
                 if (self.timeSeriesMode && sampleIndex === 0) {
-                    let key = self.samples[1];
+                    let key = self.sampleIds[1];
                     self.modelInfoMap[key].isTumor = false;
                     self.modelInfoMap[key].model.isTumor = false;
                 }
 
                 // Update order for any samples after deleted one
-                for (let i = sampleIndex + 1; i < self.samples.length; i++) {
-                    let key = self.samples[i];
+                for (let i = sampleIndex + 1; i < self.sampleIds.length; i++) {
+                    let key = self.sampleIds[i];
                     self.modelInfoMap[key].order--;
                     self.modelInfoMap[key].model.order--;
                 }
 
                 // Remove sample and delete info
-                let id = self.samples[sampleIndex];
-                self.samples.splice(sampleIndex, 1);
+                let id = self.sampleIds[sampleIndex];
+                self.sampleIds.splice(sampleIndex, 1);
                 delete self.modelInfoMap[id];
                 self.cohortModel.removeSample(id);
 
@@ -549,6 +574,7 @@
                         }
                     });
                 }
+                self.debugOrder();
             },
             onDragEnd: function (evt) {
                 let self = this;
@@ -572,15 +598,40 @@
                         ref.updateOrder(oldIndex, newIndex);
                     });
                 }
-                // Order samples arrays for view and model accordingly
+                // Order sample ids arrays for view and model accordingly
                 if (oldIndex < newIndex) {
-                    self.samples.splice(newIndex + 1, 0, self.samples[oldIndex]);
-                    self.samples.splice(oldIndex, 1);
+                    self.sampleIds.splice(newIndex + 1, 0, self.sampleIds[oldIndex]);
+                    self.sampleIds.splice(oldIndex, 1);
                 } else if (newIndex < oldIndex) {
-                    self.samples.splice(newIndex, 0, self.samples[oldIndex]);
-                    self.samples.splice(oldIndex + 1, 1);
+                    self.sampleIds.splice(newIndex, 0, self.sampleIds[oldIndex]);
+                    self.sampleIds.splice(oldIndex + 1, 1);
                 }
                 self.cohortModel.updateSampleOrder(oldIndex, newIndex);
+
+                if (self.debugMe) {
+                    console.log('updating order');
+                    self.debugOrder();
+                }
+            },
+            debugOrder: function() {
+                let self = this;
+
+                console.log("sample id array: " + self.sampleIds.join(','));
+                console.log("modelInfoMap: " + (Object.keys(self.modelInfoMap)).join(','));
+                let modelInfoOrders = [];
+                (Object.values(self.modelInfoMap)).forEach((info) => {
+                   modelInfoOrders.push(info.order);
+                });
+                console.log('modelInfo orders: ' + modelInfoOrders.join(','));
+                let modelIds = [];
+                let modelOrders = [];
+                self.cohortModel.sampleModels.forEach((model) => {
+                    modelIds.push(model.id);
+                    modelOrders.push(model.order);
+                });
+                console.log("cohort model list: " + modelIds.join(','));
+                console.log("cohort model map: " + (Object.keys(self.cohortModel.sampleMap)).join(','));
+                console.log("cohort model orders: " + modelOrders.join(','));
             }
         },
         computed: {
