@@ -47,7 +47,7 @@ class CohortModel {
         this.flaggedVariants = [];
 
         this.knownVariantsViz = 'variants'; // variants, histo, histoExon
-        this.demoCmmlFiles = true;     // If true, loads demo CMML data - ONLY LOCAL
+        this.demoCmmlFiles = false;     // If true, loads demo CMML data - ONLY LOCAL
         this.demoVcfs = this.getDemoVcfs();
         this.demoBams = this.getDemoBams();
         this.demoModelInfos = this.getDemoModelInfos();
