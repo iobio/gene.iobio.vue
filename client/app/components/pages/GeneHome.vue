@@ -913,38 +913,36 @@
                     geneNames = self.geneModel.sortedGeneNames.join(",");
                 }
 
-                let affectedSibIds = self.cohortModel.sampleMapSibs.affected.map(function (model) {
-                    return model.sampleName;
-                }).join(",");
-                let unaffectedSibIds = self.cohortModel.sampleMapSibs.unaffected.map(function (model) {
-                    return model.sampleName;
-                }).join(",");
+                // let affectedSibIds = self.cohortModel.sampleMapSibs.affected.map(function (model) {
+                //     return model.sampleName;
+                // }).join(",");
+                // let unaffectedSibIds = self.cohortModel.sampleMapSibs.unaffected.map(function (model) {
+                //     return model.sampleName;
+                // }).join(",");
 
 
                 let queryObject = {
                     gene: geneName,
                     genes: geneNames,
                     species: self.genomeBuildHelper.getCurrentSpeciesName(),
-                    build: self.genomeBuildHelper.getCurrentBuildName(),
-                    affectedSibs: affectedSibIds,
-                    unaffectedSibs: unaffectedSibIds
+                    build: self.genomeBuildHelper.getCurrentBuildName()
+                    //affectedSibs: affectedSibIds,
+                    //unaffectedSibs: unaffectedSibIds
                 };
 
+                // TODO: does this work now
                 let i = 0;
-                // TODO: instead of below, get how many params we have in file loader
-                // Create string list for vcfs, tbis, bams, bais, tumorSampleNames, normalSampleNames IN ORDER
-
-
-                // self.cohortModel.getCanonicalModels().forEach(function (model) {
-                //     queryObject['rel' + i] = model.relationship;
-                //     queryObject['vcf' + i] = model.vcf && model.vcf.getVcfURL() ? model.vcf.getVcfURL() : "";
-                //     queryObject['tbi' + i] = model.vcf && model.vcf.getTbiURL() ? model.vcf.getTbiURL() : "";
-                //     queryObject['bam' + i] = model.bam && model.bam.bamUri ? model.bam.bamUri : "";
-                //     queryObject['bai' + i] = model.bam && model.bam.baiUri ? model.bam.baiUri : "";
-                //     queryObject['sample' + i] = model.sampleName ? model.sampleName : "";
-                //     queryObject['affectedStatus' + i] = model.affectedStatus;
-                //     i++;
-                // });
+                self.cohortModel.getCanonicalModels().forEach(function (model) {
+                    queryObject['id' + i] = model.relationship;
+                    queryObject['vcf' + i] = model.vcf && model.vcf.getVcfURL() ? model.vcf.getVcfURL() : "";
+                    queryObject['tbi' + i] = model.vcf && model.vcf.getTbiURL() ? model.vcf.getTbiURL() : "";
+                    queryObject['bam' + i] = model.bam && model.bam.bamUri ? model.bam.bamUri : "";
+                    queryObject['bai' + i] = model.bam && model.bam.baiUri ? model.bam.baiUri : "";
+                    queryObject['displayName' + i] = model.getDisplayName() ? model.getDisplayName() : "";
+                    queryObject['selectedSample' + i] = model.selectedSample ? model.selectedSample : "";
+                    queryObject['isTumor' + i] = model.getTumorStatus();
+                    i++;
+                });
 
                 self.$router.replace({query: queryObject});
             },

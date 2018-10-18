@@ -54,7 +54,6 @@ class SampleModel {
 
     }
 
-
     getSampleIdentifier(theSampleName) {
         var id = this.relationship + "&&" + this.sampleName + "&&" + theSampleName;
     }
@@ -704,6 +703,10 @@ class SampleModel {
         return this.id;
     }
 
+    setId(theId) {
+        this.id = theId;
+    }
+
     /* Returns display name for sample */
     getDisplayName() {
         return this.displayName;
@@ -713,6 +716,10 @@ class SampleModel {
         if (theName) {
             this.displayName = theName;
         }
+    }
+
+    getSelectedSample() {
+        return this.selctedSample;
     }
 
     setSelectedSample(theSample) {
@@ -924,12 +931,12 @@ class SampleModel {
     }
 
     onVcfUrlEntered(vcfUrl, tbiUrl, callback) {
-        var me = this;
+        let me = this;
         this.vcfData = null;
-        var success = true;
+        let success = true;
         this.sampleName = null;
 
-        if (vcfUrl == null || vcfUrl == '') {
+        if (vcfUrl == null || vcfUrl === '') {
             this.vcfUrlEntered = false;
             this.vcf.clearVcfURL();
             success = false;
@@ -943,7 +950,8 @@ class SampleModel {
             me.getVcfRefName = null;
             me.isMultiSample = false;
 
-            success = this.vcf.openVcfUrl(vcfUrl, tbiUrl, function (success, errorMsg) {
+            debugger;   // what is tbi url coming in?
+            this.vcf.openVcfUrl(vcfUrl, tbiUrl, function (success, errorMsg) {
                 if (me.lastVcfAlertify) {
                     me.lastVcfAlertify.dismiss();
                 }
@@ -959,7 +967,7 @@ class SampleModel {
                     });
                 } else {
                     me.vcfUrlEntered = false;
-                    var msg = "<span style='font-size:18px'>" + errorMsg + "</span><br><span style='font-size:12px'>" + vcfUrl + "</span>";
+                    let msg = "<span style='font-size:18px'>" + errorMsg + "</span><br><span style='font-size:12px'>" + vcfUrl + "</span>";
                     alertify.set('notifier', 'position', 'top-right');
                     me.lastVcfAlertify = alertify.error(msg, 15);
                     callback(success);
@@ -1494,7 +1502,7 @@ class SampleModel {
 
 
     promiseAnnotateVariants(theGene, theTranscript, variantModels, isMultiSample, isBackground, onVcfData) {
-        var me = this;
+        let me = this;
 
         return new Promise(function (resolve, reject) {
 
@@ -1504,23 +1512,23 @@ class SampleModel {
             var promises = [];
             var bookmarkPromises = [];
             variantModels.forEach(function (model) {
-                var p = model._promiseGetData(CacheHelper.VCF_DATA, theGene.gene_name, theTranscript)
+                let p = model._promiseGetData(CacheHelper.VCF_DATA, theGene.gene_name, theTranscript)
                     .then(function (vcfData) {
-                        if (vcfData != null && vcfData != '') {
-                            resultMap[model.relationship] = vcfData;
+                        if (vcfData != null && vcfData !== '') {
+                            resultMap[model.id] = vcfData;
 
                             if (!isBackground) {
                                 model.vcfData = vcfData;
                                 model.fbData = me.reconstituteFbData(vcfData);
                             }
                         }
-                    })
+                    });
                 promises.push(p);
-            })
+            });
 
             Promise.all(promises)
                 .then(function () {
-                        if (Object.keys(resultMap).length == variantModels.length) {
+                        if (Object.keys(resultMap).length === variantModels.length) {
                             resolve(resultMap);
                         } else {
 
@@ -1536,16 +1544,15 @@ class SampleModel {
                                         null,   // regions
                                         isMultiSample, // is multi-sample
                                         me._getSamplesToRetrieve(),
-                                        me.getRelationship() == 'known-variants' ? 'none' : me.getAnnotationScheme().toLowerCase(),
+                                        me.getId() === 'known-variants' ? 'none' : me.getAnnotationScheme().toLowerCase(),
                                         me.getTranslator().clinvarMap,
-                                        me.getGeneModel().geneSource == 'refseq' ? true : false,
+                                        me.getGeneModel().geneSource === 'refseq',
                                         me.isBasicMode || me.globalApp.getVariantIdsForGene,  // hgvs notation
                                         me.globalApp.getVariantIdsForGene,  // rsid
                                         me.globalApp.vepAF    // vep af
                                     );
                                 })
-                                .then(function (data) {
-
+                                .then(function(data) {
                                         var annotatedRecs = data[0];
                                         var results = data[1];
 
@@ -1866,11 +1873,11 @@ class SampleModel {
 
 
     _getCacheKey(dataKind, geneName, transcript) {
-        var me = this;
+        let me = this;
         return me.getCacheHelper().getCacheKey(
             {
-                relationship: this.getRelationship(),
-                sample: (this.sampleName != null ? this.sampleName : "null"),
+                id: this.getId(),
+                sample: (this.selectedSample != null ? this.selectedSample : "null"),
                 gene: (geneName != null ? geneName : gene.gene_name),
                 transcript: (transcript != null ? transcript.transcript_id : "null"),
                 annotationScheme: (me.getAnnotationScheme().toLowerCase()),
@@ -1901,13 +1908,13 @@ class SampleModel {
   */
 
     _getSamplesToRetrieve() {
-        var me = this;
-        var samplesToRetrieve = [];
+        let me = this;
+        let samplesToRetrieve = [];
 
         if (me.getVcfSampleName()) {
             samplesToRetrieve.push({
                 vcfSampleName: me.getVcfSampleName(),
-                sampleName: me.getSampleName()
+                sampleName: me.getSelectedSample()
             });
 
             // Include all of the sample names for the proband
@@ -1924,20 +1931,17 @@ class SampleModel {
                     // proband later (when inheritance is determined)
                     samplesToRetrieve.push({
                         vcfSampleName: info.model.getVcfSampleName(),
-                        sampleName: info.model.getSampleName()
+                        sampleName: info.model.getSelectedSample()
                     });
                 }
             })
-
         } else {
             samplesToRetrieve.push({
                 vcfSampleName: "",
-                sampleName: me.getSampleName()
+                sampleName: me.getSelectedSample()
             });
         }
-
         return samplesToRetrieve;
-
     }
 
     _otherSampleInThisVcf(otherModel) {
@@ -2846,17 +2850,17 @@ class SampleModel {
         return new Promise(function (resolve, reject) {
 
             if (geneName == null) {
-                var msg = "SampleModel._promiseGetData(): empty gene name";
+                let msg = "SampleModel._promiseGetData(): empty gene name";
                 console.log(msg);
                 reject(msg);
             } else {
-                var key = me._getCacheKey(dataKind, geneName.toUpperCase(), transcript)
+                let key = me._getCacheKey(dataKind, geneName.toUpperCase(), transcript);
                 me.getCacheHelper().promiseGetData(key)
                     .then(function (data) {
                             resolve(data);
                         },
                         function (error) {
-                            var msg = "An error occurred in SampleModel._promiseGetData(): " + error;
+                            let msg = "An error occurred in SampleModel._promiseGetData(): " + error;
                             console.log(msg);
                             reject(msg);
                         })

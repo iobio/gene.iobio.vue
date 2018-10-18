@@ -1,0 +1,18 @@
+{
+  "pt1Vcf": "https://s3.amazonaws.com/secure.s3.iobio.io/deininger-cmml/vcfs/pt1.filtered.exonic.vcf.gz?AWSAccessKeyId=AKIAJO3EPB4HSCLOQYOA&Signature=F7SVtEuXF0ZpTfNvxKCIDjMaUQ8%3D&Expires=1571249870",
+  "pt1Tbi": "https://s3.amazonaws.com/secure.s3.iobio.io/deininger-cmml/vcfs/pt1.filtered.exonic.vcf.gz.tbi?AWSAccessKeyId=AKIAJO3EPB4HSCLOQYOA&Signature=iU94dbm2XYyF40qZ%2FHSW3JPOMks%3D&Expires=1571249882",
+  "pt2Vcf": "https://s3.amazonaws.com/secure.s3.iobio.io/deininger-cmml/vcfs/pt2.filtered.exonic.vcf.gz?AWSAccessKeyId=AKIAJO3EPB4HSCLOQYOA&Signature=YrZKIR%2Br0%2FdvspWsxq%2FsZlRCvfw%3D&Expires=1571249894",
+  "pt2Tbi": "https://s3.amazonaws.com/secure.s3.iobio.io/deininger-cmml/vcfs/pt2.filtered.exonic.vcf.gz.tbi?AWSAccessKeyId=AKIAJO3EPB4HSCLOQYOA&Signature=YC3NW11FtPloKy5adxfuATpgz50%3D&Expires=1571249900",
+  "pt3Vcf": "https://s3.amazonaws.com/secure.s3.iobio.io/deininger-cmml/vcfs/pt3.filtered.exonic.vcf.gz?AWSAccessKeyId=AKIAJO3EPB4HSCLOQYOA&Signature=l9ZxTkAgJLQMP1nCT0XGTSKGpmY%3D&Expires=1571249905",
+  "pt3Tbi": "https://s3.amazonaws.com/secure.s3.iobio.io/deininger-cmml/vcfs/pt3.filtered.exonic.vcf.gz.tbi?AWSAccessKeyId=AKIAJO3EPB4HSCLOQYOA&Signature=UkhTWAVqxtRRa6RVjVjgC9Ahg%2B0%3D&Expires=1571249911",
+  "pt4Vcf": "https://s3.amazonaws.com/secure.s3.iobio.io/deininger-cmml/vcfs/pt4.filtered.exonic.vcf.gz?AWSAccessKeyId=AKIAJO3EPB4HSCLOQYOA&Signature=p4OV0HXbHwzSFWLOdW2R5J3tL20%3D&Expires=1571249916",
+  "pt4Tbi": "https://s3.amazonaws.com/secure.s3.iobio.io/deininger-cmml/vcfs/pt4.filtered.exonic.vcf.gz.tbi?AWSAccessKeyId=AKIAJO3EPB4HSCLOQYOA&Signature=ZvTV0A0qKYopiy25VLjFijA6NeM%3D&Expires=1571249922",
+  "t0Bam": "https://s3.amazonaws.com/secure.s3.iobio.io/deininger-cmml/bams/14063X1.bam?AWSAccessKeyId=AKIAJO3EPB4HSCLOQYOA&Signature=uAEC6WdiPLbYZWYpuOpq%2FHgDwLo%3D&Expires=1571262842",
+  "t0Bai": "https://s3.amazonaws.com/secure.s3.iobio.io/deininger-cmml/bams/14063X1.bam.bai?AWSAccessKeyId=AKIAJO3EPB4HSCLOQYOA&Signature=tgICQy7Nws9ODuTlyr03U7Ao6Pw%3D&Expires=1571262848",
+  "t1Bam": "https://s3.amazonaws.com/secure.s3.iobio.io/deininger-cmml/bams/11200X11.bam?AWSAccessKeyId=AKIAJO3EPB4HSCLOQYOA&Signature=xdlv5gSamrXmJrAs61SlNgJiLlQ%3D&Expires=1571262878",
+  "t1Bai": "https://s3.amazonaws.com/secure.s3.iobio.io/deininger-cmml/bams/11200X11.bam.bai?AWSAccessKeyId=AKIAJO3EPB4HSCLOQYOA&Signature=ajeDuiU6r71cnL18ivkf6Hb2Aws%3D&Expires=1571262882",
+  "t2Bam": "https://s3.amazonaws.com/secure.s3.iobio.io/deininger-cmml/bams/11200X12.bam?AWSAccessKeyId=AKIAJO3EPB4HSCLOQYOA&Signature=U2N7YYZ%2FrUsETD04bkyh7biTPqw%3D&Expires=1571262887",
+  "t2Bai": "https://s3.amazonaws.com/secure.s3.iobio.io/deininger-cmml/bams/11200X12.bam.bai?AWSAccessKeyId=AKIAJO3EPB4HSCLOQYOA&Signature=kJoHo3Fuho3F%2FZ%2BaTvK1krw3rV8%3D&Expires=1571262891",
+  "t3Bam": "https://s3.amazonaws.com/secure.s3.iobio.io/deininger-cmml/bams/11200X9.bam?AWSAccessKeyId=AKIAJO3EPB4HSCLOQYOA&Signature=U%2BiAzM7V%2BbBSzz8vVH0cLp%2B%2BwGs%3D&Expires=1571262895",
+  "t3Bai": "https://s3.amazonaws.com/secure.s3.iobio.io/deininger-cmml/bams/11200X9.bam.bai?AWSAccessKeyId=AKIAJO3EPB4HSCLOQYOA&Signature=dLBFC0UjcuAtqC5%2BDe3j%2FuQlYjs%3D&Expires=1571262899"
+}

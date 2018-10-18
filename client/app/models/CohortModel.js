@@ -2,6 +2,7 @@ import CacheHelper from './CacheHelper.js'
 import VariantImporter from './VariantImporter.js'
 import VariantTrioModel from './VariantTrioModel.js'
 import SampleModel from './SampleModel.js'
+import CmmlUrls from '../../data/cmml_urls.json'
 
 /* One per patient - contains sample models for tumor and normal samples. */
 class CohortModel {
@@ -46,99 +47,12 @@ class CohortModel {
         this.flaggedVariants = [];
 
         this.knownVariantsViz = 'variants'; // variants, histo, histoExon
-
-
-        this.demoVcf = {
-            'timeSeries': "https://s3.amazonaws.com/iobio/samples/vcf/platinum-exome.vcf.gz",
-            'dual': "https://s3.amazonaws.com/iobio/gene/wgs_platinum/platinum-trio.vcf.gz"
-        };
-        this.demoBams = {
-            'timeSeries': {
-                't0': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam',
-                't1': 'https://s3.amazonaws.com/iobio/samples/bam/NA12892.exome.bam',
-                't2': 'https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam',
-                't3': 'https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam'
-            },
-            'dual': {
-                'normal': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12891.bam',
-                'tumor': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12878.bam'
-            }
-        };
+        this.demoCmmlFiles = true;     // If true, loads demo CMML data - ONLY LOCAL
+        this.demoVcfs = this.getDemoVcfs();
+        this.demoBams = this.getDemoBams();
+        this.demoModelInfos = this.getDemoModelInfos();
         this.demoGenes = ['TP53', 'APC', 'BRCA2', 'TGFB1', 'RB1'];
 
-
-        this.demoModelInfos = {
-            'timeSeries': [
-                {
-                    id: 's0',
-                    isTumor: false,
-                    displayName: 'Normal',
-                    'selectedSample': 'NA12878',
-                    'vcf': this.demoVcf.timeSeries,
-                    'tbi': null,
-                    'bam': this.demoBams.timeSeries['t0'],
-                    'bai': null,
-                    'order': 0
-                },
-                {
-                    id: 's1',
-                    isTumor: true,
-                    displayName: 'T1 Tumor',
-                    'selectedSample': 'NA12892',
-                    'vcf': this.demoVcf.timeSeries,
-                    'tbi': null,
-                    'bam': this.demoBams.timeSeries['t1'],
-                    'bai': null,
-                    'order': 1
-                },
-                {
-                    id: 's2',
-                    isTumor: true,
-                    displayName: 'T2 Tumor',
-                    'selectedSample': 'NA12891',
-                    'vcf': this.demoVcf.timeSeries,
-                    'tbi': null,
-                    'bam': this.demoBams.timeSeries['t2'],
-                    'bai': null,
-                    'order': 2
-                },
-                {
-                    id: 's3',
-                    isTumor: true,
-                    displayName: 'T3 Tumor',
-                    'selectedSample': 'NA12891',
-                    'vcf': this.demoVcf.timeSeries,
-                    'tbi': null,
-                    'bam': this.demoBams.timeSeries['t3'],
-                    'bai': null,
-                    'order': 3
-                }
-            ],
-            'dual': [
-                {
-                    id: 's0',
-                    isTumor: false,
-                    displayName: 'Normal',
-                    'selectedSample': 'NA12878',
-                    'vcf': this.demoVcf.dual,
-                    'tbi': null,
-                    'bam': this.demoBams.dual['normal'],
-                    'bai': null,
-                    'order': 0
-                },
-                {
-                    id: 's1',
-                    isTumor: true,
-                    displayName: 'Tumor',
-                    'selectedSample': 'NA12892',
-                    'vcf': this.demoVcf.dual,
-                    'tbi': null,
-                    'bam': this.demoBams.dual['tumor'],
-                    'bai': null,
-                    'order': 1
-                }
-            ]
-        };
         this.eduTourModelInfos = {
             "1": [
                 {
@@ -223,10 +137,216 @@ class CohortModel {
         this.myGene2GeneNames = ['KDM1A'];
     }
 
+    getDemoVcfs() {
+        let self = this;
+        if (self.demoCmmlFiles) {
+            return {
+                'timeSeriesVcf': CmmlUrls['pt1Vcf'],
+                'timeSeriesTbi': CmmlUrls['pt1Tbi'],
+                'dualVcf': CmmlUrls['pt1Vcf'],
+                'dualTbi': CmmlUrls['pt1Tbi']
+            };
+        } else {
+            return {
+                'timeSeries': "https://s3.amazonaws.com/iobio/samples/vcf/platinum-exome.vcf.gz",
+                'dual': "https://s3.amazonaws.com/iobio/gene/wgs_platinum/platinum-trio.vcf.gz"
+            };
+        }
+    }
+
+    getDemoBams() {
+        let self = this;
+        if (self.demoCmmlFiles) {
+            return {
+                'timeSeries': {
+                    't0Bam': CmmlUrls['t0Bam'],
+                    't1Bam': CmmlUrls['t1Bam'],
+                    't2Bam': CmmlUrls['t2Bam'],
+                    't3Bam': CmmlUrls['t3Bam'],
+                    't0Bai': CmmlUrls['t0Bai'],
+                    't1Bai': CmmlUrls['t1Bai'],
+                    't2Bai': CmmlUrls['t2Bai'],
+                    't3Bai': CmmlUrls['t3Bai']
+                },
+                'dual': {
+                    'normalBam': CmmlUrls['t0Bam'],
+                    'normalBai': CmmlUrls['t0Bai'],
+                    'tumorBam': CmmlUrls['t3Bam'],
+                    'tumorBai': CmmlUrls['t3Bai']
+                }
+            };
+        } else {
+            return {
+                'timeSeries': {
+                    't0': 'https://s3.amazonaws.com/iobio/samples/bam/NA12878.exome.bam',
+                    't1': 'https://s3.amazonaws.com/iobio/samples/bam/NA12892.exome.bam',
+                    't2': 'https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam',
+                    't3': 'https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam'
+                },
+                'dual': {
+                    'normal': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12891.bam',
+                    'tumor': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12878.bam'
+                }
+            };
+        }
+    }
+
+    getDemoModelInfos() {
+        let self = this;
+        if (self.demoCmmlFiles) {
+            return {
+                'timeSeries': [
+                    {
+                        id: 's0',
+                        isTumor: false,
+                        displayName: 'CMML Normal',
+                        'selectedSample': '14063X1',
+                        'vcf': this.demoVcfs.timeSeriesVcf,
+                        'tbi': this.demoVcfs.timeSeriesTbi,
+                        'bam': this.demoBams.timeSeries['t0Bam'],
+                        'bai': this.demoBams.timeSeries['t0Bai'],
+                        'order': 0
+                    },
+                    {
+                        id: 's1',
+                        isTumor: true,
+                        displayName: 'CMML T1',
+                        'selectedSample': '11200X11',
+                        'vcf': this.demoVcfs.timeSeriesVcf,
+                        'tbi': this.demoVcfs.timeSeriesTbi,
+                        'bam': this.demoBams.timeSeries['t1Bam'],
+                        'bai': this.demoBams.timeSeries['t1Bai'],
+                        'order': 1
+                    },
+                    {
+                        id: 's2',
+                        isTumor: true,
+                        displayName: 'CMML T2',
+                        'selectedSample': '11200X12',
+                        'vcf': this.demoVcfs.timeSeriesVcf,
+                        'tbi': this.demoVcfs.timeSeriesTbi,
+                        'bam': this.demoBams.timeSeries['t2Bam'],
+                        'bai': this.demoBams.timeSeries['t2Bai'],
+                        'order': 2
+                    },
+                    {
+                        id: 's3',
+                        isTumor: true,
+                        displayName: 'CMML T3',
+                        'selectedSample': '11200X9',
+                        'vcf': this.demoVcfs.timeSeriesVcf,
+                        'tbi': this.demoVcfs.timeSeriesTbi,
+                        'bam': this.demoBams.timeSeries['t3Bam'],
+                        'bai': this.demoBams.timeSeries['t3Bai'],
+                        'order': 3
+                    }
+                ],
+                'dual': [
+                    {
+                        id: 's0',
+                        isTumor: false,
+                        displayName: 'CMML Normal',
+                        'selectedSample': '14063X1',
+                        'vcf': this.demoVcfs.dualVcf,
+                        'tbi': this.demoVcfs.dualTbi,
+                        'bam': this.demoBams.dual['normalBam'],
+                        'bai': this.demoBams.dual['normalBai'],
+                        'order': 0
+                    },
+                    {
+                        id: 's1',
+                        isTumor: true,
+                        displayName: 'CMML Tumor',
+                        'selectedSample': '11200X9',
+                        'vcf': this.demoVcfs.dualVcf,
+                        'tbi': this.demoVcfs.dualTbi,
+                        'bam': this.demoBams.dual['tumorBam'],
+                        'bai': this.demoBams.dual['tumorBai'],
+                        'order': 1
+                    }
+                ]
+            };
+        } else {
+            return {
+                'timeSeries': [
+                    {
+                        id: 's0',
+                        isTumor: false,
+                        displayName: 'Normal',
+                        'selectedSample': 'NA12878',
+                        'vcf': this.demoVcfs.timeSeries,
+                        'tbi': null,
+                        'bam': this.demoBams.timeSeries['t0'],
+                        'bai': null,
+                        'order': 0
+                    },
+                    {
+                        id: 's1',
+                        isTumor: true,
+                        displayName: 'T1 Tumor',
+                        'selectedSample': 'NA12892',
+                        'vcf': this.demoVcfs.timeSeries,
+                        'tbi': null,
+                        'bam': this.demoBams.timeSeries['t1'],
+                        'bai': null,
+                        'order': 1
+                    },
+                    {
+                        id: 's2',
+                        isTumor: true,
+                        displayName: 'T2 Tumor',
+                        'selectedSample': 'NA12891',
+                        'vcf': this.demoVcfs.timeSeries,
+                        'tbi': null,
+                        'bam': this.demoBams.timeSeries['t2'],
+                        'bai': null,
+                        'order': 2
+                    },
+                    {
+                        id: 's3',
+                        isTumor: true,
+                        displayName: 'T3 Tumor',
+                        'selectedSample': 'NA12891',
+                        'vcf': this.demoVcfs.timeSeries,
+                        'tbi': null,
+                        'bam': this.demoBams.timeSeries['t3'],
+                        'bai': null,
+                        'order': 3
+                    }
+                ],
+                'dual': [
+                    {
+                        id: 's0',
+                        isTumor: false,
+                        displayName: 'Normal',
+                        'selectedSample': 'NA12878',
+                        'vcf': this.demoVcfs.dual,
+                        'tbi': null,
+                        'bam': this.demoBams.dual['normal'],
+                        'bai': null,
+                        'order': 0
+                    },
+                    {
+                        id: 's1',
+                        isTumor: true,
+                        displayName: 'Tumor',
+                        'selectedSample': 'NA12892',
+                        'vcf': this.demoVcfs.dual,
+                        'tbi': null,
+                        'bam': this.demoBams.dual['tumor'],
+                        'bai': null,
+                        'order': 1
+                    }
+                ]
+            };
+        }
+    }
+
     promiseInitDemo(demoKind = 'exome') {
         let self = this;
+
         return new Promise(function (resolve, reject) {
-            var promise = null;
+            let promise = null;
             if (self.demoGenes) {
                 promise = self.geneModel.promiseCopyPasteGenes(self.demoGenes.join(","));
             } else {
@@ -591,17 +711,15 @@ class CohortModel {
             return Promise.resolve();
         } else {
             return new Promise(function (resolve, reject) {
-                var vm = new SampleModel(self.globalApp);
+                let vm = new SampleModel(self.globalApp);
                 vm.init(self);
-                vm.setRelationship('known-variants');
-                vm.setName('Clinvar')
-                var clinvarUrl = self.genomeBuildHelper.getBuildResource(self.genomeBuildHelper.RESOURCE_CLINVAR_VCF_S3);
+                vm.setId('known-variants');
+                vm.setDisplayName('Clinvar');
+                let clinvarUrl = self.genomeBuildHelper.getBuildResource(self.genomeBuildHelper.RESOURCE_CLINVAR_VCF_S3);
                 vm.onVcfUrlEntered(clinvarUrl, null, function () {
                         self.sampleModels.push(vm);
-
-                        var sample = {'relationship': 'known-variants', 'model': vm};
+                        let sample = {'id': 'known-variants', 'model': vm};
                         self.sampleMap['known-variants'] = sample;
-
                         resolve(sample);
                     },
                     function (error) {
@@ -609,20 +727,21 @@ class CohortModel {
                     });
             })
         }
-
     }
 
     setTumorInfo(forceRefresh) {
         let self = this;
         if (self.affectedInfo == null || forceRefresh) {
             self.affectedInfo = [];
-            self.getCanonicalModels().forEach(function (model) {
-                if (model && model.isTumor()) {    // TODO: change known variants object name
+            self.getCanonicalModels().forEach(function(model) {
+                if (model && model.getId() !== 'known-variants') {
                     let info = {};
                     info.model = model;
-                    info.status = model.isTumor() ? 'tumor' : 'normal';
-                    info.label = model.getName();
-                    info.id = info.status + "-_-" + model.getName() + "-_-" + model.getSampleName();
+                    info.id = model.getId();
+                    info.status = model.getTumorStatus() ? 'tumor' : 'normal';
+                    info.label  = model.getDisplayName();
+
+                    info.id = info.status + "-_-" + model.getDisplayName();
 
                     self.affectedInfo.push(info);
                 }
@@ -637,6 +756,22 @@ class CohortModel {
         } else {
             return null;
         }
+    }
+
+    /* Returns first model in sample array that is normal, not tumor. */
+    getNormalModel() {
+        let self = this;
+        let retModel = null;
+        for (let i = 0; i < self.sampleModels.length; i++) {
+            if (!(self.sampleModels[i].isTumor)) {
+                retModel = self.sampleModels[i];
+                break;
+            }
+        }
+        if (retModel == null) {
+            console.log('No normal models available in getNormalModel');
+        }
+        return retModel;
     }
 
     /* Returns all normal and tumor models */
@@ -678,9 +813,9 @@ class CohortModel {
 
 
     samplesInSingleVcf() {
-        var theVcfs = {};
-        var cards = this.sampleModels.forEach(function (model) {
-            if (!model.isAlignmentsOnly() && model.getRelationship() != 'known-variants') {
+        let theVcfs = {};
+        this.sampleModels.forEach(function (model) {
+            if (!model.isAlignmentsOnly() && model.getId() !== 'known-variants') {
                 if (model.vcfUrlEntered) {
                     theVcfs[model.vcf.getVcfURL()] = true;
                 } else {
@@ -689,7 +824,7 @@ class CohortModel {
 
             }
         });
-        return Object.keys(theVcfs).length == 1;
+        return Object.keys(theVcfs).length === 1;
     }
 
 
@@ -800,16 +935,17 @@ class CohortModel {
         let self = this;
 
         return new Promise(function (resolve, reject) {
-            self.promiseAnnotateVariants(theGene, theTranscript, self.mode == 'trio' && self.samplesInSingleVcf(), false, options)
+            self.promiseAnnotateVariants(theGene, theTranscript, self.samplesInSingleVcf(), false, options)
                 .then(function (resultMap) {
                     // Flag bookmarked variants
-                    self.setVariantFlags(resultMap.proband);
+                    self.setVariantFlags(resultMap['s0']);
 
+                    // TODO: is there some functionality that I need here
                     // the variants are fully annotated so determine inheritance (if trio).
-                    return self.promiseAnnotateInheritance(theGene, theTranscript, resultMap, {
-                        isBackground: false,
-                        cacheData: true
-                    })
+                    // return self.promiseAnnotateInheritance(theGene, theTranscript, resultMap, {
+                    //     isBackground: false,
+                    //     cacheData: true
+                    // })
                 })
                 .then(function (resultMap) {
                     resolve(resultMap);
@@ -972,15 +1108,16 @@ class CohortModel {
     promiseAnnotateVariants(theGene, theTranscript, isMultiSample, isBackground, options = {}) {
         let self = this;
         return new Promise(function (resolve, reject) {
-            var annotatePromises = [];
-            var theResultMap = {};
+            let annotatePromises = [];
+            let theResultMap = {};
             if (isMultiSample) {
                 self.getCanonicalModels().forEach(function (model) {
                     if (!isBackground) {
                         model.inProgress.loadingVariants = true;
                     }
-                })
-                p = self.sampleMap['proband'].model.promiseAnnotateVariants(theGene, theTranscript, self.getCanonicalModels(), isMultiSample, isBackground)
+                });
+                // Annotate
+                let p = self.sampleMap['s0'].model.promiseAnnotateVariants(theGene, theTranscript, self.getCanonicalModels(), isMultiSample, isBackground)
                     .then(function (resultMap) {
                         if (!isBackground) {
                             self.getCanonicalModels().forEach(function (model) {
@@ -988,53 +1125,51 @@ class CohortModel {
                             })
                         }
                         theResultMap = resultMap;
-                    })
+                    });
                 annotatePromises.push(p);
             } else {
-                for (var rel in self.sampleMap) {
-                    var model = self.sampleMap[rel].model;
+                for (let id in self.sampleMap) {
+                    let model = self.sampleMap[id].model;
                     if (model.isVcfReadyToLoad() || model.isLoaded()) {
                         if (!isBackground) {
                             model.inProgress.loadingVariants = true;
                         }
-                        if (rel != 'known-variants') {
-                            var p = model.promiseAnnotateVariants(theGene, theTranscript, [model], isMultiSample, isBackground)
+                        if (id !== 'known-variants') {
+                            let p = model.promiseAnnotateVariants(theGene, theTranscript, [model], isMultiSample, isBackground)
                                 .then(function (resultMap) {
-                                    for (var theRelationship in resultMap) {
+                                    debugger;   // anything in result map here?
+                                    for (let theId in resultMap) {
                                         if (!isBackground) {
-                                            self.getModel(theRelationship).inProgress.loadingVariants = false;
+                                            self.getModel(theId).inProgress.loadingVariants = false;
                                         }
-                                        theResultMap[theRelationship] = resultMap[theRelationship];
+                                        theResultMap[theId] = resultMap[theId];
                                     }
-                                })
+                                });
                             annotatePromises.push(p);
                         }
                     }
                 }
             }
 
-
+            // TODO: this looks like bad/unused code - fix or remove
             if (options.getKnownVariants) {
                 let p = self.promiseLoadKnownVariants(theGene, theTranscript)
-                    .then(function (result) {
-                        if (self.knownVariantViz == 'variants') {
-                            for (var rel in resultMap) {
-                                theResultMap[rel] = resultMap[rel];
+                    .then(function (resultMap) {
+                        if (self.knownVariantViz === 'variants') {
+                            for (let id in resultMap) {
+                                theResultMap[id] = resultMap[id];
                             }
-
                         }
-                    })
+                    });
                 annotatePromises.push(p);
             }
 
             Promise.all(annotatePromises)
                 .then(function () {
-
                     self.promiseAnnotateWithClinvar(theResultMap, theGene, theTranscript, isBackground)
                         .then(function (data) {
                             resolve(data)
                         })
-
                 });
         })
     }
@@ -1042,98 +1177,98 @@ class CohortModel {
 
     promiseAnnotateWithClinvar(resultMap, geneObject, transcript, isBackground) {
         let self = this;
-        var formatClinvarKey = function (variant) {
-            var delim = '^^';
+        let formatClinvarKey = function (variant) {
+            let delim = '^^';
             return variant.chrom + delim + variant.ref + delim + variant.alt + delim + variant.start + delim + variant.end;
-        }
+        };
 
-        var formatClinvarThinVariant = function (key) {
-            var delim = '^^';
-            var tokens = key.split(delim);
+        let formatClinvarThinVariant = function (key) {
+            let delim = '^^';
+            let tokens = key.split(delim);
             return {'chrom': tokens[0], 'ref': tokens[1], 'alt': tokens[2], 'start': tokens[3], 'end': tokens[4]};
-        }
+        };
 
 
-        var refreshVariantsWithClinvarLookup = function (theVcfData, clinvarLookup) {
+        let refreshVariantsWithClinvarLookup = function (theVcfData, clinvarLookup) {
             theVcfData.features.forEach(function (variant) {
-                var clinvarAnnot = clinvarLookup[formatClinvarKey(variant)];
+                let clinvarAnnot = clinvarLookup[formatClinvarKey(variant)];
                 if (clinvarAnnot) {
-                    for (var key in clinvarAnnot) {
-                        variant[key] = clinvarAnnot[key];
+                    for (let clinKey in clinvarAnnot) {
+                        variant[clinKey] = clinvarAnnot[clinKey];
                     }
                 }
-            })
+            });
             if (theVcfData.loadState == null) {
                 theVcfData.loadState = {};
             }
             theVcfData.loadState['clinvar'] = true;
-        }
+        };
 
 
         return new Promise(function (resolve, reject) {
 
             // Combine the trio variants into one set of variants so that we can access clinvar once
             // instead of on a per sample basis
-            var uniqueVariants = {};
-            var unionVcfData = {features: []}
-            for (var rel in resultMap) {
-                var vcfData = resultMap[rel];
+            let uniqueVariants = {};
+            let unionVcfData = {features: []};
+            for (let id in resultMap) {
+                let vcfData = resultMap[id];
                 if (vcfData) {
-                    if (!vcfData.loadState['clinvar'] && rel != 'known-variants') {
+                    if (!vcfData.loadState['clinvar'] && id !== 'known-variants') {
                         vcfData.features.forEach(function (feature) {
                             uniqueVariants[formatClinvarKey(feature)] = true;
                         })
                     }
                 }
             }
-            if (Object.keys(uniqueVariants).length == 0) {
+            if (Object.keys(uniqueVariants).length === 0) {
                 resolve(resultMap);
             } else {
 
-                for (var key in uniqueVariants) {
-                    unionVcfData.features.push(formatClinvarThinVariant(key));
+                for (let varKey in uniqueVariants) {
+                    unionVcfData.features.push(formatClinvarThinVariant(varKey));
                 }
 
-                var refreshVariantsFunction = self.globalApp.isClinvarOffline || self.globalApp.clinvarSource == 'vcf'
-                    ? self.getProbandModel()._refreshVariantsWithClinvarVCFRecs.bind(self.getProbandModel(), unionVcfData)
-                    : self.getProbandModel()._refreshVariantsWithClinvarEutils.bind(self.getProbandModel(), unionVcfData);
+                let refreshVariantsFunction = self.globalApp.isClinvarOffline || self.globalApp.clinvarSource === 'vcf'
+                    ? self.getNormalModel()._refreshVariantsWithClinvarVCFRecs.bind(self.getNormalModel(), unionVcfData)
+                    : self.getNormalModel()._refreshVariantsWithClinvarEutils.bind(self.getNormalModel(), unionVcfData);
 
-                self.getProbandModel().vcf.promiseGetClinvarRecords(
+                self.getNormalModel().vcf.promiseGetClinvarRecords(
                     unionVcfData,
-                    self.getProbandModel()._stripRefName(geneObject.chr),
+                    self.getNormalModel()._stripRefName(geneObject.chr),
                     geneObject,
                     self.geneModel.clinvarGenes,
                     refreshVariantsFunction)
                     .then(function () {
 
                         // Create a hash lookup of all clinvar variants
-                        var clinvarLookup = {};
+                        let clinvarLookup = {};
                         unionVcfData.features.forEach(function (variant) {
-                            var clinvarAnnot = {};
+                            let clinvarAnnot = {};
 
-                            for (var key in self.getProbandModel().vcf.getClinvarAnnots()) {
-                                clinvarAnnot[key] = variant[key];
+                            for (let annotKey in self.getNormalModel().vcf.getClinvarAnnots()) {
+                                clinvarAnnot[annotKey] = variant[annotKey];
                                 clinvarLookup[formatClinvarKey(variant)] = clinvarAnnot;
                             }
-                        })
+                        });
 
-                        var refreshPromises = [];
+                        let refreshPromises = [];
 
                         // Use the clinvar variant lookup to initialize variants with clinvar annotations
-                        for (var rel in resultMap) {
-                            var vcfData = resultMap[rel];
+                        debugger;
+                        for (let id in resultMap) {
+                            let vcfData = resultMap[id];
                             if (vcfData) {
                                 if (!vcfData.loadState['clinvar']) {
-                                    var p = refreshVariantsWithClinvarLookup(vcfData, clinvarLookup);
+                                    let p = refreshVariantsWithClinvarLookup(vcfData, clinvarLookup);
                                     if (!isBackground) {
-                                        self.getModel(rel).vcfData = vcfData;
+                                        self.getModel(id).vcfData = vcfData;
                                     }
                                     //var p = getVariantCard(rel).model._promiseCacheData(vcfData, CacheHelper.VCF_DATA, vcfData.gene.gene_name, vcfData.transcript);
                                     refreshPromises.push(p);
                                 }
                             }
                         }
-
                         Promise.all(refreshPromises)
                             .then(function () {
                                 resolve(resultMap);
@@ -1141,11 +1276,8 @@ class CohortModel {
                             .catch(function (error) {
                                 reject(error);
                             })
-
                     })
             }
-
-
         })
     }
 
@@ -1154,35 +1286,34 @@ class CohortModel {
         let self = this;
 
         var resolveIt = function (resolve, resultMap, geneObject, theTranscript, options) {
-
             self.promiseCacheCohortVcfData(geneObject, theTranscript, CacheHelper.VCF_DATA, resultMap, options.cacheData)
                 .then(function () {
                     resolve({'resultMap': resultMap, 'gene': geneObject, 'transcript': theTranscript});
                 })
-
-        }
+        };
 
         return new Promise(function (resolve, reject) {
 
-            if (self.isAlignmentsOnly() && !self.globalApp.autocall && (resultMap == null || resultMap.proband == null)) {
-                resolve({'resultMap': {'proband': {features: []}}, 'gene': geneObject, 'transcript': theTranscript});
+            if (self.isAlignmentsOnly() && !self.globalApp.autocall && (resultMap == null || resultMap['s0'] == null)) {
+                resolve({'resultMap': {'s0': {features: []}}, 'gene': geneObject, 'transcript': theTranscript});
             } else {
                 // Set the max allele count across all variants in the trio.  We use this to properly scale
                 // the allele counts bars in the tooltip
                 self.maxAlleleCount = 0;
-                for (var rel in resultMap) {
-                    self.maxAlleleCount = SampleModel.calcMaxAlleleCount(resultMap[rel], self.maxAlleleCount);
+                for (let id in resultMap) {
+                    self.maxAlleleCount = SampleModel.calcMaxAlleleCount(resultMap[id], self.maxAlleleCount);
                 }
 
 
-                if (self.mode == 'single') {
-                    // Determine harmful variants, cache data, etc.
-                    resolveIt(resolve, resultMap, geneObject, theTranscript, options);
-                } else {
+                // if (self.mode == 'single') {
+                //     // Determine harmful variants, cache data, etc.
+                //     resolveIt(resolve, resultMap, geneObject, theTranscript, options);
+                // } else {
                     // We only pass in the affected info if we need to sync up genotypes because samples
-                    // where in separate vcf files
+                    // were in separate vcf files
                     var syncGenotypes = self.isAlignmentsOnly() || self.samplesInSingleVcf() ? false : true;
 
+                    // TODO: have to modify trio model to multi-sample model - may want a duo model and a timeSeries model
                     var trioModel = new VariantTrioModel(resultMap.proband, resultMap.mother, resultMap.father, null, syncGenotypes, self.affectedInfo);
 
                     // Compare the mother and father variants to the proband, setting the inheritance
@@ -1202,7 +1333,7 @@ class CohortModel {
 
 
                     })
-                }
+                //}
 
             }
 
@@ -1215,16 +1346,14 @@ class CohortModel {
     promiseCacheCohortVcfData(geneObject, theTranscript, dataKind, resultMap, cacheIt) {
         let self = this;
         return new Promise(function (resolve, reject) {
-            // Cache vcf data for trio
-            var cachePromise = null;
             if (cacheIt) {
-                var cachedPromises = [];
+                let cachedPromises = [];
                 self.sampleModels.forEach(function (model) {
-                    if (resultMap[model.getRelationship()]) {
-                        var p = model._promiseCacheData(resultMap[model.getRelationship()], dataKind, geneObject.gene_name, theTranscript);
+                    if (resultMap[model.getId()]) {
+                        let p = model._promiseCacheData(resultMap[model.getId()], dataKind, geneObject.gene_name, theTranscript);
                         cachedPromises.push(p);
                     }
-                })
+                });
                 Promise.all(cachedPromises).then(function () {
                     resolve();
                 })
@@ -1319,29 +1448,29 @@ class CohortModel {
     promiseGetCachedGeneCoverage(geneObject, transcript, showProgress = false) {
         let self = this;
         return new Promise(function (resolve, reject) {
-            var geneCoverageAll = {gene: geneObject, transcript: transcript, geneCoverage: {}};
+            let geneCoverageAll = {gene: geneObject, transcript: transcript, geneCoverage: {}};
 
-            var promises = [];
+            let promises = [];
             self.sampleModels.forEach(function (model) {
                 if (model.isBamLoaded()) {
                     if (showProgress) {
                         //vc.showBamProgress("Analyzing coverage in coding regions");
                     }
-                    var promise = model.promiseGetGeneCoverage(geneObject, transcript)
+                    let promise = model.promiseGetGeneCoverage(geneObject, transcript)
                         .then(function (data) {
                             var gc = data.geneCoverage;
-                            geneCoverageAll.geneCoverage[data.model.getRelationship()] = gc;
+                            geneCoverageAll.geneCoverage[data.model.getId()] = gc;
                             if (showProgress) {
                                 //getVariantCard(data.model.getRelationship()).endBamProgress();
                             }
                         })
                         .catch(function (error) {
                             reject(error);
-                        })
+                        });
                     promises.push(promise);
                 }
 
-            })
+            });
             Promise.all(promises).then(function () {
                 resolve(geneCoverageAll);
             })

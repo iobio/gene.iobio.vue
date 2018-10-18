@@ -629,13 +629,11 @@ var effectCategories = [
   exports.promiseGetVariants = function(refName, geneObject, selectedTranscript, regions, isMultiSample, samplesToRetrieve, annotationEngine, clinvarMap, isRefSeq, hgvsNotation, getRsId, vepAF, cache) {
     var me = this;
 
-
     return new Promise( function(resolve, reject) {
-
 
       // This comma separated string of samples to perform vcf subset on
       var vcfSampleNames = samplesToRetrieve.filter(function(sample) {
-        return (sample.vcfSampleName != "" && sample.vcfSampleName != null);
+        return (sample.vcfSampleName !== "" && sample.vcfSampleName != null);
       })
       .map(function(sample) {
         return sample.vcfSampleName;
@@ -649,7 +647,7 @@ var effectCategories = [
       .join(",");
 
 
-      if (sourceType == SOURCE_TYPE_URL) {
+      if (sourceType === SOURCE_TYPE_URL) {
         me._getRemoteVariantsImpl(refName, geneObject, selectedTranscript, regions, isMultiSample, vcfSampleNames, sampleNamesToGenotype, annotationEngine, clinvarMap, isRefSeq, hgvsNotation, getRsId, vepAF, cache,
           function(annotatedData, results) {
             if (annotatedData && results) {
@@ -745,7 +743,7 @@ var effectCategories = [
     var me = this;
 
 
-    if (regions == null || regions.length == 0) {
+    if (regions == null || regions.length === 0) {
       regions = [];
       regions.push({'name': refName, 'start': geneObject.start, 'end': geneObject.end});
     }
@@ -758,7 +756,7 @@ var effectCategories = [
     var annotatedData = "";
     // Get the results from the iobio command
     cmd.on('data', function(data) {
-         if (data == undefined) {
+         if (data == null) {
             return;
          }
          annotatedData += data;
@@ -771,7 +769,7 @@ var effectCategories = [
       var contigHdrRecFound = false;
 
       annotatedRecs.forEach(function(record) {
-        if (record.charAt(0) == "#") {
+        if (record.charAt(0) === "#") {
           me._parseHeaderForInfoFields(record);
 
         } else {
@@ -1437,15 +1435,15 @@ var effectCategories = [
       var gtSampleIndices = [];
       var gtSampleNames = null;
 
-      if (sampleNames != null && sampleNames != "") {
-        gtSampleNames   = globalApp.utility.uniq(sampleNames.split(","))
+      if (sampleNames != null && sampleNames !== "") {
+        gtSampleNames   = globalApp.utility.uniq(sampleNames.split(","));
         gtSampleIndices = gtSampleNames.map(function(sampleName,i) {
           return i;
         });
       }
       // If no sample name provided, get the genotype for the provided
       // index.  If no index provided, get the first genotype.
-      if (gtSampleIndices.length == 0) {
+      if (gtSampleIndices.length === 0) {
         gtSampleIndices.push(sampleIndex != null ? sampleIndex : 0);
       }
       if (gtSampleNames == null) {
@@ -1492,12 +1490,12 @@ var effectCategories = [
 
             var isMultiAllelic = alts.length > 1;
 
-            if (alt.indexOf("<") == 0 && alt.indexOf(">") > 0) {
+            if (alt.indexOf("<") === 0 && alt.indexOf(">") > 0) {
               var annotTokens = rec.info.split(";");
               annotTokens.forEach(function(annotToken) {
-                if (annotToken.indexOf("SVLEN=") == 0) {
+                if (annotToken.indexOf("SVLEN=") === 0) {
                   len = Math.abs(+annotToken.substring(6, annotToken.length));
-                } else if (annotToken.indexOf("SVTYPE=") == 0) {
+                } else if (annotToken.indexOf("SVTYPE=") === 0) {
                   type = annotToken.substring(7, annotToken.length);
                   //if (type && type.toLowerCase() == 'mnp') {
                   //  type = 'snp';
@@ -1511,10 +1509,10 @@ var effectCategories = [
             } else {
               len = alt.length;
               type = 'SNP';
-              if (rec.ref == '.' || alt.length > rec.ref.length ) {
+              if (rec.ref === '.' || alt.length > rec.ref.length ) {
                 type = 'INS';
                 len = alt.length - rec.ref.length;
-              } else if (rec.alt == '.' || alt.length < rec.ref.length) {
+              } else if (rec.alt === '.' || alt.length < rec.ref.length) {
                 type = 'DEL';
                 len = rec.ref.length - alt.length;
               }
@@ -1646,12 +1644,9 @@ var effectCategories = [
               }
 
             }
-
             altIdx++;
-
           });
         }
-
       });
 
       // Here is the result set.  An object representing the entire region with a field called
@@ -1676,7 +1671,6 @@ var effectCategories = [
 
 
       return  parseMultiSample ? results :  results[0];
-      //return  results;
   };
 
 exports._parseAnnot = function(rec, altIdx, isMultiAllelic, geneObject, selectedTranscript, selectedTranscriptID, vepAF) {

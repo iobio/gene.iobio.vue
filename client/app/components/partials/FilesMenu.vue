@@ -338,11 +338,16 @@
             onLoadDemoData: function () {
                 let self = this;
 
-                // Toggle switch
+                // Toggle switches
                 if (self.demoAction === 'timeSeries') {
                     self.timeSeriesMode = true;
                 } else {
                     self.timeSeriesMode = false;
+                }
+                if (self.cohortModel.demoCmmlFiles) {
+                    self.separateUrlForIndex = true;
+                } else {
+                    self.separateUrlForIndex = false;
                 }
 
                 // Reset modelInfoMap to get rid of any added info extras
@@ -413,7 +418,7 @@
                     theModelInfo.model = theModel;
 
                     // Trigger on vcf check in model
-                    theModel.onVcfUrlEntered(theModelInfo.vcf, null, function (success, sampleNames) {
+                    theModel.onVcfUrlEntered(theModelInfo.vcf, theModelInfo.tbi, function (success, sampleNames) {
                         if (success) {
                             // Set samples prop
                             theModelInfo.samples = sampleNames;
@@ -428,7 +433,7 @@
                                     self.validate();
                                 }
                             });
-                            theModel.onBamUrlEntered(theModelInfo.bam, null, function (success) {
+                            theModel.onBamUrlEntered(theModelInfo.bam, theModelInfo.bai, function (success) {
                                 self.validate();
                                 if (success) {
                                     resolve();
