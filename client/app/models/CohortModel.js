@@ -846,13 +846,13 @@ class CohortModel {
                 let p1 = self.promiseLoadVariants(theGene, theTranscript, options)
                     .then(function (data) {
                         cohortResultMap = data.resultMap;
-                    })
+                    });
                 promises.push(p1);
 
                 let p2 = self.promiseLoadCoverage(theGene, theTranscript)
                     .then(function () {
                         self.setCoverage();
-                    })
+                    });
                 promises.push(p2);
 
                 Promise.all(promises)
@@ -1127,16 +1127,16 @@ class CohortModel {
                     });
                 annotatePromises.push(p);
             } else {
-                for (let id in self.sampleMap) {
-                    let model = self.sampleMap[id].model;
+                for (var id in self.sampleMap) {
+                    var model = self.sampleMap[id].model;
                     if (model.isVcfReadyToLoad() || model.isLoaded()) {
                         if (!isBackground) {
                             model.inProgress.loadingVariants = true;
                         }
                         if (id !== 'known-variants') {
-                            let p = model.promiseAnnotateVariants(theGene, theTranscript, [model], isMultiSample, isBackground)
+                            var p = model.promiseAnnotateVariants(theGene, theTranscript, [model], isMultiSample, isBackground)
                                 .then(function (resultMap) {
-                                    for (let theId in resultMap) {
+                                    for (var theId in resultMap) {
                                         if (!isBackground) {
                                             self.getModel(theId).inProgress.loadingVariants = false;
                                         }
@@ -1508,7 +1508,6 @@ class CohortModel {
         let self = this;
         return new Promise(function (resolve, reject) {
 
-            debugger;
             let exonPromises = [];
             transcript.features.forEach(function (feature) {
                 if (!feature.hasOwnProperty("danger")) {

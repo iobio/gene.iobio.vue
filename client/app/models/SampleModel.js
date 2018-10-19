@@ -719,7 +719,7 @@ class SampleModel {
     }
 
     getSelectedSample() {
-        return this.selctedSample;
+        return this.selectedSample;
     }
 
     setSelectedSample(theSample) {
@@ -752,7 +752,7 @@ class SampleModel {
 
     getVcfSampleName() {
         // Returns a sample name if provided in the vcf header; otherwise returns null.
-        return !this.isGeneratedSampleName ? (this.sampleName == "" ? null : this.sampleName) : null;
+        return !this.isGeneratedSampleName ? (this.selectedSample == "" ? null : this.selectedSample) : null;
     }
 
 
@@ -1552,6 +1552,7 @@ class SampleModel {
                                     );
                                 })
                                 .then(function(data) {
+                                    // TODO: problem here is need results to have > 1 sample results
                                         let annotatedRecs = data[0];
                                         let results = data[1];
 
@@ -1566,18 +1567,18 @@ class SampleModel {
                                             let theGeneObject = me.getGeneModel().geneObjects[data.gene];
                                             if (theGeneObject) {
 
-                                                let resultMap = {};
-                                                let idx = 0;
+                                                var resultMap = {};
+                                                var idx = 0;
 
-                                                let postProcessNextVariantCard = function (idx, callback) {
+                                                var postProcessNextVariantCard = function (idx, callback) {
                                                     if (idx === variantModels.length) {
                                                         if (callback) {
                                                             callback();
                                                         }
                                                         return;
                                                     } else {
-                                                        let model = variantModels[idx];
-                                                        let theVcfData = results[idx];
+                                                        var model = variantModels[idx];
+                                                        var theVcfData = results[idx];
                                                         if (theVcfData == null) {
                                                             if (callback) {
                                                                 callback();
@@ -1593,7 +1594,6 @@ class SampleModel {
                                                         }
                                                         idx++;
                                                         postProcessNextVariantCard(idx, callback);
-
                                                     }
                                                 };
 
@@ -1601,8 +1601,8 @@ class SampleModel {
 
 
                                                     // Set the highest allele freq for all variants
-                                                    for (let key in resultMap) {
-                                                        let theVcfData = resultMap[key];
+                                                    for (var key in resultMap) {
+                                                        var theVcfData = resultMap[key];
                                                         if (theVcfData && theVcfData.features) {
                                                             theVcfData.features.forEach(function (variant) {
                                                                 me._determineHighestAf(variant);
@@ -2748,7 +2748,7 @@ class SampleModel {
                         me._getSamplesToRetrieve(),
                         me.getAnnotationScheme().toLowerCase(),
                         me.getTranslator().clinvarMap,
-                        me.getGeneModel().geneSource == 'refseq' ? true : false)
+                        me.getGeneModel().geneSource === 'refseq' ? true : false)
                         .then(function (data) {
 
                             if (data != null && data.features != null) {

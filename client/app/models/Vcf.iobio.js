@@ -630,7 +630,7 @@ var effectCategories = [
     var me = this;
 
     return new Promise( function(resolve, reject) {
-
+      debugger; // look @ params here
       // This comma separated string of samples to perform vcf subset on
       var vcfSampleNames = samplesToRetrieve.filter(function(sample) {
         return (sample.vcfSampleName !== "" && sample.vcfSampleName != null);
