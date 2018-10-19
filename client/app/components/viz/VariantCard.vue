@@ -151,17 +151,17 @@
 
   <v-card tile id="variant-card" class="app-card">
     <div>
-      <span id="sample-label" v-bind:class="sampleModel.relationship">
+      <span id="sample-label" v-bind:class="sampleModel.id">
         {{ sampleLabel }}
       </span>
 
       <v-badge  id="loaded-count"
       v-if="sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]" class="ml-4 mr-4 mt-1 loaded" >
-        <span slot="badge"> {{ sampleModel.relationship != 'known-variants' || knownVariantsViz == 'variants' ? sampleModel.loadedVariants.features.length : sampleModel.variantHistoCount  }} </span>
-        {{ isBasicMode || sampleModel.relationship == 'known-variants' ? 'Count' : 'Loaded' }}
+        <span slot="badge"> {{ sampleModel.id !== 'known-variants' || knownVariantsViz === 'variants' ? sampleModel.loadedVariants.features.length : sampleModel.variantHistoCount  }} </span>
+        {{ isBasicMode || sampleModel.id === 'known-variants' ? 'Count' : 'Loaded' }}
       </v-badge>
       <v-badge id="called-count"
-        v-if="sampleModel.relationship != 'known-variants' && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name] && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name].CALLED "
+        v-if="sampleModel.id !== 'known-variants' && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name] && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name].CALLED "
         class="mr-4 mt-1 called">
         <span v-if="sampleModel.loadedVariants"  slot="badge"> {{ sampleModel.calledVariants.features.length }} </span>
         Called
@@ -171,7 +171,7 @@
         Exons with insufficient coverage
       </v-badge>
 
-      <v-switch v-if="sampleModel.relationship == 'proband' && sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode" class="zoom-switch mt-1" style="max-width:80px"
+      <v-switch v-if="sampleModel.id === 's0' && sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode" class="zoom-switch mt-1" style="max-width:80px"
       label="Zoom"
       v-model="showZoom"
       >
@@ -179,7 +179,7 @@
 
 
       <known-variants-toolbar
-        v-if="sampleModel.relationship == 'known-variants'"
+        v-if="sampleModel.id === 'known-variants'"
         @knownVariantsVizChange="onKnownVariantsVizChange"
         @knownVariantsFilterChange="onKnownVariantsFilterChange"
       >
@@ -190,7 +190,7 @@
       <stacked-bar-chart-viz
         id="known-variants-chart"
         style="width:100%"
-        v-if="sampleModel.relationship == 'known-variants' && knownVariantsViz != 'variants'"
+        v-if="sampleModel.id === 'known-variants' && knownVariantsViz !== 'variants'"
         :data="sampleModel.variantHistoData"
         :width="width"
         :xStart="selectedGene.start"
@@ -249,7 +249,7 @@
         <variant-viz id="called-variant-viz"
           ref="calledVariantVizRef"
           v-if="showVariantViz"
-          v-bind:class="{hide: sampleModel.relationship == 'known-variants' && knownVariantsViz != 'variants'}"
+          v-bind:class="{hide: sampleModel.id === 'known-variants' && knownVariantsViz !== 'variants'}"
           :data="sampleModel.calledVariants"
           :regionStart="regionStart"
           :regionEnd="regionEnd"
@@ -267,7 +267,7 @@
         </variant-viz>
 
         <div class="chart-label"
-        v-show="showVariantViz && sampleModel.loadedVariants && sampleModel.loadedVariants.features.length > 0 && sampleModel.relationship != 'known-variants'"
+        v-show="showVariantViz && sampleModel.loadedVariants && sampleModel.loadedVariants.features.length > 0 && sampleModel.id !== 'known-variants'"
         >
           loaded variants
         </div>
@@ -275,7 +275,7 @@
         <variant-viz id="loaded-variant-viz"
           ref="variantVizRef"
           v-if="showVariantViz"
-          v-bind:class="{hide: sampleModel.relationship == 'known-variants' && knownVariantsViz != 'variants'}"
+          v-bind:class="{hide: sampleModel.id === 'known-variants' && knownVariantsViz !== 'variants'}"
           :data="sampleModel.loadedVariants"
           :regionStart="regionStart"
           :regionEnd="regionEnd"
@@ -437,7 +437,7 @@ export default {
       },
       depthVizYTickFormatFunc: null,
       coveragePoint: null,
-      relationship: null,
+      id: null,
       selectedExon: null,
 
       knownVariantsViz: null,
@@ -452,14 +452,14 @@ export default {
 
   methods: {
     depthVizYTickFormat: function(val) {
-      if (val == 0) {
+      if (val === 0) {
         return "";
       } else {
         return val + "x";
       }
     },
     depthVizRegionGlyph: function(exon, regionGroup, regionX) {
-      var exonId = 'exon' + exon.exon_number.replace("/", "-");
+      let exonId = 'exon' + exon.exon_number.replace("/", "-");
       if (regionGroup.select("g#" + exonId).empty()) {
         regionGroup.append('g')
               .attr("id", exonId)
@@ -485,7 +485,7 @@ export default {
           this.showVariantCircle(variant, true);
         }
       }
-      this.$emit('cohort-variant-click', variant, this, this.sampleModel.relationship);
+      this.$emit('cohort-variant-click', variant, this, this.sampleModel.id);
     },
     onVariantHover: function(variant, showTooltip=true) {
       if (this.showDepthViz) {
@@ -520,10 +520,10 @@ export default {
       }
 
 
-      var x = variant.screenX;
-      var y = variant.screenY;
+      let x = variant.screenX;
+      let y = variant.screenY;
 
-      var coord = {'x':                  x,
+      let coord = {'x':                  x,
                    'y':                  y,
                    'height':             33,
                    'parentWidth':        self.$el.offsetWidth,
@@ -539,7 +539,7 @@ export default {
         self.selectedTranscript,
         lock,
         coord,
-        self.sampleModel.relationship,
+        self.sampleModel.id,
         self.sampleModel.getAffectedInfo(),
         self.sampleModel.cohort.mode,
         self.sampleModel.cohort.maxAlleleCount);
@@ -563,19 +563,19 @@ export default {
     },
     hideVariantCircle: function(lock) {
       if (this.showVariantViz) {
-        var container = d3.select(this.$el).select('#loaded-variant-viz > svg');
+        let container = d3.select(this.$el).select('#loaded-variant-viz > svg');
         this.$refs.variantVizRef.hideVariantCircle(container, lock);
         container = d3.select(this.$el).select('#called-variant-viz > svg');
         this.$refs.variantVizRef.hideVariantCircle(container, lock);
       }
     },
     getVariantViz: function(variant) {
-      return variant.fbCalled && variant.fbCalled == 'Y'
+      return variant.fbCalled && variant.fbCalled === 'Y'
           ? this.$refs.calledVariantVizRef
           : this.$refs.variantVizRef;
     },
     getVariantSVG: function(variant) {
-      return variant.fbCalled && variant.fbCalled == 'Y'
+      return variant.fbCalled && variant.fbCalled === 'Y'
           ? d3.select(this.$el).select('#called-variant-viz > svg')
           : d3.select(this.$el).select('#loaded-variant-viz > svg');
     },
@@ -590,14 +590,14 @@ export default {
       if (self.showDepthViz && self.sampleModel.coverage != null) {
         let theDepth = null;
         var matchingVariants = self.sampleModel.loadedVariants.features.filter(function(v) {
-          return v.start == variant.start && v.alt == variant.alt && v.ref == variant.ref;
+          return v.start === variant.start && v.alt === variant.alt && v.ref === variant.ref;
         })
 
         if (matchingVariants.length > 0) {
           theDepth = matchingVariants[0].bamDepth;
           // If samtools mpileup didn't return coverage for this position, use the variant's depth
           // field.
-          if (theDepth == null || theDepth == '') {
+          if (theDepth == null || theDepth === '') {
             theDepth = matchingVariants[0].genotypeDepth;
           }
         }
@@ -623,7 +623,7 @@ export default {
     },
     getExonClass: function(exon, i) {
       if (this.showDepthViz && exon.danger) {
-        return exon.feature_type.toLowerCase() + (exon.danger[this.sampleModel.relationship] ? " danger" : "");
+        return exon.feature_type.toLowerCase() + (exon.danger[this.sampleModel.id] ? " danger" : "");
       } else {
         return exon.feature_type.toLowerCase();
       }
@@ -650,29 +650,29 @@ export default {
         tooltip.classed("locked", false);
       }
 
-      var coverageRow = function(fieldName, coverageVal, covFields) {
-        var row = '<div>';
+      let coverageRow = function(fieldName, coverageVal, covFields) {
+        let row = '<div>';
         row += '<span style="padding-left:10px;width:60px;display:inline-block">' + fieldName   + '</span>';
         row += '<span style="width:40px;display:inline-block">' + d3.round(coverageVal) + '</span>';
         row += '<span class="' + (covFields[fieldName] ? 'danger' : '') + '">' + (covFields[fieldName] ? covFields[fieldName]: '') + '</span>';
         row += "</div>";
         return row;
-      }
+      };
 
-      var html = '<div>'
+      let html = '<div>'
                + '<span id="exon-tooltip-title"' + (lock ? 'style="margin-top:8px">' : '>') + (feature.hasOwnProperty("exon_number") ? "Exon " + feature.exon_number : "") + '</span>'
                + (lock ? '<a href="javascript:void(0)" id="exon-tooltip-close">X</a>' : '')
                + '</div>';
       html     += '<div style="clear:both">' + feature.feature_type + ' ' + self.globalAppProp.utility.addCommas(feature.start) + ' - '       + self.globalAppProp.utility.addCommas(feature.end) + '</div>';
 
-      if (feature.geneCoverage && feature.geneCoverage[self.sampleModel.getRelationship()]) {
-          var covFields = self.sampleModel.cohort.filterModel.whichLowCoverage(feature.geneCoverage[self.sampleModel.getRelationship()]);
+      if (feature.geneCoverage && feature.geneCoverage[self.sampleModel.getId()]) {
+          let covFields = self.sampleModel.cohort.filterModel.whichLowCoverage(feature.geneCoverage[self.sampleModel.getId()]);
           html += "<div style='margin-top:4px'>" + "Coverage:"
-               +  coverageRow('min',    feature.geneCoverage[self.sampleModel.getRelationship()].min, covFields)
-               +  coverageRow('median', feature.geneCoverage[self.sampleModel.getRelationship()].median, covFields)
-               +  coverageRow('mean',   feature.geneCoverage[self.sampleModel.getRelationship()].mean, covFields)
-               +  coverageRow('max',    feature.geneCoverage[self.sampleModel.getRelationship()].max, covFields)
-               +  coverageRow('sd',     feature.geneCoverage[self.sampleModel.getRelationship()].sd, covFields)
+               +  coverageRow('min',    feature.geneCoverage[self.sampleModel.getId()].min, covFields)
+               +  coverageRow('median', feature.geneCoverage[self.sampleModel.getId()].median, covFields)
+               +  coverageRow('mean',   feature.geneCoverage[self.sampleModel.getId()].mean, covFields)
+               +  coverageRow('max',    feature.geneCoverage[self.sampleModel.getId()].max, covFields)
+               +  coverageRow('sd',     feature.geneCoverage[self.sampleModel.getId()].sd, covFields)
 
       }
       if (lock) {
@@ -684,14 +684,14 @@ export default {
       if (lock) {
         tooltip.select("#exon-tooltip-thresholds").on("click", function() {
           self.$emit("show-coverage-cutoffs");
-        })
+        });
         tooltip.select("#exon-tooltip-close").on("click", function() {
           self.selectedExon = null;
           self.hideExonTooltip(true);
         })
       }
 
-      var coord = self.globalAppProp.utility.getTooltipCoordinates(featureObject.node(),
+      let coord = self.globalAppProp.utility.getTooltipCoordinates(featureObject.node(),
         tooltip, self.$el.offsetWidth, $('nav.toolbar').outerHeight());
       tooltip.style("left", coord.x + "px")
              .style("text-align", 'left')
@@ -731,18 +731,25 @@ export default {
 
   computed: {
     sampleLabel: function() {
-      var label = "";
+      let label = "";
       if (this.isBasicMode || this.isEduMode ) {
         label += "Variants for ";
       }
-      if (this.sampleModel.isAlignmentsOnly()) {
-        label += this.sampleModel.relationship ;
-      } else {
-        if (this.sampleModel.cohort.mode == 'trio' && this.sampleModel.relationship != 'known-variants'
-          && this.sampleModel.relationship != this.sampleModel.name) {
-          label += this.sampleModel.relationship + " ";
-        }
-        label += this.sampleModel.name;
+      // if (this.sampleModel.isAlignmentsOnly()) {
+      //   label += this.sampleModel.selectedSample;
+      // } else {
+      //   if (this.sampleModel.cohort.mode === 'timeSeries' && this.sampleModel.id !== 'known-variants'
+      //     && this.sampleModel.displayName !== this.sampleModel.selectedSample) {
+      //     label += this.sampleModel.id + " ";
+      //   }
+      //   label += this.sampleModel.name;
+      // }
+      if (this.sampleModel.displayName && this.sampleModel.displayName !== '') {
+        label += this.sampleModel.displayName + ' (';
+      }
+      label += this.sampleModel.selectedSample;
+      if (this.sampleModel.displayName && this.sampleModel.displayName !== '') {
+          label += ')';
       }
       return label;
     },
@@ -755,13 +762,13 @@ export default {
         var regions = [];
         self.selectedTranscript.features
         .filter( function(feature) {
-            return feature.feature_type == 'CDS' || feature.feature_type == 'UTR';
+            return feature.feature_type === 'CDS' || feature.feature_type === 'UTR';
         })
         .forEach(function(feature) {
-          if (feature.danger[self.sampleModel.getRelationship()]) {
+          if (feature.danger[self.sampleModel.getId()]) {
             regions.push(feature)
           }
-        })
+        });
         return regions;
       } else {
         return [];
@@ -787,7 +794,7 @@ export default {
 
 
   mounted: function() {
-    this.relationship = this.sampleModel.relationship;
+    this.id = this.sampleModel.id;
 
   },
 

@@ -407,7 +407,7 @@ class FilterModel {
 
     if (refreshedAffectedInfo) {
       self.affectedInfo.filter(function(info) {
-        return info.model.isAffected();
+        return info.model.isTumor();
       })
       .forEach(function(info) {
         //var cb = $('#present-in-affected').find("#" + info.id + " input");
@@ -415,7 +415,7 @@ class FilterModel {
       });
 
       self.affectedInfo.filter(function(info) {
-        return !info.model.isAffected();
+        return !info.model.isTumor();
       })
       .forEach(function(info) {
         //var cb = $('#absent-in-unaffected').find("#" + info.id + " input");

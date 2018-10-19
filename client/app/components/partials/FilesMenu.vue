@@ -190,7 +190,7 @@
                 inProgress: false,
                 stateUnchanged: true,
                 arrId: 0,
-                debugMe: true
+                debugMe: false
             }
         },
         watch: {

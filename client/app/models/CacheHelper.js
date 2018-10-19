@@ -513,7 +513,7 @@ CacheHelper.prototype.getCacheKey = function(cacheObject) {
   var me = this;
   var key =  "gene.iobio"
     + CacheHelper.KEY_DELIM + this.launchTimestamp
-    + CacheHelper.KEY_DELIM + cacheObject.relationship
+    + CacheHelper.KEY_DELIM + cacheObject.id
     + CacheHelper.KEY_DELIM + cacheObject.sample
     + CacheHelper.KEY_DELIM + cacheObject.gene
     + CacheHelper.KEY_DELIM + cacheObject.transcript
