@@ -2497,7 +2497,6 @@ exports._cullTranscripts = function(transcriptObject, theTranscriptId) {
 
 exports._getHighestImpact = function(theObject, cullFunction, theTranscriptId) {
   var me = this;
-  debugger;
 
   var theEffects = theObject['HIGH'];
   if (theEffects) {

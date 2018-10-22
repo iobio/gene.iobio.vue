@@ -609,24 +609,24 @@ export default {
 
 
 
-    createAlleleCountSVGTrio: function(container, variant, relationship, affectedInfo, cohortMode, maxAlleleCount, barWidth) {
+    createAlleleCountSVGTrio: function(container, variant, id, affectedInfo, cohortMode, maxAlleleCount, barWidth) {
       var me = this;
 
       var firstTime = true;
       affectedInfo.forEach(function(info) {
 
         var affectedStatus = info.status;
-        var sampleName     = info.model.getSampleName();
+        var sampleName     = info.model.getSelectedSample();
         var genotype       = variant.genotypes[sampleName];
 
-        if (genotype == null || genotype.absent && cohortMode == 'single') {
+        if (genotype == null || genotype.absent) {
           // If vcf doesn't have any genotypes, skip showing this
 
         } else {
 
-          var selectedClazz  = cohortMode == 'trio' && info.model.relationship == relationship ? 'selected' : '';
+          var selectedClazz  = (info.model.id === id ? 'selected' : '');
 
-          var rel      = info.relationship;
+          var rel      = info.id;
           var row = container.append("div")
                              .attr("class", rel + "-alt-count ped-info");
 
@@ -643,14 +643,14 @@ export default {
                 + "</span>"
                 + (affectedStatus == 'affected' ? me.AFFECTED_GLYPH : ''));
 
-              var zyg = genotype ? (!genotype.hasOwnProperty('zygosity') || genotype.zygosity == null || genotype.zygosity == "gt_unknown" ? "unknown" : genotype.zygosity.toLowerCase()) : "none";
+              var zyg = genotype ? (!genotype.hasOwnProperty('zygosity') || genotype.zygosity == null || genotype.zygosity === "gt_unknown" ? "unknown" : genotype.zygosity.toLowerCase()) : "none";
           row.append("div")
              .attr("class",  "zygosity label " + zyg)
              .text(me.globalApp.utility.capitalizeFirstLetter(zyg));
 
 
           var barContainer = row.append("div")
-                                  .attr("class", rel + "-alt-count allele-count-bar")
+                                  .attr("class", rel + "-alt-count allele-count-bar");
           if (genotype) {
             me._appendAlleleCountSVG(barContainer,
               genotype.altCount,

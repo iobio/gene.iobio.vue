@@ -1231,17 +1231,17 @@
             },
             showVariantExtraAnnots: function (sourceComponent, variant) {
                 let self = this;
-                if (!self.isEduMode && !self.cohortModel.getModel(sourceComponent.relationship).isAlignmentsOnly()) {
-                    if (sourceComponent.relationship == 'known-variants') {
+                if (!self.isEduMode && !self.cohortModel.getModel(sourceComponent.id).isAlignmentsOnly()) {
+                    if (sourceComponent.id === 'known-variants') {
                         self.cohortModel
-                            .getModel(sourceComponent.relationship)
+                            .getModel(sourceComponent.id)
                             .promiseGetVariantExtraAnnotations(self.selectedGene, self.selectedTranscript, self.selectedVariant)
                             .then(function (refreshedVariant) {
                                 self.refreshVariantExtraAnnots(sourceComponent, variant, [refreshedVariant]);
                             })
                     } else {
                         self.cohortModel
-                            .getModel(sourceComponent.relationship)
+                            .getModel(sourceComponent.id)
                             .promiseGetImpactfulVariantIds(self.selectedGene, self.selectedTranscript)
                             .then(function (annotatedVariants) {
                                 // If the clicked variant is in the list of annotated variants, show the
@@ -1251,7 +1251,7 @@
                                     // The clicked variant wasn't annotated in the batch of variants.  Get the
                                     // extra annots for this specific variant.
                                     self.cohortModel
-                                        .getModel(sourceComponent.relationship)
+                                        .getModel(sourceComponent.id)
                                         .promiseGetVariantExtraAnnotations(self.selectedGene, self.selectedTranscript, self.selectedVariant)
                                         .then(function (refreshedVariant) {
                                             self.refreshVariantExtraAnnots(sourceComponent, variant, [refreshedVariant]);

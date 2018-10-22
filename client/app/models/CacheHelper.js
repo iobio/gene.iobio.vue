@@ -217,7 +217,7 @@ CacheHelper.prototype.cacheGenes = function(analyzeCalledVariants, callback) {
   var me = this;
 
   // If there are no more genes to cache,
-  if (me.genesToCache.length == 0 && me.cacheQueue.length == 0) {
+  if (me.genesToCache.length === 0 && me.cacheQueue.length === 0) {
     if (callback) {
       callback();
     }
@@ -238,7 +238,7 @@ CacheHelper.prototype.cacheGenes = function(analyzeCalledVariants, callback) {
   if (sizeToQueue > me.genesToCache.length) {
     sizeToQueue = me.genesToCache.length;
   }
-  var startingPos = me.cacheQueue.length == 0 ? 0 : me.cacheQueue.length;
+  var startingPos = me.cacheQueue.length === 0 ? 0 : me.cacheQueue.length;
 
   // Place next batch of genes in caching queue
   for (var i = 0; i < sizeToQueue; i++) {
@@ -312,7 +312,7 @@ CacheHelper.prototype.promiseCacheGene = function(geneName, analyzeCalledVariant
     })
     .then(function() {
       // Find out if this gene has already been analyzed
-      return me.promiseIsCachedForProband(geneObject, transcript, analyzeCalledVariants)
+      return me.promiseIsCachedForNormal(geneObject, transcript, analyzeCalledVariants)
     })
     .then(function(data) {
       isCached = data.isCached;
@@ -372,7 +372,7 @@ CacheHelper.prototype.promiseCacheGene = function(geneName, analyzeCalledVariant
       //}
       // Clear out the called variants cache since this is now cached in vcf data
       if (analyzeCalledVariants) {
-        me.cohort.getProbandModel().clearCacheItem(CacheHelper.FB_DATA, geneObject.gene_name, transcript);
+        me.cohort.getNormalModel().clearCacheItem(CacheHelper.FB_DATA, geneObject.gene_name, transcript);
       }
 
       // We have analyzed the gene, now move on to another gene
@@ -408,10 +408,10 @@ CacheHelper.prototype.cacheNextGene = function(geneName, analyzeCalledVariants, 
   this.cacheGenes(analyzeCalledVariants, callback);
 }
 
-CacheHelper.prototype.promiseIsCachedForProband = function(geneObject, transcript, checkForCalledVariants) {
+CacheHelper.prototype.promiseIsCachedForNormal = function(geneObject, transcript, checkForCalledVariants) {
   var me = this;
   return new Promise(function(resolve, reject) {
-    me.cohort.getProbandModel().promiseGetDangerSummary(geneObject.gene_name)
+    me.cohort.getNormalModel().promiseGetDangerSummary(geneObject.gene_name)
     .then(function(dangerSummary) {
       var isCached = dangerSummary == null ? false : (checkForCalledVariants ? dangerSummary.CALLED : true);
       resolve({geneObject: geneObject, transcript: transcript, shouldCallVariants: checkForCalledVariants, 'isCached': isCached})
@@ -459,7 +459,7 @@ CacheHelper.prototype.refreshGeneBadges = function(callback) {
       var keyObject = CacheHelper._parseCacheKey(key);
       if (keyObject && keyObject.launchTimestamp == me.launchTimestamp) {
 
-          if (keyObject.dataKind == dataKind && keyObject.relationship == "proband" && theGeneNames[keyObject.gene]) {
+          if (keyObject.dataKind == dataKind && keyObject.id == "s0" && theGeneNames[keyObject.gene]) {
             keys.push({'key': key, 'keyObject': keyObject});
           }
        }
@@ -725,7 +725,7 @@ CacheHelper._parseCacheKey = function(cacheKey) {
       var keyObject = {
            app: tokens[0],
            launchTimestamp: tokens[1],
-           relationship: tokens[2],
+           id: tokens[2],
            sample: tokens[3],
            gene: tokens[4],
            transcript: tokens[5],
@@ -1060,8 +1060,8 @@ CacheHelper.prototype._logCacheContents = function(keys, filterObject, showData=
     if (filterObject && Object.keys(filterObject).length > 0) {
       keep = false;
       var matchesRel = true;
-      if (filterObject.hasOwnProperty('relationship')) {
-        if (keyObject.relationship != filterObject.relationship) {
+      if (filterObject.hasOwnProperty('id')) {
+        if (keyObject.id != filterObject.id) {
           matchesRel = false;
         }
       }

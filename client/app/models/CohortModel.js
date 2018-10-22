@@ -1164,9 +1164,6 @@ class CohortModel {
 
             Promise.all(annotatePromises)
                 .then(function () {
-                    debugger;
-                    // TODO: or don't have to filter out but mark them so color scheme is diff
-                    // TODO: could filter out inherited vars here and put back in result map
                     self._annotateVariantInheritance(theResultMap);
 
                     self.promiseAnnotateWithClinvar(theResultMap, theGene, theTranscript, isBackground)
@@ -1177,8 +1174,8 @@ class CohortModel {
         })
     }
 
+    /* Marks variants that are 'inherited' from normal. Assumes normal is always the 's0' sample. */
     _annotateVariantInheritance(resultMap) {
-        debugger;           // verify format of map
         let normalSample = resultMap['s0'];
         let idLookup = {};
 
@@ -1191,7 +1188,8 @@ class CohortModel {
         }
 
         let tumorSamples = Object.keys(resultMap);
-        tumorSamples.splice(0, 1);  // Remove s0 from list TODO: verify that s0 will always be first
+        let normalIndex = tumorSamples.indexOf('s0');
+        tumorSamples.splice(normalIndex, 1);
         for (let i = 0; i < tumorSamples.length; i++) {
             let currSample = resultMap[tumorSamples[i]];
             if (currSample && currSample.features.length > 0) {
