@@ -54,6 +54,11 @@
             .switch
                 display: inline-block
                 width: 100px
+</style>
+<style scoped>
+    .customFile > input[type="file"] {
+        text-align: right;
+    }
 
 </style>
 
@@ -98,18 +103,43 @@
                     ></v-select>
                 </v-flex>
 
-                <v-flex xs3 class="pr-0">
-                    <v-select
-                            :items="demoActions"
-                            item-value="value"
-                            item-text="display"
-                            color="appColor"
-                            @input="onLoadDemoData"
-                            v-model="demoAction"
-                            overflow
-                            hide-details
-                            label="Demo data"></v-select>
+                <v-flex xs3 class="pr-0 pt-3">
+                    <v-menu>
+                        <v-btn
+                                outline
+                                small
+                                color="appColor"
+                                slot="activator">
+                            Auto-Load
+                            <v-icon small>keyboard_arrow_down</v-icon>
+                        </v-btn>
+                        <v-list
+                                v-for="action in autofillActions"
+                                :key="action.value"
+                                
+                                @click="onAutofill">
+                            <v-list-tile-title>
+                                {{ action.display }}
+                            </v-list-tile-title>
+                        </v-list>
+                        <v-btn>
+                            <input class="select-file" type="file" @change="onCustomFile">
+                        </v-btn>
+                    </v-menu>
+                    <!--<v-select-->
+                    <!--:items="autofillActions"-->
+                    <!--:class="[value === 'customFile' ? inputClass : '']"-->
+                    <!--item-value="value"-->
+                    <!--item-text="display"-->
+                    <!--color="appColor"-->
+                    <!--@input="onAutofill"-->
+                    <!--v-model="autofillAction"-->
+                    <!--overflow-->
+                    <!--hide-details-->
+                    <!--label="Autofill">-->
+                    <!--</v-select>-->
                 </v-flex>
+                <!--<input type="file" style="display: none" id="customFileInput" @change="onCustomFile"/>-->
                 <draggable
                         :options="{handle: '.drag-handle'}"
                         @end="onDragEnd">
@@ -159,12 +189,14 @@
 <script>
 
     import SampleData from '../partials/SampleData.vue'
+    //import FileChooser from '../partials/FileChooser.vue'
     import draggable from 'vuedraggable'
 
     export default {
         name: 'files-menu',
         components: {
             SampleData,
+            //FileChooser,
             draggable
         },
         props: {
@@ -180,17 +212,19 @@
                 activeTab: null,
                 modelInfoMap: {},
                 sampleIds: [],
-                demoActions: [
-                    {'display': 'Duo', 'value': 'dual'},
-                    {'display': 'Time Series', 'value': 'timeSeries'}
+                autofillActions: [
+                    {'display': 'Demo Duo', 'value': 'dual'},
+                    {'display': 'Demo Time Series', 'value': 'timeSeries'}
+                    //{'display': 'Custom File', 'value': 'customFile'}
                 ],
-                demoAction: null,
+                autofillAction: null,
                 timeSeriesMode: false,
                 separateUrlForIndex: false,
                 inProgress: false,
                 stateUnchanged: true,
                 arrId: 0,
-                debugMe: false
+                debugMe: false,
+                inputClass: 'fileSelect'
             }
         },
         watch: {
@@ -211,8 +245,8 @@
                 }
 
                 // If we've loaded a demo, and they change it, deselect demo drop-down
-                if (self.demoAction != null) {
-                    self.demoAction = null;
+                if (self.autofillAction != null) {
+                    self.autofillAction = null;
                 }
 
                 return new Promise((resolve, reject) => {
@@ -285,7 +319,7 @@
                         });
                     })
                     .then(function () {
-                        let performAnalyzeAll = self.demoAction ? true : false;
+                        let performAnalyzeAll = self.autofillAction ? true : false;
                         self.inProgress = false;
 
                         self.$emit("on-files-loaded", performAnalyzeAll);
@@ -297,7 +331,7 @@
             },
             onModeChanged: function () {
                 let self = this;
-                if (self.demoAction == null) {
+                if (self.autofillAction == null) {
                     if (self.timeSeriesMode) {
                         self.promiseInitMoreTumors()
                             .then(() => {
@@ -335,11 +369,24 @@
                     });
                 }
             },
+            onAutofill: function () {
+                let self = this;
+
+                if (self.autofillAction === 'customFile') {
+                    debugger;
+                    $("#customFileInput").click();
+                } else {
+                    self.onLoadDemoData();
+                }
+            },
+            onCustomFile: function () {
+                alert('got here');
+            },
             onLoadDemoData: function () {
                 let self = this;
 
                 // Toggle switches
-                if (self.demoAction === 'timeSeries') {
+                if (self.autofillAction === 'timeSeries') {
                     self.timeSeriesMode = true;
                 } else {
                     self.timeSeriesMode = false;
@@ -356,7 +403,7 @@
                 // Add relevant infos to map and ids to sample array in correct order
                 let idList = [];
                 let arrIndex = 0;
-                self.cohortModel.demoModelInfos[self.demoAction].forEach(function (modelInfo) {
+                self.cohortModel.demoModelInfos[self.autofillAction].forEach(function (modelInfo) {
                     let id = modelInfo.id;
                     idList.push(id);
                     self.modelInfoMap[id] = modelInfo;
@@ -378,7 +425,7 @@
 
                 // Force update labels
                 self.$refs.sampleDataRef.forEach((ref) => {
-                   ref.updateLabel();
+                    ref.updateLabel();
                 });
 
                 // Ensure models are synonymous with infos and in same order as view
@@ -550,8 +597,8 @@
                 }
 
                 // If we've selected a demo, and then changed it, deselect dropdown
-                if (self.demoAction != null && !demoCall) {
-                    self.demoAction = null;
+                if (self.autofillAction != null && !demoCall) {
+                    self.autofillAction = null;
                 }
 
                 // If we're deleting the first one on time series mode, must enforce next one normal
@@ -597,8 +644,8 @@
             updateSampleOrder: function (oldIndex, newIndex, demoCall = false) {
                 let self = this;
 
-                if (self.demoAction != null && !demoCall) {
-                    self.demoAction = null;
+                if (self.autofillAction != null && !demoCall) {
+                    self.autofillAction = null;
                 }
 
                 if (self.$refs.sampleDataRef != null) {
@@ -621,14 +668,14 @@
                     self.debugOrder();
                 }
             },
-            debugOrder: function() {
+            debugOrder: function () {
                 let self = this;
 
                 console.log("sample id array: " + self.sampleIds.join(','));
                 console.log("modelInfoMap: " + (Object.keys(self.modelInfoMap)).join(','));
                 let modelInfoOrders = [];
                 (Object.values(self.modelInfoMap)).forEach((info) => {
-                   modelInfoOrders.push(info.order);
+                    modelInfoOrders.push(info.order);
                 });
                 console.log('modelInfo orders: ' + modelInfoOrders.join(','));
                 let modelIds = [];
