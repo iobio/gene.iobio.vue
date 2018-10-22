@@ -1164,12 +1164,45 @@ class CohortModel {
 
             Promise.all(annotatePromises)
                 .then(function () {
+                    debugger;
+                    // TODO: or don't have to filter out but mark them so color scheme is diff
+                    // TODO: could filter out inherited vars here and put back in result map
+                    self._annotateVariantInheritance(theResultMap);
+
                     self.promiseAnnotateWithClinvar(theResultMap, theGene, theTranscript, isBackground)
                         .then(function (data) {
                             resolve(data)
                         })
                 });
         })
+    }
+
+    _annotateVariantInheritance(resultMap) {
+        debugger;           // verify format of map
+        let normalSample = resultMap['s0'];
+        let idLookup = {};
+
+        // Make hash table
+        if (normalSample && normalSample.features.length > 0) {
+            let normFeatures = normalSample.features;
+            normFeatures.forEach((feature) => {
+               idLookup[feature.id] = true;
+            });
+        }
+
+        let tumorSamples = Object.keys(resultMap);
+        tumorSamples.splice(0, 1);  // Remove s0 from list TODO: verify that s0 will always be first
+        for (let i = 0; i < tumorSamples.length; i++) {
+            let currSample = resultMap[tumorSamples[i]];
+            if (currSample && currSample.features.length > 0) {
+                let currFeatures = currSample.features;
+                currFeatures.forEach((feature) => {
+                    if (idLookup[feature.id] != null) {
+                        feature.isInherited = true;
+                    }
+                })
+            }
+        }
     }
 
 
@@ -1259,6 +1292,7 @@ class CohortModel {
                                 if (!vcfData.loadState['clinvar']) {
                                     var p = refreshVariantsWithClinvarLookup(vcfData, clinvarLookup);
                                     if (!isBackground) {
+                                        // TODO: need to filter these vars prior to setting
                                         self.getModel(id).vcfData = vcfData;
                                     }
                                     //var p = getVariantCard(rel).model._promiseCacheData(vcfData, CacheHelper.VCF_DATA, vcfData.gene.gene_name, vcfData.transcript);

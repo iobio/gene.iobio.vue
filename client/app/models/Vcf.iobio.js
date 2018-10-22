@@ -630,7 +630,6 @@ var effectCategories = [
     var me = this;
 
     return new Promise( function(resolve, reject) {
-      debugger; // look @ params here
       // This comma separated string of samples to perform vcf subset on
       var vcfSampleNames = samplesToRetrieve.filter(function(sample) {
         return (sample.vcfSampleName !== "" && sample.vcfSampleName != null);
@@ -1390,7 +1389,7 @@ var effectCategories = [
 
     var writeStream = function(stream) {
       records.forEach( function(record) {
-        if (record.trim() == "") {
+        if (record.trim() === "") {
         } else {
           stream.write(record + "\n");
         }
@@ -1550,8 +1549,8 @@ var effectCategories = [
                     'level':                    +0,
                     'strand':                   geneObject.strand,
                     'chrom':                    refName,
-                    'type':                     annot.typeAnnotated && annot.typeAnnotated != '' ? annot.typeAnnotated : type,
-                    'id':                       rec.id,
+                    'type':                     annot.typeAnnotated && annot.typeAnnotated !== '' ? annot.typeAnnotated : type,
+                    'id':                       (rec.pos + '.' + refName + '.' + geneObject.strand + '.' + rec.ref + '.' + rec.alt),  // key = start.chromosome.strand.ref.alt
                     'ref':                      rec.ref,
                     'alt':                      alt,
                     'qual':                     rec.qual,
@@ -1623,7 +1622,9 @@ var effectCategories = [
                     'highestImpactVep':        highestImpactVep,
                     'highestSIFT':             highestSIFT,
                     'highestPolyphen':         highestPolyphen,
-                    'highestREVEL':            highestREVEL
+                    'highestREVEL':            highestREVEL,
+
+                      'isInherited':            false
                   }
 
                   for (var key in clinvarResult) {
@@ -2496,6 +2497,8 @@ exports._cullTranscripts = function(transcriptObject, theTranscriptId) {
 
 exports._getHighestImpact = function(theObject, cullFunction, theTranscriptId) {
   var me = this;
+  debugger;
+
   var theEffects = theObject['HIGH'];
   if (theEffects) {
     return {HIGH: cullFunction(theEffects, theTranscriptId)};

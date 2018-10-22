@@ -736,23 +736,14 @@ class SampleModel {
         this.tumorStatus = status;
     }
 
-    // setSampleName(sampleName) {
-    //     this.sampleName = sampleName;
-    // }
-
     setGeneratedSampleName(sampleName) {
         this.sampleName = sampleName;
         this.isGeneratedSampleName = true;
     }
 
-    //
-    // getSampleName() {
-    //     return this.sampleName;
-    // }
-
     getVcfSampleName() {
         // Returns a sample name if provided in the vcf header; otherwise returns null.
-        return !this.isGeneratedSampleName ? (this.selectedSample == "" ? null : this.selectedSample) : null;
+        return !this.isGeneratedSampleName ? (this.selectedSample === "" ? null : this.selectedSample) : null;
     }
 
 
@@ -1552,7 +1543,6 @@ class SampleModel {
                                     );
                                 })
                                 .then(function(data) {
-                                    // TODO: problem here is need results to have > 1 sample results
                                         let annotatedRecs = data[0];
                                         let results = data[1];
 
@@ -1598,8 +1588,6 @@ class SampleModel {
                                                 };
 
                                                 postProcessNextVariantCard(idx, function () {
-
-
                                                     // Set the highest allele freq for all variants
                                                     for (var key in resultMap) {
                                                         var theVcfData = resultMap[key];
@@ -1609,10 +1597,7 @@ class SampleModel {
                                                             })
                                                         }
                                                     }
-
-
                                                     resolve(resultMap);
-
                                                 });
 
                                             } else {
@@ -2801,9 +2786,9 @@ class SampleModel {
         var polyphen = "";
         var regulatory = "";
 
-        var effectList = (annotationScheme == null || annotationScheme.toLowerCase() == 'snpeff' ? d.effect : d.vepConsequence);
+        var effectList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.effect : d.vepConsequence);
         for (var key in effectList) {
-            if (annotationScheme.toLowerCase() == 'vep' && key.indexOf("&") > 0) {
+            if (annotationScheme.toLowerCase() === 'vep' && key.indexOf("&") > 0) {
                 var tokens = key.split("&");
                 tokens.forEach(function (token) {
                     effects += " " + token;
@@ -2813,15 +2798,22 @@ class SampleModel {
                 effects += " " + key;
             }
         }
-        var impactList = (annotationScheme == null || annotationScheme.toLowerCase() == 'snpeff' ? d.impact : d[self.globalApp.impactFieldToFilter]);
+        var impactList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.impact : d[self.globalApp.impactFieldToFilter]);
         for (var key in impactList) {
             impacts += " " + key;
         }
-        var colorImpactList = (annotationScheme == null || annotationScheme.toLowerCase() == 'snpeff' ? d.impact : d[self.globalApp.impactFieldToColor]);
-        for (var key in colorImpactList) {
-            colorimpacts += " " + 'impact_' + key;
+
+        // TODO: refactor this so we still have filtering abilities for actual impact
+        if (d.isInherited) {
+            colorimpacts += " " + 'impact_INHERITED';
+        } else {
+            var colorImpactList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.impact : d[self.globalApp.impactFieldToColor]);
+            for (var key in colorImpactList) {
+                colorimpacts += " " + 'impact_' + key;
+            }
         }
-        if (colorimpacts == "") {
+
+        if (colorimpacts === "") {
             colorimpacts = "impact_none";
         }
         for (var key in d.sift) {

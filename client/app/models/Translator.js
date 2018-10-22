@@ -27,14 +27,15 @@ export default class Translator {
               'benign'                : {value: 151, badge: false, examineBadge: true, clazz: 'clinvar_benign', symbolFunction: this.glyph.showClinVarSymbol},
               'none'                  : {value: 161, badge: false, examineBadge: false, clazz: ''}
                        };
-    this.impactMap = {  HIGH:     {value: 1, badge: true, clazz: 'impact_HIGH',     symbolFunction: this.glyph.showImpactSymbol},
+    this.impactMap = {
+                        HIGH:     {value: 1, badge: true, clazz: 'impact_HIGH',     symbolFunction: this.glyph.showImpactSymbol},
                         MODERATE: {value: 2, badge: true, clazz: 'impact_MODERATE', symbolFunction: this.glyph.showImpactSymbol},
                         MODIFIER: {value: 3, badge: false, clazz: 'impact_MODIFIER', symbolFunction: this.glyph.showImpactSymbol},
                         LOW:      {value: 4, badge: false, clazz: 'impact_LOW',      symbolFunction: this.glyph.showImpactSymbol},
                         none:     {value: 5, badge: false, clazz: 'impact_none',      symbolFunction: this.glyph.showImpactSymbol}
                      };
     this.highestImpactMap = {
-                      HIGH:     {value: 1, badge: true, clazz: 'impact_HIGH',     symbolFunction: this.showHighestImpactSymbol, bind: this},
+                        HIGH:     {value: 1, badge: true, clazz: 'impact_HIGH',     symbolFunction: this.showHighestImpactSymbol, bind: this},
                         MODERATE: {value: 2, badge: true, clazz: 'impact_MODERATE', symbolFunction: this.showHighestImpactSymbol, bind: this},
                         MODIFIER: {value: 3, badge: false, clazz: 'impact_MODIFIER', symbolFunction: this.showHighestImpactSymbol, bind: this},
                         LOW:      {value: 4, badge: false, clazz: 'impact_LOW',      symbolFunction: this.showHighestImpactSymbol, bind: this}
