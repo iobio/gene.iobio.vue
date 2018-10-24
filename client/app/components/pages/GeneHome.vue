@@ -272,6 +272,7 @@
 
                 <variant-card
                         ref="variantCardRef"
+                        v-if="showVariantCards"
                         v-for="model in models"
                         :key="model.relationship"
                         v-bind:class="[
@@ -390,7 +391,7 @@
             FeatureMatrixCard,
             VariantCard,
             SplitPane,
-            AppTour,
+            AppTour
         },
         props: {
             paramGene: null,
@@ -450,6 +451,7 @@
                 selectedVariant: null,
                 selectedVariantRelationship: null,
 
+                showVariantCards: false,
                 showKnownVariantsCard: false,
 
                 inProgress: {},
@@ -862,6 +864,7 @@
 
             onFilesLoaded: function (analyzeAll, callback) {
                 let self = this;
+                self.showVariantCards = true;
                 self.setUrlParameters();
 
                 self.promiseClearCache()

@@ -356,7 +356,9 @@
                 let self = this;
                 self.isTumor = status;
                 self.modelInfo.isTumor = status;
-                self.modelInfo.model.isTumor = status;
+                if (self.modelInfo.model) {
+                    self.modelInfo.model.isTumor = status;
+                }
             }
         },
         created: function () {

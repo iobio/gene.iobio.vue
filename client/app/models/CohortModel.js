@@ -1,6 +1,5 @@
 import CacheHelper from './CacheHelper.js'
 import VariantImporter from './VariantImporter.js'
-import VariantTrioModel from './VariantTrioModel.js'
 import SampleModel from './SampleModel.js'
 import CmmlUrls from '../../data/cmml_urls.json'
 
@@ -31,8 +30,6 @@ class CohortModel {
 
         this.sampleModels = [];        // List of sample models correlated with this cohort
         this.sampleMap = {};           // Relateds IDs to model objects
-        this.numNormalSamples = 0;
-        this.numTumorSamples = 0;
 
         this.mode = 'time';             // Indicates time-series mode
         this.maxAlleleCount = null;
@@ -47,7 +44,7 @@ class CohortModel {
         this.flaggedVariants = [];
 
         this.knownVariantsViz = 'variants'; // variants, histo, histoExon
-        this.demoCmmlFiles = true;     // If true, loads demo CMML data - ONLY LOCAL
+        this.demoCmmlFiles = false;     // If true, loads demo CMML data - ONLY LOCAL
         this.demoVcfs = this.getDemoVcfs();
         this.demoBams = this.getDemoBams();
         this.demoModelInfos = this.getDemoModelInfos();

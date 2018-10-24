@@ -343,7 +343,7 @@
 
                         self.$emit("on-files-loaded", performAnalyzeAll);
                         self.showFilesMenu = false;
-                    })
+                    });
             },
             onCancel: function () {
                 this.showFilesMenu = false;
