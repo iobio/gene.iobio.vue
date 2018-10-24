@@ -56,8 +56,8 @@
       <file leaf-file-name="FilesMenu.vue" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="607">
-              <caret line="141" column="63" lean-forward="true" selection-start-line="141" selection-start-column="63" selection-end-line="141" selection-end-column="63" />
+            <state relative-caret-position="127">
+              <caret line="401" selection-start-line="401" selection-end-line="401" />
               <folding>
                 <element signature="n#style#0;n#span#0;n#div#0;n#label#0;n#v-list-tile#2;n#v-list#0;n#v-menu#0;n#v-flex#3;n#v-layout#0;n#v-form#0;n#v-menu#0;n#template#0;n#!!top" expanded="true" />
               </folding>
@@ -68,26 +68,8 @@
       <file leaf-file-name="routes.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/routes.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="33" column="5" lean-forward="true" selection-start-line="33" selection-start-column="5" selection-end-line="33" selection-end-column="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_variables.sass" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/assets/sass/_variables.sass">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="320">
-              <caret line="20" column="26" lean-forward="true" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="cmml_urls.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/data/cmml_urls.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="256">
-              <caret line="16" column="191" lean-forward="true" selection-start-line="16" selection-start-column="12" selection-end-line="16" selection-end-column="191" />
+            <state relative-caret-position="191">
+              <caret line="32" column="31" lean-forward="true" selection-start-line="32" selection-start-column="31" selection-end-line="32" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -147,14 +129,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>oncustom</find>
-      <find>fill</find>
-      <find>choose</find>
-      <find>file-chooser-button</find>
-      <find>customfile</find>
-      <find>autofillActions</find>
-      <find>customFileRef</find>
-      <find>select-file</find>
       <find>custom-file-btn</find>
       <find>custom`</find>
       <find>customFileInput</find>
@@ -177,6 +151,14 @@
       <find>initcu</find>
       <find>genes.json</find>
       <find>onloaddemo</find>
+      <find>Load</find>
+      <find>custom fil</find>
+      <find>auto-load</find>
+      <find>custom</find>
+      <find>auto-fil</find>
+      <find>customfile</find>
+      <find>onDownloadCustomFile</find>
+      <find>appDarkGray</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -330,12 +312,12 @@
       <workItem from="1538585773765" duration="9406000" />
       <workItem from="1538671939863" duration="105140000" />
       <workItem from="1539825118284" duration="24936000" />
-      <workItem from="1540169903055" duration="28915000" />
+      <workItem from="1540169903055" duration="32074000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="204192000" />
+    <option name="totallyTimeSpent" value="207351000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="1057" extended-state="6" />
@@ -733,6 +715,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/assets/sass/_variables.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="320">
+          <caret line="20" column="26" lean-forward="true" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/routes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="191">
+          <caret line="32" column="31" lean-forward="true" selection-start-line="32" selection-start-column="31" selection-end-line="32" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="115">
@@ -753,24 +749,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/assets/sass/_variables.sass">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="20" column="26" lean-forward="true" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/routes.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="33" column="5" lean-forward="true" selection-start-line="33" selection-start-column="5" selection-end-line="33" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="607">
-          <caret line="141" column="63" lean-forward="true" selection-start-line="141" selection-start-column="63" selection-end-line="141" selection-end-column="63" />
+        <state relative-caret-position="127">
+          <caret line="401" selection-start-line="401" selection-end-line="401" />
           <folding>
             <element signature="n#style#0;n#span#0;n#div#0;n#label#0;n#v-list-tile#2;n#v-list#0;n#v-menu#0;n#v-flex#3;n#v-layout#0;n#v-form#0;n#v-menu#0;n#template#0;n#!!top" expanded="true" />
           </folding>

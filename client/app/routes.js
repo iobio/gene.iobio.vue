@@ -30,6 +30,7 @@ Vue.use(Vuetify, {
     theme: {
         appColor: "#7f1010",
         appGray: "#888888",
+        appDarkGray: '#686868',
         altRowColor: "#c6c6c8"
     }
 });

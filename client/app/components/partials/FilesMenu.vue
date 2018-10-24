@@ -82,7 +82,7 @@
         </v-btn>
         <v-form id="files-form">
             <v-layout row wrap class="mt-2">
-                <v-flex xs4 class="mt-2">
+                <v-flex xs3 class="mt-2">
                     <v-container>
                         <v-switch label="Time Series" hide-details v-model="timeSeriesMode">
                         </v-switch>
@@ -91,7 +91,7 @@
                     </v-container>
                 </v-flex>
 
-                <v-flex xs2 class="pl-2 pr-0">
+                <v-flex xs3 class="pl-2 pr-0">
                     <v-select
                             label="Species"
                             hide-details
@@ -101,7 +101,7 @@
                     ></v-select>
                 </v-flex>
 
-                <v-flex xs2 class="pl-2 pr-0">
+                <v-flex xs3 class="pl-2 pr-0">
                     <v-select
                             label="Genome Build"
                             hide-details
@@ -116,7 +116,7 @@
                         <v-btn outline
                                color="appColor"
                                slot="activator">
-                            Auto-Load
+                            Auto-Fill
                             <v-icon small>keyboard_arrow_down</v-icon>
                         </v-btn>
                         <v-list>
@@ -138,17 +138,29 @@
                             </v-list-tile>
                             <v-list-tile>
                                 <label class="file-select">
-                                    <!-- We can't use a normal button element here, as it would become the target of the label. -->
+                                    <!-- We can't use a normal button element here, it would become the target of the label. -->
                                     <div class="select-button">
-                                        <!-- Display the filename if a file has been selected. -->
-                                        <span style="color: #888888">Custom File</span>
+                                        <span style="color: #888888">Upload Config</span>
                                     </div>
-                                    <!-- Now, the file input that we hide. -->
-                                    <input type="file" @change="onCustomFile"/>
+                                    <!-- Hidden file input -->
+                                    <input type="file" @change="onUploadCustomFile"/>
                                 </label>
+                            </v-list-tile>
+                            <v-list-tile>
+                                <v-list-tile-action>
+                                    <v-btn flat color="appGray" :disabled="!isValid"
+                                           @click="onDownloadCustomFile">
+                                        Download Config
+                                    </v-btn>
+                                </v-list-tile-action>
                             </v-list-tile>
                         </v-list>
                     </v-menu>
+                </v-flex>
+                <v-flex xs1>
+                    <v-btn icon>
+                        <v-icon></v-icon>
+                    </v-btn>
                 </v-flex>
                 <draggable
                         :options="{handle: '.drag-handle'}"
@@ -374,7 +386,7 @@
                     });
                 }
             },
-            onCustomFile: function (evt) {
+            onUploadCustomFile: function (evt) {
                 let self = this;
 
                 let customFile = evt.target.files[0];
@@ -384,9 +396,39 @@
                     })
                     .catch((e) => {
                         console.log('Problem loading custom config file: ' + e);
-                        // TODO: comment back in once we have this working
-                        //alert('There was a problem loading from the selected config file. Please try again.');
+                        alert('There was a problem loading from the selected config file. Please try again.');
                     });
+            },
+            onDownloadCustomFile: function () {
+                let self = this;
+
+                // JSON.stringify
+                let exportObj = {'isTimeSeries': self.timeSeriesMode};
+                let sampleArr = [];
+                let infoValues = Object.values(self.modelInfoMap);
+                infoValues.forEach((val) => {
+                    let newVal = {};
+                    newVal.id = val.id;
+                    newVal.isTumor = val.isTumor;
+                    newVal.vcf = val.vcf;
+                    newVal.tbi = val.tbi;
+                    newVal.bam = val.bam;
+                    newVal.bai = val.bai;
+                    newVal.order = val.order;
+                    newVal.selectedSample = val.selectedSample;
+                    newVal.displayName = val.displayName;
+                    sampleArr.push(newVal);
+                });
+                exportObj['samples'] = sampleArr;
+                const exportFile = JSON.stringify(exportObj);
+                const blob = new Blob([exportFile], {type: 'text/plain'});
+                const e = document.createEvent('MouseEvents'),
+                    a = document.createElement('a');
+                a.download = "oncogene_config.json";
+                a.href = window.URL.createObjectURL(blob);
+                a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
+                e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                a.dispatchEvent(e);
             },
             loadDuoDemo: function () {
                 let self = this;
@@ -479,14 +521,14 @@
                         }
                     })
             },
-            checkCustomIndex: function(infos) {
-              let areSeparate = false;
-              infos.forEach((info) => {
-                  if (info.bai != null || info.tbi != null) {
-                      areSeparate = true;
-                  }
-              });
-              return areSeparate;
+            checkCustomIndex: function (infos) {
+                let areSeparate = false;
+                infos.forEach((info) => {
+                    if (info.bai != null || info.tbi != null) {
+                        areSeparate = true;
+                    }
+                });
+                return areSeparate;
             },
             /* Sets corresponding model for each info object; */
             promiseSetModel: function (model) {
