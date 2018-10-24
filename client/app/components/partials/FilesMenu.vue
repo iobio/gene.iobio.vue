@@ -55,11 +55,19 @@
                 display: inline-block
                 width: 100px
 </style>
+<!--Taken from https://alligator.io/vuejs/file-select-component/-->
 <style scoped>
-    .customFile > input[type="file"] {
-        text-align: right;
+    .file-select > .select-button {
+        text-align: left;
+        padding-left: 20px;
+        cursor: pointer;
+        font-weight: 500;
     }
 
+    /* Don't forget to hide the original file input! */
+    .file-select > input[type="file"] {
+        display: none;
+    }
 </style>
 
 <template>
@@ -103,43 +111,45 @@
                     ></v-select>
                 </v-flex>
 
-                <v-flex xs3 class="pr-0 pt-3">
+                <v-flex xs3 class="pr-0 pt-2">
                     <v-menu>
-                        <v-btn
-                                outline
-                                small
-                                color="appColor"
-                                slot="activator">
+                        <v-btn outline
+                               color="appColor"
+                               slot="activator">
                             Auto-Load
                             <v-icon small>keyboard_arrow_down</v-icon>
                         </v-btn>
-                        <v-list
-                                v-for="action in autofillActions"
-                                :key="action.value"
-                                
-                                @click="onAutofill">
-                            <v-list-tile-title>
-                                {{ action.display }}
-                            </v-list-tile-title>
+                        <v-list>
+                            <v-list-tile>
+                                <v-list-tile-action>
+                                    <v-btn flat
+                                           @click="loadDuoDemo">
+                                        {{ dualAutofill.display }}
+                                    </v-btn>
+                                </v-list-tile-action>
+                            </v-list-tile>
+                            <v-list-tile>
+                                <v-list-tile-action>
+                                    <v-btn flat
+                                           @click="loadTimeDemo">
+                                        {{ timeAutofill.display }}
+                                    </v-btn>
+                                </v-list-tile-action>
+                            </v-list-tile>
+                            <v-list-tile>
+                                <label class="file-select">
+                                    <!-- We can't use a normal button element here, as it would become the target of the label. -->
+                                    <div class="select-button">
+                                        <!-- Display the filename if a file has been selected. -->
+                                        <span>Custom File</span>
+                                    </div>
+                                    <!-- Now, the file input that we hide. -->
+                                    <input type="file" @change="onCustomFile"/>
+                                </label>
+                            </v-list-tile>
                         </v-list>
-                        <v-btn>
-                            <input class="select-file" type="file" @change="onCustomFile">
-                        </v-btn>
                     </v-menu>
-                    <!--<v-select-->
-                    <!--:items="autofillActions"-->
-                    <!--:class="[value === 'customFile' ? inputClass : '']"-->
-                    <!--item-value="value"-->
-                    <!--item-text="display"-->
-                    <!--color="appColor"-->
-                    <!--@input="onAutofill"-->
-                    <!--v-model="autofillAction"-->
-                    <!--overflow-->
-                    <!--hide-details-->
-                    <!--label="Autofill">-->
-                    <!--</v-select>-->
                 </v-flex>
-                <!--<input type="file" style="display: none" id="customFileInput" @change="onCustomFile"/>-->
                 <draggable
                         :options="{handle: '.drag-handle'}"
                         @end="onDragEnd">
@@ -212,11 +222,8 @@
                 activeTab: null,
                 modelInfoMap: {},
                 sampleIds: [],
-                autofillActions: [
-                    {'display': 'Demo Duo', 'value': 'dual'},
-                    {'display': 'Demo Time Series', 'value': 'timeSeries'}
-                    //{'display': 'Custom File', 'value': 'customFile'}
-                ],
+                dualAutofill: {'display': 'Demo Duo', 'value': 'dual'},
+                timeAutofill: {'display': 'Demo Time Series', 'value': 'timeSeries'},
                 autofillAction: null,
                 timeSeriesMode: false,
                 separateUrlForIndex: false,
@@ -342,8 +349,6 @@
                         self.removeMoreTumors();
                     }
                 }
-
-                //this.validate();  TODO: do I need to do this again when switching?
             },
             /* Moves sample 's0' to first slot of samples array */
             moveNormalToFirstSlot: function () {
@@ -369,29 +374,49 @@
                     });
                 }
             },
-            onAutofill: function () {
+            onCustomFile: function (evt) {
                 let self = this;
 
-                if (self.autofillAction === 'customFile') {
-                    debugger;
-                    $("#customFileInput").click();
-                } else {
-                    self.onLoadDemoData();
-                }
+                let customFile = evt.target.files[0];
+                self.cohortModel.promiseInitCustomFile(customFile)
+                    .then((obj) => {
+                        self.onAutoLoad(obj.isTimeSeries, 'custom', obj.infos);
+                    })
+                    .catch((e) => {
+                        console.log('Problem loading custom config file: ' + e);
+                        // TODO: comment back in once we have this working
+                        //alert('There was a problem loading from the selected config file. Please try again.');
+                    });
             },
-            onCustomFile: function () {
-                alert('got here');
+            loadDuoDemo: function () {
+                let self = this;
+                self.onAutoLoad(false, 'demo', null);
             },
-            onLoadDemoData: function () {
+            loadTimeDemo: function () {
+                let self = this;
+                self.onAutoLoad(true, 'demo', null);
+            },
+            onAutoLoad: function (timeSeries, mode, customInfos) {
                 let self = this;
 
                 // Toggle switches
-                if (self.autofillAction === 'timeSeries') {
+                if (timeSeries) {
                     self.timeSeriesMode = true;
                 } else {
                     self.timeSeriesMode = false;
                 }
-                if (self.cohortModel.demoCmmlFiles) {
+
+                let infosToLoad = null;
+                let customHasSeparateIndices = false;
+                if (mode === 'demo') {
+                    let whichDemo = timeSeries ? 'timeSeries' : 'dual';
+                    infosToLoad = self.cohortModel.demoModelInfos[whichDemo];
+                } else {
+                    infosToLoad = customInfos;
+                    customHasSeparateIndices = self.checkCustomIndex(customInfos);
+                }
+
+                if (self.cohortModel.demoCmmlFiles || customHasSeparateIndices) {
                     self.separateUrlForIndex = true;
                 } else {
                     self.separateUrlForIndex = false;
@@ -403,7 +428,7 @@
                 // Add relevant infos to map and ids to sample array in correct order
                 let idList = [];
                 let arrIndex = 0;
-                self.cohortModel.demoModelInfos[self.autofillAction].forEach(function (modelInfo) {
+                infosToLoad.forEach(function (modelInfo) {
                     let id = modelInfo.id;
                     idList.push(id);
                     self.modelInfoMap[id] = modelInfo;
@@ -428,7 +453,7 @@
                     ref.updateLabel();
                 });
 
-                // Ensure models are synonymous with infos and in same order as view
+                // Ensure models are synonymous with infos and in same order as viewd
                 self.cohortModel.removeExtraModels(idList);
                 let addPromises = [];
                 for (let i = 0; i < self.sampleIds.length; i++) {
@@ -436,7 +461,7 @@
                     let currModel = self.cohortModel.getModel(currKey);
                     if (currModel == null) {
                         let corrInfo = self.modelInfoMap[currKey];
-                        let p = self.cohortModel.promiseAddSample(corrInfo, i); // Don't need to assign to map, done in promiseSetMOdel below
+                        let p = self.cohortModel.promiseAddSample(corrInfo, i); // Don't need to assign to map, done in promiseSetModel below
                         addPromises.push(p);
                     } else {
                         self.cohortModel.sampleModels[i] = currModel;
@@ -453,6 +478,15 @@
                             self.debugOrder();
                         }
                     })
+            },
+            checkCustomIndex: function(infos) {
+              let areSeparate = false;
+              infos.forEach((info) => {
+                  if (info.bai != null || info.tbi != null) {
+                      areSeparate = true;
+                  }
+              });
+              return areSeparate;
             },
             /* Sets corresponding model for each info object; */
             promiseSetModel: function (model) {

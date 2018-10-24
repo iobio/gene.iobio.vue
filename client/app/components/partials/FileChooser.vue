@@ -58,7 +58,7 @@
     <v-btn id="file-chooser-button" dark class="btn--dark-flat-focused file-chooser-button">
       {{ title }}
       <input v-if="isMultiple"  class="select-file" multiple type="file" @change="onFileSelected">
-      <input v-if="!isMultiple" class="select-file" v-bind:accept="accept" type="file" @change="onFileSelected" >
+      <input v-if="!isMultiple" class="select-file" v-bind:accept="accept" type="file" @change="onFileSelected">
     </v-btn>
     <div v-if="showLabel" id="file-label-area">
       <span id="file-label">

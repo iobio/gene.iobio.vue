@@ -491,6 +491,35 @@ class CohortModel {
         })
     }
 
+    promiseInitCustomFile(customFile) {
+        return new Promise((resolve, reject) => {
+            let modelInfos = [];
+            const reader = new FileReader();
+            reader.onload = (fileObj) => {
+                let fileText = fileObj.target.result;
+                let infoObj = JSON.parse(fileText);
+                let isTimeSeries = infoObj['isTimeSeries'];
+                let samples = infoObj['samples'];
+                samples.forEach((sample) =>  {
+                    let currInfo = {};
+                    currInfo.id = sample.id;
+                    currInfo.isTumor = sample.isTumor;
+                    currInfo['vcf'] = sample.vcf;
+                    currInfo['tbi'] = sample.tbi;
+                    currInfo['bam'] = sample.bam;
+                    currInfo['bai'] = sample.bai;
+                    currInfo['order'] = sample.order;
+                    currInfo['selectedSample'] = sample.selectedSample;
+                    currInfo.displayName = sample.displayName;
+                    modelInfos.push(currInfo);
+                });
+                let returnObj = {"isTimeSeries": isTimeSeries, "infos": modelInfos};
+                resolve(returnObj);
+            };
+            reader.readAsText(customFile);
+        })
+    }
+
     promiseInit(modelInfos) {
         let self = this;
 
