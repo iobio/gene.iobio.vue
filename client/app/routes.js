@@ -29,6 +29,7 @@ import '../assets/css/siteVuetify.css'
 Vue.use(Vuetify, {
     theme: {
         appColor: "#7f1010",
+        appGray: "#888888",
         altRowColor: "#c6c6c8"
     }
 });

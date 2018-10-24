@@ -59,7 +59,7 @@
 <style scoped>
     .file-select > .select-button {
         text-align: left;
-        padding-left: 20px;
+        padding-left: 15px;
         cursor: pointer;
         font-weight: 500;
     }
@@ -122,7 +122,7 @@
                         <v-list>
                             <v-list-tile>
                                 <v-list-tile-action>
-                                    <v-btn flat
+                                    <v-btn flat color="appGray"
                                            @click="loadDuoDemo">
                                         {{ dualAutofill.display }}
                                     </v-btn>
@@ -130,7 +130,7 @@
                             </v-list-tile>
                             <v-list-tile>
                                 <v-list-tile-action>
-                                    <v-btn flat
+                                    <v-btn flat color="appGray"
                                            @click="loadTimeDemo">
                                         {{ timeAutofill.display }}
                                     </v-btn>
@@ -141,7 +141,7 @@
                                     <!-- We can't use a normal button element here, as it would become the target of the label. -->
                                     <div class="select-button">
                                         <!-- Display the filename if a file has been selected. -->
-                                        <span>Custom File</span>
+                                        <span style="color: #888888">Custom File</span>
                                     </div>
                                     <!-- Now, the file input that we hide. -->
                                     <input type="file" @change="onCustomFile"/>
