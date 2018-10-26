@@ -157,11 +157,6 @@
                         </v-list>
                     </v-menu>
                 </v-flex>
-                <v-flex xs1>
-                    <v-btn icon>
-                        <v-icon></v-icon>
-                    </v-btn>
-                </v-flex>
                 <draggable
                         :options="{handle: '.drag-handle'}"
                         @end="onDragEnd">

@@ -4,6 +4,7 @@ glyphicons-halflings-regular.89889688147bd7575d6327160d64e760.svg
 QuattrocentoSans-Bold.7fd45b9b66da92e6198e0732294d5708.ttf
 QuattrocentoSans-Italic.911cd9cc3f16643b8e2367faffd52d90.ttf
 .tmp
+deploy.sh
 deploy
 build.js.map
 client/data/cmml_urls.json
