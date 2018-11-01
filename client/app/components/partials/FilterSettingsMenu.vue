@@ -128,7 +128,6 @@ export default {
       filters: [
         {name: 'pathogenic',        display: 'Known pathogenic',        active: false, custom: false},
         {name: 'autosomalDominant', display: 'Autosomal dominant',      active: false, custom: false},
-        {name: 'denovo',            display: 'De novo',                 active: false, custom: false},
         {name: 'recessive',         display: 'Recessive',               active: false, custom: false},
         {name: 'xlinked',           display: 'X-linked',                active: false, custom: false},
         {name: 'compoundHet',       display: 'Compound het',            active: false, custom: false},

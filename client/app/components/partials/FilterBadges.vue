@@ -194,12 +194,13 @@ export default {
   data () {
     return {
       customFilters: null,
+        // TODO: what information would be useful here?
+        // Ideas: Found in cosmic, found in biocportal, existing clinvar scales, compound het
+        // Do we need dominant and recessive?
       filters: [
         {name: 'pathogenic',        display: 'Known pathogenic variants'        , tooltip: null, showTooltip: false},
         {name: 'autosomalDominant', display: 'Autosomal dominant variants'      , tooltip: null, showTooltip: false},
-        {name: 'denovo',            display: 'De novo variants'                 , tooltip: null, showTooltip: false},
         {name: 'recessive',         display: 'Recessive variants'               , tooltip: null, showTooltip: false},
-        {name: 'xlinked',           display: 'X-linked variants'                , tooltip: null, showTooltip: false},
         {name: 'compoundHet',       display: 'Compound het variants'            , tooltip: null, showTooltip: false},
         {name: 'highOrModerate',    display: 'High or moderate impact variants' , tooltip: null, showTooltip: false},
         {name: 'coverage',          display: 'Insufficient coverage in genes'   , tooltip: null, showTooltip: false}

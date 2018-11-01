@@ -20,7 +20,7 @@ class FilterModel {
 
     // standard filters
     this.KNOWN_CAUSATIVE           = "known_causative";
-    this.DENOVO                    = "denovo";
+    // this.DENOVO                    = "denovo";
     this.RECESSIVE                 = "recessive";
     this.FUNCTIONAL_IMPACT         = "functional_impact";
     this.LOW_COVERAGE              = "low_coverage";
@@ -84,22 +84,6 @@ class FilterModel {
         isUserFlagged: false,
         exclusiveOf: ['pathogenic']
       },
-      'denovo': {
-        active: true,
-        custom: false,
-        title: "De novo",
-        name: "De novo inheritance, low allele freq",
-        order: 3,
-        userFlagged: false,
-        maxAf: .05,
-        clinvar: null,
-        impact: ['HIGH', 'MODERATE'],
-        consequence: null,
-        inheritance: ['denovo'],
-        zyosity: null,
-        minGenotypeDepth: null,
-        exclusiveOf: ['pathogenic']
-      },
       'compoundHet': {
         active: true,
         custom: false,
@@ -147,7 +131,7 @@ class FilterModel {
         zyosity: null,
         isUserFlagged: false,
         minGenotypeDepth: null,
-        exclusiveOf: ['pathogenic', 'autosomalDominant', 'recessive', 'denovo', 'compoundHet', 'xlinked']
+        exclusiveOf: ['pathogenic', 'autosomalDominant', 'recessive', 'compoundHet', 'xlinked']
       },
       'userFlagged': {
         active: true,

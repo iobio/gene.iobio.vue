@@ -32,7 +32,7 @@
 </style>
 <template>
 
-    <v-layout row wrap class=" file-component ">
+    <v-layout row wrap class="file-component">
         <v-flex xs9>
             <v-text-field
                     v-if="fileType === 'url'"

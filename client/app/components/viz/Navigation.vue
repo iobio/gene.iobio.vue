@@ -271,18 +271,7 @@
                         @show-snackbar="onShowSnackbar"
                         @hide-snackbar="onHideSnackbar">
                 </phenotype-search>
-
-
-                <!--
-                        <v-btn v-if="!isEduMode && !isBasicMode" id="show-variants-button" flat  @click="onVariants">
-                         <v-icon>bookmark</v-icon>
-                         Variants
-                        </v-btn>
-                -->
-
-
             </v-toolbar-items>
-
 
             <files-menu
                     v-if="!isEduMode && !isBasicMode"

@@ -138,7 +138,7 @@
                             </v-list-tile>
                             <v-list-tile>
                                 <label class="file-select">
-                                    <!-- We can't use a normal button element here, it would become the target of the label. -->
+                                    <!-- We can't use a normal button element here, it would become t he target of the label. -->
                                     <div class="select-button">
                                         <span style="color: #888888">Upload Config</span>
                                     </div>

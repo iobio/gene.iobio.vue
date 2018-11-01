@@ -559,7 +559,6 @@ class CohortModel {
             vm.init(self);
             vm.id = modelInfo.id;
             vm.displayName = modelInfo.displayName;
-            //vm.order = modelInfo.order;
             vm.isTumor = modelInfo.isTumor;
             vm.isBasicMode = self.isBasicMode;
             vm.isEduMode = self.isEduMode;

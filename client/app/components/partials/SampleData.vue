@@ -80,7 +80,7 @@
                                   placeholder="Enter nickname"
                                   hide-details
                                   v-model="modelInfo.displayName"
-                                  @change="onNameEntered"
+                                  @change="onNicknameEntered"
                     ></v-text-field>
                 </v-flex>
                 <v-flex d-flex xs8 v-if="!isStaticSlot && !timeSeriesMode">
@@ -214,7 +214,7 @@
         computed: {
         },
         methods: {
-            onNameEntered: function () {
+            onNicknameEntered: function () {
                 if (self.modelInfo && self.modelInfo.model) {
                     self.modelInfo.model.setDisplayName(self.modelInfo.displayName);
                 }

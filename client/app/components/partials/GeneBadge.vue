@@ -222,14 +222,6 @@
            width="15" height="15">
           </app-icon>
 
-
-          <app-icon
-           v-if="hasFilteredVariants('denovo')"
-           icon="denovo"
-           class=" level-edu glyph"
-           width="15" height="15">
-          </app-icon>
-
           <app-icon
            v-if="hasFilteredVariants('xlinked')"
            icon="xlinked"
@@ -389,7 +381,6 @@ export default {
         'is-pathogenic':         this.gene.dangerSummary && this.gene.dangerSummary.badges.pathogenic.length > 0,
         'inheritance-autosomal-dominant': this.gene.dangerSummary && this.gene.dangerSummary.badges.autosomalDominant.length > 0,
         'inheritance-recessive': this.gene.dangerSummary && this.gene.dangerSummary.badges.recessive.length > 0,
-        'inheritance-denovo':    this.gene.dangerSummary && this.gene.dangerSummary.badges.denovo.length > 0,
         'inheritance-x-linked':  this.gene.dangerSummary && this.gene.dangerSummary.badges.xlinked.length > 0,
         'inheritance-compound-het':
                                  this.gene.dangerSummary && this.gene.dangerSummary.badges.compoundHet.length > 0,

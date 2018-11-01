@@ -33,7 +33,6 @@ class SampleModel {
         this.isGeneratedSampleName = false;
         this.defaultSampleName = null;
         this.isTumor = true;
-        //this.order = 0;     // Time series order: 0 for normal, 1+ for tumor
 
         this.lastVcfAlertify = null;
         this.lastBamAlertify = null;
@@ -871,8 +870,6 @@ class SampleModel {
                             me.lastVcfAlertify.dismiss();
                         }
                         if (success) {
-
-
                             me.vcfFileOpened = true;
                             me.vcfUrlEntered = false;
                             me.getVcfRefName = null;
