@@ -820,9 +820,7 @@ class SampleModel {
             if (callback) {
                 callback(false)
             }
-
         } else {
-
             this.bamUrlEntered = true;
             this.bam = new Bam(this.globalApp, this.cohort.endpoint, bamUrl, baiUrl);
 
@@ -842,7 +840,6 @@ class SampleModel {
                     callback(success);
                 }
             });
-
         }
 
         this.getBamRefName = this._stripRefName;

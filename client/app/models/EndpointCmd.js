@@ -117,11 +117,11 @@ export default class EndpointCmd {
     cmd = cmd.pipe(me.IOBIO.af, ["-b", me.genomeBuildHelper.getCurrentBuildName()], {ssl: me.globalApp.useSSL});
 
     // Skip snpEff if RefSeq transcript set or we are just annotating with the vep engine
-    if (annotationEngine == 'none') {
+    if (annotationEngine === 'none') {
       // skip annotation if annotationEngine set to  'none'
 
 
-    } else if (isRefSeq || annotationEngine == 'vep') {
+    } else if (isRefSeq || annotationEngine === 'vep') {
       // VEP
       var vepArgs = [];
       vepArgs.push(" --assembly");

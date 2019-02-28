@@ -884,6 +884,7 @@ class CohortModel {
                     .then(function () {
 
                         // Now summarize the danger for the selected gene
+                        // TODO: does this need to be for each loop calling this for all samples?
                         self.promiseSummarizeDanger(theGene, theTranscript, cohortResultMap.s0, null)
                             .then(function () {
                                 self.setLoadedVariants(theGene);
@@ -1024,7 +1025,6 @@ class CohortModel {
 
     setLoadedVariants(gene, id = null) {
         let self = this;
-
 
         let filterAndPileupVariants = function (model, start, end, target = 'loaded') {
             let filteredVariants = $.extend({}, model.vcfData);
@@ -1431,7 +1431,8 @@ class CohortModel {
         })
     }
 
-    promiseSummarizeDanger(geneObject, theTranscript, probandVcfData, options) {
+    // TODO: need to know when this is called and why
+    promiseSummarizeDanger(geneObject, theTranscript, theVcfData, options) {
         let self = this;
 
         return new Promise(function (resolve, reject) {
@@ -1446,12 +1447,12 @@ class CohortModel {
                             // Summarize the danger for the gene based on the filtered annotated variants and gene coverage
                             let filteredVcfData = null;
                             let filteredFbData = null;
-                            if (probandVcfData) {
-                                if (probandVcfData.features && probandVcfData.features.length > 0) {
-                                    filteredVcfData = self.getNormalModel().filterVariants(probandVcfData, self.filterModel.getFilterObject(), geneObject.start, geneObject.end, true);
+                            if (theVcfData) {
+                                if (theVcfData.features && theVcfData.features.length > 0) {
+                                    filteredVcfData = self.getNormalModel().filterVariants(theVcfData, self.filterModel.getFilterObject(), geneObject.start, geneObject.end, true);
                                     filteredFbData = self.getNormalModel().reconstituteFbData(filteredVcfData);
-                                } else if (probandVcfData.features) {
-                                    filteredVcfData = probandVcfData;
+                                } else if (theVcfData.features) {
+                                    filteredVcfData = theVcfData;
                                 }
 
 
@@ -1478,7 +1479,7 @@ class CohortModel {
                             resolve();
                         })
                         .catch(function (error) {
-                            var msg = "An error occurred in promiseSummarizeDanger() when calling SampleModel.promiseGetDangerSummary(): " + error;
+                            let msg = "An error occurred in promiseSummarizeDanger() when calling SampleModel.promiseGetDangerSummary(): " + error;
                             console.log(msg);
                             reject(msg);
                         })
@@ -1486,7 +1487,7 @@ class CohortModel {
 
                 })
                 .catch(function (error) {
-                    var msg = "An error occurred in CohortModel.promiseSummarizeDanger() when calling promiseGetCachedGeneCoverage(): " + error;
+                    let msg = "An error occurred in CohortModel.promiseSummarizeDanger() when calling promiseGetCachedGeneCoverage(): " + error;
                     console.log(msg);
                     reject(msg);
                 });
@@ -1527,7 +1528,6 @@ class CohortModel {
                 resolve(geneCoverageAll);
             })
         })
-
     }
 
     promiseLoadBamDepth(theGene, theTranscript) {

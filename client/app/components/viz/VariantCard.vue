@@ -591,7 +591,7 @@ export default {
         let theDepth = null;
         var matchingVariants = self.sampleModel.loadedVariants.features.filter(function(v) {
           return v.start === variant.start && v.alt === variant.alt && v.ref === variant.ref;
-        })
+        });
 
         if (matchingVariants.length > 0) {
           theDepth = matchingVariants[0].bamDepth;

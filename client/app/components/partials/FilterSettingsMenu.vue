@@ -155,7 +155,7 @@ export default {
         self.$refs[refName].forEach(function(component) {
           component.isActive = false;
         })
-      })
+      });
       this.filters.push({name: 'custom' + (this.filters.length - 7), display: 'custom', active: true, custom: true});
     },
     onApply: function() {
@@ -165,7 +165,7 @@ export default {
         self.$refs[refName].forEach(function(component) {
           component.apply();
         })
-      })
+      });
       self.$emit('filter-settings-applied');
       this.$emit('filter-settings-closed');
       this.showMenu = false;

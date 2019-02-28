@@ -214,7 +214,7 @@ class FilterModel {
     }
     for (var key in resultMap) {
       resultMap[key].features.forEach( function(variant) {
-        if (!variant.hasOwnProperty('fbCalled') || variant.fbCalled != 'Y') {
+        if (!variant.hasOwnProperty('fbCalled') || variant.fbCalled !== 'Y') {
           self.recFilters[variant.recfilter] = variant.recfilter;
         }
       });
@@ -341,9 +341,9 @@ class FilterModel {
 
 
 
-  passesModelFilter(relationship, variant) {
+  passesModelFilter(sampleId, variant) {
     let self = this;
-    let theFilters = self.modelFilters[relationship];
+    let theFilters = self.modelFilters[sampleId];
     if (theFilters) {
       let passCount = 0;
       for (var key in theFilters) {
@@ -356,7 +356,7 @@ class FilterModel {
           passCount++;
         }
       }
-      return passCount == Object.keys(theFilters).length;
+      return passCount === Object.keys(theFilters).length;
     } else {
       return true;
     }
