@@ -4,434 +4,518 @@
 */
 <style lang="sass">
   @import ../../../assets/sass/variables
+  $landing-page-font: Poppins
+  $accent-color: #10487f
+  $accent-color-light: #1662ac
+  $powered-by-accent-color: #1662ac
+  $accent-color-bright: #14c39a
+  $header-color: #818181
+  $brown-gray: #393c40
+  $mid-blue-color: #416b9a
+  $light-gray-color: #f0f1f3
+  $cohort-blue: #95b0c6
+  $app-gray: #888888
+  .image-shadow
+    -webkit-box-shadow: 6px 11px 68px -7px rgba(0, 0, 0, 0.49)
+    box-shadow: 6px 11px 68px -7px rgba(0, 0, 0, 0.49)
+
   #welcome-area
-    text-align: center
-    margin-top: 25px
+    margin-top: -5px
     display: flex
     justify-content: space-around
     flex-direction: column
     align-items: center
+    margin-left: -5px
+    margin-right: -5px
     .welcome-panel
-      background-color: white
-      padding-bottom: 15px
-      padding-top: 15px
-      padding-left: 10px
-      padding-right: 10px
-      margin-top: 20px
-      width:  850px
+      padding-bottom: 0px
+      &.main
+        background: linear-gradient(128deg, #961313 0%, #961313 5%, #7f1010 10%, #10487f 65%)
+        //background: white
+        display: flex
+        flex-direction: row
+        align-items: flex-start
+        justify-content: space-between
+        width: 100%
+        .main-headline
+          display: flex
+          flex-direction: row
+          padding-top: 70px
+          margin-left: 30px
+          margin-right: 30px
+          width: 40%
+      &.videos-and-blogs
+        //background: linear-gradient(262deg, rgba(43,70,101,1) 23%, rgba(61,99,142,1) 73%, rgba(73,132,170,1) 95%, rgba(52,80,96,1) 100%)
+        background: white
+        padding-top: 20px
+        padding-bottom: 20px
+        padding-left: 30px
+        padding-right: 30px
+        width: 100%
+      &.how-it-works
+        width: 70%
+        flex-grow: 2
+        //background: linear-gradient(262deg, rgba(43,70,101,1) 23%, rgba(61,99,142,1) 73%, rgba(73,132,170,1) 95%, rgba(52,80,96,1) 100%)
+        //background: linear-gradient(304deg, rgba(43,70,101,1) 14%, rgba(61,99,142,1) 68%, rgba(94,141,184,1) 85%)
+        background-color: white
+      &.features
+        background-color: white
+      &.resources
+        background-color: $light-gray-color !important
+        padding-top: 20px
+        padding-bottom: 20px
+        margin: 0
+      &.collaborations
+        background-color: $mid-blue-color
       #welcome-label
-        color: $text-color
-        font-size: 20px
+        color: white
+        //color:          $header-color
+        font-size: 32px
+        line-height: 36px
+        font-family: $landing-page-font
+        font-weight: normal
+        padding-bottom: 5px
       #welcome-label-small
-        color: $text-color
-        font-size: 16px
-      #what-is-new-link
-        font-size: 18px
-      #helpful-articles-link
-        font-size: 18px
-      button
+        color: $app-gray
+        font-size: 20px
+        font-family: $landing-page-font
+        font-weight: normal
+        padding-bottom: 10px
+        font-weight: normal
+        padding-left: 30px
+        &.accent-label
+          color: $app-color
+      .buttons-group
+        margin-top: 0px !important
+        padding-top: 30px
+        display: flex
+        flex-direction: column
+        align-items: center
+      button.welcome-button
         font-size: 16px !important
         margin-left: 7px
         margin-right: 7px
+        height: 40px
+        width: 270px
+        margin-bottom: 10px
+        background-color: $accent-color
+        color: $accent-color
+        font-family: $landing-page-font
+        margin-bottom: 30px
+        i.material-icons
+          font-size: 26px
+          width: 26px
+          color: white
+          margin-right: 7px
+        .btn__content
+          color: white
+      button.welcome-button-outline
+        font-size: 16px !important
+        margin-left: 7px
+        margin-right: 7px
+        height: 40px
+        width: 230px
+        margin-bottom: 10px
+        background-color: white
+        color: $accent-color
+        font-family: $landing-page-font
+        border: thin solid $accent-color
+        i.material-icons
+          font-size: 26px
+          width: 26px
+          color: $accent-color
+          margin-right: 7px
+        .btn__content
+          color: $accent-color
       #welcome-panel-content
         display: flex
         justify-content: center
         margin-top: 0px
-        i.material-icons
-          font-size: 20px
-          vertical-align: middle
-          display: inline-block
-          padding-top: 2px
-          float: left
-          color: $welcome-accent-color
-        span.bullet-item
-          display: inline-block
-          float: left
-          word-wrap: break-word
-          width: 260px
-          margin-left: 5px
-          margin-bottom: 15px
-        .description-paragraph
-          text-align: left
-          margin-top: 50px
-          color: $text-color
-          font-size: 18px
-          margin-right: 0px
-          margin-left: 100px
-          li
-            padding-bottom: 10px
-            li
-              padding-bottom: 4px
-        #video-thumbprint-heading
-          font-size: 18px
-          color: $text-color
-          margin-top: 0px
-          margin-bottom: 3px
-        #video-thumbprint-panel
-          margin-top: 0px
-          margin-bottom: 10px
-        #video-thumbprint-content
-          display: flex
-          flex-wrap: wrap
-        .video-thumbprint-well
-          position: relative
-          width: 110px
-          text-align: center
-          margin-left: 0px
-          .video-title
-            margin-top: 10px
-            margin-left: 10px
-            margin-right: 10px
-            color: $welcome-header-color
-            font-size: 14px
-            line-height: 17px
-            height: 65px
-            border: $welcome-border-color solid thin
-            padding: 5px
-            width: 100px
-            #play-button
-              cursor: pointer
-              opacity: 0.4
-              color: $play-button-color
-              font-size: 50px
-              position: absolute
-              top: 18px
-              left: 30px
-          .video-thumbprint
-            width: 90px
-            height: 50px
-            margin-top: 5px
-            margin-left: 10px
-            background-color: grey
-            background-size: cover
-            display: none
-            #play-button
-              cursor: pointer
-              opacity: 0.5
-              color: rgba(70, 70, 70, 0.9)
-              font-size: 60px
-              position: absolute
-              top: 0px
-              left: 25px
-          #welcome-screencast-panel-multigene-analysis
-            background-image: url('../../../assets/images/thumbprint-multigene.png')
-          #welcome-screencast-panel-saving-analysis
-            background-image: url('../../../assets/images/thumbprint-bookmarks.png')
-          #welcome-screencast-panel-coverage-analysis
-            background-image: url('../../../assets/images/thumbprint-coverage.png')
-        #video-thumbprint-heading-large
-          font-size: 20px
-          color: $text-color
-          position: relative
-          top: 55px
-          cursor: default
-        .video-thumbprint-well-large
-          position: relative
-          width: 250px
-          height: 160px !important
-          text-align: center
-          margin-left: 0px
-          .video-title
-            margin-top: 10px
-            margin-left: 10px
-            margin-right: 10px
-            color: white
-            font-size: 16px
-            line-height: 17px
-          .video-thumbprint-large
-            background-color: grey
-            background-size: cover
-            #play-button
-              cursor: pointer
-              opacity: .4
-              color: $play-button-color
-              font-size: 90px
-              position: absolute
-              top: 40px
-              left: 80px
-              cursor: pointer
-          #welcome-screencast-panel-intro
-            background-color: white
+
+  .resources-panel
+    flex-wrap: wrap
+    justify-content: center !important
+    margin: 0
+    .avatar
+      min-height: 90px
+      min-width: 90px
+      margin-bottom: 10px
+      margin-left: 10px
+      margin-right: 10px
+      background-color: transparent !important
+      border: 2px solid white
+      border-color: $powered-by-accent-color !important
+      span
+        font-size: 15px
+
+  .resources-panel, .collaborators-panel
+    padding-top: 20px
+    display: flex
+    justify-content: space-around
+    flex-direction: row
+    div
+      color: white
+      font-family: $landing-page-font
+      font-size: 18px
+      margin-left: 25px
+      margin-right: 25px
+      text-align: center
+      line-height: 22px
+
+  .how-it-works-panel, .features-panel
+    clear: both
+    display: flex
+    flex-direction: column
+    justify-content: space-between
+    flex-wrap: wrap
+    padding-top: 5px
+    .divider
+      background-color: transparent
+      max-width: 90%
+      margin-top: 20px
+      margin-bottom: 15px
+    div.features-item
+      margin-bottom: 40px
+      i.material-icons
+        display: inline
+        margin-right: 8px
+        color: $accent-color
+        font-size: 28px
+    div.how-it-works-item, div.features-item
+      display: flex
+      padding-left: 30px
+      .avatar
+        margin-right: 10px
+        min-width: 28px !important
+        min-height: 28px !important
+        &.teal
+          background-color: $cohort-blue !important
+        span.headline
+          font-size: 15px !important
+      .how-it-works-image, .features-image
+        margin-right: 0px
+        padding-left: 50px
+        img
+          max-width: 400px
+          min-width: 200px
+          -webkit-box-shadow: 6px 11px 68px -7px rgba(0, 0, 0, 0.49)
+          box-shadow: 6px 11px 68px -7px rgba(0, 0, 0, 0.49)
+      .how-it-works-title, .features-title
+        font-family: $landing-page-font
+        font-size: 18px
+        display: inline-block
+        line-height: 24px
+        margin-right: 50px
+      /*width: 400px*/
+      .how-it-works-title, .features-title
+        margin-right: 10px
+        min-width: 350px
+        max-width: 350px
+      .features-title
+        color: $header-color
+        font-weight: 500
+      .how-it-works-title
+        color: $header-color
+        font-weight: 500
+
+  #blog-post-content, .video-content
+    display: flex
+    flex-wrap: wrap
+    flex-direction: row
+    justify-content: space-between
+    align-items: center
+    padding-bottom: 40px
+    padding-top: 20px
+    padding-left: 40px
+    padding-right: 20px
+    .blog-post
+      height: 100px
+      width: 200px
+      margin-bottom: 50px
+      .blog-post-title
+        font-family: $landing-page-font
+        color: $app-color
+        font-size: 20px
+        padding-top: 15px
+        text-align: center
+        padding-bottom: 5px
+        font-weight: 500
+      .blog-post-well
+        position: relative
+        cursor: pointer
+        position: relative
+        text-align: center
+        margin-left: 0px
+        outline: thin solid lightgray
+    .video-item
+      margin-right: 30px
+      margin-bottom: 20px
+    .video-thumbnail-placeholder
+      height: 132px
+      width: 252px
+      cursor: pointer
+      outline: 1px solid lightgray
+      position: relative
+      img
+        width: 250px
+        height: 130px
+      #play-button
+        cursor: pointer
+        color: $app-color
+        font-size: 80px
+        top: 30px
+        left: 90px
+        opacity: .7
+        position: absolute
+    .video-text-title
+      font-size: 20px
+      font-family: $landing-page-font
+      cursor: pointer
+      color: $app-color
+      padding-bottom: 5px
+      text-align: center
+      font-weight: 500
+
   #screencast-panel
-    text-align: center
-    margin-top: 50px
-    overflow: visible
+    margin-top: -5px
+    display: flex
+    height: -webkit-fill-available
+    justify-content: space-around
+    flex-direction: column
+    align-items: center
+    margin-left: -5px
+    margin-right: -5px
+    background: linear-gradient(180deg, rgba(49, 82, 120, 1) 11%, rgba(61, 99, 142, 1) 84%, rgba(22, 129, 167, 1) 97%)
     .video-container
-      height: 430px
-      width: 680px
-      background-color: white
+      height: 500px
+      width: 780px
       margin-left: auto
       margin-right: auto
+      text-align: center
       h4
-        font-size: 21px
+        font-size: 24px
         padding-top: 10px
-        margin-right: 50px
+        margin-right: 90px
+        font-family: $landing-page-font
+        color: white
+      i.material-icons
+        color: white !important
       .video-stop-button
         float: left
         margin-left: 10px
         padding-left: 0
-        margin-top:  5px
+        margin-top: 5px
         margin-bottom: 0px
         i.material-icons
           text-align: left
+          color: white !important
       .iframe-placeholder
         position: relative
         height: 0
         padding-bottom: 75.0%
 </style>
 
+<style>
+  @media only screen and (max-width: 1130px) {
+    .how-it-works .how-it-works-panel .how-it-works-image img {
+      max-width: 300px !important;
+    }
+  }
+
+  @media only screen and (max-width: 1000px) {
+    .welcome-panel.main img,
+    .welcome-panel.main .image-shadow {
+      display: none
+    }
+
+    .how-it-works-panel {
+      padding: 0px;
+    }
+  }
+
+  @media only screen and (max-width: 768px) {
+    .welcome-panel.how-it-works {
+      padding-left: 20px;
+    }
+  }
+
+  @media only screen and (max-width: 600px) {
+    #welcome-area .welcome-panel.main {
+      flex-direction: column !important;
+    }
+
+    #welcome-area .welcome-panel.how-it-works {
+      width: 100%;
+    }
+
+    .how-it-works-panel {
+      align-items: center;
+    }
+
+    #welcome-area .welcome-panel.main .main-headline {
+      padding-top: 15px;
+      width: fit-content;
+    }
+
+    .welcome-panel.main img,
+    .welcome-panel.main .image-shadow,
+    .welcome-panel.how-it-works img,
+    .welcome-panel.features img,
+    .how-it-works-image,
+    .features-image {
+      display: none
+    }
+
+    .how-it-works-panel {
+      padding: 20px;
+    }
+  }
+</style>
+
 <template>
-  <div>
-    <div id="screencast-panel" class="hide">
-
-
-
-      <div id="screencast-intro" class="hide video-container">
-        <button  class="video-stop-button btn " @click="stopVideo('screencast-intro')">
-          <i class="material-icons">arrow_back</i>
-        </button>
-        <h4>Introducing gene.iobio</h4>
-        <div id="screencast-intro-iframe-placeholder"></div>
-      </div>
-
-      <div id="screencast-coverage-analysis" class="hide video-container" >
-        <button class="video-stop-button btn " @click="stopVideo('screencast-coverage-analysis')">
-          <i class="material-icons">arrow_back</i>
-        </button>
-        <h4>Assessing insufficient coverage</h4>
-        <div id="screencast-coverage-analysis-iframe-placeholder"></div>
-      </div>
-
-      <div id="screencast-saving-analysis" class="hide video-container" >
-        <button class="video-stop-button btn btn-default" @click="stopVideo('screencast-saving-analysis')">
-          <i class="material-icons">arrow_back</i>
-        </button>
-        <h4>Saving your variant analysis</h4>
-        <div id="screencast-saving-analysis-iframe-placeholder"></div>
-      </div>
-
-      <div id="screencast-multi-gene-analysis" class="hide video-container" >
-        <button class="video-stop-button btn btn-default" @click="stopVideo('screencast-multi-gene-analysis')">
-          <i class="material-icons" style="text-align: left;">
-            arrow_back
-          </i>
-        </button>
-        <h4>Multi-gene analysis</h4>
-        <div id="screencast-multi-gene-analysis-iframe-placeholder"></div>
-      </div>
-    </div>
-
-
-
-
-
-    <div id="welcome-area" class="">
-
-      <div class="welcome-panel" >
-        <div id="welcome-label">
-          A web tool for disease-causing variant interrogation
-        </div>
-        <div id="welcome-panel-content">
-
-          <div id="video-thumbprint-panel" style="margin-top:55px">
-            <div id="video-thumbprint-content">
-
-              <v-card  class="video-thumbprint-well-large shadow-z-2">
-                <div id="welcome-screencast-panel-intro" class="video-thumbprint-large" >
-                  <span id="video-thumbprint-heading-large">Introducing<br>gene.iobio</span>
-                  <i class="material-icons" id="play-button" @click="playVideo('screencast-intro')">
-                    play_arrow
-                  </i>
+  <div style="background-color: white">
+    <div id="welcome-area" style="background-color:white; flex-grow: 1">
+      <div class="welcome-panel main">
+        <div class="main-headline">
+          <div style="padding-top:10px;padding-left:0px;padding-right:20px; width:100%">
+            <transition-group name="fadeDown">
+              <div v-if="showWelcomeLabel" style="animation-duration: 1s; " key="welcome-label"
+                   id="welcome-label">
+                <div style="text-align: center">
+                  Analyze Somatic Variants <br> in Real-time
                 </div>
-                <div class="video-title"></div>
-              </v-card>
-            </div>
+              </div>
+            </transition-group>
+
+            <transition-group name="fadeDown" tag="div">
+              <div v-if="showWelcomeButton" key="welcome-button" class="buttons-group"
+                   style="text-align:center;animation-duration: 1s;">
+                <v-btn class="welcome-button" id="load-demo-data" @click="onLoadDemoData">
+                  <i class="material-icons">local_library</i>
+                  RUN WITH DEMO DATA
+                </v-btn>
+                <v-btn class="welcome-button" @click="openMosaic">
+                  <i class="material-icons">cloud_queue</i>
+                  LAUNCH FROM MOSAIC
+                </v-btn>
+                <v-btn class="welcome-button" @click="openFileSelection">
+                  <i class="material-icons">folder_open</i>
+                  UPLOAD CONFIGURATION
+                </v-btn>
+              </div>
+            </transition-group>
           </div>
-
-          <div class="description-paragraph">
-            <div>
-
-              <div>
-                <i class="material-icons">check_circle</i>
-                <span class="bullet-item">Real-time analysis</span>
-              </div>
-
-              <div>
-                <i class="material-icons">check_circle</i>
-                <span class="bullet-item">On-the-fly annotation</span>
-              </div>
-              <div>
-                <i class="material-icons">check_circle</i>
-                <span class="bullet-item">Integrated genomic visualizations</span>
-              </div>
-              <div>
-                <i class="material-icons">check_circle</i>
-                <span class="bullet-item">On-demand variant calling</span>
+        </div>
+        <div class="welcome-panel how-it-works">
+          <br>
+          <div id="welcome-label-small" class="accent-label"
+               style="padding-top:10px;text-align:center"></div>
+          <div class="how-it-works-panel">
+            <div class="how-it-works-item">
+              <v-avatar size="28px" color="appHighlight">
+                <span class="white--text headline">1</span>
+              </v-avatar>
+              <span class="how-it-works-title">SELECT cohort data from your machine, the cloud, or our project-hosting platform <i>Mosaic</i></span>
+              <div class="how-it-works-image">
+                <!--<img src="../../../assets/images/file_menu_cohort.png" style="">-->
               </div>
             </div>
 
-          </div>
+            <v-divider></v-divider>
 
-        </div>
-
-
-
-
-        <div style="margin-top:30px">
-          <v-btn id="load-demo-data"  @click="onLoadDemoData">
-            Try it with demo data
-          </v-btn>
-          <v-btn   @click="onAppTour">
-            Take guided tour
-          </v-btn>
-        </div>
-      </div>
-
-      <div class="welcome-panel" style="padding:0px;background:transparent;margin-top:20px">
-        <div id="welcome-label-small">
-          Videos
-        </div>
-        <div id="welcome-panel-content"  style="display:flex;justify-content:space-around">
-
-
-          <div id="video-thumbprint-panel">
-            <div id="video-thumbprint-content">
-
-
-              <div class="video-thumbprint-well ">
-                <div id="welcome-screencast-panel-multigene-analysis" class="video-thumbprint shadow-z-2">
-                </div>
-                <div class="video-title">
-                  <i class="material-icons" id="play-button" @click="playVideo('screencast-multi-gene-analysis')">play_arrow
-                  </i>
-                  Multi-gene analysis
-                </div>
+            <div class="how-it-works-item">
+              <v-avatar size="28px" color="appHighlight">
+                <span class="white--text headline">2</span>
+              </v-avatar>
+              <span class="how-it-works-title">ENTER a gene of interest</span>
+              <div class="how-it-works-image">
+                <!--<img src="../../../assets/images/gene_selection_cohort.png" style="width:230px">-->
               </div>
+            </div>
+            <v-divider></v-divider>
 
 
-              <div class="video-thumbprint-well ">
-                <div id="welcome-screencast-panel-coverage-analysis" class="video-thumbprint shadow-z-2" >
-                  <i class="material-icons" id="play-button" @click="playVideo('screencast-coverage-analysis')">play_arrow
-                  </i>
-                </div>
-                <div class="video-title">
-                  <i class="material-icons" id="play-button" @click="playVideo('screencast-coverage-analysis')">play_arrow
-                  </i>
-                  Coverage analysis
-                </div>
+            <div class="how-it-works-item">
+              <v-avatar size="28px" color="appHighlight">
+                <span class="white--text headline">3</span>
+              </v-avatar>
+              <span class="how-it-works-title">IDENTIFY enriched genomic variants within the selected cohort</span>
+              <div class="how-it-works-image">
+                <!--<img src="../../../assets/images/track_600_cohort.png" style="max-width:600px">-->
               </div>
+            </div>
+
+            <div class="how-it-works-item" style="margin-top: -95px">
+              <v-avatar size="28px" color="appHighlight">
+                <span class="white--text headline">4</span>
+              </v-avatar>
+              <span class="how-it-works-title">HIGHLIGHT common variants in both the cohort and individual patient samples</span>
+            </div>
+            <v-divider></v-divider>
+            <v-divider></v-divider>
 
 
-
-              <div class="video-thumbprint-well ">
-                <div id="welcome-screencast-panel-saving-analysis" class="video-thumbprint shadow-z-2" >
-                  <i class="material-icons" id="play-button" @click="playVideo('screencast-saving-analysis')">play_arrow
-                  </i>
-                </div>
-                <div class="video-title">
-                  <i class="material-icons" id="play-button" @click="playVideo('screencast-saving-analysis')">play_arrow
-                  </i>
-                  Saving your analysis
-
-                </div>
+            <div class="how-it-works-item">
+              <v-avatar size="28px" color="appHighlight">
+                <span class="white--text headline">5</span>
+              </v-avatar>
+              <span class="how-it-works-title">CLICK on a variant to view the most up-to-date annotations from ClinVar, VEP, gnomAD</span>
+              <div class="how-it-works-image">
+                <!--<img src="../../../assets/images/anno_details_cohort.png" style="width: 270px;">-->
+                <!--<img src="../../../assets/images/freq_cohort.png"-->
+                     <!--style="max-width:350px; margin-left: 20px">-->
               </div>
+            </div>
 
+            <v-divider></v-divider>
 
+            <div class="how-it-works-item">
+              <v-avatar size="28px" color="appHighlight">
+                <span class="white--text headline">6</span>
+              </v-avatar>
+              <span class="how-it-works-title">FILTER variants by enrichment, impact, and frequency</span>
+            </div>
+            <v-divider></v-divider>
 
-
-
-
-
+            <div class="welcome-panel resources">
+              <div id="welcome-label-small">
+                IOBIO. Powered by state-of-the-art bioinformatics tools.
+              </div>
+              <div class="resources-panel">
+                <v-avatar>
+                  <span class="grey--text">VEP</span>
+                </v-avatar>
+                <v-avatar color="teal">
+                  <span class="grey--text">Samtools</span>
+                </v-avatar>
+                <v-avatar color="teal">
+                  <span class="grey--text">Tabix</span>
+                </v-avatar>
+                <v-avatar color="teal">
+                  <span class="grey--text">vt</span>
+                </v-avatar>
+                <v-avatar color="teal">
+                  <span class="grey--text">GNomAD</span>
+                </v-avatar>
+                <v-avatar color="teal">
+                  <span class="grey--text">1000 Genomes</span>
+                </v-avatar>
+                <v-avatar color="teal">
+                  <span class="grey--text">Phenolyzer</span>
+                </v-avatar>
+                <v-avatar color="teal">
+                  <span class="grey--text">RefSeq</span>
+                </v-avatar>
+                <v-avatar color="teal">
+                  <span class="grey--text">Gencode</span>
+                </v-avatar>
+                <v-avatar color="teal">
+                  <span class="grey--text">HPO</span>
+                </v-avatar>
+              </div>
             </div>
           </div>
         </div>
-
-
-
-      </div>
-
-      <div class="welcome-panel" style="background:transparent;margin-top:0px;padding-top:10px">
-        <div id="welcome-label-small">
-          Blog Posts
-        </div>
-        <div id="welcome-panel-content"  style="display:flex;justify-content:space-around">
-
-
-          <div id="video-thumbprint-panel">
-            <div id="video-thumbprint-content">
-
-
-
-              <a href="http://iobio.io/2018/07/20/gene_3.0/" target="_new">
-                <div class="video-thumbprint-well ">
-                  <div class="video-thumbprint shadow-z-2" >
-
-                  </div>
-                  <div class="video-title">
-                    New gene.iobio 3.0
-                  </div>
-                </div>
-              </a>
-
-
-
-              <a href="http://iobio.io/2017/09/27/loading-data/" target="_new">
-                <div class="video-thumbprint-well ">
-                  <div class="video-thumbprint shadow-z-2" >
-
-                  </div>
-                  <div class="video-title">
-                    How to load your data
-                  </div>
-                </div>
-              </a>
-
-
-              <a href="http://iobio.io/2017/04/26/gene_2.3.0/" target="_new">
-                <div class="video-thumbprint-well ">
-                  <div class="video-thumbprint shadow-z-2" >
-                  </div>
-                  <div class="video-title">
-                    Saving and loading your analysis
-                  </div>
-                </div>
-              </a>
-
-
-
-              <a href="http://iobio.io/2017/07/11/coverage/" target="_new">
-                <div class="video-thumbprint-well ">
-                  <div class="video-thumbprint shadow-z-2" >
-                  </div>
-                  <div class="video-title">
-                    Coverage analysis
-                  </div>
-                </div>
-              </a>
-
-
-              <a href="http://iobio.io/2017/09/29/gene_2.5.0/" target="_new">
-                <div class="video-thumbprint-well ">
-                  <div class="video-thumbprint shadow-z-2" >
-                  </div>
-                  <div class="video-title">
-                    ClinVar and gnomAD
-                  </div>
-                </div>
-              </a>
-
-
-
-
-
-
-
-            </div>
-          </div>
-        </div>
-
-
-
       </div>
     </div>
   </div>
@@ -441,52 +525,73 @@
 <script>
     export default {
         name: 'welcome',
-        components: {
-        },
+        components: {},
         props: {
+            isBasicMode: null,
+            isEduMode: null,
+            launchedFromClin: null
         },
         data() {
             return {
+                appFeatures: [
+                    {key: 1, display: 'Analyze in<br>real-time', icon: "feature-realtime"},
+                    {key: 2, display: 'Annotate and segregate variants', icon: "feature-analysis"},
+                    {key: 3, display: 'Visualize<br>data', icon: "feature-viz"},
+                    {key: 4, display: 'Inspect<br>coverage', icon: "feature-coverage"},
+                    {key: 5, display: 'Recall<br>variants', icon: "feature-on-demand"},
+                ],
+                showWelcomeLabel: false,
+                showWelcomeFeature: false,
+                showWelcomeButton: false,
                 videoPlayer: null,
                 videoStyle: "position:absolute;width:100%;height:100%;left:0",
-                videoConfigs : {
+                videoConfigs: {
                     'screencast-intro': {
                         src: "https://www.youtube.com/embed/1R3kuXh6seQ?autoplay=1&rel=0&ecver=2",
                         videoId: '1R3kuXh6seQ',
-                        width: 623,
-                        height: 369,
+                        width: 670,
+                        height: 420,
                         frameborder: "0",
                         allowfullscreen: ""
                     },
                     'screencast-coverage-analysis': {
                         src: "https://www.youtube.com/embed/dnq8HtthDgU?autoplay=1&rel=0&ecver=2",
                         videoId: 'dnq8HtthDgU',
-                        width: 623,
-                        height: 369,
+                        width: 670,
+                        height: 420,
                         frameborder: "0",
                         allowfullscreen: ""
                     },
                     'screencast-saving-analysis': {
                         src: "https://www.youtube.com/embed/6T8DkrJWd6w?autoplay=1&rel=0&ecver=2",
                         videoId: '6T8DkrJWd6w',
-                        width: 623,
-                        height: 369,
+                        width: 670,
+                        height: 420,
                         frameborder: "0",
                         allowfullscreen: ""
                     },
                     'screencast-multi-gene-analysis': {
                         src: "https://www.youtube.com/embed/EW2Sm4HEAPg?autoplay=1&rel=0&ecver=2",
                         videoId: 'EW2Sm4HEAPg',
-                        width: 623,
-                        height: 369,
+                        width: 670,
+                        height: 420,
                         frameborder: "0",
                         allowfullscreen: ""
                     }
                 }
             }
         },
+        mounted: function () {
+            let self = this;
+            let delay = 0;
+            this.showWelcomeLabel = true;
+            self.showWelcomeButton = true;
+            if (!this.launchedFromClin && !this.isBasicMode && !this.isEduMode) {
+                self.showWelcomeFeature = true;
+            }
+        },
         methods: {
-            playVideo: function(videoName) {
+            playVideo: function (videoName) {
                 let self = this;
                 var videoContainer = $('#' + videoName);
                 var config = this.videoConfigs[videoName];
@@ -495,6 +600,8 @@
                 $('#welcome-area').addClass('hide');
                 $('#screencast-panel').removeClass('hide');
                 $('.video-container').addClass('hide');
+                $('#background-img-container').addClass('hide');
+                $('#diagonal-background').addClass('hide');
                 videoContainer.removeClass('hide');
                 // Load the video if the iframe doesn't exist
                 if (videoContainer.find("iframe").length == 0) {
@@ -517,11 +624,11 @@
                     self.videoPlayer.playVideo();
                 }
             },
-            onPlayerReady: function(event) {
+            onPlayerReady: function (event) {
                 let self = this;
                 event.target.playVideo();
             },
-            onPlayerStateChange: function() {
+            onPlayerStateChange: function () {
                 let self = this;
                 var eventData = JSON.parse(event.data);
                 if (eventData && eventData.hasOwnProperty("info")) {
@@ -531,17 +638,23 @@
                     }
                 }
             },
-            stopVideo: function(videoName) {
+            stopVideo: function (videoName) {
                 let self = this;
                 self.videoPlayer.pauseVideo();
                 $('#welcome-area').removeClass('hide');
                 $('#screencast-panel').addClass('hide');
+                $('#background-img-container').removeClass('hide');
+                $('#diagonal-background').removeClass('hide');
             },
-            onLoadDemoData: function() {
+            onLoadDemoData: function () {
                 this.$emit("load-demo-data");
             },
-            onAppTour: function() {
-                this.$emit("take-app-tour");
+            openFileSelection: function () {
+                let self = this;
+                self.$emit('open-file-selection');
+            },
+            openMosaic: function () {
+                window.open('https://viewer.sfari.org');
             }
         }
     }

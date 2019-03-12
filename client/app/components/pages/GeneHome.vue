@@ -253,13 +253,12 @@
                     </split-pane>
                 </div>
 
-
-                <welcome
-                        v-if="showWelcome"
-                        @load-demo-data="onLoadDemoData"
-                        @take-app-tour="onTakeAppTour"
-                >
-                </welcome>
+                <v-flex xs12 v-if="showWelcome">
+                    <welcome
+                            @load-demo-data="onLoadDemoData"
+                            @open-file-selection="openFileSelection">
+                    </welcome>
+                </v-flex>
 
                 <v-card style="width:400px;height:50px;padding-top:15px"
                         id="data-sources-loader"

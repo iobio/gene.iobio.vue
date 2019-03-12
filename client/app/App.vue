@@ -61,6 +61,11 @@ button
 
 </style>
 
+<style lang="scss">
+  @import url('https://fonts.googleapis.com/css?family=Open+Sans|Quattrocento|Quattrocento+Sans|Quicksand|Roboto');
+  @import url("https://fonts.googleapis.com/css?family=Poppins");
+</style>
+
 <template>
 
   <div id="app">
