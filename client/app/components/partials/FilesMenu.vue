@@ -428,6 +428,22 @@
                 self.loadDemoFromWelcome = true;
                 self.showFilesMenu = true;
             },
+            updateBuildAndValidate: function(newVal) {
+                let self = this;
+                if (newVal !== self.buildName) {    // self.buildName still oldVal at this point
+                    self.cohortModel.genomeBuildHelper.setCurrentBuild(newVal);
+                    if (self.$refs.entryDataRef) {
+                        self.$refs.entryDataRef.forEach((entryRef) => {
+                            if (!(self.launchedFromHub && entryRef.dragId === 's0')) {
+                                entryRef.retryEnteredUrls()
+                                    .catch((errObj) => {
+                                        console.log('There was a problem with retryEnteredUrls: ' + errObj);
+                                    })
+                            }
+                        })
+                    }
+                }
+            },
             closeFileMenu: function() {
                 let self = this;
                 self.loadDemoFromWelcome = true;
@@ -508,7 +524,7 @@
                     Promise.all(addPromises)
                         .then(() => {
                             // Turn on loading spinners
-                            for (let i = self.launchedFromHub ? 1 : 0; i < self.$refs.entryDataRef.length; i++) {
+                            for (let i = self.launchedFromHub ? 1 : 0; i < self.$refs.sampleDataRef.length; i++) {
                                 self.$refs.sampleDataRef[i].setLoadingFlags(true);
                             }
 
@@ -521,6 +537,7 @@
                             }
                             resolve();
                         }).catch((error) => {
+                            debugger;
                             reject('Problem in autoloading in files menu: ' + error);
                     })
                 });
@@ -794,7 +811,7 @@
         },
         mounted: function () {
             if (this.cohortModel) {
-                this.speciesName = this.cohortModel.genomeBuildHelper.getCurrentSpeciesName();
+                // this.speciesName = this.cohortModel.genomeBuildHelper.getCurrentSpeciesName();
                 this.buildName = this.cohortModel.genomeBuildHelper.getCurrentBuildName();
                 this.speciesList = this.cohortModel.genomeBuildHelper.speciesList.map(function (sp) {
                     return sp.name;

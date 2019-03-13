@@ -232,25 +232,25 @@
             }
         },
         watch: {
-            'modelInfo.vcfs': function (newVal, oldVal) {
+            'modelInfo.vcf': function (newVal, oldVal) {
                 let self = this;
                 if (newVal) {
                     self.firstVcf = newVal[0];
                 }
             },
-            'modelInfo.tbis': function (newVal, oldVal) {
+            'modelInfo.tbi': function (newVal, oldVal) {
                 let self = this;
                 if (newVal) {
                     self.firstTbi = newVal[0];
                 }
             },
-            'modelInfo.bams': function (newVal, oldVal) {
+            'modelInfo.bam': function (newVal, oldVal) {
                 let self = this;
                 if (newVal) {
                     self.firstBam = newVal[0];
                 }
             },
-            'modelInfo.bais': function (newVal, oldVal) {
+            'modelInfo.bai': function (newVal, oldVal) {
                 let self = this;
                 if (newVal) {
                     self.firstBai = newVal[0];
@@ -283,11 +283,11 @@
             onVcfUrlEntered: function (vcfUrl, tbiUrl) {
                 let self = this;
                 if (vcfUrl === '') {
-                    self.modelInfo.vcfs = [];
+                    self.modelInfo.vcf = null;
                     self.firstVcf = null;
                 }
                 if (tbiUrl === '') {
-                    self.modelInfo.tbis = null;
+                    self.modelInfo.tbi = null;
                     self.firstTbi = null;
                 }
 
@@ -395,9 +395,9 @@
                     self.modelInfo.model.onBamUrlEntered(bamUrl, baiUrl, function (success) {
                         self.checkingBam = false;
                         if (success) {
-                            self.modelInfo.bams = [bamUrl];
+                            self.modelInfo.bam = [bamUrl];
                             if (baiUrl) {
-                                self.modelInfo.bais = [baiUrl];
+                                self.modelInfo.bai = [baiUrl];
                             }
                         } else {
                             self.bamError = true;
@@ -406,11 +406,11 @@
                     })
                 }
                 if (bamUrl === '') {
-                    self.modelInfo.bams = [];
+                    self.modelInfo.bam = null;
                     self.firstBam = null;
                 }
                 if (baiUrl === '') {
-                    self.modelInfo.bais = null;
+                    self.modelInfo.bai = null;
                     self.firstBai = null;
                 }
             },
@@ -483,7 +483,7 @@
             setLoadingFlags: function (flagState) {
                 let self = this;
                 self.retrievingIds = flagState;
-                if (self.modelInfo.bams.length > 0) {
+                if (self.modelInfo.bam) {
                     self.checkingBam = flagState;
                 }
             },
@@ -513,17 +513,17 @@
             //     self.onVcfUrlEntered(self.modelInfo.vcf, self.modelInfo.tbi);
             // }
             // If we've already filled in the file menu, populate accordingly
-            if (self.modelInfo.vcfs) {
-                self.firstVcf = self.modelInfo.vcfs[0];
+            if (self.modelInfo.vcf) {
+                self.firstVcf = self.modelInfo.vcf;
             }
-            if (self.modelInfo.tbis) {
-                self.firstTbi = self.modelInfo.tbis[0];
+            if (self.modelInfo.tbi) {
+                self.firstTbi = self.modelInfo.tbi;
             }
-            if (self.modelInfo.bams) {
-                self.firstBam = self.modelInfo.bams[0];
+            if (self.modelInfo.bam) {
+                self.firstBam = self.modelInfo.bam;
             }
-            if (self.modelInfo.bais) {
-                self.firstBai = self.modelInfo.bais[0];
+            if (self.modelInfo.bai) {
+                self.firstBai = self.modelInfo.bai];
             }
 
         }
