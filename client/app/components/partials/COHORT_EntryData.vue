@@ -596,30 +596,14 @@
                     return !self.excludeSampleIds.includes(sample);
                 });
             },
-            /* Fills in samples field with all sample IDs seen when checking provided vcf urls.
-             * If this is a cohort entry, fills in subset, proband, and exclude sample ID arrays.
-             * Else if this is a sample entry, fills in selected sample ID.
-             * Fills sample fields in both view and model. */
-            fillSampleFields: function (samples, sampleToSelect, subsetSampleIds, excludeSampleIds) {
+            /* Fills selectedSample & samples fields in both view and model. */
+            fillSampleFields: function (samples, sampleToSelect) {
                 let self = this;
 
                 self.samples = samples;
                 if (sampleToSelect) {
                     self.selectedSample = sampleToSelect;
-                    self.modelInfo.dataSet.setSelectedSample(sampleToSelect);
-                } else {
-                    self.subsetSampleIds = subsetSampleIds;
-                    self.excludeSampleIds = excludeSampleIds;
-                    self.selectedSample = null;
-                    self.modelInfo.dataSet.setProbandIds(self.getProbandIds());
-                }
-                if (subsetSampleIds.length > 0) {
-                    self.modelInfo.dataSet.setSubsetIds(subsetSampleIds);
-                    self.subsetSampleDisplay = subsetSampleIds.join(', ');
-                }
-                if (excludeSampleIds.length > 0) {
-                    self.modelInfo.dataSet.setExcludeIds(excludeSampleIds);
-                    self.excludeSampleDisplay = excludeSampleIds.join(', ');
+                    self.modelInfo.model.setSelectedSample(sampleToSelect);
                 }
             },
             setLoadingFlags: function (flagState) {

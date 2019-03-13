@@ -326,7 +326,8 @@
                         let performAnalyzeAll = self.autofillAction ? true : false;
                         self.inProgress = false;
 
-                        self.$emit("on-files-loaded", performAnalyzeAll);
+                        self.$emit("on-files-loaded", performAnalyzeAll, self.loadDemoFromWelcome);
+                        self.loadDemoFromWelcome = false;
                         self.showFilesMenu = false;
                     });
             },
@@ -537,7 +538,6 @@
                             }
                             resolve();
                         }).catch((error) => {
-                            debugger;
                             reject('Problem in autoloading in files menu: ' + error);
                     })
                 });
@@ -564,13 +564,14 @@
                     // Trigger on vcf check in model
                     theModel.onVcfUrlEntered(theModelInfo.vcf, theModelInfo.tbi, function (success, sampleNames) {
                         if (success) {
-                            // Set samples prop
+                            // Set sample prop
                             theModelInfo.samples = sampleNames;
                             self.$refs.sampleDataRef.forEach(function (ref) {
                                 if (ref.modelInfo.id === theModel.id) {
                                     // Set selected sample in model and in child cmpnt
-                                    theModel.selectedSample = theModelInfo.selectedSample;
+                                    theModel.setSelectedSample(theModelInfo.selectedSample);
                                     ref.updateSamples(sampleNames, theModelInfo.selectedSample);
+                                    ref.setLoadingFlags(false);
 
                                     // Set display name in model
                                     theModel.displayName = theModelInfo.displayName ? theModelInfo.displayName : theModelInfo.selectedSample;
@@ -582,11 +583,15 @@
                                 if (success) {
                                     resolve();
                                 } else {
-                                    reject();
+                                    reject('No bam to check');
                                 }
                             })
                         } else {
-                            reject();
+                            // Turn off loading spinners
+                            for (let i = 0; i < self.$refs.sampleDataRef.length; i++) {
+                                self.$refs.sampleDataRef[i].setLoadingFlags(false);
+                            }
+                            reject('No vcf to check');
                         }
                     })
                 })
@@ -640,7 +645,7 @@
                                     if (self.loadDemoFromWelcome) {
                                         self.onAutoLoad(false, 'demo')
                                             .then(() => {
-                                                self.loadDemoFromWelcome = false;
+                                                // self.loadDemoFromWelcome = false; TODO: get rid of
                                                 self.onLoad();
                                             })
                                     }

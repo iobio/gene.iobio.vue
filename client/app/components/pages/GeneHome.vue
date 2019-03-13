@@ -874,7 +874,7 @@
                 }
             },
 
-            onFilesLoaded: function (analyzeAll, callback) {
+            onFilesLoaded: function (analyzeAll, loadDemoFromWelcome) {
                 let self = this;
                 self.showVariantCards = true;
                 self.setUrlParameters();
@@ -882,7 +882,11 @@
                 self.promiseClearCache()
                     .then(function () {
                         self.featureMatrixModel.init();
-                        return self.promiseResetAllGenes();
+                        if (loadDemoFromWelcome) {
+                            return Promise.resolve();
+                        } else {
+                            return self.promiseResetAllGenes();
+                        }
                     })
                     .then(function () {
                         if (self.selectedGene && self.selectedGene.gene_name) {
@@ -1401,7 +1405,7 @@
             },
             promiseResetAllGenes: function () {
                 let self = this;
-                if (self.geneModel.sortedGeneNames == null || self.geneModel.sortedGeneNames.length == 0) {
+                if (self.geneModel.sortedGeneNames == null || self.geneModel.sortedGeneNames.length === 0) {
                     return Promise.resolve();
                 } else {
                     return new Promise(function (resolve, reject) {

@@ -56,7 +56,7 @@ class CohortModel {
                     relationship: 'proband',
                     affectedStatus: 'affected',
                     name: 'Father',
-                    'sample': 'sample2',
+                    'selectedSample': 'sample2',
                     vcf: 'https://s3.amazonaws.com/iobio/NHMU/nhmu.vcf.gz',
                     'tbi': null,
                     'bam': null,
@@ -66,7 +66,7 @@ class CohortModel {
                     relationship: 'proband',
                     affectedStatus: 'affected',
                     name: 'Jimmy',
-                    'sample': 'sample3',
+                    'selectedSample': 'sample3',
                     vcf: 'https://s3.amazonaws.com/iobio/NHMU/nhmu.vcf.gz',
                     'tbi': null,
                     'bam': null,
@@ -76,7 +76,7 @@ class CohortModel {
                     relationship: 'proband',
                     affectedStatus: 'affected',
                     name: 'Bobby',
-                    'sample': 'sample4',
+                    'selectedSample': 'sample4',
                     vcf: 'https://s3.amazonaws.com/iobio/NHMU/nhmu.vcf.gz',
                     'tbi': null,
                     'bam': null,
@@ -86,7 +86,7 @@ class CohortModel {
                     relationship: 'proband',
                     affectedStatus: 'affected',
                     name: 'Sarah',
-                    'sample': 'sample5',
+                    'selectedSample': 'sample5',
                     vcf: 'https://s3.amazonaws.com/iobio/NHMU/nhmu.vcf.gz',
                     'tbi': null,
                     'bam': null,
@@ -98,7 +98,7 @@ class CohortModel {
                     relationship: 'proband',
                     affectedStatus: 'affected',
                     name: 'John',
-                    'sample': 'sample1',
+                    'selectedSample': 'sample1',
                     vcf: 'https://s3.amazonaws.com/iobio/NHMU/nhmu.vcf.gz',
                     'tbi': null,
                     'bam': null,
@@ -108,7 +108,7 @@ class CohortModel {
                     relationship: 'proband',
                     affectedStatus: 'affected',
                     name: 'Diego',
-                    'sample': 'sample3',
+                    'selectedSample': 'sample3',
                     vcf: 'https://s3.amazonaws.com/iobio/NHMU/nhmu.vcf.gz',
                     'tbi': null,
                     'bam': null,
@@ -118,7 +118,7 @@ class CohortModel {
                     relationship: 'proband',
                     affectedStatus: 'affected',
                     name: 'Anna',
-                    'sample': 'sample2',
+                    'selectedSample': 'sample2',
                     vcf: 'https://s3.amazonaws.com/iobio/NHMU/nhmu.vcf.gz',
                     'tbi': null,
                     'bam': null,
@@ -821,7 +821,6 @@ class CohortModel {
         }
     }
 
-
     isAlignmentsOnly() {
         var theModels = this.getCanonicalModels().filter(function (model) {
             return model.isAlignmentsOnly();
@@ -835,7 +834,6 @@ class CohortModel {
         });
         return theModels.length > 0;
     }
-
 
     samplesInSingleVcf() {
         let theVcfs = {};
@@ -852,7 +850,6 @@ class CohortModel {
         return Object.keys(theVcfs).length === 1;
     }
 
-
     promiseLoadData(theGene, theTranscript, options) {
         let self = this;
         let promises = [];
@@ -863,14 +860,12 @@ class CohortModel {
             } else {
 
                 self.startGeneProgress(theGene.gene_name);
-
                 self.clearLoadedData();
 
-                let cohortResultMap = null;
-
+                let resultMap = null;
                 let p1 = self.promiseLoadVariants(theGene, theTranscript, options)
                     .then(function (data) {
-                        cohortResultMap = data.resultMap;
+                        resultMap = data.resultMap;
                     });
                 promises.push(p1);
 
@@ -884,13 +879,11 @@ class CohortModel {
                     .then(function () {
 
                         // Now summarize the danger for the selected gene
-                        // TODO: does this need to be for each loop calling this for all samples?
-                        self.promiseSummarizeDanger(theGene, theTranscript, cohortResultMap.s0, null)
+                        self.promiseSummarizeDanger(theGene, theTranscript, resultMap.s0, null)
                             .then(function () {
                                 self.setLoadedVariants(theGene);
-
                                 self.endGeneProgress(theGene.gene_name);
-                                resolve(cohortResultMap);
+                                resolve(resultMap);
                             })
                     })
                     .catch(function (error) {
@@ -1001,14 +994,19 @@ class CohortModel {
 
     }
 
-
-    clearLoadedData() {
+    /* Clears the variant data for each cohort if the last gene analyzed for this data set is different than the one provided.
+     * This coordinates display with loading new tracks once some tracks have already been analyzed.
+     * Falsifies flags used for chip display. */
+    clearLoadedData(geneName) {
         let self = this;
         self.sampleModels.forEach(function (model) {
-            model.loadedVariants = {loadState: {}, features: [], maxLevel: 1, featureWidth: 0};
-            model.calledVariants = {loadState: {}, features: [], maxLevel: 1, featureWidth: 0};
-            model.variantHistoData = [];
-            model.coverage = [[]];
+            if (model.lastGeneLoaded !== geneName) {
+                model.loadedVariants = {loadState: {}, features: [], maxLevel: 1, featureWidth: 0};
+                model.calledVariants = {loadState: {}, features: [], maxLevel: 1, featureWidth: 0};
+                model.variantHistoData = [];
+                model.coverage = [[]];
+                model.noMatchingSamples = false;
+            }
         });
     }
 
@@ -1136,35 +1134,52 @@ class CohortModel {
             let theResultMap = {};
             if (isMultiSample) {
                 self.getCanonicalModels().forEach(function (model) {
-                    if (!isBackground) {
+                    let noReloadNecessary = model.lastGeneLoaded === theGene.gene_name && model.loadedVariants != null && !model.entryDataChanged;
+                    if (!isBackground && !noReloadNecessary) {
+                        debugger;
                         model.inProgress.loadingVariants = true;
                     }
                 });
-                // Annotate
-                let p = self.sampleMap['s0'].model.promiseAnnotateVariants(theGene, theTranscript, self.getCanonicalModels(), isMultiSample, isBackground)
-                    .then(function (resultMap) {
-                        if (!isBackground) {
-                            self.getCanonicalModels().forEach(function (model) {
-                                model.inProgress.loadingVariants = false;
-                            })
-                        }
-                        theResultMap = resultMap;
-                    });
+                // Annotate if something in the file loader has changed
+                let firstModel = self.sampleMap['s0'].model;
+                let noReloadNecessary = firstModel.lastGeneLoaded === theGene.gene_name && firstModel.loadedVariants != null && !firstModel.entryDataChanged;
+                let p = null;
+                if (!noReloadNecessary) {
+                    firstModel.lastGeneLoaded = theGene.gene_name;
+                    p = firstModel.promiseAnnotateVariants(theGene, theTranscript, self.getCanonicalModels(), isMultiSample, isBackground)
+                        .then(function (resultMap) {
+                            if (!isBackground) {
+                                self.getCanonicalModels().forEach(function (model) {
+                                    debugger;
+                                    model.inProgress.loadingVariants = false;
+                                })
+                            }
+                            firstModel.entryDataChanged = false;
+                            theResultMap = resultMap;
+                        });
+                } else {
+                    p = Promise.resolve();
+                }
                 annotatePromises.push(p);
             } else {
                 for (var id in self.sampleMap) {
-                    var model = self.sampleMap[id].model;
-                    if (model.isVcfReadyToLoad() || model.isLoaded()) {
+                    let model = self.sampleMap[id].model;
+                    let noReloadNecessary = model.lastGeneLoaded === theGene.gene_name && model.loadedVariants != null && !model.entryDataChanged;
+                    if (model.isVcfReadyToLoad() || model.isLoaded() && !noReloadNecessary) {
                         if (!isBackground) {
+                            debugger;
                             model.inProgress.loadingVariants = true;
                         }
+                        model.lastGeneLoaded = theGene.gene_name;
                         if (id !== 'known-variants') {
-                            var p = model.promiseAnnotateVariants(theGene, theTranscript, [model], isMultiSample, isBackground)
+                            let p = model.promiseAnnotateVariants(theGene, theTranscript, [model], isMultiSample, isBackground)
                                 .then(function (resultMap) {
                                     for (var theId in resultMap) {
                                         if (!isBackground) {
+                                            debugger;
                                             self.getModel(theId).inProgress.loadingVariants = false;
                                         }
+                                        model.entryDataChanged = false;
                                         theResultMap[theId] = resultMap[theId];
                                     }
                                 });

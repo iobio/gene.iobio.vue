@@ -7,8 +7,8 @@ import vcfiobio from './Vcf.iobio.js';
 class SampleModel {
     constructor(globalApp) {
         this.globalApp = globalApp;
-        this.vcf = null;
-        this.bam = null;
+        this.vcf = null;            // The vcf.iobio model backing this
+        this.bam = null;            // The bam.iobio model backing this
 
         this.vcfData = null;
         this.fbData = null;
@@ -26,13 +26,16 @@ class SampleModel {
         this.bamFileOpened = false;
         this.getBamRefName = null;
 
-        this.id = '';               // Must be unique, format s0, s1...
-        this.displayName = '';      // Display name
-        this.selectedSample = '';   // The sample id corresponding to vcf column
+        this.id = '';               // Must be unique, format s0, s1... used to coordinate order in FilesMenu
+        this.displayName = '';      // Display name entered in filesMenu
+        this.selectedSample = '';   // The sample id corresponding to vcf column we're analyzing
         this.vcfRefNamesMap = {};
         this.isGeneratedSampleName = false;
         this.defaultSampleName = null;
         this.isTumor = true;
+        this.entryDataChanged = false;      // True if something in the filesMenu has changed for this sample, and the track needs to be udpated upon clicking 'Load'
+        this.lastGeneLoaded = null;         // The most recent gene analyzed for this sample
+        this.noMatchingSamples = false;     // True if active filters leave no variants applicable from this sample
 
         this.lastVcfAlertify = null;
         this.lastBamAlertify = null;
@@ -753,6 +756,11 @@ class SampleModel {
 
     getDefaultSampleName() {
         return this.defaultSampleName;
+    }
+
+    markEntryDataChanged() {
+        let self = this;
+        self.entryDataChanged = true;
     }
 
     init(cohort) {

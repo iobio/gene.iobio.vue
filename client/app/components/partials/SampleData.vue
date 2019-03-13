@@ -235,25 +235,25 @@
             'modelInfo.vcf': function (newVal, oldVal) {
                 let self = this;
                 if (newVal) {
-                    self.firstVcf = newVal[0];
+                    self.firstVcf = newVal;
                 }
             },
             'modelInfo.tbi': function (newVal, oldVal) {
                 let self = this;
                 if (newVal) {
-                    self.firstTbi = newVal[0];
+                    self.firstTbi = newVal;
                 }
             },
             'modelInfo.bam': function (newVal, oldVal) {
                 let self = this;
                 if (newVal) {
-                    self.firstBam = newVal[0];
+                    self.firstBam = newVal;
                 }
             },
             'modelInfo.bai': function (newVal, oldVal) {
                 let self = this;
                 if (newVal) {
-                    self.firstBai = newVal[0];
+                    self.firstBai = newVal;
                 }
             },
             timeSeriesMode: function() {
@@ -266,7 +266,6 @@
             },
             selectedSample: function(newVal, oldVal) {
                 let self = this;
-                // TODO: change dataSet and add fxn
                 if (newVal != null && newVal !== oldVal && self.modelInfo && self.modelInfo.model) {
                     self.modelInfo.model.markEntryDataChanged();
                 }
@@ -303,6 +302,7 @@
                             if (success) {
                                 self.samples = sampleNames;
                                 self.retrievingIds = false;
+                                debugger;
                                 if (self.modelInfo.selectedSample && self.samples.indexOf(self.modelInfo.selectedSample) >= 0) {
                                     self.selectedSample = self.modelInfo.selectedSample;
                                     self.modelInfo.model.sampleName = self.modelInfo.sample;
@@ -315,7 +315,7 @@
                                     self.modelInfo.selectedSample = null;
                                     self.modelInfo.model.sampleName = null;
                                 }
-                                self.$emit("samples-available", self.modelInfo.order, self.samples);
+                                // self.$emit("samples-available", self.modelInfo.order, self.samples);
                             } else {
                                 self.retrievingIds = false;
                                 self.vcfError = true;
@@ -371,17 +371,17 @@
             updateSamples: function (samples, sampleToSelect) {
                 this.samples = samples;
                 if (sampleToSelect) {
-                    this.sample = sampleToSelect;
+                    this.selectedSample = sampleToSelect;
                 } else {
-                    this.sample = null;
+                    this.selectedSample = null;
                 }
             },
             onSampleSelected: function () {
                 let self = this;
-                self.modelInfo.sample = this.sample;
+                self.modelInfo.selectedSample = this.selectedSample;
                 if (self.modelInfo.model) {
-                    self.modelInfo.model.sampleName = this.modelInfo.sample;
-                    self.modelInfo.model.setSelectedSample(this.modelInfo.sample);
+                    self.modelInfo.model.sampleName = this.modelInfo.selectedSample;
+                    self.modelInfo.model.setSelectedSample(this.modelInfo.selectedSample);
                 }
                 self.$emit("sample-data-changed");
             },
@@ -523,7 +523,7 @@
                 self.firstBam = self.modelInfo.bam;
             }
             if (self.modelInfo.bai) {
-                self.firstBai = self.modelInfo.bai];
+                self.firstBai = self.modelInfo.bai;
             }
 
         }

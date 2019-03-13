@@ -736,8 +736,8 @@
             onFlaggedVariantsImported: function () {
                 this.$emit("flagged-variants-imported")
             },
-            onFilesLoaded: function (analyzeAll) {
-                this.$emit("on-files-loaded", analyzeAll);
+            onFilesLoaded: function (analyzeAll, loadDemoFromWelcome) {
+                this.$emit("on-files-loaded", analyzeAll, loadDemoFromWelcome);
             },
             onWelcome: function () {
                 this.$emit("on-show-welcome");
