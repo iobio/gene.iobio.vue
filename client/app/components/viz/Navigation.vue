@@ -277,6 +277,7 @@
                     ref="fileMenuRef"
                     v-if="!isEduMode && !isBasicMode"
                     :cohortModel="cohortModel"
+                    :launchedFromHub="launchedFromHub"
                     @on-files-loaded="onFilesLoaded"
                     @load-demo-data="onLoadDemoData"
             >
@@ -641,6 +642,7 @@
             cohortModel: null,
             flaggedVariants: null,
             launchedFromClin: null,
+            launchedFromHub: null,
             bringAttention: null
         },
         data() {

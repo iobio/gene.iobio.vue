@@ -28,7 +28,6 @@
                 padding-left: 5px
 
     #files-form
-
         .radio-group
             .input-group__input
                 min-height: 25px
@@ -93,21 +92,13 @@
 
                 <v-flex xs3 class="pl-2 pr-0">
                     <v-select
-                            label="Species"
-                            hide-details
-                            v-model="speciesName"
-                            :items="speciesList"
-                            color="appColor"
-                    ></v-select>
-                </v-flex>
-
-                <v-flex xs3 class="pl-2 pr-0">
-                    <v-select
                             label="Genome Build"
                             hide-details
                             v-model="buildName"
+                            :disabled="launchedFromHub"
                             :items="buildList"
                             color="appColor"
+                            @change="updateBuildAndValidate"
                     ></v-select>
                 </v-flex>
 
@@ -173,6 +164,7 @@
                                 :dragId="sample"
                                 :arrIndex=sampleIds.indexOf(sample)
                                 :separateUrlForIndex="separateUrlForIndex"
+                                :launchedFromHub="launchedFromHub"
                                 @sample-data-changed="validate"
                                 @samples-available="onSamplesAvailable"
                                 @remove-sample="removeSample">
@@ -194,7 +186,6 @@
                             :disabled="!isValid">
                         Load
                     </v-btn>
-
                     <v-btn @click="onCancel">
                         Cancel
                     </v-btn>
@@ -206,14 +197,12 @@
 <script>
 
     import SampleData from '../partials/SampleData.vue'
-    //import FileChooser from '../partials/FileChooser.vue'
     import draggable from 'vuedraggable'
 
     export default {
         name: 'files-menu',
         components: {
             SampleData,
-            //FileChooser,
             draggable
         },
         props: {
@@ -322,7 +311,6 @@
                 self.inProgress = true;
 
                 self.cohortModel.genomeBuildHelper.setCurrentBuild(self.buildName);
-                self.cohortModel.genomeBuildHelper.setCurrentSpecies(self.speciesName);
 
                 self.cohortModel.promiseAddClinvarSample()
                     .then(function () {
@@ -643,28 +631,6 @@
                         });
                 }
             },
-            // // Called each time files menu opened
-            // init: function () {
-            //     let self = this;
-            //     // If we already have model information from Hub, we want to display that in the file loader
-            //     if (self.variantModel && self.variantModel.getAllDataSets().length > 0 && !self.loadDemoFromWelcome) {
-            //         self.initModelInfo();
-            //         // Otherwise add single entry for initial launch
-            //     } else {
-            //         self.promiseAddEntry(false, false)
-            //             .then(() => {
-            //                 // If we've clicked run w/ demo data on welcome screen, want to get that process going
-            //                 if (self.loadDemoFromWelcome) {
-            //                     self.onAutoLoad(false)
-            //                         .then(() => {
-            //                             self.loadDemoFromWelcome = false;
-            //                             self.onLoad();
-            //                         })
-            //                 }
-            //             })
-            //     }
-            // },
-
             initModelInfo: function () {
                 let self = this;
                 self.separateUrlForIndex = false;

@@ -22,8 +22,8 @@
       <file leaf-file-name="GeneHome.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/pages/GeneHome.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="780" column="39" lean-forward="true" selection-start-line="780" selection-start-column="39" selection-end-line="780" selection-end-column="39" />
+            <state relative-caret-position="224">
+              <caret line="405" column="16" lean-forward="true" selection-start-line="405" selection-start-column="16" selection-end-line="405" selection-end-column="16" />
               <folding>
                 <element signature="n#style#0;n#v-tab-item#0;n#v-tabs#0;n#v-card#0;n#split-pane#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
               </folding>
@@ -46,8 +46,8 @@
       <file leaf-file-name="Navigation.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/viz/Navigation.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="257">
-              <caret line="676" column="18" lean-forward="true" selection-start-line="676" selection-start-column="18" selection-end-line="676" selection-end-column="18" />
+            <state relative-caret-position="253">
+              <caret line="641" column="30" lean-forward="true" selection-start-line="641" selection-start-column="30" selection-end-line="641" selection-end-column="30" />
               <folding>
                 <element signature="n#style#0;n#v-toolbar-items#0;n#v-toolbar#0;n#div#0;n#template#0;n#!!top" expanded="true" />
               </folding>
@@ -76,11 +76,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FilesMenu.vue" pinned="false" current-in-tab="false">
+      <file leaf-file-name="FilesMenu.vue" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="321">
-              <caret line="523" column="82" lean-forward="true" selection-start-line="523" selection-start-column="82" selection-end-line="523" selection-end-column="82" />
+            <state relative-caret-position="481">
+              <caret line="520" column="29" lean-forward="true" selection-start-line="520" selection-start-column="29" selection-end-line="520" selection-end-column="29" />
+              <folding>
+                <element signature="e#7633#7684#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="COHORT_FilesMenu.vue" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/app/components/partials/COHORT_FilesMenu.vue">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="4012">
+              <caret line="510" column="35" lean-forward="true" selection-start-line="510" selection-start-column="35" selection-end-line="510" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -88,17 +100,26 @@
       <file leaf-file-name="SampleData.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/partials/SampleData.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6096">
-              <caret line="499" column="30" lean-forward="true" selection-start-line="499" selection-start-column="30" selection-end-line="499" selection-end-column="30" />
+            <state relative-caret-position="6029">
+              <caret line="514" column="77" lean-forward="true" selection-start-line="514" selection-start-column="77" selection-end-line="514" selection-end-column="77" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="COHORT_EntryData.vue" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ConfirmationDialog.vue" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/app/components/partials/ConfirmationDialog.vue">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="656">
+              <caret line="41" column="16" lean-forward="true" selection-start-line="41" selection-start-column="16" selection-end-line="41" selection-end-column="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="COHORT_EntryData.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/partials/COHORT_EntryData.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6976">
-              <caret line="646" column="28" lean-forward="true" selection-start-line="646" selection-start-column="28" selection-end-line="646" selection-end-column="28" />
+            <state relative-caret-position="352">
+              <caret line="232" column="16" lean-forward="true" selection-start-line="232" selection-start-column="16" selection-end-line="232" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -133,10 +154,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>loaddemo</find>
-      <find>&lt;welc</find>
-      <find>addgene</find>
-      <find>transcript</find>
       <find>addgenemodel</find>
       <find>run with demo</find>
       <find>load-demo</find>
@@ -163,6 +180,10 @@
       <find>retrie</find>
       <find>onvcfur</find>
       <find>retrievingIds</find>
+      <find>&lt;files</find>
+      <find>files</find>
+      <find>files-menu</find>
+      <find>navigation</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/deploy</dir>
@@ -202,11 +223,12 @@
         <option value="$PROJECT_DIR$/client/app/routes.js" />
         <option value="$PROJECT_DIR$/client/app/components/viz/Welcome.vue" />
         <option value="$PROJECT_DIR$/client/app/models/GeneModel.js" />
-        <option value="$PROJECT_DIR$/client/app/components/pages/GeneHome.vue" />
-        <option value="$PROJECT_DIR$/client/app/components/viz/Navigation.vue" />
-        <option value="$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue" />
-        <option value="$PROJECT_DIR$/client/app/components/partials/SampleData.vue" />
         <option value="$PROJECT_DIR$/client/app/components/partials/COHORT_EntryData.vue" />
+        <option value="$PROJECT_DIR$/client/app/components/partials/SampleData.vue" />
+        <option value="$PROJECT_DIR$/client/app/components/partials/COHORT_FilesMenu.vue" />
+        <option value="$PROJECT_DIR$/client/app/components/viz/Navigation.vue" />
+        <option value="$PROJECT_DIR$/client/app/components/pages/GeneHome.vue" />
+        <option value="$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue" />
       </list>
     </option>
   </component>
@@ -337,6 +359,7 @@
       <recent name="$PROJECT_DIR$/client/assets/animations/images" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/client/app/components/partials" />
       <recent name="$PROJECT_DIR$/client/assets/images" />
       <recent name="$PROJECT_DIR$/client/data" />
       <recent name="$PROJECT_DIR$/client/assets/animations/images" />
@@ -384,15 +407,16 @@
       <workItem from="1547657408324" duration="606000" />
       <workItem from="1547923648666" duration="437000" />
       <workItem from="1551388044207" duration="676000" />
-      <workItem from="1552411172768" duration="12581000" />
+      <workItem from="1552411172768" duration="13981000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="324332000" />
+    <option name="totallyTimeSpent" value="325732000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="1057" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.16510417" />
       <window_info anchor="bottom" id="TODO" order="10" />
@@ -431,20 +455,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/client/app/partials/Glyph.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="608">
-          <caret line="456" column="71" selection-start-line="456" selection-start-column="71" selection-end-line="456" selection-end-column="71" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/Translator.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-643">
-          <caret line="36" column="29" lean-forward="true" selection-start-line="36" selection-start-column="29" selection-end-line="36" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/assets/sass/_symbols.sass">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="358">
@@ -744,44 +754,61 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/pages/GeneHome.vue">
+    <entry file="file://$PROJECT_DIR$/client/app/components/partials/COHORT_EntryData.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="780" column="39" lean-forward="true" selection-start-line="780" selection-start-column="39" selection-end-line="780" selection-end-column="39" />
-          <folding>
-            <element signature="n#style#0;n#v-tab-item#0;n#v-tabs#0;n#v-card#0;n#split-pane#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-          </folding>
+        <state relative-caret-position="352">
+          <caret line="232" column="16" lean-forward="true" selection-start-line="232" selection-start-column="16" selection-end-line="232" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/partials/SampleData.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6029">
+          <caret line="514" column="77" lean-forward="true" selection-start-line="514" selection-start-column="77" selection-end-line="514" selection-end-column="77" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/partials/ConfirmationDialog.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="656">
+          <caret line="41" column="16" lean-forward="true" selection-start-line="41" selection-start-column="16" selection-end-line="41" selection-end-column="16" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/app/components/viz/Navigation.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="257">
-          <caret line="676" column="18" lean-forward="true" selection-start-line="676" selection-start-column="18" selection-end-line="676" selection-end-column="18" />
+        <state relative-caret-position="253">
+          <caret line="641" column="30" lean-forward="true" selection-start-line="641" selection-start-column="30" selection-end-line="641" selection-end-column="30" />
           <folding>
             <element signature="n#style#0;n#v-toolbar-items#0;n#v-toolbar#0;n#div#0;n#template#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/pages/GeneHome.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="405" column="16" lean-forward="true" selection-start-line="405" selection-start-column="16" selection-end-line="405" selection-end-column="16" />
+          <folding>
+            <element signature="n#style#0;n#v-tab-item#0;n#v-tabs#0;n#v-card#0;n#split-pane#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/partials/COHORT_FilesMenu.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4012">
+          <caret line="510" column="35" lean-forward="true" selection-start-line="510" selection-start-column="35" selection-end-line="510" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="321">
-          <caret line="523" column="82" lean-forward="true" selection-start-line="523" selection-start-column="82" selection-end-line="523" selection-end-column="82" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/partials/SampleData.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6096">
-          <caret line="499" column="30" lean-forward="true" selection-start-line="499" selection-start-column="30" selection-end-line="499" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/partials/COHORT_EntryData.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6976">
-          <caret line="646" column="28" lean-forward="true" selection-start-line="646" selection-start-column="28" selection-end-line="646" selection-end-column="28" />
+        <state relative-caret-position="481">
+          <caret line="520" column="29" lean-forward="true" selection-start-line="520" selection-start-column="29" selection-end-line="520" selection-end-column="29" />
+          <folding>
+            <element signature="e#7633#7684#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

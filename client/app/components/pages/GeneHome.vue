@@ -85,6 +85,7 @@
                 :geneModel="geneModel"
                 :flaggedVariants="flaggedVariants"
                 :launchedFromClin="launchedFromClin"
+                :launchedFromHub="launchedFromHub"
                 :bringAttention="bringAttention"
                 @input="onGeneNameEntered"
                 @load-demo-data="onLoadDemoData"
