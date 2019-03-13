@@ -217,7 +217,8 @@
             draggable
         },
         props: {
-            cohortModel: null
+            cohortModel: null,
+            launchedFromHub: false
         },
         data() {
             return {
@@ -518,6 +519,11 @@
                     }
                     Promise.all(addPromises)
                         .then(() => {
+                            // Turn on loading spinners
+                            for (let i = self.launchedFromHub ? 1 : 0; i < self.$refs.entryDataRef.length; i++) {
+                                self.$refs.sampleDataRef[i].setLoadingFlags(true);
+                            }
+
                             self.cohortModel.getCanonicalModels().forEach(function (model) {
                                 self.promiseSetModel(model);
                             });

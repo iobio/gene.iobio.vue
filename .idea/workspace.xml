@@ -76,11 +76,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FilesMenu.vue" pinned="false" current-in-tab="true">
+      <file leaf-file-name="FilesMenu.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="366">
-              <caret line="517" column="21" selection-start-line="517" selection-start-column="21" selection-end-line="517" selection-end-column="21" />
+            <state relative-caret-position="321">
+              <caret line="523" column="82" lean-forward="true" selection-start-line="523" selection-start-column="82" selection-end-line="523" selection-end-column="82" />
             </state>
           </provider>
         </entry>
@@ -88,8 +88,17 @@
       <file leaf-file-name="SampleData.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/partials/SampleData.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2224">
-              <caret line="139" column="42" lean-forward="true" selection-start-line="139" selection-start-column="42" selection-end-line="139" selection-end-column="42" />
+            <state relative-caret-position="6096">
+              <caret line="499" column="30" lean-forward="true" selection-start-line="499" selection-start-column="30" selection-end-line="499" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="COHORT_EntryData.vue" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/client/app/components/partials/COHORT_EntryData.vue">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="6976">
+              <caret line="646" column="28" lean-forward="true" selection-start-line="646" selection-start-column="28" selection-end-line="646" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -115,13 +124,15 @@
       </file>
     </leaf>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Vue Single File Component" />
+      </list>
+    </option>
+  </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>run with de</find>
-      <find>&lt;welcome</find>
-      <find>promiseinitdemo</find>
-      <find>open-file</find>
-      <find>navref</find>
       <find>loaddemo</find>
       <find>&lt;welc</find>
       <find>addgene</find>
@@ -147,6 +158,11 @@
       <find>loaddemofr</find>
       <find>debugg</find>
       <find>onautoload</find>
+      <find>launchedFromHub</find>
+      <find>sampleDataRef</find>
+      <find>retrie</find>
+      <find>onvcfur</find>
+      <find>retrievingIds</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/deploy</dir>
@@ -175,7 +191,6 @@
         <option value="$PROJECT_DIR$/client/app/components/partials/FilterSettings.vue" />
         <option value="$PROJECT_DIR$/client/app/models/FilterModel.js" />
         <option value="$PROJECT_DIR$/client/app/components/partials/FilterSettingsMenu.vue" />
-        <option value="$PROJECT_DIR$/client/app/components/partials/SampleData.vue" />
         <option value="$PROJECT_DIR$/client/app/models/CohortModel.js" />
         <option value="$PROJECT_DIR$/client/app/models/SampleModel.js" />
         <option value="$PROJECT_DIR$/client/app/models/EndpointCmd.js" />
@@ -190,6 +205,8 @@
         <option value="$PROJECT_DIR$/client/app/components/pages/GeneHome.vue" />
         <option value="$PROJECT_DIR$/client/app/components/viz/Navigation.vue" />
         <option value="$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue" />
+        <option value="$PROJECT_DIR$/client/app/components/partials/SampleData.vue" />
+        <option value="$PROJECT_DIR$/client/app/components/partials/COHORT_EntryData.vue" />
       </list>
     </option>
   </component>
@@ -367,16 +384,15 @@
       <workItem from="1547657408324" duration="606000" />
       <workItem from="1547923648666" duration="437000" />
       <workItem from="1551388044207" duration="676000" />
-      <workItem from="1552411172768" duration="9748000" />
+      <workItem from="1552411172768" duration="12581000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="321499000" />
+    <option name="totallyTimeSpent" value="324332000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="1057" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.16510417" />
       <window_info anchor="bottom" id="TODO" order="10" />
@@ -415,13 +431,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilterIcon.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="31" column="15" lean-forward="true" selection-start-line="31" selection-start-column="15" selection-end-line="31" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/partials/Glyph.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="608">
@@ -654,13 +663,6 @@
     <entry file="file://$PROJECT_DIR$/client/app/d3/StackedAreaChart.d3.js">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/partials/SampleData.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2224">
-          <caret line="139" column="42" lean-forward="true" selection-start-line="139" selection-start-column="42" selection-end-line="139" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/server/views/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="191">
@@ -764,8 +766,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="366">
-          <caret line="517" column="21" selection-start-line="517" selection-start-column="21" selection-end-line="517" selection-end-column="21" />
+        <state relative-caret-position="321">
+          <caret line="523" column="82" lean-forward="true" selection-start-line="523" selection-start-column="82" selection-end-line="523" selection-end-column="82" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/partials/SampleData.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6096">
+          <caret line="499" column="30" lean-forward="true" selection-start-line="499" selection-start-column="30" selection-end-line="499" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/partials/COHORT_EntryData.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6976">
+          <caret line="646" column="28" lean-forward="true" selection-start-line="646" selection-start-column="28" selection-end-line="646" selection-end-column="28" />
         </state>
       </provider>
     </entry>

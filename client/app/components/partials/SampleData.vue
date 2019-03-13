@@ -77,7 +77,7 @@
                 <v-flex d-flex xs2 class="sample-label">
                     <v-text-field class="pt-1"
                                   color="appColor"
-                                  placeholder="Enter nickname"
+                                  placeholder="Enter Track Name"
                                   hide-details
                                   v-model="modelInfo.displayName"
                                   @change="onNicknameEntered"
@@ -104,7 +104,7 @@
                         <v-icon color="appColor">reorder</v-icon>
                     </v-btn>
                     <v-btn small flat icon style="margin: 0 !important"
-                           @click="removeSample">
+                           @click="openConfirmationDialog">
                         <v-icon color="appColor">
                             clear
                         </v-icon>
@@ -123,22 +123,31 @@
                 </v-flex>
                 <v-flex d-flex xs12 class="ml-3" style="margin-top: -5px">
                     <sample-data-file
-                            :defaultUrl="modelInfo.vcf"
-                            :defaultIndexUrl="modelInfo.tbi"
+                            ref="vcfFileRef"
+                            :defaultUrl="firstVcf"
+                            :defaultIndexUrl="firstTbi"
                             :label="`vcf`"
                             :indexLabel="`tbi`"
                             :filePlaceholder="filePlaceholder.vcf"
                             :fileAccept="fileAccept.vcf"
                             :separateUrlForIndex="separateUrlForIndex"
+                            :isError="vcfError"
                             @url-entered="onVcfUrlEntered"
                             @file-selected="onVcfFilesSelected">
                     </sample-data-file>
+                </v-flex>
+                <v-flex d-flex xs12 v-if="retrievingIds">
+                    <v-layout>
+                        <div class="loader">
+                            <img src="../../../assets/images/wheel.gif">
+                        </div>
+                    </v-layout>
                 </v-flex>
                 <v-flex xs4 id="sample-selection">
                     <v-select
                             v-bind:class="samples == null || samples.length === 0 ? 'hide' : ''"
                             label="Sample"
-                            v-model="sample"
+                            v-model="selectedSample"
                             :items="samples"
                             color="appColor"
                             autocomplete
@@ -148,16 +157,25 @@
                 </v-flex>
                 <v-flex d-flex xs12 class="ml-3 ">
                     <sample-data-file
-                            :defaultUrl="modelInfo.bam"
-                            :defaultIndexUrl="modelInfo.bai"
+                            ref="bamFileRef"
+                            :defaultUrl="firstBam"
+                            :defaultIndexUrl="firstBai"
                             :label="`bam`"
                             :indexLabel="`bai`"
                             :filePlaceholder="filePlaceholder.bam"
                             :fileAccept="fileAccept.bam"
                             :separateUrlForIndex="separateUrlForIndex"
+                            :isError="bamError"
                             @url-entered="onBamUrlEntered"
                             @file-selected="onBamFilesSelected">
                     </sample-data-file>
+                </v-flex>
+                <v-flex d-flex xs12 v-if="checkingBam">
+                    <v-layout>
+                        <div class="loader">
+                            <img src="../../../assets/images/wheel.gif">
+                        </div>
+                    </v-layout>
                 </v-flex>
             </v-layout>
         </v-flex>
@@ -168,19 +186,22 @@
 
     import SampleDataFile from '../partials/SampleDataFile.vue'
     import draggable from 'vuedraggable'
+    import ConfirmationDialog from "./ConfirmationDialog.vue";
 
     export default {
         name: 'sample-data',
         components: {
             draggable,
-            SampleDataFile
+            SampleDataFile,
+            ConfirmationDialog
         },
         props: {
             modelInfo: null,
             separateUrlForIndex: null,
             timeSeriesMode: false,
             dragId: '',
-            arrIndex: 0
+            arrIndex: 0,
+            launchedFromHub: false
         },
         data() {
             return {
@@ -194,14 +215,47 @@
                     'bam': '.bam, .bai'
                 },
                 samples: [],    // the available samples to choose from
-                sample: null,   // the selected sample
+                selectedSample: null,   // the selected sample
                 isTumor: true,
                 rowLabel: '',
                 chipLabel: '',
-                isStaticSlot: false
+                isStaticSlot: false,
+                firstVcf: null,
+                firstTbi: null,
+                firstBam: null,
+                firstBai: null,
+                retrievingIds: false,
+                checkingBam: false,
+                vcfError: false,
+                bamError: false,
+                selectedTrackId: null
             }
         },
         watch: {
+            'modelInfo.vcfs': function (newVal, oldVal) {
+                let self = this;
+                if (newVal) {
+                    self.firstVcf = newVal[0];
+                }
+            },
+            'modelInfo.tbis': function (newVal, oldVal) {
+                let self = this;
+                if (newVal) {
+                    self.firstTbi = newVal[0];
+                }
+            },
+            'modelInfo.bams': function (newVal, oldVal) {
+                let self = this;
+                if (newVal) {
+                    self.firstBam = newVal[0];
+                }
+            },
+            'modelInfo.bais': function (newVal, oldVal) {
+                let self = this;
+                if (newVal) {
+                    self.firstBai = newVal[0];
+                }
+            },
             timeSeriesMode: function() {
                 let self = this;
                 self.updateLabel();
@@ -209,6 +263,13 @@
             isTumor: function() {
                 let self = this;
                 self.chipLabel = self.isTumor ? 'TUMOR' : 'NORMAL';
+            },
+            selectedSample: function(newVal, oldVal) {
+                let self = this;
+                // TODO: change dataSet and add fxn
+                if (newVal != null && newVal !== oldVal && self.modelInfo && self.modelInfo.model) {
+                    self.modelInfo.model.markEntryDataChanged();
+                }
             }
         },
         computed: {
@@ -221,54 +282,84 @@
             },
             onVcfUrlEntered: function (vcfUrl, tbiUrl) {
                 let self = this;
-                self.$set(self, "sample", null);
-                self.$set(self, "samples", []);
-
-                if (self.modelInfo && self.modelInfo.model) {
-                    self.modelInfo.model.onVcfUrlEntered(vcfUrl, tbiUrl, function (success, sampleNames) {
-                        if (success) {
-                            self.samples = sampleNames;
-                            if (self.modelInfo.sample && self.samples.indexOf(self.modelInfo.sample) >= 0) {
-                                self.sample = self.modelInfo.sample;
-                                self.modelInfo.model.sampleName = self.modelInfo.sample;
-                            } else if (self.samples.length === 1) {
-                                self.sample = self.samples[0];
-                                self.modelInfo.sample = self.sample;
-                                self.modelInfo.model.sampleName = self.sample;
-                            } else {
-                                self.sample = null;
-                                self.modelInfo.sample = null;
-                                self.modelInfo.model.sampleName = null;
-                            }
-                            self.$emit("samples-available", self.modelInfo.order, self.samples);
-                        }
-                        self.$emit("sample-data-changed");
-                    })
+                if (vcfUrl === '') {
+                    self.modelInfo.vcfs = [];
+                    self.firstVcf = null;
                 }
+                if (tbiUrl === '') {
+                    self.modelInfo.tbis = null;
+                    self.firstTbi = null;
+                }
+
+                return new Promise((resolve, reject) => {
+                    self.vcfError = false;
+                    self.retrievingIds = true;
+                    self.$emit("sample-data-changed");
+                    self.$set(self, "selectedSample", null);
+                    self.$set(self, "samples", []);
+                    if (self.modelInfo && self.modelInfo.model) {
+                        // TODO: add build info to return callback params & check+notify as needed
+                        self.modelInfo.model.onVcfUrlEntered(vcfUrl, tbiUrl, function (success, sampleNames) {
+                            if (success) {
+                                self.samples = sampleNames;
+                                self.retrievingIds = false;
+                                if (self.modelInfo.selectedSample && self.samples.indexOf(self.modelInfo.selectedSample) >= 0) {
+                                    self.selectedSample = self.modelInfo.selectedSample;
+                                    self.modelInfo.model.sampleName = self.modelInfo.sample;
+                                } else if (self.samples.length === 1) {
+                                    self.selectedSample = self.samples[0];
+                                    self.modelInfo.selectedSample = self.selectedSample;
+                                    self.modelInfo.model.sampleName = self.selectedSample;
+                                } else {
+                                    self.selectedSample = null;
+                                    self.modelInfo.selectedSample = null;
+                                    self.modelInfo.model.sampleName = null;
+                                }
+                                self.$emit("samples-available", self.modelInfo.order, self.samples);
+                            } else {
+                                self.retrievingIds = false;
+                                self.vcfError = true;
+                                alertify.set('notifier', 'position', 'top-right');
+                                alertify.warning("There was an error accessing the entered file. Please check the file and try again.");
+                                reject('There was an error in onVcfUrlEnt in sampledata component');
+                            }
+                            self.$emit("sample-data-changed");
+                            resolve();
+                        })
+                    }
+
+                })
             },
             onVcfFilesSelected: function (fileSelection) {
                 let self = this;
-                self.$set(self, "sample", null);
+                self.$set(self, "selectedSample", null);
                 self.$set(self, "samples", []);
+                fileSelection.id = self.modelInfo.id;
                 self.modelInfo.model.promiseVcfFilesSelected(fileSelection)
                     .then(function (data) {
-                        self.samples = data.sampleNames;
-                        if (self.modelInfo.sample && self.samples.indexOf(self.modelInfo.sample) >= 0) {
-                            self.sample = self.modelInfo.sample;
-                            self.modelInfo.model.sampleName = self.modelInfo.sample;
-                        } else if (self.samples.length === 1) {
-                            self.sample = self.samples[0];
-                            self.modelInfo.sample = self.sample;
-                            self.modelInfo.model.sampleName = self.sample;
-                        } else {
-                            self.sample = null;
-                            self.modelInfo.sample = null;
-                            self.modelInfo.model.sampleName = null;
+                        if (data && data.sampleNames.length > 0) {
+                            self.retrievingIds = false;
+                            self.samples = data.sampleNames;
+                            if (self.modelInfo.selectedSample && self.samples.indexOf(self.modelInfo.selectedSample) >= 0) {
+                                self.selectedSample = self.modelInfo.selectedSample;
+                                self.modelInfo.model.sampleName = self.modelInfo.selectedSample;
+                            } else if (self.samples.length === 1) {
+                                self.selectedSample = self.samples[0];
+                                self.modelInfo.selectedSample = self.selectedSample;
+                                self.modelInfo.model.sampleName = self.selectedSample;
+                            } else {
+                                self.selectedSample = null;
+                                self.modelInfo.selectedSample = null;
+                                self.modelInfo.model.sampleName = null;
+                            }
+                            self.$emit("sample-data-changed");
+                            self.$emit("samples-available", self.modelInfo.relationship, self.samples);
                         }
-                        self.$emit("sample-data-changed");
-                        self.$emit("samples-available", self.modelInfo.relationship, self.samples);
                     })
                     .catch(function (error) {
+                        console.log('Error in selecting vcf files in sampleData: ' + error);
+                        self.vcfError = true;
+                        self.retrievingIds = false;
                         self.$emit("sample-data-changed");
                     })
             },
@@ -296,22 +387,43 @@
             },
             onBamUrlEntered: function (bamUrl, baiUrl) {
                 let self = this;
+                self.bamError = false;
+                self.checkingBam = true;
+                self.$emit("sample-data-changed");
+
                 if (self.modelInfo && self.modelInfo.model) {
                     self.modelInfo.model.onBamUrlEntered(bamUrl, baiUrl, function (success) {
+                        self.checkingBam = false;
                         if (success) {
+                            self.modelInfo.bams = [bamUrl];
+                            if (baiUrl) {
+                                self.modelInfo.bais = [baiUrl];
+                            }
                         } else {
+                            self.bamError = true;
                         }
                         self.$emit("sample-data-changed");
                     })
+                }
+                if (bamUrl === '') {
+                    self.modelInfo.bams = [];
+                    self.firstBam = null;
+                }
+                if (baiUrl === '') {
+                    self.modelInfo.bais = null;
+                    self.firstBai = null;
                 }
             },
             onBamFilesSelected: function (fileSelection) {
                 let self = this;
                 self.modelInfo.model.promiseBamFilesSelected(fileSelection)
                     .then(function () {
+                        self.bamError = false;
                         self.$emit("sample-data-changed");
                     })
                     .catch(function (error) {
+                        console.log('There was a problem selecting the bam in sampleData: '+ error);
+                        self.bamError = true;
                         self.$emit("sample-data-changed");
                     })
             },
@@ -359,10 +471,35 @@
                 if (self.modelInfo.model) {
                     self.modelInfo.model.isTumor = status;
                 }
+            },
+            openConfirmationDialog: function() {
+                let self = this;
+                self.$refs.confirmationDialogRef.displayDialog();
+            },
+            confirmDeleteTrack: function() {
+                let self = this;
+                self.removeSample();
+            },
+            setLoadingFlags: function (flagState) {
+                let self = this;
+                self.retrievingIds = flagState;
+                if (self.modelInfo.bams.length > 0) {
+                    self.checkingBam = flagState;
+                }
+            },
+            retryEnteredUrls: function() {
+                let self = this;
+                if (self.$refs.vcfFileRef) {
+                    let fileRef = self.$refs.vcfFileRef;
+                    if (fileRef.url && fileRef.label === 'vcf') {
+                        return self.onVcfUrlEntered(fileRef.url, fileRef.indexUrl);
+                    }
+                }
             }
         },
         created: function () {
-
+            this.vcfError = false;
+            this.bamError = false;
         },
         mounted: function () {
             let self = this;
@@ -371,8 +508,22 @@
             self.rowLabel = self.getRowLabel();
             self.chipLabel = self.isTumor ? 'TUMOR' : 'NORMAL';
             self.isStaticSlot = self.dragId === 's0' || self.dragId === 's1';
-            if (self.modelInfo.vcf) {
-                self.onVcfUrlEntered(self.modelInfo.vcf, self.modelInfo.tbi);
+            // TODO: think below took place of this - delete when test
+            // if (self.modelInfo.vcf) {
+            //     self.onVcfUrlEntered(self.modelInfo.vcf, self.modelInfo.tbi);
+            // }
+            // If we've already filled in the file menu, populate accordingly
+            if (self.modelInfo.vcfs) {
+                self.firstVcf = self.modelInfo.vcfs[0];
+            }
+            if (self.modelInfo.tbis) {
+                self.firstTbi = self.modelInfo.tbis[0];
+            }
+            if (self.modelInfo.bams) {
+                self.firstBam = self.modelInfo.bams[0];
+            }
+            if (self.modelInfo.bais) {
+                self.firstBai = self.modelInfo.bais[0];
             }
 
         }
