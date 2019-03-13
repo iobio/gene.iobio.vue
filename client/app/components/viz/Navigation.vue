@@ -274,6 +274,7 @@
             </v-toolbar-items>
 
             <files-menu
+                    ref="fileMenuRef"
                     v-if="!isEduMode && !isBasicMode"
                     :cohortModel="cohortModel"
                     @on-files-loaded="onFilesLoaded"
@@ -676,6 +677,18 @@
         methods: {
             onLoadDemoData: function (loadAction) {
                 this.$emit("load-demo-data", loadAction);
+            },
+            closeFileMenu: function() {
+                let self = this;
+                if (self.$refs.fileMenuRef) {
+                    self.$refs.fileMenuRef.closeFileMenu();
+                }
+            },
+            onAutoLoad: function() {
+                let self = this;
+                if (self.$refs.fileMenuRef) {
+                    self.$refs.fileMenuRef.promiseLoadDemoFromWelcome();
+                }
             },
             onClearCache: function () {
                 this.$emit("clear-cache")

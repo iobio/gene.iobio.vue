@@ -106,7 +106,6 @@
 
         <v-content>
             <v-container fluid>
-
                 <intro-card v-if="forMyGene2"
                             :closeIntro="closeIntro"
                             :isBasicMode="isBasicMode"
@@ -115,7 +114,6 @@
                             @on-advanced-mode="onAdvancedMode"
                             @on-basic-mode="onBasicMode">
                 </intro-card>
-
 
                 <genes-card
                         v-if="geneModel && (geneModel.geneNames.length > 0  || isEduMode)"
@@ -146,16 +144,13 @@
                         @filter-settings-applied="onFilterSettingsApplied"
                         @filter-settings-closed="showCoverageCutoffs = false"
                         @apply-genes="onApplyGenes"
-                        @stop-analysis="onStopAnalysis"
-                >
+                        @stop-analysis="onStopAnalysis">
                 </genes-card>
 
 
-                <div
-                        v-if="geneModel && Object.keys(selectedGene).length > 0"
+                <div v-if="geneModel && Object.keys(selectedGene).length > 0"
                         style="height:auto;margin-top:10px;margin-bottom:10px"
-                        v-bind:class="{hide : showWelcome }"
-                >
+                        v-bind:class="{hide : showWelcome }">
                     <split-pane :leftPercent="featureMatrixWidthPercent">
                         <feature-matrix-card v-show="featureMatrixWidthPercent > 0" slot="left"
                                              style="min-width:300px;min-height:auto;max-height:auto;overflow-y:scroll"
@@ -173,19 +168,15 @@
                                              @cohort-variant-click="onCohortVariantClick"
                                              @cohort-variant-hover="onCohortVariantHover"
                                              @cohort-variant-hover-end="onCohortVariantHoverEnd"
-                                             @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.getModel('proband').loadedVariants);"
-                        >
+                                             @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.getModel('proband').loadedVariants);">
                         </feature-matrix-card>
 
                         <v-card id="gene-and-variant-tabs" slot="right"
                                 style="min-height:auto;max-height:auto;margin-bottom:0px;padding-top:0px;margin-top:0px;overflow-y:scroll">
-
-
                             <v-tabs
                                     v-if="geneModel"
                                     v-model="activeGeneVariantTab"
-                                    light
-                            >
+                                    light>
                                 <v-tab>
                                     Gene
                                 </v-tab>
@@ -238,14 +229,11 @@
                                             :info="selectedVariantInfo"
                                             @transcript-id-selected="onTranscriptIdSelected"
                                             @flag-variant="onFlagVariant"
-                                            @remove-flagged-variant="onRemoveFlaggedVariant"
-                                    >
+                                            @remove-flagged-variant="onRemoveFlaggedVariant">
                                     </variant-detail-card>
 
                                     <scroll-button ref="scrollButtonRefVariant" :parentId="`variant-detail`">
                                     </scroll-button>
-
-
                                 </v-tab-item>
                             </v-tabs>
                         </v-card>
@@ -787,28 +775,52 @@
                 });
 
             },
-
             onLoadDemoData: function () {
                 let self = this;
                 self.promiseClearCache()
                     .then(function () {
-                        self.onGeneSelected(self.cohortModel.demoGenes[0]);
-                        return self.cohortModel.promiseInitDemo()
-                    })
-                    .then(function () {
-                        self.models = self.cohortModel.sampleModels;
-                        if (self.selectedGene && Object.keys(self.selectedGene).length > 0) {
-                            self.promiseLoadData()
-                                .then(function () {
-                                    if (self.cohortModel && self.cohortModel.isLoaded && !self.isEduMode) {
-                                        self.cacheHelper.analyzeAll(self.cohortModel, false);
-                                    }
-                                });
+                        if (self.$refs.navRef) {
+                            self.$refs.navRef.closeFileMenu();
                         }
-                    })
+                        self.geneModel.promiseAddGeneName(self.cohortModel.demoGenes[0])
+                            .then(() => {
+                                self.geneModel.promiseGetGeneObject(self.cohortModel.demoGenes[0])
+                                    .then(function (theGeneObject) {
+                                        self.selectedGene = theGeneObject;
+                                        self.selectedTranscript = self.geneModel.getCanonicalTranscript(self.selectedGene);
+                                        if (self.$refs.navRef) {
+                                            self.$refs.navRef.onAutoLoad();
+                                        }
+                                    });
+                            });
+                    });
             },
-
-
+            // Old gene version:
+            // onLoadDemoData: function () {
+            //     let self = this;
+            //     self.promiseClearCache()
+            //         .then(function () {
+            //             self.onGeneSelected(self.cohortModel.demoGenes[0]);
+            //             return self.cohortModel.promiseInitDemo();
+            //         })
+            //         .then(function () {
+            //             self.models = self.cohortModel.sampleModels;
+            //             if (self.selectedGene && Object.keys(self.selectedGene).length > 0) {
+            //                 self.promiseLoadData()
+            //                     .then(function () {
+            //                         if (self.cohortModel && self.cohortModel.isLoaded && !self.isEduMode) {
+            //                             self.cacheHelper.analyzeAll(self.cohortModel, false);
+            //                         }
+            //                     });
+            //             }
+            //         })
+            // },
+            openFileSelection: function() {
+                let self = this;
+                if (self.$refs.navRef) {
+                    self.$refs.navRef.openFileSelection();
+                }
+            },
             promiseLoadData: function () {
                 let self = this;
 

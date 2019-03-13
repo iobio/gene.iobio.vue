@@ -238,7 +238,8 @@
                 stateUnchanged: true,
                 arrId: 0,
                 debugMe: false,
-                inputClass: 'fileSelect'
+                inputClass: 'fileSelect',
+                loadDemoFromWelcome: false
             }
         },
         watch: {
@@ -433,88 +434,102 @@
                 let self = this;
                 self.onAutoLoad(true, 'demo', null);
             },
+            promiseLoadDemoFromWelcome: function() {
+                let self = this;
+                self.loadDemoFromWelcome = true;
+                self.showFilesMenu = true;
+            },
+            closeFileMenu: function() {
+                let self = this;
+                self.loadDemoFromWelcome = true;
+                self.showFilesMenu = false;
+            },
             onAutoLoad: function (timeSeries, mode, customInfos) {
                 let self = this;
 
-                // Toggle switches
-                if (timeSeries) {
-                    self.timeSeriesMode = true;
-                } else {
-                    self.timeSeriesMode = false;
-                }
-
-                let infosToLoad = null;
-                let customHasSeparateIndices = false;
-                if (mode === 'demo') {
-                    let whichDemo = timeSeries ? 'timeSeries' : 'dual';
-                    infosToLoad = self.cohortModel.demoModelInfos[whichDemo];
-                } else {
-                    infosToLoad = customInfos;
-                    customHasSeparateIndices = self.checkCustomIndex(customInfos);
-                }
-
-                if (self.cohortModel.demoCmmlFiles || customHasSeparateIndices) {
-                    self.separateUrlForIndex = true;
-                } else {
-                    self.separateUrlForIndex = false;
-                }
-
-                // Reset modelInfoMap to get rid of any added info extras
-                self.modelInfoMap = {};
-
-                // Add relevant infos to map and ids to sample array in correct order
-                let idList = [];
-                let arrIndex = 0;
-                infosToLoad.forEach(function (modelInfo) {
-                    let id = modelInfo.id;
-                    idList.push(id);
-                    self.modelInfoMap[id] = modelInfo;
-                    self.sampleIds[arrIndex] = modelInfo.id;
-                    arrIndex++;
-                });
-
-                // Get rid of any remaining extra samples names in array
-                if (self.sampleIds.length > arrIndex) {
-                    let numToDelete = self.sampleIds.length - arrIndex;
-                    self.sampleIds.splice(arrIndex, numToDelete);
-                }
-
-                // Ensure orders are correct
-                for (let i = 0; i < self.sampleIds.length; i++) {
-                    let currInfo = self.modelInfoMap[self.sampleIds[i]];
-                    currInfo.order = i;
-                }
-
-                // Force update labels
-                self.$refs.sampleDataRef.forEach((ref) => {
-                    ref.updateLabel();
-                });
-
-                // Ensure models are synonymous with infos and in same order as viewd
-                self.cohortModel.removeExtraModels(idList);
-                let addPromises = [];
-                for (let i = 0; i < self.sampleIds.length; i++) {
-                    let currKey = self.sampleIds[i];
-                    let currModel = self.cohortModel.getModel(currKey);
-                    if (currModel == null) {
-                        let corrInfo = self.modelInfoMap[currKey];
-                        let p = self.cohortModel.promiseAddSample(corrInfo, i); // Don't need to assign to map, done in promiseSetModel below
-                        addPromises.push(p);
+                return new Promise((resolve, reject) => {
+                    // Toggle switches
+                    if (timeSeries) {
+                        self.timeSeriesMode = true;
                     } else {
-                        self.cohortModel.sampleModels[i] = currModel;
+                        self.timeSeriesMode = false;
                     }
-                }
 
-                Promise.all(addPromises)
-                    .then(() => {
-                        self.cohortModel.getCanonicalModels().forEach(function (model) {
-                            self.promiseSetModel(model);
-                        });
-                        if (self.debugMe) {
-                            console.log('loading demo data');
-                            self.debugOrder();
+                    let infosToLoad = null;
+                    let customHasSeparateIndices = false;
+                    if (mode === 'demo') {
+                        let whichDemo = timeSeries ? 'timeSeries' : 'dual';
+                        infosToLoad = self.cohortModel.demoModelInfos[whichDemo];
+                    } else {
+                        infosToLoad = customInfos;
+                        customHasSeparateIndices = self.checkCustomIndex(customInfos);
+                    }
+
+                    if (self.cohortModel.demoCmmlFiles || customHasSeparateIndices) {
+                        self.separateUrlForIndex = true;
+                    } else {
+                        self.separateUrlForIndex = false;
+                    }
+
+                    // Reset modelInfoMap to get rid of any added info extras
+                    self.modelInfoMap = {};
+
+                    // Add relevant infos to map and ids to sample array in correct order
+                    let idList = [];
+                    let arrIndex = 0;
+                    infosToLoad.forEach(function (modelInfo) {
+                        let id = modelInfo.id;
+                        idList.push(id);
+                        self.modelInfoMap[id] = modelInfo;
+                        self.sampleIds[arrIndex] = modelInfo.id;
+                        arrIndex++;
+                    });
+
+                    // Get rid of any remaining extra samples names in array
+                    if (self.sampleIds.length > arrIndex) {
+                        let numToDelete = self.sampleIds.length - arrIndex;
+                        self.sampleIds.splice(arrIndex, numToDelete);
+                    }
+
+                    // Ensure orders are correct
+                    for (let i = 0; i < self.sampleIds.length; i++) {
+                        let currInfo = self.modelInfoMap[self.sampleIds[i]];
+                        currInfo.order = i;
+                    }
+
+                    // Force update labels
+                    self.$refs.sampleDataRef.forEach((ref) => {
+                        ref.updateLabel();
+                    });
+
+                    // Ensure models are synonymous with infos and in same order as viewed
+                    self.cohortModel.removeExtraModels(idList);
+                    let addPromises = [];
+                    for (let i = 0; i < self.sampleIds.length; i++) {
+                        let currKey = self.sampleIds[i];
+                        let currModel = self.cohortModel.getModel(currKey);
+                        if (currModel == null) {
+                            let corrInfo = self.modelInfoMap[currKey];
+                            let p = self.cohortModel.promiseAddSample(corrInfo, i); // Don't need to assign to map, done in promiseSetModel below
+                            addPromises.push(p);
+                        } else {
+                            self.cohortModel.sampleModels[i] = currModel;
                         }
+                    }
+                    Promise.all(addPromises)
+                        .then(() => {
+                            self.cohortModel.getCanonicalModels().forEach(function (model) {
+                                self.promiseSetModel(model);
+                            });
+                            if (self.debugMe) {
+                                console.log('loading demo data');
+                                self.debugOrder();
+                            }
+                            resolve();
+                        }).catch((error) => {
+                            reject('Problem in autoloading in files menu: ' + error);
                     })
+                });
             },
             checkCustomIndex: function (infos) {
                 let areSeparate = false;
@@ -603,15 +618,47 @@
             },
             init: function () {
                 let self = this;
-                if (self.cohortModel && self.cohortModel.getCanonicalModels().length > 0) {
+                if (self.cohortModel && self.cohortModel.getCanonicalModels().length > 0 && !self.loadDemoFromWelcome) {
                     self.initModelInfo();
                 } else {
                     self.promiseAddSample(false, false)
                         .then(() => {
-                            self.promiseAddSample(true, false);
+                            self.promiseAddSample(true, false)
+                                .then(() => {
+                                    // If we've clicked run w/ demo data on welcome screen, want to get that process going
+                                    if (self.loadDemoFromWelcome) {
+                                        self.onAutoLoad(false, 'demo')
+                                            .then(() => {
+                                                self.loadDemoFromWelcome = false;
+                                                self.onLoad();
+                                            })
+                                    }
+                                });
                         });
                 }
             },
+            // // Called each time files menu opened
+            // init: function () {
+            //     let self = this;
+            //     // If we already have model information from Hub, we want to display that in the file loader
+            //     if (self.variantModel && self.variantModel.getAllDataSets().length > 0 && !self.loadDemoFromWelcome) {
+            //         self.initModelInfo();
+            //         // Otherwise add single entry for initial launch
+            //     } else {
+            //         self.promiseAddEntry(false, false)
+            //             .then(() => {
+            //                 // If we've clicked run w/ demo data on welcome screen, want to get that process going
+            //                 if (self.loadDemoFromWelcome) {
+            //                     self.onAutoLoad(false)
+            //                         .then(() => {
+            //                             self.loadDemoFromWelcome = false;
+            //                             self.onLoad();
+            //                         })
+            //                 }
+            //             })
+            //     }
+            // },
+
             initModelInfo: function () {
                 let self = this;
                 self.separateUrlForIndex = false;
