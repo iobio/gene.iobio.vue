@@ -735,21 +735,13 @@ export default {
       if (this.isBasicMode || this.isEduMode ) {
         label += "Variants for ";
       }
-      // if (this.sampleModel.isAlignmentsOnly()) {
-      //   label += this.sampleModel.selectedSample;
-      // } else {
-      //   if (this.sampleModel.cohort.mode === 'timeSeries' && this.sampleModel.id !== 'known-variants'
-      //     && this.sampleModel.displayName !== this.sampleModel.selectedSample) {
-      //     label += this.sampleModel.id + " ";
-      //   }
-      //   label += this.sampleModel.name;
-      // }
       if (this.sampleModel.displayName && this.sampleModel.displayName !== '') {
-        label += this.sampleModel.displayName + ' (';
-      }
-      label += this.sampleModel.selectedSample;
-      if (this.sampleModel.displayName && this.sampleModel.displayName !== '') {
-          label += ')';
+        label += this.sampleModel.displayName;
+        if (this.sampleModel.selectedSample) {
+            label += ' (' + this.sampleModel.selectedSample + ')';
+        }
+      } else {
+          label += this.sampleModel.selectedSample.toUpper();
       }
       return label;
     },

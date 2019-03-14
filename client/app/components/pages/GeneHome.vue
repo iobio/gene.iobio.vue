@@ -117,11 +117,14 @@
                 </intro-card>
 
                 <genes-card
-                        v-if="geneModel && (geneModel.geneNames.length > 0  || isEduMode)"
-                        v-bind:class="{hide : showWelcome && !isEduMode}"
+                        v-if="geneModel"
+                        v-show="filterModel"
+                        v-bind:class="{hide : showWelcome && !isEduMode, 'full-width': true}"
                         ref="genesCardRef"
                         :isEduMode="isEduMode"
                         :isBasicMode="isBasicMode"
+                        :launchedFromClin="launchedFromClin"
+                        :launchedFromHub="launchedFromHub"
                         :tourNumber="tourNumber"
                         :geneModel="geneModel"
                         :selectedGene="selectedGene"
@@ -140,106 +143,106 @@
                         @analyze-all="onAnalyzeAll"
                         @call-variants="callVariants"
                         @sort-genes="onSortGenes"
-                        @add-flagged-variants="onAddFlaggedVariants"
-                        @register-flagged-variants="onRegisterFlaggedVariants"
+                        @filter-selected="onFilterSelected"
                         @filter-settings-applied="onFilterSettingsApplied"
                         @filter-settings-closed="showCoverageCutoffs = false"
                         @apply-genes="onApplyGenes"
-                        @stop-analysis="onStopAnalysis">
+                        @stop-analysis="onStopAnalysis"
+                        @show-known-variants="onShowKnownVariantsCard"
+                        @show-cosmic-variants="onShowCosmicVariantsCard">
                 </genes-card>
 
-
-                <div v-if="geneModel && Object.keys(selectedGene).length > 0"
-                        style="height:auto;margin-top:10px;margin-bottom:10px"
+                <v-card class="full-width" style="margin-top:10px;margin-bottom:10px;padding-bottom:10px;"
+                        v-if="geneModel && Object.keys(selectedGene).length > 0"
                         v-bind:class="{hide : showWelcome }">
-                    <split-pane :leftPercent="featureMatrixWidthPercent">
-                        <feature-matrix-card v-show="featureMatrixWidthPercent > 0" slot="left"
-                                             style="min-width:300px;min-height:auto;max-height:auto;overflow-y:scroll"
-                                             ref="featureMatrixCardRef"
-                                             v-bind:class="{ hide: !cohortModel || !cohortModel.isLoaded || !featureMatrixModel || !featureMatrixModel.rankedVariants }"
-                                             :isEduMode="isEduMode"
-                                             :isBasicMode="isBasicMode"
-                                             :featureMatrixModel="featureMatrixModel"
-                                             :selectedGene="selectedGene"
-                                             :selectedTranscript="analyzedTranscript"
-                                             :selectedVariant="selectedVariant"
-                                             :relationship="PROBAND"
-                                             :variantTooltip="variantTooltip"
-                                             :width="cardWidth"
-                                             @cohort-variant-click="onCohortVariantClick"
-                                             @cohort-variant-hover="onCohortVariantHover"
-                                             @cohort-variant-hover-end="onCohortVariantHoverEnd"
-                                             @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.getModel('proband').loadedVariants);">
-                        </feature-matrix-card>
+                    <gene-card
+                            :showTitle="false"
+                            :isEduMode="isEduMode"
+                            :isBasicMode="isBasicMode"
+                            :geneModel="geneModel"
+                            :selectedGene="selectedGene"
+                            :selectedTranscript="selectedTranscript"
+                            :geneRegionStart="geneRegionStart"
+                            :geneRegionEnd="geneRegionEnd"
+                            :showGeneViz="!isEduMode && !isBasicMode && (cohortModel == null || !cohortModel.isLoaded)"
+                            @transcript-selected="onTranscriptSelected"
+                            @gene-source-selected="onGeneSourceSelected"
+                            @gene-region-buffer-change="onGeneRegionBufferChange"
+                            @gene-region-zoom="onGeneRegionZoom"
+                            @gene-region-zoom-reset="onGeneRegionZoomReset"
+                    >
+                    </gene-card>
+                </v-card>
 
-                        <v-card id="gene-and-variant-tabs" slot="right"
-                                style="min-height:auto;max-height:auto;margin-bottom:0px;padding-top:0px;margin-top:0px;overflow-y:scroll">
-                            <v-tabs
-                                    v-if="geneModel"
-                                    v-model="activeGeneVariantTab"
-                                    light>
-                                <v-tab>
-                                    Gene
-                                </v-tab>
-                                <v-tab v-if="!isEduMode">
-                                    Variant
-                                </v-tab>
-                                <v-switch class="clinvar-switch"
-                                          v-if="geneModel.geneDangerSummaries[selectedGene.gene_name] && !isEduMode && !isBasicMode"
-                                          v-bind:label="`Display all ${selectedGene.gene_name} ClinVar variants`"
-                                          v-model="showKnownVariantsCard"
+                <div
+                    v-if="geneModel && Object.keys(selectedGene).length > 0 && (!isBasicMode || selectedVariant != null)"
+                    style="height:auto;margin-bottom:10px;"
+                    v-bind:class="{hide : showWelcome, 'full-width': true }"
+                >
+
+                    <v-card v-if="geneModel && cohortModel.isLoaded && Object.keys(selectedGene).length > 0"
+                            id="gene-and-variant-tabs" slot="right"
+                            class="full-width"
+                            style=";min-height:auto;max-height:auto;margin-bottom:0px;padding-top:0px;margin-top:0px;">
+                        <v-tabs
+                            v-model="activeGeneVariantTab"
+                            light
+                            :class="{'basic': isBasicMode}">
+                            <v-tab v-if="!isBasicMode">
+                                Ranked Variants in Gene
+                            </v-tab>
+                            <v-tab v-if="!isEduMode">
+                                Variant
+                            </v-tab>
+
+                            <v-tab-item v-if="!isBasicMode" style="margin-top:5px;margin-bottom:0px;overflow-y:auto">
+
+                                <feature-matrix-card style="min-width:300px; min-height:auto; max-height:auto"
+                                                     ref="featureMatrixCardRef"
+                                                     v-bind:class="{ hide: !cohortModel || !cohortModel.isLoaded || !featureMatrixModel || !featureMatrixModel.rankedVariants }"
+                                                     :isEduMode="isEduMode"
+                                                     :isBasicMode="isBasicMode"
+                                                     :featureMatrixModel="featureMatrixModel"
+                                                     :selectedGene="selectedGene"
+                                                     :selectedTranscript="analyzedTranscript"
+                                                     :selectedVariant="selectedVariant"
+                                                     :relationship="PROBAND"
+                                                     :variantTooltip="variantTooltip"
+                                                     :width="cardWidth"
+                                                     @cohort-variant-click="onCohortVariantClick"
+                                                     @cohort-variant-hover="onCohortVariantHover"
+                                                     @cohort-variant-hover-end="onCohortVariantHoverEnd"
+                                                     @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.getModel('proband').loadedVariants);"
                                 >
-                                </v-switch>
-                                <v-tab-item style="margin-top:5px;margin-bottom:0px;overflow-y:scroll">
-                                    <gene-card
-                                            :showTitle="false"
-                                            :isEduMode="isEduMode"
-                                            :isBasicMode="isBasicMode"
-                                            :geneModel="geneModel"
-                                            :selectedGene="selectedGene"
-                                            :selectedTranscript="selectedTranscript"
-                                            :geneRegionStart="geneRegionStart"
-                                            :geneRegionEnd="geneRegionEnd"
-                                            :showGeneViz="!isEduMode && !isBasicMode && (cohortModel == null || !cohortModel.isLoaded)"
-                                            @transcript-selected="onTranscriptSelected"
-                                            @gene-source-selected="onGeneSourceSelected"
-                                            @gene-region-buffer-change="onGeneRegionBufferChange"
-                                            @gene-region-zoom="onGeneRegionZoom"
-                                            @gene-region-zoom-reset="onGeneRegionZoomReset"
-                                    >
-                                    </gene-card>
+                                </feature-matrix-card>
 
-                                    <!--              <scroll-button ref="scrollButtonRefGene" :parentId="`gene-summary-box`">
-                                                      </scroll-button>
-                                    -->
 
-                                </v-tab-item>
-                                <v-tab-item style="margin-top:0px;margin-bottom:0px;overflow-y:scroll">
-                                    <variant-detail-card
-                                            ref="variantDetailCardRef"
-                                            :isEduMode="isEduMode"
-                                            :isBasicMode="isBasicMode"
-                                            :showTitle="false"
-                                            :selectedGene="selectedGene"
-                                            :selectedTranscript="analyzedTranscript"
-                                            :selectedVariant="selectedVariant"
-                                            :selectedVariantRelationship="selectedVariantRelationship"
-                                            :genomeBuildHelper="genomeBuildHelper"
-                                            :variantTooltip="variantTooltip"
-                                            :cohortModel="cohortModel"
-                                            :info="selectedVariantInfo"
-                                            @transcript-id-selected="onTranscriptIdSelected"
-                                            @flag-variant="onFlagVariant"
-                                            @remove-flagged-variant="onRemoveFlaggedVariant">
-                                    </variant-detail-card>
+                            </v-tab-item>
+                            <v-tab-item style="margin-top:0px;margin-bottom:0px;overflow-y:auto">
+                                <variant-detail-card
+                                        ref="variantDetailCardRef"
+                                        :isEduMode="isEduMode"
+                                        :isBasicMode="isBasicMode"
+                                        :forMyGene2="forMyGene2"
+                                        :showTitle="false"
+                                        :selectedGene="selectedGene"
+                                        :selectedTranscript="analyzedTranscript"
+                                        :selectedVariant="selectedVariant"
+                                        :selectedVariantRelationship="selectedVariantRelationship"
+                                        :genomeBuildHelper="genomeBuildHelper"
+                                        :variantTooltip="variantTooltip"
+                                        :cohortModel="cohortModel"
+                                        :info="selectedVariantInfo"
+                                        @transcript-id-selected="onTranscriptIdSelected"
+                                        @flag-variant="onFlagVariant"
+                                >
+                                </variant-detail-card>
 
-                                    <scroll-button ref="scrollButtonRefVariant" :parentId="`variant-detail`">
-                                    </scroll-button>
-                                </v-tab-item>
-                            </v-tabs>
-                        </v-card>
-
-                    </split-pane>
+                                <scroll-button ref="scrollButtonRefVariant" :parentId="`variant-detail`">
+                                </scroll-button>
+                            </v-tab-item>
+                        </v-tabs>
+                    </v-card>
                 </div>
 
                 <v-flex xs12 v-if="showWelcome">
@@ -441,6 +444,7 @@
 
                 showVariantCards: false,
                 showKnownVariantsCard: false,
+                showCosmicVariantsCard: false,
 
                 inProgress: {},
                 firstLaunchFromFileMenu: true,
@@ -681,14 +685,10 @@
                 setTimeout(function () {
                     self.onResize();
                 }, 1000)
-            },
-            showKnownVariantsCard: function () {
-                this.onShowKnownVariantsCard();
             }
         },
 
         methods: {
-
             promiseInitCache: function () {
                 let self = this;
                 return new Promise(function (resolve, reject) {
@@ -817,7 +817,7 @@
             //             }
             //         })
             // },
-            openFileSelection: function() {
+            openFileSelection: function () {
                 let self = this;
                 if (self.$refs.navRef) {
                     self.$refs.navRef.openFileSelection();
@@ -1390,6 +1390,14 @@
             onAnalyzeAll: function () {
                 this.cacheHelper.analyzeAll(this.cohortModel);
             },
+            onFilterSelected: function(filterName, filteredGeneNames) {
+                this.activeFilterName = filterName;
+                this.filteredGeneNames = filteredGeneNames;
+                if (filterName === 'coverage') {
+                    this.showLeftPanelForGenes();
+                    this.onGeneSelected(this.selectedGene.gene_name);
+                }
+            },
             onClearAllGenes: function () {
                 this.clearFilter();
                 this.selectedGene = {};
@@ -1604,7 +1612,7 @@
                     let modelInfos = [];
                     for (let i = 0; i < sampleNames.length; i++) {
                         let modelInfo = {'name': sampleNames[i]};
-                        modelInfo.id = tumorStatuses[i] ? 'n' + i : 't' + (i-1);
+                        modelInfo.id = tumorStatuses[i] ? 'n' + i : 't' + (i - 1);
                         modelInfo.name = sampleNames[i];
                         modelInfo.isTumor = tumorStatuses[i];
                         modelInfo.vcf = vcfs[i];
@@ -1773,10 +1781,18 @@
 
                     });
             },
-            onShowKnownVariantsCard: function () {
+            onShowKnownVariantsCard: function(showIt) {
                 let self = this;
+                self.showKnownVariantsCard = showIt;
                 if (self.showKnownVariantsCard) {
                     self.onKnownVariantsVizChange();
+                }
+            },
+            onShowCosmicVariantsCard: function(showIt) {
+                let self = this;
+                self.showCosmicVariantsCard = showIt;
+                if (self.showCosmicVariantsCard) {
+                    self.onCosmicVariantsVizChange();
                 }
             },
             onFilterSettingsApplied: function () {

@@ -534,7 +534,10 @@ class CohortModel {
             let promises = [];
 
             // Add clinvar track
-            promises.push(self.promiseAddClinvarSample());        // TODO: promise add COSMIC sample
+            promises.push(self.promiseAddClinvarSample());
+
+            // Add cosmic track
+            // TODO: implement
 
             // Add tracks for user samples
             modelInfos.forEach(function (modelInfo) {
@@ -762,10 +765,9 @@ class CohortModel {
         } else {
             return new Promise(function (resolve, reject) {
                 let vm = new SampleModel(self.globalApp);
-                vm.isCosmic = true;
                 vm.init(self);
                 vm.setId('known-variants');
-                vm.setDisplayName('Clinvar');
+                vm.setDisplayName('ClinVar');
                 let clinvarUrl = self.genomeBuildHelper.getBuildResource(self.genomeBuildHelper.RESOURCE_CLINVAR_VCF_S3);
                 vm.onVcfUrlEntered(clinvarUrl, null, function () {
                         self.sampleModels.push(vm);

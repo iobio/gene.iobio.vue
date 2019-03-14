@@ -1,22 +1,29 @@
-$text-color:           rgb(113,113,113)
-$app-gray:             #888888
-
-
 $app-color:            #7f1010
 $app-color-light:      #961313
 $app-color-lighter:    #ac1616
 
+$animationDuration: 2s
+
+$text-color:           rgb(113,113,113)
+$app-gray:             #888888
+
+$color-1: #398eb2
+$color-2: #ffbf6b
+$color-3: #d1675a
+$color-4: #96312e
+$color-5: #153d52
+$heading-color: #36577a
+$app-background-color: #f1f1f1
 
 $nav-color:            $app-color
 $nav-text-color:       white
 $nav-title-color:      white
 
-
-
-
-
-$nav-color-clin:       $app-color
-$nav-text-color-clin:  white
+$clin-app-color:       $app-color
+$clin-accent-color:    #77d0e6
+$nav-color-clin:       white
+$nav-text-color-clin:  $text-color
+$nav-title-color-clin: $clin-app-color
 
 $amber-lighten-5:  #FFF8E1
 $amber-lighten-4:  #FFECB3
@@ -33,7 +40,7 @@ $app-accent-color:    $amber-darken-1
 
 
 
-
+$link-button-color:    #f1f1f1
 
 
 $link-color:           $app-color-light
@@ -62,22 +69,27 @@ $current-frame-color:           #969696
 $arrow-color:                   $current-color
 $flagged-border-color:          $current-color
 $cell-border-color:             #dedede
+$notes-background-color:        #fffae2
 
 
-$called-variant-color:          $app-gray
-$called-variant-color-darker:   $app-gray
-$loaded-variant-color:          $app-gray
 
 
-$danger-exon-color:              rgba(175, 180, 43, .5)
-$danger-exon-border-color:       rgba(175, 180, 43, .9)
-$coverage-problem-color:         rgba(175, 180, 43, .75)
-$coverage-problem-region-color:  rgba(175, 180, 43, .5)
-$coverage-problem-tooltip-color: rgb(175, 180, 43)
+$danger-exon-color:              rgba(228, 101, 101, .5)
+$danger-exon-border-color:       rgba(228, 101, 101, .75)
+$coverage-problem-color:         rgba(228, 101, 101, 1)
+$coverage-problem-region-color:  $danger-exon-color
+$coverage-problem-tooltip-color: rgb(228, 101, 101)
+$coverage-problem-glyph-color:   rgb(228, 101, 101)
 
 $danger-color:                    #b32f2f
 $warning-background-color:        rgb(217, 123, 123)
 $warning-border-color:            #b67272
+
+
+$called-variant-color:          #89a5c4
+$called-variant-color-darker:   #89a5c4
+$loaded-variant-color:          $app-gray
+
 
 $hom-color:                       rgba(173, 38, 38, 0.65)
 $het-color:                       rgb(181, 181, 181)
@@ -86,12 +98,33 @@ $homref-color:                    rgb(216, 216, 216)
 $bookmark-color:                  #3773A7
 
 
-$iobio-font:           'Quicksand'
-$app-font:             'Quattrocento Sans', sans-serif
+$app-font:                'Poppins', sans-serif
+$iobio-font:              'Poppins', sans-serif
 
 
 
-$tour-button-color:      #E45C5C
+$high-impact-color:       #ac1113
+$moderate-impact-color:   #ec9d2c
+$modifier-impact-color:   #f9e4b5
+$low-impact-color:        rgba(181, 207, 107, 0.65)
+
+
+$level-high-color:        $high-impact-color
+$level-likely-high-color: rgba(220, 78, 78, .81)
+$level-medium-color:      rgba(231, 186, 82, 1)
+$level-low-color:         rgba(181, 207, 107, 1)
+$level-likely-low-color:  rgba(163, 183, 104, 1)
+$level-conflicting-color: rgb(111, 182, 180)
+$level-other-color:       rgb(189, 189, 189)
+
+
+$significant-color:            $high-impact-color
+$unknown-significance-color:   #fa8847
+$not-significant-color:        #adabab
+$poor-qual-color:              #c15555
+$not-reviewed-color:           #d3d3d3
+
+$tour-button-color:            #E45C5C
 
 $gene-box-color:         rgba(93, 128, 157, 0.63)
 $gene-box-border-color:  rgb(93, 128, 157)
@@ -101,8 +134,8 @@ $tour-hilite-color:      #E45C5C
 $tour-theme-color:     #1D287B
 
 
-$clinvar-path-color:     #ad494A
-$clinvar-lpath-color:    #FB7737
+$clinvar-path-color:     $high-impact-color
+$clinvar-lpath-color:    $level-likely-high-color
 $clinvar-uc-color:       rgba(231,186,82,1)
 $clinvar-benign-color:   rgba(156,194,49,1)
 $clinvar-lbenign-color:  rgba(181,207,107,1)
