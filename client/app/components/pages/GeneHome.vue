@@ -264,11 +264,11 @@
                         v-for="model in models"
                         :key="model.relationship"
                         v-bind:class="[
-        { 'hide': showWelcome || Object.keys(selectedGene).length == 0 || !cohortModel  || cohortModel.inProgress.loadingDataSources || (model.relationship == 'known-variants' && showKnownVariantsCard == false),
-          'edu' : isEduMode
-        },
-        model.relationship
-        ]"
+                            { 'hide': showWelcome || Object.keys(selectedGene).length === 0 || !cohortModel  || cohortModel.inProgress.loadingDataSources || (model.relationship === 'known-variants' && showKnownVariantsCard === false),
+                              'edu' : isEduMode
+                            },
+                            model.relationship
+                            ]"
                         :globalAppProp="globalApp"
                         :isEduMode="isEduMode"
                         :isBasicMode="isBasicMode"

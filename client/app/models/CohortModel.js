@@ -28,10 +28,10 @@ class CohortModel {
 
         this.isLoaded = false;
 
-        this.sampleModels = [];        // List of sample models correlated with this cohort
-        this.sampleMap = {};           // Relateds IDs to model objects
+        this.sampleModels = [];                 // List of sample models correlated with this cohort
+        this.sampleMap = {};                    // Relateds IDs to model objects
 
-        this.mode = 'time';             // Indicates time-series mode
+        this.mode = 'time';                     // Indicates time-series mode
         this.maxAlleleCount = null;
         this.affectedInfo = null;
         this.maxDepth = 0;
@@ -43,8 +43,8 @@ class CohortModel {
         this.genesInProgress = [];
         this.flaggedVariants = [];
 
-        this.knownVariantsViz = 'variants'; // variants, histo, histoExon
-        this.demoCmmlFiles = false;     // If true, loads demo CMML data - ONLY LOCAL
+        this.knownVariantsViz = 'variants';     // variants, histo, histoExon
+        this.demoCmmlFiles = false;             // If true, loads demo CMML data - ONLY LOCAL
         this.demoVcfs = this.getDemoVcfs();
         this.demoBams = this.getDemoBams();
         this.demoModelInfos = this.getDemoModelInfos();
@@ -530,28 +530,51 @@ class CohortModel {
             self.flaggedVariants = [];
             self.genesInProgress = [];
             self.sampleMap = {};
-
             self.clearLoadedData();
-
             let promises = [];
+
+            // Add clinvar track
+            promises.push(self.promiseAddClinvarSample());        // TODO: promise add COSMIC sample
+
+            // Add tracks for user samples
             modelInfos.forEach(function (modelInfo) {
                 promises.push(self.promiseAddSample(modelInfo));
             });
-            promises.push(self.promiseAddClinvarSample());        // TODO: promise add COSMIC sample
-
 
             Promise.all(promises)
                 .then(function () {
+
+                    // Enforce cosmic track being on top
+                    self.putCosmicSampleFirst();
+
+                    // Flip status flags
                     self.setTumorInfo(true);
                     self.inProgress.loadingDataSources = false;
                     self.isLoaded = true;
-
                     resolve();
                 })
                 .catch(function (error) {
                     reject(error);
                 })
         })
+    }
+
+    /* Places the cosmic sample model first in the list so that it's track is rendered above the others. */
+    putCosmicSampleFirst() {
+        let self = this;
+        let cosmicModelIdx = -1;
+        for (let i = 0; i < self.sampleModels.length; i++) {
+            let currModel = self.sampleModels[i];
+            if (currModel.isCosmic === true) {
+                cosmicModelIdx = i;
+                break;
+            }
+        }
+        if (cosmicModelIdx > 0) {
+            let cosmicModel = self.sampleModels[cosmicModelIdx];
+            self.sampleModels.splice(cosmicModelIdx, 1);    // Delete current position
+            self.sampleModels.splice(0, 0, cosmicModel);    // Insert it first
+        }
     }
 
 
@@ -569,7 +592,6 @@ class CohortModel {
             let vcfPromise = null;
             if (modelInfo.vcf) {
                 vcfPromise = new Promise(function (vcfResolve, vcfReject) {
-                        // TODO: make sure we don't need to set selected sample field for model here...
                         vm.onVcfUrlEntered(modelInfo.vcf, modelInfo.tbi, function () {
                             if (modelInfo.displayName && modelInfo.displayName !== '') {
                                 vm.setDisplayName(modelInfo.displayName);
@@ -740,6 +762,7 @@ class CohortModel {
         } else {
             return new Promise(function (resolve, reject) {
                 let vm = new SampleModel(self.globalApp);
+                vm.isCosmic = true;
                 vm.init(self);
                 vm.setId('known-variants');
                 vm.setDisplayName('Clinvar');
@@ -864,6 +887,9 @@ class CohortModel {
 
                 self.startGeneProgress(theGene.gene_name);
                 self.clearLoadedData();
+
+                // Enforce Cosmic sample top track
+                self.putCosmicSampleFirst();
 
                 let resultMap = null;
                 let p1 = self.promiseLoadVariants(theGene, theTranscript, options)

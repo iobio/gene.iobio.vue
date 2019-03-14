@@ -33,6 +33,7 @@ class SampleModel {
         this.isGeneratedSampleName = false;
         this.defaultSampleName = null;
         this.isTumor = true;
+        this.isCosmic = false;
         this.entryDataChanged = false;      // True if something in the filesMenu has changed for this sample, and the track needs to be udpated upon clicking 'Load'
         this.lastGeneLoaded = null;         // The most recent gene analyzed for this sample
         this.noMatchingSamples = false;     // True if active filters leave no variants applicable from this sample
