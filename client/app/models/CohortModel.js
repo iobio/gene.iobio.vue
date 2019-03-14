@@ -1139,7 +1139,6 @@ class CohortModel {
                 self.getCanonicalModels().forEach(function (model) {
                     let noReloadNecessary = model.lastGeneLoaded === theGene.gene_name && model.loadedVariants != null && !model.entryDataChanged;
                     if (!isBackground && !noReloadNecessary) {
-                        debugger;
                         model.inProgress.loadingVariants = true;
                     }
                 });
@@ -1153,7 +1152,6 @@ class CohortModel {
                         .then(function (resultMap) {
                             if (!isBackground) {
                                 self.getCanonicalModels().forEach(function (model) {
-                                    debugger;
                                     model.inProgress.loadingVariants = false;
                                 })
                             }
@@ -1170,7 +1168,6 @@ class CohortModel {
                     let noReloadNecessary = model.lastGeneLoaded === theGene.gene_name && model.loadedVariants != null && !model.entryDataChanged;
                     if (model.isVcfReadyToLoad() || model.isLoaded() && !noReloadNecessary) {
                         if (!isBackground) {
-                            debugger;
                             model.inProgress.loadingVariants = true;
                         }
                         model.lastGeneLoaded = theGene.gene_name;
@@ -1179,7 +1176,6 @@ class CohortModel {
                                 .then(function (resultMap) {
                                     for (var theId in resultMap) {
                                         if (!isBackground) {
-                                            debugger;
                                             self.getModel(theId).inProgress.loadingVariants = false;
                                         }
                                         model.entryDataChanged = false;

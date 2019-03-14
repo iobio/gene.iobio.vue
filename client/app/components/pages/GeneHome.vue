@@ -892,12 +892,7 @@
                     })
                     .then(function () {
                         if (self.selectedGene && self.selectedGene.gene_name) {
-                            self.promiseLoadGene(self.selectedGene.gene_name)
-                                .then(function () {
-                                    if (callback) {
-                                        callback();
-                                    }
-                                });
+                            self.promiseLoadGene(self.selectedGene.gene_name);
 
                             if (analyzeAll) {
                                 if (self.cohortModel && self.cohortModel.isLoaded) {

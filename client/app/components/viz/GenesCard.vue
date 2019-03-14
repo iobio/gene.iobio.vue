@@ -200,19 +200,19 @@ div.container.small
               </v-btn>
 
 
-              <div id="call-variants-dropdown"
-                v-if="isLoaded && hasAlignments"
-              >
-                <v-menu offset-y>
-                  <v-btn raised slot="activator"
-                  v-tooltip.top-center="`Call variants from alignments`">Call variants</v-btn>
-                  <v-list>
-                      <v-list-tile v-for="action in callVariantsActions" :key="action" @click="onCallVariants(action)">
-                      <v-list-tile-title>{{ action }}</v-list-tile-title>
-                    </v-list-tile>
-                  </v-list>
-                </v-menu>
-              </div>
+              <!--<div id="call-variants-dropdown"-->
+                <!--v-if="isLoaded && hasAlignments"-->
+              <!--&gt;-->
+                <!--<v-menu offset-y>-->
+                  <!--<v-btn raised slot="activator"-->
+                  <!--v-tooltip.top-center="`Call variants from alignments`">Call variants</v-btn>-->
+                  <!--<v-list>-->
+                      <!--<v-list-tile v-for="action in callVariantsActions" :key="action" @click="onCallVariants(action)">-->
+                      <!--<v-list-tile-title>{{ action }}</v-list-tile-title>-->
+                    <!--</v-list-tile>-->
+                  <!--</v-list>-->
+                <!--</v-menu>-->
+              <!--</div>-->
 
               <v-btn
               v-if="callAllInProgress"

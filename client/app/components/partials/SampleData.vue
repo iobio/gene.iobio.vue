@@ -271,6 +271,7 @@
         },
         methods: {
             onNicknameEntered: function () {
+                let self = this;
                 if (self.modelInfo && self.modelInfo.model) {
                     self.modelInfo.model.setDisplayName(self.modelInfo.displayName);
                 }
