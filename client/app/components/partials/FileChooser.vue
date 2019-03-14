@@ -64,11 +64,11 @@
       <span id="file-label">
           {{ fileName }}
       </span>
-      <v-btn small flat id="clear-file-button"
-        @click="clearFile"
-        v-if="fileName != null && fileName.length > 0">
-          Clear
-      </v-btn>
+      <!--<v-btn small flat id="clear-file-button"-->
+        <!--@click="clearFile"-->
+        <!--v-if="fileName != null && fileName.length > 0">-->
+          <!--Clear-->
+      <!--</v-btn>-->
     </div>
   </span>
 </template>

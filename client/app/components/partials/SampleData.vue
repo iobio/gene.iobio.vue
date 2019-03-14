@@ -288,18 +288,22 @@
                 }
 
                 return new Promise((resolve, reject) => {
+
+                    // Clear error state & flip on loading gif
                     self.vcfError = false;
                     self.retrievingIds = true;
                     self.$emit("sample-data-changed");
+
+                    // Clear out old data
                     self.$set(self, "selectedSample", null);
                     self.$set(self, "samples", []);
+
                     if (self.modelInfo && self.modelInfo.model) {
                         // TODO: add build info to return callback params & check+notify as needed
                         self.modelInfo.model.onVcfUrlEntered(vcfUrl, tbiUrl, function (success, sampleNames) {
                             if (success) {
                                 self.samples = sampleNames;
                                 self.retrievingIds = false;
-                                debugger;
                                 if (self.modelInfo.selectedSample && self.samples.indexOf(self.modelInfo.selectedSample) >= 0) {
                                     self.selectedSample = self.modelInfo.selectedSample;
                                     self.modelInfo.model.sampleName = self.modelInfo.sample;
@@ -329,9 +333,19 @@
             },
             onVcfFilesSelected: function (fileSelection) {
                 let self = this;
+
                 self.$set(self, "selectedSample", null);
                 self.$set(self, "samples", []);
+
+                // if we've hit the clear file button
+                if (fileSelection == null) {
+                    self.$emit('sample-data-changed');
+                    return;
+                }
                 fileSelection.id = self.modelInfo.id;
+                self.vcfError = false;
+                self.retrievingIds = true;
+
                 self.modelInfo.model.promiseVcfFilesSelected(fileSelection)
                     .then(function (data) {
                         if (data && data.sampleNames.length > 0) {
@@ -375,10 +389,11 @@
             },
             onSampleSelected: function () {
                 let self = this;
-                self.modelInfo.selectedSample = this.selectedSample;
+                debugger;
+                self.modelInfo.selectedSample = self.selectedSample;
                 if (self.modelInfo.model) {
-                    self.modelInfo.model.sampleName = this.modelInfo.selectedSample;
-                    self.modelInfo.model.setSelectedSample(this.modelInfo.selectedSample);
+                    self.modelInfo.model.sampleName = self.modelInfo.selectedSample;
+                    self.modelInfo.model.setSelectedSample(self.modelInfo.selectedSample);
                 }
                 self.$emit("sample-data-changed");
             },

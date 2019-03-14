@@ -65,7 +65,7 @@
         <v-flex xs12>
             <span> {{ fileName }} </span>
             <v-btn small flat id="clear-file-button"
-                   onclick="clearFile"
+                   v-on:click="clearSelectedFile"
                    v-if="fileName != null && fileName.length > 0">
                 Clear
             </v-btn>
@@ -119,16 +119,16 @@
                 }
                 this.$emit("file-selected", event.target);
             },
+            clearSelectedFile: function () {
+                this.fileName = '';
+                this.$emit("file-selected");
+            },
             onUrlChange: _.debounce(function (newUrl) {
                 if (newUrl && newUrl.length > 0) {
                     this.fileName = '';
                 }
                 this.$emit('url-entered', this.url, this.indexUrl);
-            }, 100),
-            clearFile: function () {
-                this.fileName = '';
-                this.$emit("file-selected");
-            }
+            }, 100)
         },
         created: function () {
             this.indexUrl = this.defaultIndexUrl;
