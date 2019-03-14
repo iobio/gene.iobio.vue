@@ -771,6 +771,12 @@
             },
             onSupportIOBIO: function () {
                 window.open("http://iobio.io/support.html", "_iobio");
+            },
+            openFileSelection: function() {
+                let self = this;
+                if (self.$refs.fileMenuRef) {
+                    self.$refs.fileMenuRef.openFileSelection();
+                }
             }
         },
         created: function () {

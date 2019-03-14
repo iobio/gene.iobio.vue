@@ -130,7 +130,7 @@
                             <v-list-tile>
                                 <label class="file-select">
                                     <!-- We can't use a normal button element here, it would become t he target of the label. -->
-                                    <div class="select-button">
+                                    <div id="uploadButton" class="select-button">
                                         <span style="color: #888888">Upload Config</span>
                                     </div>
                                     <!-- Hidden file input -->
@@ -799,6 +799,11 @@
                 console.log("cohort model list: " + modelIds.join(','));
                 console.log("cohort model map: " + (Object.keys(self.cohortModel.sampleMap)).join(','));
                 console.log("cohort model orders: " + modelOrders.join(','));
+            },
+            openFileSelection: function() {
+                let self = this;
+                self.showFilesMenu = true;
+                $('#uploadButton').click();
             }
         },
         computed: {

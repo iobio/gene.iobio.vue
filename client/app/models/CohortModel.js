@@ -497,6 +497,9 @@ class CohortModel {
                 let infoObj = JSON.parse(fileText);
                 let isTimeSeries = infoObj['isTimeSeries'];
                 let samples = infoObj['samples'];
+                if (samples == null) {
+                    reject('Could not read samples from config file');
+                }
                 samples.forEach((sample) =>  {
                     let currInfo = {};
                     currInfo.id = sample.id;
