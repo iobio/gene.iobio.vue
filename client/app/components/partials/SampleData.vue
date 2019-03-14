@@ -1,6 +1,9 @@
 <style lang="sass">
     @import ../../../assets/sass/variables
     #sample-data-form
+        .track-name
+            input
+                font-size: 12px !important
         #sample-selection
             .input-group--select
                 .input-group__selections__comma
@@ -26,15 +29,8 @@
                     transform: translate(0, -18px) scale(0.95)
 
         .sample-label
-            span
-                margin-top: 2px
-                margin-bottom: 2px
-                vertical-align: top
-                margin-left: 0px
-                font-size: 15px
-                color: $app-color
-                display: inline-block
-                margin-right: 20px
+            input
+                font-size: 14px
             .switch
                 display: inline-block
                 width: 100px
@@ -75,7 +71,7 @@
                 :style="{'margin-left': '-17px'}">
             <v-layout row wrap class="vert-border">
                 <v-flex d-flex xs2 class="sample-label">
-                    <v-text-field class="pt-1"
+                    <v-text-field class="pt-1 track-name"
                                   color="appColor"
                                   placeholder="Enter Track Name"
                                   hide-details

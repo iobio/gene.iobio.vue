@@ -443,6 +443,7 @@
                 showKnownVariantsCard: false,
 
                 inProgress: {},
+                firstLaunchFromFileMenu: true,
 
                 PROBAND: 'proband',
                 activeGeneVariantTab: null,
@@ -874,7 +875,7 @@
                 }
             },
 
-            onFilesLoaded: function (analyzeAll, loadDemoFromWelcome) {
+            onFilesLoaded: function (analyzeAll) {
                 let self = this;
                 self.showVariantCards = true;
                 self.setUrlParameters();
@@ -882,7 +883,8 @@
                 self.promiseClearCache()
                     .then(function () {
                         self.featureMatrixModel.init();
-                        if (loadDemoFromWelcome) {
+                        if (self.firstLaunchFromFileMenu) {
+                            self.firstLaunchFromFileMenu = false;
                             return Promise.resolve();
                         } else {
                             return self.promiseResetAllGenes();

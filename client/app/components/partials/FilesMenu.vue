@@ -81,7 +81,7 @@
         </v-btn>
         <v-form id="files-form">
             <v-layout row wrap class="mt-2">
-                <v-flex xs3 class="mt-2">
+                <v-flex xs6 class="mt-2">
                     <v-container>
                         <v-switch label="Time Series" hide-details v-model="timeSeriesMode">
                         </v-switch>
@@ -229,7 +229,8 @@
                 arrId: 0,
                 debugMe: false,
                 inputClass: 'fileSelect',
-                loadDemoFromWelcome: false
+                loadDemoFromWelcome: false,
+                loadDemoFromDropdown: false
             }
         },
         watch: {
@@ -326,8 +327,7 @@
                         let performAnalyzeAll = self.autofillAction ? true : false;
                         self.inProgress = false;
 
-                        self.$emit("on-files-loaded", performAnalyzeAll, self.loadDemoFromWelcome);
-                        self.loadDemoFromWelcome = false;
+                        self.$emit("on-files-loaded", performAnalyzeAll);
                         self.showFilesMenu = false;
                     });
             },
@@ -645,7 +645,7 @@
                                     if (self.loadDemoFromWelcome) {
                                         self.onAutoLoad(false, 'demo')
                                             .then(() => {
-                                                // self.loadDemoFromWelcome = false; TODO: get rid of
+                                                self.loadDemoFromWelcome = false;
                                                 self.onLoad();
                                             })
                                     }
@@ -816,7 +816,7 @@
         },
         mounted: function () {
             if (this.cohortModel) {
-                // this.speciesName = this.cohortModel.genomeBuildHelper.getCurrentSpeciesName();
+                this.speciesName = this.cohortModel.genomeBuildHelper.getCurrentSpeciesName();
                 this.buildName = this.cohortModel.genomeBuildHelper.getCurrentBuildName();
                 this.speciesList = this.cohortModel.genomeBuildHelper.speciesList.map(function (sp) {
                     return sp.name;
