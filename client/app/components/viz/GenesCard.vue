@@ -1,13 +1,30 @@
 <style lang="sass">
     @import ../../../assets/sass/variables
 
-
     #genes-card
         margin-bottom: 0px
         padding-bottom: 0px
 
         #gene-count-badges
             text-align: center
+
+        .first-optional-track-switch
+            padding: 0px
+            width: 130px
+            display: inline-block
+            float: left
+            vertical-align: top
+            text-align: left
+            padding-top: 16px
+            margin-left: 30px
+
+            label
+                padding-left: 7px
+                line-height: 18px
+                font-size: 13px
+                font-weight: normal
+                padding-top: 2px
+                color: $text-color
 
         .optional-track-switch
             padding: 0px
@@ -17,7 +34,6 @@
             vertical-align: top
             text-align: left
             padding-top: 16px
-            margin-left: 30px
 
             label
                 padding-left: 7px
@@ -263,7 +279,7 @@
                         <v-icon>stop</v-icon>
                     </v-btn>
 
-                    <v-switch class="optional-track-switch"
+                    <v-switch class="first-optional-track-switch"
                               v-if=" isLoaded && !isEduMode && !isBasicMode"
                               label="ClinVar track"
                               v-model="showKnownVariantsCard"

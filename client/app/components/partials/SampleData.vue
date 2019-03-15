@@ -175,6 +175,10 @@
                 </v-flex>
             </v-layout>
         </v-flex>
+        <confirmation-dialog
+                ref="confirmationDialogRef"
+                @confirm-delete-track="confirmDeleteTrack">
+        </confirmation-dialog>
     </v-layout>
 </template>
 
@@ -520,10 +524,6 @@
             self.rowLabel = self.getRowLabel();
             self.chipLabel = self.isTumor ? 'TUMOR' : 'NORMAL';
             self.isStaticSlot = self.dragId === 's0' || self.dragId === 's1';
-            // TODO: think below took place of this - delete when test
-            // if (self.modelInfo.vcf) {
-            //     self.onVcfUrlEntered(self.modelInfo.vcf, self.modelInfo.tbi);
-            // }
             // If we've already filled in the file menu, populate accordingly
             if (self.modelInfo.vcf) {
                 self.firstVcf = self.modelInfo.vcf;
