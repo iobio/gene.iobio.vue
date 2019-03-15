@@ -44,94 +44,14 @@ class CohortModel {
         this.flaggedVariants = [];
 
         this.knownVariantsViz = 'variants';     // variants, histo, histoExon
+        this.cosmicVariantsViz = 'variants';
         this.demoCmmlFiles = false;             // If true, loads demo CMML data - ONLY LOCAL
         this.demoVcfs = this.getDemoVcfs();
         this.demoBams = this.getDemoBams();
         this.demoModelInfos = this.getDemoModelInfos();
         this.demoGenes = ['TP53', 'APC', 'BRCA2', 'TGFB1', 'RB1'];
 
-        this.eduTourModelInfos = {
-            "1": [
-                {
-                    relationship: 'proband',
-                    affectedStatus: 'affected',
-                    name: 'Father',
-                    'selectedSample': 'sample2',
-                    vcf: 'https://s3.amazonaws.com/iobio/NHMU/nhmu.vcf.gz',
-                    'tbi': null,
-                    'bam': null,
-                    'bai': null
-                },
-                {
-                    relationship: 'proband',
-                    affectedStatus: 'affected',
-                    name: 'Jimmy',
-                    'selectedSample': 'sample3',
-                    vcf: 'https://s3.amazonaws.com/iobio/NHMU/nhmu.vcf.gz',
-                    'tbi': null,
-                    'bam': null,
-                    'bai': null
-                },
-                {
-                    relationship: 'proband',
-                    affectedStatus: 'affected',
-                    name: 'Bobby',
-                    'selectedSample': 'sample4',
-                    vcf: 'https://s3.amazonaws.com/iobio/NHMU/nhmu.vcf.gz',
-                    'tbi': null,
-                    'bam': null,
-                    'bai': null
-                },
-                {
-                    relationship: 'proband',
-                    affectedStatus: 'affected',
-                    name: 'Sarah',
-                    'selectedSample': 'sample5',
-                    vcf: 'https://s3.amazonaws.com/iobio/NHMU/nhmu.vcf.gz',
-                    'tbi': null,
-                    'bam': null,
-                    'bai': null
-                }
-            ],
-            "2": [
-                {
-                    relationship: 'proband',
-                    affectedStatus: 'affected',
-                    name: 'John',
-                    'selectedSample': 'sample1',
-                    vcf: 'https://s3.amazonaws.com/iobio/NHMU/nhmu.vcf.gz',
-                    'tbi': null,
-                    'bam': null,
-                    'bai': null
-                },
-                {
-                    relationship: 'proband',
-                    affectedStatus: 'affected',
-                    name: 'Diego',
-                    'selectedSample': 'sample3',
-                    vcf: 'https://s3.amazonaws.com/iobio/NHMU/nhmu.vcf.gz',
-                    'tbi': null,
-                    'bam': null,
-                    'bai': null
-                },
-                {
-                    relationship: 'proband',
-                    affectedStatus: 'affected',
-                    name: 'Anna',
-                    'selectedSample': 'sample2',
-                    vcf: 'https://s3.amazonaws.com/iobio/NHMU/nhmu.vcf.gz',
-                    'tbi': null,
-                    'bam': null,
-                    'bai': null
-                }
-            ]
 
-        };
-        this.eduTourGeneNames = {
-            "1": null,
-            "2": ['VKORC1']
-        };
-        this.myGene2GeneNames = ['KDM1A'];
     }
 
     getDemoVcfs() {
@@ -385,109 +305,6 @@ class CohortModel {
         })
     }
 
-
-    promiseInitMyGene2(siteConfig, fileId) {
-        let self = this;
-
-        return new Promise(function (resolve, reject) {
-            var validationMsg = "";
-            if (siteConfig == null || Object.keys(siteConfig).length == 0 || !siteConfig.hasOwnProperty('mygene2')) {
-                validationMsg += "<br>&nbsp;&nbsp;Site configuration is missing for mygene2. "
-            } else {
-                if (siteConfig.mygene2.tokenEndpoint == "") {
-                    validationMsg += "<br>&nbsp;&nbsp;Missing site configuration field 'tokenEndpoint'. ";
-                }
-                if (siteConfig.mygene2.xAuthToken == "") {
-                    validationMsg += "<br>&nbsp;&nbsp;Missing site configuration field 'xAuthToken'. ";
-                }
-            }
-            if (fileId == null || fileId == "") {
-                validationMsg += "<br>&nbsp;&nbsp;Missing request parameter 'fileId'."
-            }
-
-            if (!self.genomeBuildHelper.getCurrentBuild()) {
-                validationMsg += "<br>&nbsp;&nbsp;Missing request parameter 'build'.";
-            }
-
-            if (validationMsg.length > 0) {
-                alertify.confirm("Warning", "Cannot load data due to the following errors: " + validationMsg,
-                    function () {
-                        reject();
-                    },
-                    function () {
-                        self.defaultingToDemoData = true;
-                        self.promiseInitDemo()
-                            .then(function () {
-                                resolve();
-                            })
-                    }).set('labels', {ok: 'OK', cancel: 'Continue, but just use demo data'});
-            } else {
-
-                var endpointUrl = siteConfig.mygene2.tokenEndpoint + "token/" + fileId;
-
-                $.ajax({
-                    type: 'get',
-                    url: endpointUrl,
-                    dataType: 'json',
-                    contentType: 'json',
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    headers: {
-                        'X-Auth-Token': siteConfig.mygene2.xAuthToken
-                    },
-                    success: function (res) {
-                        var vcfUrl = siteConfig.mygene2.dataEndpoint + res.token + "/" + res.fileUpload.name;
-                        var modelInfo = {
-                            relationship: 'proband',
-                            affectedStatus: 'affected',
-                            name: 'Proband',
-                            'sample': '',
-                            vcf: vcfUrl,
-                            'tbi': null,
-                            'bam': null,
-                            'bai': null
-                        };
-
-                        var genePromise = null;
-                        if (self.geneModel.geneNames.length === 0 && self.myGene2GeneNames) {
-                            genePromise = self.geneModel.promiseCopyPasteGenes(self.myGene2GeneNames.join(","));
-                        } else {
-                            genePromise = Promise.resolve();
-                        }
-
-                        genePromise.then(function () {
-                            self.promiseInit([modelInfo])
-                                .then(function () {
-                                    resolve();
-                                })
-                                .catch(function (error) {
-                                    reject(error);
-                                })
-
-                        });
-                    },
-                    error: function (xhr, status, errorThrown) {
-                        console.log("Error: " + errorThrown);
-                        console.log("Status: " + status);
-                        console.log(xhr);
-                        console.log("Unable to get MyGene2 endpoint filenames");
-                        alertify.confirm("Unable to obtain variant files using MyGene2 token.",
-                            function () {
-                                reject(errorThrown);
-                            },
-                            function () {
-                                self.promiseInitDemo()
-                                    .then(function () {
-                                        resolve();
-                                    })
-                            }).set('labels', {ok: 'OK', cancel: 'Continue, but just use demo data'});
-                    }
-                });
-            }
-        })
-    }
-
     promiseInitCustomFile(customFile) {
         return new Promise((resolve, reject) => {
             let modelInfos = [];
@@ -531,15 +348,16 @@ class CohortModel {
             self.genesInProgress = [];
             self.sampleMap = {};
             self.clearLoadedData();
+
+            // Increment orders of all sample model infos, to accomodate clinvar & cosmic tracks first
+            modelInfos.forEach((modelInfo) => {
+                modelInfo.order += 2;
+            })
+
+
             let promises = [];
-
-            // Add clinvar track
             promises.push(self.promiseAddClinvarSample());
-
-            // Add cosmic track
-            // TODO: implement
-
-            // Add tracks for user samples
+            promises.push(self.promiseAddCosmicSample());
             modelInfos.forEach(function (modelInfo) {
                 promises.push(self.promiseAddSample(modelInfo));
             });
@@ -547,8 +365,8 @@ class CohortModel {
             Promise.all(promises)
                 .then(function () {
 
-                    // Enforce cosmic track being on top
-                    self.putCosmicSampleFirst();
+                    // Enforce cosmic & clinvar tracks being on top
+                    self.sortSampleModels();
 
                     // Flip status flags
                     self.setTumorInfo(true);
@@ -560,24 +378,6 @@ class CohortModel {
                     reject(error);
                 })
         })
-    }
-
-    /* Places the cosmic sample model first in the list so that it's track is rendered above the others. */
-    putCosmicSampleFirst() {
-        let self = this;
-        let cosmicModelIdx = -1;
-        for (let i = 0; i < self.sampleModels.length; i++) {
-            let currModel = self.sampleModels[i];
-            if (currModel.isCosmic === true) {
-                cosmicModelIdx = i;
-                break;
-            }
-        }
-        if (cosmicModelIdx > 0) {
-            let cosmicModel = self.sampleModels[cosmicModelIdx];
-            self.sampleModels.splice(cosmicModelIdx, 1);    // Delete current position
-            self.sampleModels.splice(0, 0, cosmicModel);    // Insert it first
-        }
     }
 
 
@@ -632,13 +432,14 @@ class CohortModel {
 
             Promise.all([vcfPromise, bamPromise])
                 .then(function () {
-                    let theModel = {'model': vm};
+                    //let theModel = {'model': vm};
                     if (destIndex >= 0) {
                         self.sampleModels[destIndex] = vm;
                     } else {
                         self.sampleModels.push(vm);
                     }
-                    self.sampleMap[modelInfo.id] = theModel;
+                    // TODO: why aren't we adding info here instead of model
+                    self.sampleMap[modelInfo.id] = modelInfo;
                     resolve(vm);
                 });
         })
@@ -771,7 +572,7 @@ class CohortModel {
                 let clinvarUrl = self.genomeBuildHelper.getBuildResource(self.genomeBuildHelper.RESOURCE_CLINVAR_VCF_S3);
                 vm.onVcfUrlEntered(clinvarUrl, null, function () {
                         self.sampleModels.push(vm);
-                        let sample = {'id': 'known-variants', 'model': vm};
+                        let sample = {'id': 'known-variants', 'model': vm, 'order': 0};
                         self.sampleMap['known-variants'] = sample;
                         resolve(sample);
                     },
@@ -780,6 +581,58 @@ class CohortModel {
                     });
             })
         }
+    }
+
+    promiseAddCosmicSample() {
+        let self = this;
+        if (self.sampleMap['cosmic-variants']) {
+            return Promise.resolve();
+        } else {
+            return new Promise(function (resolve, reject) {
+                let vm = new SampleModel(self.globalApp);
+                vm.init(self);
+                vm.setId('cosmic-variants');
+                vm.setDisplayName('COSMIC');
+                let cosmicUrl = self.genomeBuildHelper.getBuildResource(self.genomeBuildHelper.RESOURCE_COSMIC_VCF_S3);
+                vm.onVcfUrlEntered(cosmicUrl, null, function () {
+                        self.sampleModels.push(vm);
+                        let sample = {'id': 'cosmic-variants', 'model': vm, 'order': 1};
+                        self.sampleMap['cosmic-variants'] = sample;
+                        resolve(sample);
+                    },
+                    function (error) {
+                        reject(error);
+                    });
+            })
+        }
+    }
+
+    /* Ensure sample models sorted by correct order */
+    sortSampleModels() {
+        let firstNonRefInfo = this.sampleMap['s0'];
+        // If we've already correctly sorted our models, don't do it again
+        if (firstNonRefInfo.order > 0) {
+            return;
+        }
+
+        // Sort orders in model infos
+        Object.values(this.sampleMap).forEach((info) => {
+            if (info.id === 'known-variants') {
+                info.order = 0;
+            } else if (info.id === 'cosmic-variants') {
+                info.order = 1;
+            } else {
+                info.order += 2;
+            }
+        });
+
+        var currMap = this.sampleMap;
+        // Sort models according to order variable
+        let sortedModels = this.sampleModels.sort(function(a,b) {
+            return currMap[a.id].order - currMap[b.id].order;
+        });
+        this.sampleModels = [];
+        this.sampleModels = sortedModels;
     }
 
     setTumorInfo(forceRefresh) {
@@ -891,7 +744,7 @@ class CohortModel {
                 self.clearLoadedData();
 
                 // Enforce Cosmic sample top track
-                self.putCosmicSampleFirst();
+                self.sortSampleModels();
 
                 let resultMap = null;
                 let p1 = self.promiseLoadVariants(theGene, theTranscript, options)
@@ -976,6 +829,48 @@ class CohortModel {
                 .then(function (data) {
                     self.getModel('known-variants').inProgress.loadingVariants = false;
                     self.setVariantHistoData('known-variants', data);
+                    resolve(data);
+                })
+        })
+    }
+
+    promiseLoadCosmicVariants(theGene, theTranscript) {
+        let self = this;
+        if (self.cosmicVariantsViz === 'variants') {
+            return self._promiseLoadCosmicVariants(theGene, theTranscript);
+        } else  {
+            return self._promiseLoadCosmicVariantCounts(theGene, theTranscript);
+        }
+    }
+
+    _promiseLoadCosmicVariants(theGene, theTranscript) {
+        let self = this;
+        return new Promise(function(resolve, reject) {
+            self.getModel('cosmic-variants').inProgress.loadingVariants = true;
+            self.sampleMap['cosmic-variants'].model.promiseAnnotateCosmicVariants(theGene, theTranscript, [self.sampleMap['cosmic-variants'].model], {'isMultiSample': false, 'isBackground': false})
+                .then(function(resultMap) {
+                    self.getModel('cosmic-variants').inProgress.loadingVariants = false;
+                    self.setLoadedVariants(theGene, 'cosmic-variants');
+                    resolve(resultMap);
+                })
+                .catch((error) => {
+                    reject('Problem loading cosmic variants: ' + error);
+                })
+        })
+    }
+
+    _promiseLoadCosmicVariantCounts(theGene, theTranscript) {
+        let self = this;
+        return new Promise(function(resolve, reject) {
+            self.getModel('cosmic-variants').inProgress.loadingVariants = true;
+            var binLength = null;
+            if (self.cosmicVariantsViz === 'histo') {
+                binLength = Math.floor( ((+theGene.end - +theGene.start) / $('#gene-viz').innerWidth()) * 8);
+            }
+            self.sampleMap['cosimc-variants'].model.promiseGetCosmicVariantHistoData(theGene, theTranscript, binLength)
+                .then(function(data) {
+                    self.getModel('cosmic-variants').inProgress.loadingVariants = false;
+                    self.setVariantHistoData('cosmic-variants', data);
                     resolve(data);
                 })
         })

@@ -267,11 +267,12 @@
                         v-for="model in models"
                         :key="model.relationship"
                         v-bind:class="[
-                            { 'hide': showWelcome || Object.keys(selectedGene).length === 0 || !cohortModel  || cohortModel.inProgress.loadingDataSources || (model.relationship === 'known-variants' && showKnownVariantsCard === false),
-                              'edu' : isEduMode
-                            },
-                            model.relationship
-                            ]"
+                        { 'full-width': true, 'hide': showWelcome || Object.keys(selectedGene).length === 0 || !cohortModel  || cohortModel.inProgress.loadingDataSources
+                          || (model.relationship === 'known-variants' && showKnownVariantsCard === false) || (model.relationship === 'cosmic-variants' && showCosmicVariantsCard === false),
+                          'edu' : isEduMode
+                        },
+                        model.relationship
+                        ]"
                         :globalAppProp="globalApp"
                         :isEduMode="isEduMode"
                         :isBasicMode="isBasicMode"
@@ -286,14 +287,16 @@
                         :regionEnd="geneRegionEnd"
                         :width="cardWidth"
                         :showGeneViz="true"
-                        :showDepthViz="model.relationship !== 'known-variants'"
-                        :showVariantViz="model.relationship !== 'known-variants' || showKnownVariantsCard"
-                        :geneVizShowXAxis="model.relationship === 'proband' || model.relationship === 'known-variants'"
+                        :showDepthViz="model.relationship !== 'known-variants' && model.relationship !== 'cosmic-variants'"
+                        :showVariantViz="(model.relationship !== 'known-variants' || showKnownVariantsCard) || (model.relationship !== 'cosmic-variants' || showCosmicVariantsCard)"
+                        :geneVizShowXAxis="model.relationship === 'proband' || model.relationship === 'known-variants' || model.relationship === 'cosmic-variants'"
                         @cohort-variant-click="onCohortVariantClick"
                         @cohort-variant-hover="onCohortVariantHover"
                         @cohort-variant-hover-end="onCohortVariantHoverEnd"
                         @known-variants-viz-change="onKnownVariantsVizChange"
                         @known-variants-filter-change="onKnownVariantsFilterChange"
+                        @cosmic-variants-viz-change="onCosmicVariantsVizChange"
+                        @cosmic-variants-filter-change="onCosmicVariantsFilterChange"
                         @gene-region-zoom="onGeneRegionZoom"
                         @gene-region-zoom-reset="onGeneRegionZoomReset"
                         @show-coverage-cutoffs="showCoverageCutoffs = true"
@@ -907,9 +910,6 @@
                         } else {
                             self.onShowSnackbar({message: 'Enter a gene name or a phenotype term.', timeout: 5000});
                             self.bringAttention = 'gene';
-                            if (callback) {
-                                callback();
-                            }
                         }
                     })
             },
@@ -1317,11 +1317,26 @@
                     self.cohortModel.promiseLoadKnownVariants(self.selectedGene, self.selectedTranscript);
                 }
             },
+            onCosmicVariantsVizChange: function(viz) {
+                let self = this;
+                if (viz) {
+                    self.cohortModel.cosmicVariantsViz = viz;
+                }
+                if (self.showCosmicVariantsCard && self.cohortModel && self.cohortModel.isLoaded && Object.keys(self.selectedGene).length > 0) {
+                    // TODO: implement this
+                    self.cohortModel.promiseLoadCosmicVariants(self.selectedGene, self.selectedTranscript);
+                }
+            },
             onKnownVariantsFilterChange: function (selectedCategories) {
                 let self = this;
                 self.filterModel.setModelFilter('known-variants', 'clinvar', selectedCategories);
 
                 self.cohortModel.setLoadedVariants(self.selectedGene, 'known-variants');
+            },
+            onCosmicVariantsFilterChange: function(selectedCategories) {
+                let self = this;
+                self.filterModel.setModelFilter('cosmic-variants', 'vepImpact', selectedCategories);
+                self.cohortModel.setLoadedVariants(self.selectedGene, 'cosmic-variants');
             },
             onRemoveGene: function (geneName) {
                 let self = this;
