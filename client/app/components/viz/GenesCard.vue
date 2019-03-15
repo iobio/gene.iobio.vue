@@ -271,7 +271,7 @@
                     </v-switch>
 
                     <v-switch class="optional-track-switch"
-                              v-if=" isLoaded && !isEduMode && !isBasicMode && launchedFromHub"
+                              v-if=" isLoaded && !isEduMode && !isBasicMode"
                               label="COSMIC track"
                               v-model="showCosmicVariantsCard"
                     >

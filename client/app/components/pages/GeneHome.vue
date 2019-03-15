@@ -265,20 +265,20 @@
                         ref="variantCardRef"
                         v-if="showVariantCards"
                         v-for="model in models"
-                        :key="model.relationship"
+                        :key="model.id"
                         v-bind:class="[
                         { 'full-width': true, 'hide': showWelcome || Object.keys(selectedGene).length === 0 || !cohortModel  || cohortModel.inProgress.loadingDataSources
-                          || (model.relationship === 'known-variants' && showKnownVariantsCard === false) || (model.relationship === 'cosmic-variants' && showCosmicVariantsCard === false),
+                          || (model.id === 'known-variants' && showKnownVariantsCard === false) || (model.id === 'cosmic-variants' && showCosmicVariantsCard === false),
                           'edu' : isEduMode
                         },
-                        model.relationship
+                        model.id
                         ]"
                         :globalAppProp="globalApp"
                         :isEduMode="isEduMode"
                         :isBasicMode="isBasicMode"
                         :clearZoom="clearZoom"
                         :sampleModel="model"
-                        :classifyVariantSymbolFunc="model.relationship === 'known-variants' ? model.classifyByClinvar : model.classifyByImpact"
+                        :classifyVariantSymbolFunc="model.id === 'known-variants' ? model.classifyByClinvar : model.classifyByImpact"
                         :variantTooltip="variantTooltip"
                         :selectedGene="selectedGene"
                         :selectedTranscript="analyzedTranscript"
@@ -287,9 +287,9 @@
                         :regionEnd="geneRegionEnd"
                         :width="cardWidth"
                         :showGeneViz="true"
-                        :showDepthViz="model.relationship !== 'known-variants' && model.relationship !== 'cosmic-variants'"
-                        :showVariantViz="(model.relationship !== 'known-variants' || showKnownVariantsCard) || (model.relationship !== 'cosmic-variants' || showCosmicVariantsCard)"
-                        :geneVizShowXAxis="model.relationship === 'proband' || model.relationship === 'known-variants' || model.relationship === 'cosmic-variants'"
+                        :showDepthViz="model.id !== 'known-variants' && model.id !== 'cosmic-variants'"
+                        :showVariantViz="(model.id !== 'known-variants' || showKnownVariantsCard) || (model.id !== 'cosmic-variants' || showCosmicVariantsCard)"
+                        :geneVizShowXAxis="model.id === 's0' || model.id === 'known-variants' || model.id === 'cosmic-variants'"
                         @cohort-variant-click="onCohortVariantClick"
                         @cohort-variant-hover="onCohortVariantHover"
                         @cohort-variant-hover-end="onCohortVariantHoverEnd"
@@ -308,9 +308,7 @@
                         :timeout="snackbar.timeout"
                         absolute
                         auto-height
-                        v-model="showSnackbar"
-
-                >
+                        v-model="showSnackbar">
                     <span v-html="snackbar.message"></span>
                     <v-btn flat color="white" @click.native="showSnackbar = false">
                     </v-btn>

@@ -352,8 +352,7 @@ class CohortModel {
             // Increment orders of all sample model infos, to accomodate clinvar & cosmic tracks first
             modelInfos.forEach((modelInfo) => {
                 modelInfo.order += 2;
-            })
-
+            });
 
             let promises = [];
             promises.push(self.promiseAddClinvarSample());
@@ -364,7 +363,6 @@ class CohortModel {
 
             Promise.all(promises)
                 .then(function () {
-
                     // Enforce cosmic & clinvar tracks being on top
                     self.sortSampleModels();
 
