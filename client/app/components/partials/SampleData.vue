@@ -393,7 +393,6 @@
             },
             onSampleSelected: function () {
                 let self = this;
-                debugger;
                 self.modelInfo.selectedSample = self.selectedSample;
                 if (self.modelInfo.model) {
                     self.modelInfo.model.sampleName = self.modelInfo.selectedSample;

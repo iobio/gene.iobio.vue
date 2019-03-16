@@ -830,7 +830,6 @@
                 return new Promise(function (resolve, reject) {
 
                     if (self.models && self.models.length > 0) {
-
                         self.cardWidth = $('#genes-card').innerWidth();
                         var options = {'getKnownVariants': self.showKnownVariantsCard};
 
@@ -883,6 +882,7 @@
 
                 self.promiseClearCache()
                     .then(function () {
+                        // TODO: only want to do this if something has changed in file selector?
                         self.featureMatrixModel.init();
                         if (self.firstLaunchFromFileMenu) {
                             self.firstLaunchFromFileMenu = false;
@@ -902,14 +902,25 @@
                             }
                         } else if (self.geneModel.sortedGeneNames && self.geneModel.sortedGeneNames.length > 0) {
                             self.onGeneSelected(self.geneModel.sortedGeneNames[0]);
-                            if (callback) {
-                                callback();
-                            }
                         } else {
                             self.onShowSnackbar({message: 'Enter a gene name or a phenotype term.', timeout: 5000});
                             self.bringAttention = 'gene';
                         }
                     })
+                // self.promiseClearCache()
+                //     .then(function() {
+                //         // if (self.variantModel.filterModel == null && self.selectedGene != null) {
+                //         //     self.initializeFiltering();
+                //         // }
+                //         if (self.selectedGene && self.selectedGene.gene_name) {
+                //             self.promiseLoadGene(self.selectedGene.gene_name);
+                //         } else if (self.geneModel.sortedGeneNames && self.geneModel.sortedGeneNames.length > 0) {
+                //             self.onGeneSelected(self.geneModel.sortedGeneNames[0]);
+                //         } else {
+                //             self.onShowSnackbar({message: 'Enter a gene name or a phenotype term.', timeout: 5000});
+                //             self.bringAttention = 'gene';
+                //         }
+                //     });
             },
 
             setUrlParameters: function () {
@@ -926,27 +937,16 @@
                     geneNames = self.geneModel.sortedGeneNames.join(",");
                 }
 
-                // let affectedSibIds = self.cohortModel.sampleMapSibs.affected.map(function (model) {
-                //     return model.sampleName;
-                // }).join(",");
-                // let unaffectedSibIds = self.cohortModel.sampleMapSibs.unaffected.map(function (model) {
-                //     return model.sampleName;
-                // }).join(",");
-
-
                 let queryObject = {
                     gene: geneName,
                     genes: geneNames,
                     species: self.genomeBuildHelper.getCurrentSpeciesName(),
                     build: self.genomeBuildHelper.getCurrentBuildName()
-                    //affectedSibs: affectedSibIds,
-                    //unaffectedSibs: unaffectedSibIds
                 };
 
-                // TODO: does this work now
                 let i = 0;
                 self.cohortModel.getCanonicalModels().forEach(function (model) {
-                    queryObject['id' + i] = model.relationship;
+                    queryObject['id' + i] = model.id;
                     queryObject['vcf' + i] = model.vcf && model.vcf.getVcfURL() ? model.vcf.getVcfURL() : "";
                     queryObject['tbi' + i] = model.vcf && model.vcf.getTbiURL() ? model.vcf.getTbiURL() : "";
                     queryObject['bam' + i] = model.bam && model.bam.bamUri ? model.bam.bamUri : "";
@@ -956,7 +956,6 @@
                     queryObject['isTumor' + i] = model.getTumorStatus();
                     i++;
                 });
-
                 self.$router.replace({query: queryObject});
             },
 
@@ -1032,24 +1031,12 @@
 
             promiseLoadGene: function (geneName, theTranscript) {
                 let self = this;
-
                 this.showWelcome = false;
-
-
                 return new Promise(function (resolve, reject) {
-
-                    if (self.forMyGene2) {
-                        if (!self.closeIntro) {
-                            setTimeout(function () {
-                                self.closeIntro = true;
-                            }, 2000);
-                        }
-                    }
-
                     self.clearZoom = true;
 
                     if (self.cohortModel) {
-                        self.cohortModel.clearLoadedData();
+                        self.cohortModel.clearLoadedData(geneName);
                     }
                     if (self.featureMatrixModel) {
                         self.featureMatrixModel.clearRankedVariants();
@@ -1057,51 +1044,51 @@
 
                     self.geneModel.promiseAddGeneName(geneName)
                         .then(function () {
-                            return self.geneModel.promiseGetGeneObject(geneName)
-                        })
-                        .then(function (theGeneObject) {
-                            if (self.bringAttention == 'gene') {
-                                self.bringAttention = null;
-                            }
-                            self.geneModel.adjustGeneRegion(theGeneObject);
-                            self.geneRegionStart = theGeneObject.start;
-                            self.geneRegionEnd = theGeneObject.end;
-                            self.selectedGene = theGeneObject;
+                            self.geneModel.promiseGetGeneObject(geneName)
+                                .then(function (theGeneObject) {
+                                    if (self.bringAttention === 'gene') {
+                                        self.bringAttention = null;
+                                    }
+                                    self.geneModel.adjustGeneRegion(theGeneObject);
+                                    self.geneRegionStart = theGeneObject.start;
+                                    self.geneRegionEnd = theGeneObject.end;
+                                    self.selectedGene = theGeneObject;
 
-                            if (theTranscript) {
-                                // If we have selected a flagged variant, we want to use the flagged
-                                // variant's transcript
-                                self.selectedTranscript = theTranscript;
-                            } else {
-                                // Determine the transcript that should be selected for this gene
-                                // If the transcript wasn't previously selected for this gene,
-                                // set it to the canonical transcript
-                                let latestTranscript = self.geneModel.getLatestGeneTranscript(geneName);
-                                if (latestTranscript == null) {
-                                    self.selectedTranscript = self.geneModel.getCanonicalTranscript(self.selectedGene);
-                                    self.geneModel.setLatestGeneTranscript(geneName, self.selectedTranscript);
-                                } else {
-                                    self.selectedTranscript = latestTranscript;
-                                }
+                                    if (theTranscript) {
+                                        // If we have selected a flagged variant, we want to use the flagged
+                                        // variant's transcript
+                                        self.selectedTranscript = theTranscript;
+                                    } else {
+                                        // Determine the transcript that should be selected for this gene
+                                        // If the transcript wasn't previously selected for this gene,
+                                        // set it to the canonical transcript
+                                        let latestTranscript = self.geneModel.getLatestGeneTranscript(geneName);
+                                        if (latestTranscript == null) {
+                                            self.selectedTranscript = self.geneModel.getCanonicalTranscript(self.selectedGene);
+                                            self.geneModel.setLatestGeneTranscript(geneName, self.selectedTranscript);
+                                        } else {
+                                            self.selectedTranscript = latestTranscript;
+                                        }
 
-                            }
+                                    }
 
-                            if (self.$refs.scrollButtonRefGene) {
-                                self.$refs.scrollButtonRefGene.showScrollButtons();
-                            }
-                            if (self.cohortModel.isLoaded) {
-                                self.promiseLoadData()
-                                    .then(function () {
-                                        self.clearZoom = false;
+                                    if (self.$refs.scrollButtonRefGene) {
+                                        self.$refs.scrollButtonRefGene.showScrollButtons();
+                                    }
+                                    if (self.cohortModel.isLoaded) {
+                                        self.promiseLoadData()
+                                            .then(function () {
+                                                self.clearZoom = false;
+                                                resolve();
+                                            })
+                                            .catch(function (err) {
+                                                console.log(err)
+                                                reject(err);
+                                            })
+                                    } else {
                                         resolve();
-                                    })
-                                    .catch(function (err) {
-                                        console.log(err)
-                                        reject(err);
-                                    })
-                            } else {
-                                resolve();
-                            }
+                                    }
+                                })
                         })
                         .catch(function (error) {
                             console.log(error);

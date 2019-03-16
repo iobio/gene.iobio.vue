@@ -313,8 +313,9 @@
 
                 self.cohortModel.genomeBuildHelper.setCurrentBuild(self.buildName);
 
-                self.cohortModel.promiseAddClinvarSample()
-                    .then(function () {
+                // TODO: adding clinvar sample twice?
+                // self.cohortModel.promiseAddClinvarSample()
+                //     .then(function () {
                         self.cohortModel.setTumorInfo(true);
                         self.cohortModel.isLoaded = true;
                         self.cohortModel.getCanonicalModels().forEach(function (model) {
@@ -322,14 +323,14 @@
                                 model.displayName = model.id;
                             }
                         });
-                    })
-                    .then(function () {
+                    // })
+                    // .then(function () {
                         let performAnalyzeAll = self.autofillAction ? true : false;
                         self.inProgress = false;
 
                         self.$emit("on-files-loaded", performAnalyzeAll);
                         self.showFilesMenu = false;
-                    });
+                    // });
             },
             onCancel: function () {
                 this.showFilesMenu = false;

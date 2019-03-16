@@ -737,9 +737,8 @@ class CohortModel {
             if (Object.keys(self.sampleMap).length === 0) {
                 resolve();
             } else {
-
                 self.startGeneProgress(theGene.gene_name);
-                self.clearLoadedData();
+                self.clearLoadedData(theGene.gene_name);
 
                 // Enforce Cosmic sample top track
                 self.sortSampleModels();
@@ -765,6 +764,10 @@ class CohortModel {
                             .then(function () {
                                 self.setLoadedVariants(theGene);
                                 self.endGeneProgress(theGene.gene_name);
+                                // TODO: get rid of if mraking belowworks
+                                // self.sampleModels.forEach((model) => {
+                                //    model.entryDataChanged = false;
+                                // });
                                 resolve(resultMap);
                             })
                     })
@@ -1056,50 +1059,51 @@ class CohortModel {
         return new Promise(function (resolve, reject) {
             let annotatePromises = [];
             let theResultMap = {};
-            if (isMultiSample) {
-                self.getCanonicalModels().forEach(function (model) {
-                    let noReloadNecessary = model.lastGeneLoaded === theGene.gene_name && model.loadedVariants != null && !model.entryDataChanged;
-                    if (!isBackground && !noReloadNecessary) {
-                        model.inProgress.loadingVariants = true;
-                    }
-                });
-                // Annotate if something in the file loader has changed
-                let firstModel = self.sampleMap['s0'].model;
-                let noReloadNecessary = firstModel.lastGeneLoaded === theGene.gene_name && firstModel.loadedVariants != null && !firstModel.entryDataChanged;
-                let p = null;
-                if (!noReloadNecessary) {
-                    firstModel.lastGeneLoaded = theGene.gene_name;
-                    p = firstModel.promiseAnnotateVariants(theGene, theTranscript, self.getCanonicalModels(), isMultiSample, isBackground)
-                        .then(function (resultMap) {
-                            if (!isBackground) {
-                                self.getCanonicalModels().forEach(function (model) {
-                                    model.inProgress.loadingVariants = false;
-                                })
-                            }
-                            firstModel.entryDataChanged = false;
-                            theResultMap = resultMap;
-                        });
-                } else {
-                    p = Promise.resolve();
-                }
-                annotatePromises.push(p);
-            } else {
+            // if (isMultiSample) {
+            //     // self.getCanonicalModels().forEach(function (model) {
+            //     //     let noReloadNecessary = model.lastGeneLoaded === theGene.gene_name && model.loadedVariants != null && !model.entryDataChanged;
+            //     //     if (!isBackground && !noReloadNecessary) {
+            //     //         model.inProgress.loadingVariants = true;
+            //     //     }
+            //     // });
+            //     // Annotate if something in the file loader has changed
+            //     let firstModel = self.sampleMap['s0'].model;
+            //     let noReloadNecessary = firstModel.lastGeneLoaded === theGene.gene_name && firstModel.loadedVariants != null && !firstModel.entryDataChanged;
+            //     let p = null;
+            //     if (!noReloadNecessary) {
+            //         firstModel.inProgress.loadingVariants = true;
+            //         firstModel.lastGeneLoaded = theGene.gene_name;
+            //         firstModel.entryDataChanged = false;
+            //         p = firstModel.promiseAnnotateVariants(theGene, theTranscript, self.getCanonicalModels(), isMultiSample, isBackground)
+            //             .then(function (resultMap) {
+            //                 if (!isBackground) {
+            //                     self.getCanonicalModels().forEach(function (model) {
+            //                         model.inProgress.loadingVariants = false;
+            //                     })
+            //                 }
+            //                 theResultMap = resultMap;
+            //             });
+            //     } else {
+            //         p = Promise.resolve();
+            //     }
+            //     annotatePromises.push(p);
+            // } else {
                 for (var id in self.sampleMap) {
                     let model = self.sampleMap[id].model;
                     let noReloadNecessary = model.lastGeneLoaded === theGene.gene_name && model.loadedVariants != null && !model.entryDataChanged;
-                    if (model.isVcfReadyToLoad() || model.isLoaded() && !noReloadNecessary) {
+                    if ((model.isVcfReadyToLoad() || model.isLoaded()) && !noReloadNecessary) {
+                        model.lastGeneLoaded = theGene.gene_name;
+                        model.entryDataChanged = false;
                         if (!isBackground) {
                             model.inProgress.loadingVariants = true;
                         }
-                        model.lastGeneLoaded = theGene.gene_name;
-                        if (id !== 'known-variants') {
+                        if (id !== 'known-variants' && id !== 'cosmic-variants') {
                             let p = model.promiseAnnotateVariants(theGene, theTranscript, [model], isMultiSample, isBackground)
                                 .then(function (resultMap) {
                                     for (var theId in resultMap) {
                                         if (!isBackground) {
                                             self.getModel(theId).inProgress.loadingVariants = false;
                                         }
-                                        model.entryDataChanged = false;
                                         theResultMap[theId] = resultMap[theId];
                                     }
                                 });
@@ -1107,9 +1111,8 @@ class CohortModel {
                         }
                     }
                 }
-            }
+            //}
 
-            // TODO: this looks like bad/unused code - fix or remove
             if (options.getKnownVariants) {
                 let p = self.promiseLoadKnownVariants(theGene, theTranscript)
                     .then(function (resultMap) {
@@ -1440,7 +1443,7 @@ class CohortModel {
 
             let promises = [];
             self.sampleModels.forEach(function (model) {
-                if (model.isBamLoaded()) {
+                if (model.isBamLoaded() && model.entryDataChanged) {
                     if (showProgress) {
                         //vc.showBamProgress("Analyzing coverage in coding regions");
                     }
@@ -1472,7 +1475,7 @@ class CohortModel {
             let promises = [];
             let theResultMap = {};
             self.getCanonicalModels().forEach(function (model) {
-                if (model.isBamLoaded()) {
+                if (model.isBamLoaded() && model.entryDataChanged) {
                     model.inProgress.loadingCoverage = true;
                     var p = new Promise(function (innerResolve, innerReject) {
                         var theModel = model;
