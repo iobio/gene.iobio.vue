@@ -759,15 +759,17 @@ class CohortModel {
                 Promise.all(promises)
                     .then(function () {
 
+                        // Set entry data flag to false for all sample models
+                        self.sampleModels.forEach((model) => {
+                           model.entryDataChanged = false;
+                        });
+
                         // Now summarize the danger for the selected gene
                         self.promiseSummarizeDanger(theGene, theTranscript, resultMap.s0, null)
                             .then(function () {
                                 self.setLoadedVariants(theGene);
                                 self.endGeneProgress(theGene.gene_name);
                                 // TODO: get rid of if mraking belowworks
-                                // self.sampleModels.forEach((model) => {
-                                //    model.entryDataChanged = false;
-                                // });
                                 resolve(resultMap);
                             })
                     })
@@ -1093,7 +1095,7 @@ class CohortModel {
                     let noReloadNecessary = model.lastGeneLoaded === theGene.gene_name && model.loadedVariants != null && !model.entryDataChanged;
                     if ((model.isVcfReadyToLoad() || model.isLoaded()) && !noReloadNecessary) {
                         model.lastGeneLoaded = theGene.gene_name;
-                        model.entryDataChanged = false;
+                        //model.entryDataChanged = false;
                         if (!isBackground) {
                             model.inProgress.loadingVariants = true;
                         }
