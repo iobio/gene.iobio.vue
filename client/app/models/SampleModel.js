@@ -759,9 +759,13 @@ class SampleModel {
         return this.defaultSampleName;
     }
 
-    markEntryDataChanged() {
+    markEntryDataChanged(changedStatus) {
         let self = this;
-        self.entryDataChanged = true;
+        if (changedStatus) {
+            self.entryDataChanged = changedStatus;
+        } else {
+            self.entryDataChanged = true;
+        }
     }
 
     init(cohort) {

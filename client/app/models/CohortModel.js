@@ -760,8 +760,8 @@ class CohortModel {
                     .then(function () {
 
                         // Set entry data flag to false for all sample models
-                        self.sampleModels.forEach((model) => {
-                           model.entryDataChanged = false;
+                        self.sampleModels.forEach((currModel) => {
+                           currModel.markEntryDataChanged(false);
                         });
 
                         // Now summarize the danger for the selected gene
@@ -906,7 +906,7 @@ class CohortModel {
 
     promiseLoadCoverage(theGene, theTranscript) {
         let self = this;
-
+        // TODO: left off why when switch gene does coverage not work
         return new Promise(function (resolve, reject) {
 
             self.promiseGetCachedGeneCoverage(theGene, theTranscript, true)
@@ -1095,7 +1095,6 @@ class CohortModel {
                     let noReloadNecessary = model.lastGeneLoaded === theGene.gene_name && model.loadedVariants != null && !model.entryDataChanged;
                     if ((model.isVcfReadyToLoad() || model.isLoaded()) && !noReloadNecessary) {
                         model.lastGeneLoaded = theGene.gene_name;
-                        //model.entryDataChanged = false;
                         if (!isBackground) {
                             model.inProgress.loadingVariants = true;
                         }
