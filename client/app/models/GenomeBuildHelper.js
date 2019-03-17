@@ -19,6 +19,8 @@ export class GenomeBuildHelper {
     this.RESOURCE_CLINVAR_VCF_OFFLINE = "CLINVAR VCF OFFLINE";
     this.RESOURCE_CLINVAR_POSITION    = "CLINVAR EUTILS BASE POSITION";
     this.RESOURCE_ENSEMBL_URL         = "ENSEMBL URL";
+    this.RESOURCE_COSMIC_VCF_S3_CODING= "CODING COSMIC VCF S3";
+    this.RESOURCE_COSMIC_VCF_S3_NON   = "NONCODING COSMIC VCF S3";
 
     this.genomeBuildServer            = this.globalApp.HTTP_SERVICES + "genomebuild/";
 
@@ -173,7 +175,7 @@ export class GenomeBuildHelper {
     var theResource = null;
     if (this.currentBuild) {
       this.currentBuild.resources.forEach(function(gbResource) {
-        if (!theResource && gbResource.type == resourceType) {
+        if (!theResource && gbResource.type === resourceType) {
           theResource = gbResource.resource;
         }
       });

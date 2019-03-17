@@ -183,7 +183,7 @@
                     <v-card v-if="geneModel && cohortModel.isLoaded && Object.keys(selectedGene).length > 0"
                             id="gene-and-variant-tabs" slot="right"
                             class="full-width"
-                            style=";min-height:auto;max-height:auto;margin-bottom:0px;padding-top:0px;margin-top:0px;">
+                            style="margin-bottom:0px;padding-top:0px;margin-top:0px;">
                         <v-tabs
                             v-model="activeGeneVariantTab"
                             light
@@ -197,7 +197,7 @@
 
                             <v-tab-item v-if="!isBasicMode" style="margin-top:5px;margin-bottom:0px;overflow-y:auto">
 
-                                <feature-matrix-card style="min-width:300px; min-height:auto; max-height:auto"
+                                <feature-matrix-card style="min-width:300px"
                                                      ref="featureMatrixCardRef"
                                                      v-bind:class="{ hide: !cohortModel || !cohortModel.isLoaded || !featureMatrixModel || !featureMatrixModel.rankedVariants }"
                                                      :isEduMode="isEduMode"
@@ -882,8 +882,9 @@
 
                 self.promiseClearCache()
                     .then(function () {
-                        // TODO: only want to do this if something has changed in file selector?
                         self.featureMatrixModel.init();
+                        // TODO: filter nonRefSamples
+                        // TODO: call featureMatrixModel.addAllLoadedSamples(self.cohortModel.nonRefSamples)
                         if (self.firstLaunchFromFileMenu) {
                             self.firstLaunchFromFileMenu = false;
                             return Promise.resolve();
@@ -1308,7 +1309,6 @@
                     self.cohortModel.cosmicVariantsViz = viz;
                 }
                 if (self.showCosmicVariantsCard && self.cohortModel && self.cohortModel.isLoaded && Object.keys(self.selectedGene).length > 0) {
-                    // TODO: implement this
                     self.cohortModel.promiseLoadCosmicVariants(self.selectedGene, self.selectedTranscript);
                 }
             },

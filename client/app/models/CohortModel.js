@@ -591,6 +591,7 @@ class CohortModel {
                 vm.init(self);
                 vm.setId('cosmic-variants');
                 vm.setDisplayName('COSMIC');
+                // TODO: the Cosmic resource needs to be added to the result that comes back from ajax query to genome resource server
                 let cosmicUrl = self.genomeBuildHelper.getBuildResource(self.genomeBuildHelper.RESOURCE_COSMIC_VCF_S3);
                 vm.onVcfUrlEntered(cosmicUrl, null, function () {
                         self.sampleModels.push(vm);
@@ -769,7 +770,6 @@ class CohortModel {
                             .then(function () {
                                 self.setLoadedVariants(theGene);
                                 self.endGeneProgress(theGene.gene_name);
-                                // TODO: get rid of if mraking belowworks
                                 resolve(resultMap);
                             })
                     })
