@@ -1162,28 +1162,32 @@
                 var variant = self.cohortModel.getProbandModel().loadedVariants.features[2];
                 self.onCohortVariantClick(variant, null, 'proband');
             },
-            onCohortVariantClick: function (variant, sourceComponent, sourceRelationship) {
+            onCohortVariantClick: function(variant, sourceComponent, sampleModelId) {
                 let self = this;
                 if (variant) {
                     self.calcFeatureMatrixWidthPercent();
                     self.selectedVariant = variant;
-                    self.selectedVariantRelationship = sourceRelationship;
-                    self.activeGeneVariantTab = "1";
-                    self.showVariantExtraAnnots(sourceComponent, variant);
+                    self.selectedVariantParentSampleId = sampleModelId;
+                    self.selectedVariantNotes = variant.notes;
+                    self.selectedVariantInterpretation = variant.interpretation;
+                    self.activeGeneVariantTab = self.isBasicMode ? "0" : "1";
+                    self.showVariantExtraAnnots(sampleModelId, variant);
 
-                    self.$refs.variantCardRef.forEach(function (variantCard) {
+                    self.$refs.variantCardRef.forEach(function(variantCard) {
                         if (sourceComponent == null || variantCard != sourceComponent) {
                             variantCard.hideVariantCircle(true);
                             variantCard.showVariantCircle(variant, true);
                             variantCard.showCoverageCircle(variant);
                         }
-                    })
-                    if (sourceComponent == null || self.$refs.featureMatrixCardRef != sourceComponent) {
-                        self.$refs.featureMatrixCardRef.selectVariant(self.selectedVariant);
-                    }
-                    if (self.isEduMode) {
-                        self.$refs.appTourRef.checkVariant(variant);
-                    }
+                    });
+                    // if (!self.isBasicMode && self.$refs.featureMatrixCardRef) {
+                    //     if (sourceComponent == null || self.$refs.featureMatrixCardRef != sourceComponent) {
+                    //         self.$refs.featureMatrixCardRef.selectVariant(self.selectedVariant);
+                    //     }
+                    // }
+                    // if (self.isEduMode) {
+                    //     self.$refs.appTourRef.checkVariant(variant);
+                    // }
                     if (self.$refs.scrollButtonRefVariant) {
                         self.$refs.scrollButtonRefVariant.showScrollButtons();
                     }
@@ -1231,32 +1235,32 @@
                     self.$refs.featureMatrixCardRef.selectVariant(null);
                 }
             },
-            showVariantExtraAnnots: function (sourceComponent, variant) {
+            showVariantExtraAnnots: function (parentSampleId, variant) {
                 let self = this;
-                if (!self.isEduMode && !self.cohortModel.getModel(sourceComponent.id).isAlignmentsOnly()) {
-                    if (sourceComponent.id === 'known-variants') {
+                if (!self.isEduMode && !self.cohortModel.getModel(parentSampleId).isAlignmentsOnly()) {
+                    if (parentSampleId === 'known-variants') {
                         self.cohortModel
-                            .getModel(sourceComponent.id)
+                            .getModel(parentSampleId)
                             .promiseGetVariantExtraAnnotations(self.selectedGene, self.selectedTranscript, self.selectedVariant)
                             .then(function (refreshedVariant) {
-                                self.refreshVariantExtraAnnots(sourceComponent, variant, [refreshedVariant]);
+                                self.refreshVariantExtraAnnots(parentSampleId, variant, [refreshedVariant]);
                             })
                     } else {
                         self.cohortModel
-                            .getModel(sourceComponent.id)
+                            .getModel(parentSampleId)
                             .promiseGetImpactfulVariantIds(self.selectedGene, self.selectedTranscript)
                             .then(function (annotatedVariants) {
                                 // If the clicked variant is in the list of annotated variants, show the
                                 // tooltip; otherwise, the callback will get the extra annots for this
                                 // specific variant
-                                self.refreshVariantExtraAnnots(sourceComponent, variant, annotatedVariants, function () {
+                                self.refreshVariantExtraAnnots(parentSampleId, variant, annotatedVariants, function () {
                                     // The clicked variant wasn't annotated in the batch of variants.  Get the
                                     // extra annots for this specific variant.
                                     self.cohortModel
-                                        .getModel(sourceComponent.id)
+                                        .getModel(parentSampleId)
                                         .promiseGetVariantExtraAnnotations(self.selectedGene, self.selectedTranscript, self.selectedVariant)
                                         .then(function (refreshedVariant) {
-                                            self.refreshVariantExtraAnnots(sourceComponent, variant, [refreshedVariant]);
+                                            self.refreshVariantExtraAnnots(parentSampleId, variant, [refreshedVariant]);
                                         })
                                 })
                             });

@@ -654,7 +654,7 @@ class CohortModel {
         }
     }
 
-    /* Returns model corresponding to name or null if DNE */
+    /* Returns sample model corresponding to name or null if DNE */
     getModel(id) {
         if (this.sampleMap[id] != null) {
             return this.sampleMap[id].model;
@@ -718,7 +718,7 @@ class CohortModel {
     samplesInSingleVcf() {
         let theVcfs = {};
         this.sampleModels.forEach(function (model) {
-            if (!model.isAlignmentsOnly() && model.getId() !== 'known-variants') {
+            if (!model.isAlignmentsOnly() && model.getId() !== 'known-variants' && model.getId() !== 'cosmic-variants') {
                 if (model.vcfUrlEntered) {
                     theVcfs[model.vcf.getVcfURL()] = true;
                 } else {
@@ -1902,13 +1902,13 @@ class CohortModel {
         var self = this;
         var existingVariants = this.flaggedVariants.filter(function (v) {
             var matches = (
-                self.globalApp.utility.stripRefName(v.chrom) == self.globalApp.utility.stripRefName(variant.chrom)
-                && v.start == variant.start
-                && v.ref == variant.ref
-                && v.alt == variant.alt);
+                self.globalApp.utility.stripRefName(v.chrom) === self.globalApp.utility.stripRefName(variant.chrom)
+                && v.start === variant.start
+                && v.ref === variant.ref
+                && v.alt === variant.alt);
             return matches;
-        })
-        if (existingVariants.length == 0) {
+        });
+        if (existingVariants.length === 0) {
             this.flaggedVariants.push(variant);
             this._recacheForFlaggedVariant(theGene, theTranscript, variant);
         }
@@ -1924,16 +1924,17 @@ class CohortModel {
     }
 
     removeFlaggedVariant(theGene, theTranscript, variant) {
+        debugger;
         var self = this;
         var index = -1;
         var i = 0;
         this.removeFilterPassed(variant, "userFlagged");
         this.flaggedVariants.forEach(function (v) {
             var matches = (
-                self.globalApp.utility.stripRefName(v.chrom) == self.globalApp.utility.stripRefName(variant.chrom)
-                && v.start == variant.start
-                && v.ref == variant.ref
-                && v.alt == variant.alt);
+                self.globalApp.utility.stripRefName(v.chrom) === self.globalApp.utility.stripRefName(variant.chrom)
+                && v.start === variant.start
+                && v.ref === variant.ref
+                && v.alt === variant.alt);
             if (matches) {
                 index = i;
                 v.isUserFlagged = false;
@@ -1949,21 +1950,21 @@ class CohortModel {
 
     _recacheForFlaggedVariant(theGene, theTranscript, variant) {
         let self = this;
-        self.getProbandModel().promiseGetVcfData(theGene, theTranscript)
+        self.getNormalModel().promiseGetVcfData(theGene, theTranscript)
             .then(function (data) {
                 let cachedVcfData = data.vcfData;
                 cachedVcfData.features.forEach(function (v) {
                     var matches = (
-                        self.globalApp.utility.stripRefName(v.chrom) == self.globalApp.utility.stripRefName(variant.chrom)
-                        && v.start == variant.start
-                        && v.ref == variant.ref
-                        && v.alt == variant.alt);
+                        self.globalApp.utility.stripRefName(v.chrom) === self.globalApp.utility.stripRefName(variant.chrom)
+                        && v.start === variant.start
+                        && v.ref === variant.ref
+                        && v.alt === variant.alt);
                     if (matches) {
                         v.isUserFlagged = variant.isUserFlagged;
                         v.filtersPassed = variant.filtersPassed;
                     }
                 });
-                self.getProbandModel()._promiseCacheData(cachedVcfData, CacheHelper.VCF_DATA, theGene.gene_name, theTranscript);
+                self.getNormalModel()._promiseCacheData(cachedVcfData, CacheHelper.VCF_DATA, theGene.gene_name, theTranscript);
             });
     }
 
@@ -2327,7 +2328,7 @@ class CohortModel {
     removeFlaggedVariantsForGene(geneName) {
         let self = this;
         let variantsToRemove = this.flaggedVariants.filter(function (flaggedVariant) {
-            return flaggedVariant.gene.gene_name == geneName;
+            return flaggedVariant.gene.gene_name === geneName;
         });
         variantsToRemove.forEach(function (variant) {
             var index = self.flaggedVariants.indexOf(variant);

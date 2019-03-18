@@ -27,6 +27,11 @@ export default class Translator {
               'benign'                : {value: 151, badge: false, examineBadge: true, clazz: 'clinvar_benign', symbolFunction: this.glyph.showClinVarSymbol},
               'none'                  : {value: 161, badge: false, examineBadge: false, clazz: ''}
                        };
+    this.somaticMap = {
+              'somatic'               : {value: 1,   badge: true, examineBadge: true, clazz: 'clinvar_path', symbolFunction: this.glyph.showSomaticSymbol},
+              'inherited'             : {value: 2,   badge: false, examineBadge: false, clazz: ''}
+                      };
+
     this.impactMap = {
                         HIGH:     {value: 1, badge: true, clazz: 'impact_HIGH',     symbolFunction: this.glyph.showImpactSymbol},
                         MODERATE: {value: 2, badge: true, clazz: 'impact_MODERATE', symbolFunction: this.glyph.showImpactSymbol},
@@ -77,6 +82,7 @@ export default class Translator {
                       'autosomalDominant': {value: 1, badge: false, clazz: 'system-flagged',  symbolFunction: this.glyph.showFlaggedSymbol},
                       'compoundHet':       {value: 1, badge: false, clazz: 'system-flagged',  symbolFunction: this.glyph.showFlaggedSymbol},
                       'highOrModerate':    {value: 2, badge: false, clazz: 'system-flagged',  symbolFunction: this.glyph.showFlaggedSymbol},
+                      'somatic':           {value: 2, badge: false, clazz: 'system-flagged',  symbolFunction: this.glyph.showFlaggedSymbol},
                       'userFlagged':       {value: 3, badge: false, clazz: 'user-flagged',    symbolFunction: this.glyph.showFlaggedSymbol},
                       '':                  {value: 3, badge: false, clazz: '',                symbolFunction: ''}
                        };

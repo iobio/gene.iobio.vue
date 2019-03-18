@@ -203,7 +203,6 @@ export default {
       ROW_LABEL_WIDTH_EDU: 130,
       CELL_SIZE: null,
 
-
       margin: {top: 0, right: 40, bottom: 7, left: 0},
       cellSize: null,
       cellWidth: null,
@@ -214,10 +213,7 @@ export default {
       columnLabelSymbol: this.columnHeaderSymbol,
       adjustTooltipCoordinates: function(variant) {
       },
-
       showSettings: false
-
-
     }
   },
 

@@ -1623,9 +1623,8 @@ var effectCategories = [
                     'highestSIFT':             highestSIFT,
                     'highestPolyphen':         highestPolyphen,
                     'highestREVEL':            highestREVEL,
-
-                      'isInherited':            false
-                  }
+                     'isInherited':            false
+                  };
 
                   for (var key in clinvarResult) {
                     variant[key] = clinvarResult[key];
@@ -1810,8 +1809,7 @@ exports._parseVepAnnot = function(altIdx, isMultiAllelic, annotToken, annot, gen
         // all of the vep fields.  We place these into maps
         // because we can have multiple vep consequences for
         // the same transcript.
-        // TODO:  Need to sort so that highest impact shows first
-        //        and is used for filtering and ranking purposes.
+        // TODO:  Need to sort so that highest impact shows first and is used for filtering and ranking purposes.
         if (featureType == 'Transcript' && (feature == selectedTranscriptID || feature == selectedTranscript.transcript_id)) {
           annot.vep.vepImpact[vepTokens[vepFields.IMPACT]] = vepTokens[vepFields.IMPACT];
 

@@ -75,7 +75,7 @@
                 font-weight: normal
                 padding-bottom: 5px
             #welcome-label-small
-                color: $accent-color
+                color: $app-gray
                 font-size: 20px
                 font-family: $landing-page-font
                 font-weight: normal

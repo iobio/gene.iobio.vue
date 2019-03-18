@@ -385,7 +385,6 @@ export default {
     regionEnd: 0,
     width: 0,
 
-
     showVariantViz: true,
     showGeneViz: true,
     showDepthViz: true,
