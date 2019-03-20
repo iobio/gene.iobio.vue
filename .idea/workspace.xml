@@ -36,24 +36,15 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="VariantDetailCard.vue" pinned="false" current-in-tab="true">
+      <file leaf-file-name="VariantDetailCard.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/viz/VariantDetailCard.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="287">
-              <caret line="371" lean-forward="true" selection-start-line="371" selection-end-line="371" />
+            <state relative-caret-position="219">
+              <caret line="363" column="61" lean-forward="true" selection-start-line="363" selection-start-column="61" selection-end-line="363" selection-end-column="61" />
               <folding>
                 <element signature="e#19893#19927#0" expanded="true" />
                 <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="VariantLinksMenu.vue" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/app/components/partials/VariantLinksMenu.vue">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="209">
-              <caret line="113" column="31" lean-forward="true" selection-start-line="113" selection-start-column="31" selection-end-line="113" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -84,20 +75,55 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CohortModel.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
+      <file leaf-file-name="GenomeBuildHelper.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/app/models/GenomeBuildHelper.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="655" lean-forward="true" selection-start-line="655" selection-end-line="655" />
+            <state relative-caret-position="176">
+              <caret line="11" column="35" lean-forward="true" selection-start-line="11" selection-start-column="35" selection-end-line="11" selection-end-column="35" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SampleModel.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="CohortModel.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="321">
+              <caret line="569" column="105" selection-start-line="569" selection-start-column="105" selection-end-line="569" selection-end-column="105" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Vcf.iobio.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/app/models/Vcf.iobio.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="464">
+              <caret line="1634" column="19" lean-forward="true" selection-start-line="1634" selection-start-column="19" selection-end-line="1634" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Variant.d3.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/app/d3/Variant.d3.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="285" lean-forward="true" selection-start-line="285" selection-end-line="285" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SampleModel.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/app/models/SampleModel.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-480">
-              <caret line="1240" column="49" lean-forward="true" selection-start-line="1240" selection-start-column="49" selection-end-line="1240" selection-end-column="49" />
+            <state relative-caret-position="560">
+              <caret line="2834" column="36" lean-forward="true" selection-start-line="2834" selection-start-column="36" selection-end-line="2834" selection-end-column="36" />
+              <folding>
+                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -123,14 +149,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>on-files-load</find>
-      <find>iobio</find>
-      <find>samplesinsingle</find>
-      <find>absent in</find>
-      <find>matrixRows</find>
-      <find>getClinvarRank</find>
-      <find>rank =</find>
-      <find>flag</find>
       <find>_recacheForFlaggedVariant</find>
       <find>unflag</find>
       <find>removefl</find>
@@ -153,6 +171,14 @@
       <find>refreshVariantExtraAnnots</find>
       <find>getmodel</find>
       <find>isbamload</find>
+      <find>promiseaddclinvar</find>
+      <find>promiseAddCosmicSample</find>
+      <find>promiseannotate</find>
+      <find>promiseannotatecos</find>
+      <find>promiseaddcosmi</find>
+      <find>square</find>
+      <find>_moderate</find>
+      <find>impact_</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -197,7 +223,6 @@
         <option value="$PROJECT_DIR$/client/app/models/COHORT_CohortModel.js" />
         <option value="$PROJECT_DIR$/client/app/components/viz/GenesCard.vue" />
         <option value="$PROJECT_DIR$/client/app/components/partials/SampleData.vue" />
-        <option value="$PROJECT_DIR$/client/app/models/SampleModel.js" />
         <option value="$PROJECT_DIR$/client/app/models/GenomeBuildHelper.js" />
         <option value="$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue" />
         <option value="$PROJECT_DIR$/client/app/components/viz/Welcome.vue" />
@@ -212,8 +237,9 @@
         <option value="$PROJECT_DIR$/client/app/models/FeatureMatrixModel.js" />
         <option value="$PROJECT_DIR$/client/app/components/viz/FeatureMatrixCard.vue" />
         <option value="$PROJECT_DIR$/client/app/components/pages/GeneHome.vue" />
-        <option value="$PROJECT_DIR$/client/app/models/CohortModel.js" />
         <option value="$PROJECT_DIR$/client/app/components/viz/VariantDetailCard.vue" />
+        <option value="$PROJECT_DIR$/client/app/models/CohortModel.js" />
+        <option value="$PROJECT_DIR$/client/app/models/SampleModel.js" />
       </list>
     </option>
   </component>
@@ -299,7 +325,7 @@
               <item name="gene.iobio.vue" type="462c0819:PsiDirectoryNode" />
               <item name="client" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="globals" type="462c0819:PsiDirectoryNode" />
+              <item name="d3" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="gene.iobio.vue" type="b2602c69:ProjectViewProjectNode" />
@@ -307,6 +333,12 @@
               <item name="client" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
               <item name="models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="gene.iobio.vue" type="b2602c69:ProjectViewProjectNode" />
+              <item name="gene.iobio.vue" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="js" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="gene.iobio.vue" type="b2602c69:ProjectViewProjectNode" />
@@ -388,18 +420,18 @@
       <workItem from="1547923648666" duration="437000" />
       <workItem from="1551388044207" duration="676000" />
       <workItem from="1552411172768" duration="71445000" />
-      <workItem from="1552928210792" duration="6882000" />
+      <workItem from="1552928210792" duration="12781000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="390078000" />
+    <option name="totallyTimeSpent" value="395977000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1440" height="877" extended-state="6" />
+    <frame x="0" y="23" width="1920" height="1057" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.22013889" />
+      <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.16510417" />
       <window_info anchor="bottom" id="TODO" order="10" />
       <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" weight="0.32971016" />
@@ -490,13 +522,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1808">
           <caret line="113" column="36" lean-forward="true" selection-start-line="113" selection-start-column="36" selection-end-line="113" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/d3/Variant.d3.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4160">
-          <caret line="260" column="45" selection-start-line="260" selection-start-column="45" selection-end-line="260" selection-end-column="45" />
         </state>
       </provider>
     </entry>
@@ -688,13 +713,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/GenomeBuildHelper.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="14" column="56" selection-start-line="14" selection-start-column="56" selection-end-line="14" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5024">
@@ -736,13 +754,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="448">
           <caret line="85" column="140" lean-forward="true" selection-start-line="85" selection-start-column="140" selection-end-line="85" selection-end-column="140" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/Vcf.iobio.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
-          <caret line="1621" column="64" lean-forward="true" selection-start-line="1621" selection-start-column="64" selection-end-line="1621" selection-end-column="64" />
         </state>
       </provider>
     </entry>
@@ -803,13 +814,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/SampleModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-480">
-          <caret line="1240" column="49" lean-forward="true" selection-start-line="1240" selection-start-column="49" selection-end-line="1240" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/components/pages/GeneHome.vue">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="293">
@@ -825,19 +829,55 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
+    <entry file="file://$PROJECT_DIR$/client/app/components/viz/VariantDetailCard.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="655" lean-forward="true" selection-start-line="655" selection-end-line="655" />
+        <state relative-caret-position="219">
+          <caret line="363" column="61" lean-forward="true" selection-start-line="363" selection-start-column="61" selection-end-line="363" selection-end-column="61" />
+          <folding>
+            <element signature="e#19893#19927#0" expanded="true" />
+            <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/viz/VariantDetailCard.vue">
+    <entry file="file://$PROJECT_DIR$/client/app/models/GenomeBuildHelper.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="287">
-          <caret line="371" lean-forward="true" selection-start-line="371" selection-end-line="371" />
+        <state relative-caret-position="176">
+          <caret line="11" column="35" lean-forward="true" selection-start-line="11" selection-start-column="35" selection-end-line="11" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/models/Vcf.iobio.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="464">
+          <caret line="1634" column="19" lean-forward="true" selection-start-line="1634" selection-start-column="19" selection-end-line="1634" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/d3/Variant.d3.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="285" lean-forward="true" selection-start-line="285" selection-end-line="285" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="321">
+          <caret line="569" column="105" selection-start-line="569" selection-start-column="105" selection-end-line="569" selection-end-column="105" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/models/SampleModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="560">
+          <caret line="2834" column="36" lean-forward="true" selection-start-line="2834" selection-start-column="36" selection-end-line="2834" selection-end-column="36" />
           <folding>
-            <element signature="e#19893#19927#0" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
           </folding>
         </state>

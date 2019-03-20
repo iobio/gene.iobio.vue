@@ -2788,6 +2788,7 @@ class SampleModel {
         let self = this;
         var impacts = "";
         var colorimpacts = "";
+        var borderColor = "";
         var effects = "";
         var sift = "";
         var polyphen = "";
@@ -2817,6 +2818,7 @@ class SampleModel {
             var colorImpactList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.impact : d[self.globalApp.impactFieldToColor]);
             for (var key in colorImpactList) {
                 colorimpacts += " " + 'impact_' + key;
+                borderColor += "border_SOMATIC";
             }
         }
 
@@ -2833,7 +2835,7 @@ class SampleModel {
             regulatory += " " + key;
         }
 
-        return 'variant ' + d.type.toLowerCase() + ' ' + d.zygosity.toLowerCase() + ' ' + (d.inheritance ? d.inheritance.toLowerCase() : "") + ' ua_' + d.ua + ' ' + sift + ' ' + polyphen + ' ' + regulatory + ' ' + +' ' + d.clinvar + ' ' + impacts + ' ' + effects + ' ' + d.consensus + ' ' + colorimpacts;
+        return 'variant ' + d.type.toLowerCase() + ' ' + d.zygosity.toLowerCase() + ' ' + (d.inheritance ? d.inheritance.toLowerCase() : "") + ' ua_' + d.ua + ' ' + sift + ' ' + polyphen + ' ' + regulatory + ' ' + +' ' + d.clinvar + ' ' + impacts + ' ' + effects + ' ' + d.consensus + ' ' + colorimpacts + ' ' + borderColor;
     }
 
     classifyByClinvar(d) {

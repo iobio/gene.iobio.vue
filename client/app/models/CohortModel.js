@@ -591,9 +591,14 @@ class CohortModel {
                 vm.init(self);
                 vm.setId('cosmic-variants');
                 vm.setDisplayName('COSMIC');
-                // TODO: the Cosmic resource needs to be added to the result that comes back from ajax query to genome resource server
-                let cosmicUrl = self.genomeBuildHelper.getBuildResource(self.genomeBuildHelper.RESOURCE_COSMIC_VCF_S3);
-                vm.onVcfUrlEntered(cosmicUrl, null, function () {
+
+                let cosmicUrl = "https://s3.amazonaws.com/iobio/samples/vcf/cosmic.coding.noncoding.GRCh37.final.vcf.gz";
+                let cosmicTbi = "https://s3.amazonaws.com/iobio/samples/vcf/cosmic.coding.noncoding.GRCh37.final.vcf.gz.tbi";
+                if (self.genomeBuildHelper.currentBuild === 'GRCh38') {
+                    cosmicUrl = "https://s3.amazonaws.com/iobio/samples/vcf/cosmic.coding.GRCh38.vcf.gz";
+                    cosmicTbi = "https://s3.amazonaws.com/iobio/samples/vcf/cosmic.coding.GRCh38.vcf.gz.tbi";
+                }
+                vm.onVcfUrlEntered(cosmicUrl, cosmicTbi, function () {
                         self.sampleModels.push(vm);
                         let sample = {'id': 'cosmic-variants', 'model': vm, 'order': 1};
                         self.sampleMap['cosmic-variants'] = sample;
@@ -850,7 +855,7 @@ class CohortModel {
         let self = this;
         return new Promise(function(resolve, reject) {
             self.getModel('cosmic-variants').inProgress.loadingVariants = true;
-            self.sampleMap['cosmic-variants'].model.promiseAnnotateCosmicVariants(theGene, theTranscript, [self.sampleMap['cosmic-variants'].model], {'isMultiSample': false, 'isBackground': false})
+            self.sampleMap['cosmic-variants'].model.promiseAnnotateVariants(theGene, theTranscript, [self.sampleMap['cosmic-variants'].model], {'isMultiSample': false, 'isBackground': false})
                 .then(function(resultMap) {
                     self.getModel('cosmic-variants').inProgress.loadingVariants = false;
                     self.setLoadedVariants(theGene, 'cosmic-variants');

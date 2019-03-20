@@ -371,8 +371,8 @@
         </span>
 
 
-            <span class="pr-1 pl-1" v-if="!isBasicMode && (selectedVariantRelationship == 'known-variants')">
-        <app-icon v-show="selectedVariantRelationship == 'known-variants'"
+            <span class="pr-1 pl-1" v-if="!isBasicMode && (selectedVariantRelationship === 'known-variants')">
+        <app-icon v-show="selectedVariantRelationship === 'known-variants'"
                   icon="clinvar" width="16" height="16">
         </app-icon>
         <span class="rel-header">{{ selectedVariantRelationship | showRelationship }}</span>
