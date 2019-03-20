@@ -2784,7 +2784,7 @@ class SampleModel {
 
     }
 
-    classifyByImpact(d, annotationScheme) {
+    classifyByImpact(d, annotationScheme, inTumorTrack) {
         let self = this;
         var impacts = "";
         var colorimpacts = "";
@@ -2814,11 +2814,12 @@ class SampleModel {
         // TODO: refactor this so we still have filtering abilities for actual impact
         if (d.isInherited) {
             colorimpacts += " " + 'impact_INHERITED';
+        } else if (inTumorTrack) {
+            colorimpacts += " " + "impact_SOMATIC";
         } else {
             var colorImpactList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.impact : d[self.globalApp.impactFieldToColor]);
             for (var key in colorImpactList) {
                 colorimpacts += " " + 'impact_' + key;
-                borderColor += "border_SOMATIC";
             }
         }
 

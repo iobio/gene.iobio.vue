@@ -261,6 +261,7 @@
           :showBrush="false"
           :showXAxis="true"
           :classifySymbolFunc="classifyVariantSymbolFunc"
+          :isTumorTrack="sampleModel.isTumor"
           @variantClick="onVariantClick"
           @variantHover="onVariantHover"
           @variantHoverEnd="onVariantHoverEnd">
@@ -287,6 +288,7 @@
           :showBrush="false"
           :showXAxis="true"
           :classifySymbolFunc="classifyVariantSymbolFunc"
+          :isTumorTrack="sampleModel.isTumor"
           @variantClick="onVariantClick"
           @variantHover="onVariantHover"
           @variantHoverEnd="onVariantHoverEnd">

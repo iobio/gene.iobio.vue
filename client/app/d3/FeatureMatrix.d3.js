@@ -443,6 +443,7 @@ export default function featureMatrixD3() {
       cells.each( function(d,i) {
          var symbolFunction = d.symbolFunction;
          if (symbolFunction) {
+           // TODO: this is where we should be calling getsomaticsymbol from glyph model
            d3.select(this).call(symbolFunction, {'self': d.bindTo, 'cellSize': (cellWidth != null ? cellWidth : cellSize)});
          }
       });

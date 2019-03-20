@@ -136,7 +136,11 @@ export default {
           return "";
         }
       },
-      classifySymbolFunc: null
+      classifySymbolFunc: null,
+      isTumorTrack: {
+          type: Boolean,
+          default: false
+      }
     },
     data() {
       return {
@@ -155,7 +159,7 @@ export default {
         this.variantChart =  variantD3()
           .width(this.width)
           .clazz(function(variant) {
-            return self.classifySymbolFunc(variant, self.annotationScheme);
+            return self.classifySymbolFunc(variant, self.annotationScheme, self.isTumorTrack);
           })
           .margin(this.margin)
           .showXAxis(this.showXAxis)

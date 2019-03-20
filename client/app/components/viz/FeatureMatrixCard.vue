@@ -93,7 +93,7 @@
 
           <feature-matrix-viz id="feature-matrix-viz"
             ref="featureMatrixVizRef"
-            v-bind:class="{ hide: featureMatrixModel.rankedVariants.length == 0, 'basic' : isBasicMode}"
+            v-bind:class="{ hide: featureMatrixModel.rankedVariants.length === 0, 'basic' : isBasicMode}"
             :data="featureMatrixModel.rankedVariants"
             :matrixRows="featureMatrixModel.filteredMatrixRows"
             :annotationScheme="featureMatrixModel.cohort.annotationScheme"
