@@ -993,7 +993,7 @@ class CohortModel {
 
         let allVariants = $.extend({}, self.getNormalModel().loadedVariants);
         allVariants.features = [];      // Start empty so when we get normal in loop below, we don't duplicate
-        let uniqueFeatures = {};
+        let uniqueMatrixFeatures = {};  // The features to rank in the matrix
 
         self.sampleModels.forEach(function (model) {
             if (id == null || id === model.id) {
@@ -1008,43 +1008,38 @@ class CohortModel {
                     let calledVariants = filterAndPileupVariants(model, start, end, 'called');
                     model.calledVariants = calledVariants;
 
-                    let currVariants = model.loadedVariants.features;
-                    currVariants.forEach((currVar) => {
-                        if (uniqueFeatures[currVar.id] == null) {
-                            uniqueFeatures[currVar.id] = currVar;
-                            allVariants.features.push(currVar);
-                        }
-                    });
-                    if (model.calledVariants) {
-                        currVariants = model.calledVariants.features;
+                        let currVariants = model.loadedVariants.features;
                         currVariants.forEach((currVar) => {
-                            if (uniqueFeatures[currVar.id] == null) {
-                                uniqueFeatures[currVar.id] = currVar;
+                            if (uniqueMatrixFeatures[currVar.id] == null) {
+                                uniqueMatrixFeatures[currVar.id] = currVar;
                                 allVariants.features.push(currVar);
                             }
                         });
-                    }
-
+                        if (model.calledVariants) {
+                            currVariants = model.calledVariants.features;
+                            currVariants.forEach((currVar) => {
+                                if (uniqueMatrixFeatures[currVar.id] == null) {
+                                    uniqueMatrixFeatures[currVar.id] = currVar;
+                                    allVariants.features.push(currVar);
+                                }
+                            });
+                        }
                     // For onc, we want all variants in matrix
                     // if (model.getId() === 's0') {
                     //     var allVariants = $.extend({}, model.loadedVariants);
                     //     allVariants.features = model.loadedVariants.features.concat(model.calledVariants.features);
                     //     self.featureMatrixModel.promiseRankVariants(allVariants);
                     // }
-
-
-
                 } else {
                     model.loadedVariants = {loadState: {}, features: []};
                     model.calledVariants = {loadState: {}, features: []}
                 }
-
             }
         });
-
         // Plug combined, unique features into feature matrix model
-        self.featureMatrixModel.promiseRankVariants(allVariants);
-
+        if (id !== 'known-variants' && id !== 'cosmic-variants') {
+            self.featureMatrixModel.promiseRankVariants(allVariants);
+        }
     }
 
     setCoverage(regionStart, regionEnd) {

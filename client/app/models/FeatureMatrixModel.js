@@ -323,7 +323,6 @@ class FeatureMatrixModel {
   setFeaturesForVariants(theVariants) {
     let self = this;
 
-    debugger;
     theVariants.forEach( function(variant) {
       var features = [];
       for (var i = 0; i < self.filteredMatrixRows.length; i++) {
