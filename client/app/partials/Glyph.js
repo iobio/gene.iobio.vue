@@ -91,7 +91,7 @@ export default class Glyph {
       var width, height, clazz;
       options = options || {};
 
-      debugger;
+      debugger; // are we ever calling this
       var attrs = {
           width: "14",
           height: "14",
@@ -104,8 +104,8 @@ export default class Glyph {
       var cellSizeAttrs = {};
       if (options.cellSize > 18) {
           cellSizeAttrs.width = "17",
-              cellSizeAttrs.height = "17",
-              cellSizeAttrs.transform = "translate(2,2)"
+          cellSizeAttrs.height = "17",
+          cellSizeAttrs.transform = "translate(2,2)"
       }
 
       $.extend(attrs, datumAttrs, cellSizeAttrs, options);

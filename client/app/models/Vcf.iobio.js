@@ -1623,7 +1623,7 @@ var effectCategories = [
                     'highestSIFT':             highestSIFT,
                     'highestPolyphen':         highestPolyphen,
                     'highestREVEL':            highestREVEL,
-                     'isInherited':            false
+                    'isInherited':             true
                   };
 
                   for (var key in clinvarResult) {

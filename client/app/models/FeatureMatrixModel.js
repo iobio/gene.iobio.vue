@@ -22,7 +22,7 @@ class FeatureMatrixModel {
 
       this.matrixRows = [
         {name:'Flagged'                      , id:'isFlagged',      order:0, index:0, match: 'exact', attribute: 'filtersPassed',                    map: this.getTranslator().filtersPassedMap },
-        {name:'Somatic'                      , id:'isSomatic',      order:1, index:1, match: 'exact', attribute: 'somatic',                          map: this.getTranslator().somaticMap},
+        {name:'Somatic'                      , id:'isSomatic',      order:1, index:1, match: 'exact', attribute: 'isInherited',                      map: this.getTranslator().somaticMap},
         {name:'Pathogenicity - ClinVar'      , id:'clinvar',        order:2, index:2, match: 'exact', attribute: 'clinVarClinicalSignificance',      map: this.getTranslator().clinvarMap },
         {name:'Impact (VEP)'                 , id:'impact',         order:3, index:3, match: 'exact', attribute: this.globalApp.impactFieldToColor,  map: this.getTranslator().impactMap},
         {name:'Most severe impact (VEP)'     , id:'highest-impact', order:4, index:4, match: 'exact', attribute: this.globalApp.impactFieldToFilter, map: this.getTranslator().highestImpactMap},
@@ -322,6 +322,7 @@ class FeatureMatrixModel {
   /* Does the actual cell populating */
   setFeaturesForVariants(theVariants) {
     let self = this;
+    debugger; // do we have variants that are not inherited
 
     theVariants.forEach( function(variant) {
       var features = [];
@@ -329,7 +330,7 @@ class FeatureMatrixModel {
         features.push(null);
       }
 
-      self.filteredMatrixRows.forEach( function(matrixRow) {
+      self.filteredMatrixRows.forEach(function(matrixRow) {
         var rawValue = null;
         if (matrixRow.attribute instanceof Array) {
           rawValue = self.getGenericAnnotation().getValue(variant, matrixRow.attribute);
@@ -347,7 +348,15 @@ class FeatureMatrixModel {
         if (matrixRow.attribute === 'clinvar') {
           rawValue = 'N';
         }
-        if (rawValue != null && (self.isNumeric(rawValue) || rawValue != "")) {
+
+        // Input modification for somatic
+        if (matrixRow.attribute === 'isInherited' && rawValue === false) {
+          rawValue = 'isSomatic';
+        } else if (matrixRow.attribute === 'isInherited' && rawValue === true) {
+          rawValue = 'isInherited';
+        }
+
+        if (rawValue != null && (self.isNumeric(rawValue) || rawValue !== "")) {
           if (matrixRow.match === 'field') {
             if (matrixRow.formatFunction) {
               theValue = matrixRow.formatFunction.call(self, variant, rawValue);
@@ -406,7 +415,7 @@ class FeatureMatrixModel {
               }
 
             }
-          } else if (matrixRow.match == 'range') {
+          } else if (matrixRow.match === 'range') {
             // If this feature is a range, get the mapped value be testing if the
             // value is within a min-max range.
             if (self.isNumeric(rawValue)) {

@@ -2812,7 +2812,7 @@ class SampleModel {
         }
 
         // TODO: refactor this so we still have filtering abilities for actual impact
-        if (d.isInherited) {
+        if (d.isInherited && inTumorTrack) {
             colorimpacts += " " + 'impact_INHERITED';
         } else if (inTumorTrack) {
             colorimpacts += " " + "impact_SOMATIC";

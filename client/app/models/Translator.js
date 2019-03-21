@@ -28,8 +28,8 @@ export default class Translator {
               'none'                  : {value: 161, badge: false, examineBadge: false, clazz: ''}
                        };
     this.somaticMap = {
-              'somatic'               : {value: 1,   badge: true, examineBadge: true, clazz: 'clinvar_path', symbolFunction: this.glyph.showSomaticSymbol},
-              'inherited'             : {value: 2,   badge: false, examineBadge: false, clazz: ''}
+              'isSomatic'             : {value: 1,   badge: true, examineBadge: true, clazz: 'impact_SOMATIC', symbolFunction: this.glyph.showSomaticSymbol},
+              'isInherited'           : {value: 2,   badge: false, examineBadge: false, clazz: ''}
                       };
 
     this.impactMap = {
