@@ -140,6 +140,10 @@ export default {
       isTumorTrack: {
           type: Boolean,
           default: false
+      },
+      isKnownOrCosmicTrack: {
+          type: Boolean,
+          default: false
       }
     },
     data() {
@@ -159,7 +163,7 @@ export default {
         this.variantChart =  variantD3()
           .width(this.width)
           .clazz(function(variant) {
-            return self.classifySymbolFunc(variant, self.annotationScheme, self.isTumorTrack);
+            return self.classifySymbolFunc(variant, self.annotationScheme, self.isTumorTrack, self.isKnownOrCosmicTrack);
           })
           .margin(this.margin)
           .showXAxis(this.showXAxis)

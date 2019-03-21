@@ -322,8 +322,8 @@ class FeatureMatrixModel {
   /* Does the actual cell populating */
   setFeaturesForVariants(theVariants) {
     let self = this;
-    debugger; // do we have variants that are not inherited
 
+    debugger;
     theVariants.forEach( function(variant) {
       var features = [];
       for (var i = 0; i < self.filteredMatrixRows.length; i++) {

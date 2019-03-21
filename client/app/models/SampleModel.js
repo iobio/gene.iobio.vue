@@ -2724,6 +2724,61 @@ class SampleModel {
     }
 
 
+
+    classifyByImpact(d, annotationScheme, inTumorTrack, inKnownTrack) {
+        let self = this;
+        var impacts = "";
+        var colorimpacts = "";
+        var borderColor = "";
+        var effects = "";
+        var sift = "";
+        var polyphen = "";
+        var regulatory = "";
+
+        var effectList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.effect : d.vepConsequence);
+        for (var key in effectList) {
+            if (annotationScheme.toLowerCase() === 'vep' && key.indexOf("&") > 0) {
+                var tokens = key.split("&");
+                tokens.forEach(function (token) {
+                    effects += " " + token;
+
+                });
+            } else {
+                effects += " " + key;
+            }
+        }
+        var impactList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.impact : d[self.globalApp.impactFieldToFilter]);
+        for (var key in impactList) {
+            impacts += " " + key;
+        }
+
+        // TODO: refactor this so we still have filtering abilities for actual impact
+        if (d.isInherited && inTumorTrack && !inKnownTrack) {
+            colorimpacts += " " + 'impact_INHERITED';
+        } else if (inTumorTrack && !inKnownTrack) {
+            colorimpacts += " " + "impact_SOMATIC";
+        } else {
+            var colorImpactList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.impact : d[self.globalApp.impactFieldToColor]);
+            for (var key in colorImpactList) {
+                colorimpacts += " " + 'impact_' + key;
+            }
+        }
+
+        if (colorimpacts === "") {
+            colorimpacts = "impact_none";
+        }
+        for (var key in d.sift) {
+            sift += " " + key;
+        }
+        for (var key in d.polyphen) {
+            polyphen += " " + key;
+        }
+        for (var key in d.regulatory) {
+            regulatory += " " + key;
+        }
+
+        return 'variant ' + d.type.toLowerCase() + ' ' + d.zygosity.toLowerCase() + ' ' + (d.inheritance ? d.inheritance.toLowerCase() : "") + ' ua_' + d.ua + ' ' + sift + ' ' + polyphen + ' ' + regulatory + ' ' + +' ' + d.clinvar + ' ' + impacts + ' ' + effects + ' ' + d.consensus + ' ' + colorimpacts + ' ' + borderColor;
+    }
     promiseCompareVariants(theVcfData, compareAttribute, matchAttribute, matchFunction, noMatchFunction) {
         var me = this;
 
@@ -2782,61 +2837,6 @@ class SampleModel {
         });
 
 
-    }
-
-    classifyByImpact(d, annotationScheme, inTumorTrack) {
-        let self = this;
-        var impacts = "";
-        var colorimpacts = "";
-        var borderColor = "";
-        var effects = "";
-        var sift = "";
-        var polyphen = "";
-        var regulatory = "";
-
-        var effectList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.effect : d.vepConsequence);
-        for (var key in effectList) {
-            if (annotationScheme.toLowerCase() === 'vep' && key.indexOf("&") > 0) {
-                var tokens = key.split("&");
-                tokens.forEach(function (token) {
-                    effects += " " + token;
-
-                });
-            } else {
-                effects += " " + key;
-            }
-        }
-        var impactList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.impact : d[self.globalApp.impactFieldToFilter]);
-        for (var key in impactList) {
-            impacts += " " + key;
-        }
-
-        // TODO: refactor this so we still have filtering abilities for actual impact
-        if (d.isInherited && inTumorTrack) {
-            colorimpacts += " " + 'impact_INHERITED';
-        } else if (inTumorTrack) {
-            colorimpacts += " " + "impact_SOMATIC";
-        } else {
-            var colorImpactList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.impact : d[self.globalApp.impactFieldToColor]);
-            for (var key in colorImpactList) {
-                colorimpacts += " " + 'impact_' + key;
-            }
-        }
-
-        if (colorimpacts === "") {
-            colorimpacts = "impact_none";
-        }
-        for (var key in d.sift) {
-            sift += " " + key;
-        }
-        for (var key in d.polyphen) {
-            polyphen += " " + key;
-        }
-        for (var key in d.regulatory) {
-            regulatory += " " + key;
-        }
-
-        return 'variant ' + d.type.toLowerCase() + ' ' + d.zygosity.toLowerCase() + ' ' + (d.inheritance ? d.inheritance.toLowerCase() : "") + ' ua_' + d.ua + ' ' + sift + ' ' + polyphen + ' ' + regulatory + ' ' + +' ' + d.clinvar + ' ' + impacts + ' ' + effects + ' ' + d.consensus + ' ' + colorimpacts + ' ' + borderColor;
     }
 
     classifyByClinvar(d) {

@@ -91,7 +91,6 @@ export default class Glyph {
       var width, height, clazz;
       options = options || {};
 
-      debugger; // are we ever calling this
       var attrs = {
           width: "14",
           height: "14",

@@ -262,6 +262,7 @@
           :showXAxis="true"
           :classifySymbolFunc="classifyVariantSymbolFunc"
           :isTumorTrack="sampleModel.isTumor"
+          :isKnownOrCosmicTrack="isKnownOrCosmicTrack"
           @variantClick="onVariantClick"
           @variantHover="onVariantHover"
           @variantHoverEnd="onVariantHoverEnd">
@@ -289,6 +290,7 @@
           :showXAxis="true"
           :classifySymbolFunc="classifyVariantSymbolFunc"
           :isTumorTrack="sampleModel.isTumor"
+          :isKnownOrCosmicTrack="isKnownOrCosmicTrack"
           @variantClick="onVariantClick"
           @variantHover="onVariantHover"
           @variantHoverEnd="onVariantHoverEnd">
@@ -392,10 +394,6 @@ export default {
     showDepthViz: true,
     geneVizShowXAxis: null
   },
-
-
-
-
   data() {
     let self = this;
     return {
@@ -449,8 +447,6 @@ export default {
 
     }
   },
-
-
   methods: {
     depthVizYTickFormat: function(val) {
       if (val === 0) {
@@ -766,8 +762,15 @@ export default {
       } else {
         return [];
       }
+    },
+    isKnownOrCosmicTrack: function() {
+      let self = this;
+      if (self.sampleModel.id === 'known-variants' || self.sampleModel.id === 'cosmic-variants') {
+          return true;
+      } else {
+          return false;
+      }
     }
-
   },
 
   watch: {
