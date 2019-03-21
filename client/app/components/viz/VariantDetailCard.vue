@@ -383,12 +383,12 @@
             <span class="pl-1 refalt">{{ refAlt  }}</span>
             <span class="pl-2">{{ info.HGVSpAbbrev }}</span>
 
-            // TODO: left off here get rid of proband stuff & update known-variants + cosmic-variants
-            <v-btn v-if="!isBasicMode && !isEduMode && selectedVariantRelationship != 'known-variants' && cohortModel.getModel(selectedVariantRelationship ? selectedVariantRelationship : 'proband').isBamLoaded() "
-                   class="variant-action-button"  @click="onShowPileup">
-                <v-icon>line_style</v-icon>
-                Pileup
-            </v-btn>
+            <!--// TODO: left off here get rid of proband stuff & update known-variants + cosmic-variants-->
+            <!--<v-btn v-if="!isBasicMode && !isEduMode && selectedVariantRelationship !== 'known-variants' && cohortModel.getModel(trackId).isBamLoaded() "-->
+                   <!--class="variant-action-button"  @click="onShowPileup">-->
+                <!--<v-icon>line_style</v-icon>-->
+                <!--Pileup-->
+            <!--</v-btn>-->
 
             <div id="user-flag-buttons" v-if="selectedVariant && !isEduMode && !isBasicMode && selectedVariantRelationship != 'known-variants'" >
                 <v-btn class="flag-button variant-action-button" small raised
@@ -491,16 +491,16 @@
 
 
 
-                <v-flex v-if="!isBasicMode && selectedVariant.inheritance != '' && selectedVariant.inheritance != 'none' ">
-                    <v-layout row class="">
-                        <v-flex xs3 class="field-label">Inheritance</v-flex>
-                        <v-flex id="inheritance" xs9 class="field-value">
-                            <app-icon :icon="selectedVariant.inheritance" height="16" width="16">
-                            </app-icon>
-                            {{ selectedVariant.inheritance == 'denovo' ? 'de novo' : selectedVariant.inheritance }}
-                        </v-flex>
-                    </v-layout>
-                </v-flex>
+                <!--<v-flex v-if="!isBasicMode && selectedVariant.inheritance !== '' && selectedVariant.inheritance !== 'none' ">-->
+                    <!--<v-layout row class="">-->
+                        <!--<v-flex xs3 class="field-label">Inheritance</v-flex>-->
+                        <!--<v-flex id="inheritance" xs9 class="field-value">-->
+                            <!--<app-icon :icon="selectedVariant.inheritance" height="16" width="16">-->
+                            <!--</app-icon>-->
+                            <!--{{ selectedVariant.inheritance == 'denovo' ? 'de novo' : selectedVariant.inheritance }}-->
+                        <!--</v-flex>-->
+                    <!--</v-layout>-->
+                <!--</v-flex>-->
                 <v-flex>
                     <v-layout row>
                         <v-flex xs3 v-if="!isBasicMode" class="field-label">Impact</v-flex>
@@ -510,7 +510,7 @@
                         <v-flex xs8 v-if="isBasicMode" class="field-value">{{ info.vepImpact }}</v-flex>
                     </v-layout>
                 </v-flex>
-                <v-flex v-if="info.vepHighestImpact != '' && !isBasicMode">
+                <v-flex v-if="info.vepHighestImpact !== '' && !isBasicMode">
                     <v-layout row >
                         <v-flex xs3 class="field-label">Most severe impact</v-flex>
                         <v-flex xs9 class="field-value">
@@ -533,7 +533,7 @@
                     </v-layout>
                 </v-flex>
                 <v-flex >
-                    <v-layout row  v-if="info.clinvarLinks.length > 0">
+                    <v-layout row  v-if="info.clinVarLinks && info.clinvarLinks.length > 0">
                         <v-flex :xs3="!isBasicMode" :xs4="isBasicMode"  class="field-label">Clinvar</v-flex>
                         <v-flex :xs9="!isBasicMode" :xs8="isBasicMode"   class="field-value">
                 <span class="clinvar-submission" v-for="clinvarLink in info.clinvarLinks"
@@ -551,7 +551,7 @@
 
                 </v-flex>
 
-                <v-flex  v-if="info.revel != '' && info.revel != null && !isBasicMode" >
+                <v-flex  v-if="info.revel !== '' && info.revel != null && !isBasicMode" >
                     <v-layout row class="">
                         <v-flex xs3 class="field-label revel">REVEL</v-flex>
                         <v-flex xs9 :class="getRevelClass(info)">
@@ -560,13 +560,13 @@
                         </v-flex>
                     </v-layout>
                 </v-flex>
-                <v-flex   v-if="info.polyphen != '' && !isBasicMode">
+                <v-flex   v-if="info.polyphen !== '' && !isBasicMode">
                     <v-layout row class="" >
                         <v-flex xs3 class="field-label">Polyphen</v-flex>
                         <v-flex xs9 :class="getPolyphenClass(selectedVariant)">{{ info.polyphen }}</v-flex>
                     </v-layout>
                 </v-flex>
-                <v-flex  v-if="info.sift != '' && !isBasicMode" >
+                <v-flex  v-if="info.sift !== '' && !isBasicMode" >
                     <v-layout row class="">
                         <v-flex xs3 class="field-label">SIFT</v-flex>
                         <v-flex xs9 :class="getSiftClass(selectedVariant)">{{ info.sift }}</v-flex>
@@ -588,7 +588,7 @@
                 </v-layout>
             </v-flex>
 
-            <v-flex   v-if="genomeBuildHelper.getCurrentBuildName() != 'GRCh37' && !isBasicMode" xs6>
+            <v-flex   v-if="genomeBuildHelper.getCurrentBuildName() !== 'GRCh37' && !isBasicMode" xs6>
                 <v-layout row>
                     <v-flex xs3 class="field-label">ExAC</v-flex>
                     <v-flex xs9 class="field-value" v-html="afExAC"></v-flex>
@@ -604,7 +604,7 @@
             </v-flex>
 
 
-            <v-flex  v-if="info.regulatory != '' & !isBasicMode">
+            <v-flex  v-if="info.regulatory !== '' & !isBasicMode">
                 <v-layout row>
                     <v-flex xs3 class="field-label">Regulatory</v-flex>
                     <v-flex xs9  v-html="info.regulatory" class="field-value"></v-flex>
@@ -769,8 +769,8 @@
                     selection.selectAll(".ped-info").remove();
                     self.createAlleleCountSVGTrio(selection,
                         self.selectedVariant,
-                        'proband',   // FIXME - This needs to be passed in from event that sends variant selected event
-                        self.cohortModel.affectedInfo,
+                        's0',   // FIXME - This needs to be passed in from event that sends variant selected event
+                        self.cohortModel.tumorInfo,
                         self.cohortModel.mode,
                         self.cohortModel.maxAlleleCount,
                         self.WIDTH_ALLELE_COUNT_BAR);
@@ -817,67 +817,67 @@
 
 
 
-            createAlleleCountSVGTrio: function(container, variant, relationship, affectedInfo, cohortMode, maxAlleleCount, barWidth) {
+            createAlleleCountSVGTrio: function(container, variant, id, affectedInfo, cohortMode, maxAlleleCount, barWidth) {
                 var me = this;
 
-                // var firstTime = true;
-                //
-                // // Workaround to adjust max allele count for siblings
-                // let adjustedMaxAlleleCount = maxAlleleCount;
-                // affectedInfo.forEach(function(info) {
-                //     var sampleName     = info.model.getSampleName();
-                //     var genotype       = variant.genotypes ? variant.genotypes[sampleName] : null;
-                //
-                //     if (genotype == null || genotype.absent && cohortMode == 'single') {
-                //     } else {
-                //         if ((+genotype.altCount + +genotype.refCount) > adjustedMaxAlleleCount) {
-                //             adjustedMaxAlleleCount = +genotype.altCount + +genotype.refCount;
-                //         }
-                //         if (+genotype.genotypeDepth > adjustedMaxAlleleCount) {
-                //             adjustedMaxAlleleCount = +genotype.genotypeDepth;
-                //         }
-                //     }
-                //})
+                var firstTime = true;
+
+                // Workaround to adjust max allele count for siblings
+                let adjustedMaxAlleleCount = maxAlleleCount;
+                affectedInfo.forEach(function(info) {
+                    var sampleName     = info.model.getSelectedSample();
+                    var genotype       = variant.genotypes ? variant.genotypes[sampleName] : null;
+
+                    if (genotype == null || genotype.absent && cohortMode === 'single') {
+                    } else {
+                        if ((+genotype.altCount + +genotype.refCount) > adjustedMaxAlleleCount) {
+                            adjustedMaxAlleleCount = +genotype.altCount + +genotype.refCount;
+                        }
+                        if (+genotype.genotypeDepth > adjustedMaxAlleleCount) {
+                            adjustedMaxAlleleCount = +genotype.genotypeDepth;
+                        }
+                    }
+                })
 
 
                 affectedInfo.forEach(function(info) {
 
-                    var affectedStatus = info.status;
-                    var sampleName     = info.model.getSampleName();
+                    var isSomatic      = !info.isInherited;
+                    var sampleName     = info.model.getSelectedSample();
                     var genotype       = variant.genotypes ? variant.genotypes[sampleName] : null;
 
-                    if (genotype == null || genotype.absent && cohortMode == 'single') {
+                    if (genotype == null || genotype.absent && cohortMode === 'single') {
                         // If vcf doesn't have any genotypes, skip showing this
 
                     } else {
 
-                        var selectedClazz  = cohortMode == 'trio' && info.model.relationship == relationship ? 'selected' : '';
+                        var selectedClazz  = info.model.id === id ? 'selected' : '';
 
-                        var rel      = info.relationship;
+                        var displayName      = info.displayName;
                         var row = container.append("div")
-                            .attr("class", rel + "-alt-count ped-info");
+                            .attr("class", "ped-info");
 
                         if (firstTime) {
                             me._appendReadCountHeading(row);
                             firstTime = false;
                         }
                         row.append("div")
-                            .attr("class", rel + "-alt-count header-small ")
+                            .attr("class", "header-small ")
                             .html("<span class='ped-label "
                                 + selectedClazz + "'>"
-                                + " " + (rel == 'sibling' ? 'Sib' : me.globalApp.utility.capitalizeFirstLetter(rel))
-                                + " " + (rel == 'sibling' ? sampleName : '')
+                                + (displayName !== '' ? (" " + displayName) : '')
+                                + " " + sampleName
                                 + "</span>"
-                                + (affectedStatus == 'affected' ? me.AFFECTED_GLYPH : ''));
+                                + (isSomatic === true ? me.AFFECTED_GLYPH : ''));
 
-                        var zyg = genotype ? (!genotype.hasOwnProperty('zygosity') || genotype.zygosity == null || genotype.zygosity == "gt_unknown" ? "unknown" : genotype.zygosity.toLowerCase()) : "none";
+                        var zyg = genotype ? (!genotype.hasOwnProperty('zygosity') || genotype.zygosity == null || genotype.zygosity === "gt_unknown" ? "unknown" : genotype.zygosity.toLowerCase()) : "none";
                         row.append("div")
                             .attr("class",  "zygosity label " + zyg)
                             .text(me.globalApp.utility.capitalizeFirstLetter(zyg));
 
 
                         var barContainer = row.append("div")
-                            .attr("class", rel + "-alt-count allele-count-bar")
+                            .attr("class", "allele-count-bar")
                         if (genotype) {
                             me._appendAlleleCountSVG(barContainer,
                                 genotype.altCount,
@@ -1278,7 +1278,7 @@
             showRelationship: function(buf) {
                 if (buf == null) {
                     return "";
-                } else if (buf == 'known-variants') {
+                } else if (buf === 'known-variants') {
                     return 'ClinVar';
                 } else {
                     // Capitalize first letter

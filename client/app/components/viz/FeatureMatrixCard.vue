@@ -186,7 +186,7 @@ export default {
     selectedGene: null,
     selectedTranscript: null,
     selectedVariant: null,
-    relationship: null,
+    id: null,
     variantTooltip: null,
     width: 0
   },
@@ -339,7 +339,7 @@ export default {
     },
 
     onVariantClick: function(variant) {
-      this.$emit('cohort-variant-click', variant, this, 'proband');
+      this.$emit('cohort-variant-click', variant, this, this.id);
     },
 
     onVariantHover: function(variant) {

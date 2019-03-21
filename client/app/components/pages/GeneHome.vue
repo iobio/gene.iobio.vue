@@ -206,7 +206,7 @@
                                                      :selectedGene="selectedGene"
                                                      :selectedTranscript="analyzedTranscript"
                                                      :selectedVariant="selectedVariant"
-                                                     :relationship="PROBAND"
+                                                     :id="'s0'"
                                                      :variantTooltip="variantTooltip"
                                                      :width="cardWidth"
                                                      @cohort-variant-click="onCohortVariantClick"
@@ -1158,7 +1158,7 @@
             onCircleVariant: function (idx) {
                 let self = this;
                 var variant = self.cohortModel.getProbandModel().loadedVariants.features[2];
-                self.onCohortVariantClick(variant, null, 'proband');
+                self.onCohortVariantClick(variant, null, 's0'); // TODO: test this, used to be proband
             },
             onCohortVariantClick: function(variant, sourceComponent, sampleModelId) {
                 let self = this;
@@ -1243,6 +1243,7 @@
                             .then(function (refreshedVariant) {
                                 self.refreshVariantExtraAnnots(parentSampleId, variant, [refreshedVariant]);
                             })
+                    // TODO: need to put else if cosmic-variants
                     } else {
                         self.cohortModel
                             .getModel(parentSampleId)

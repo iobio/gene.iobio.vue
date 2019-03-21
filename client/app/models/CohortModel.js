@@ -33,7 +33,7 @@ class CohortModel {
 
         this.mode = 'time';                     // Indicates time-series mode
         this.maxAlleleCount = null;
-        this.affectedInfo = null;
+        this.tumorInfo = null;                  // Used in variant detail cards & tooltips
         this.maxDepth = 0;
 
         this.inProgress = {
@@ -641,19 +641,18 @@ class CohortModel {
 
     setTumorInfo(forceRefresh) {
         let self = this;
-        if (self.affectedInfo == null || forceRefresh) {
-            self.affectedInfo = [];
+        if (self.tumorInfo == null || forceRefresh) {
+            self.tumorInfo = [];
             self.getCanonicalModels().forEach(function(model) {
-                if (model && model.getId() !== 'known-variants') {
+                if (model && model.getId() !== 'known-variants' && model.getId() !== 'cosmic-variants') {
                     let info = {};
                     info.model = model;
                     info.id = model.getId();
-                    info.status = model.getTumorStatus() ? 'tumor' : 'normal';
+                    info.status = model.getTumorStatus() ? 'Tumor' : 'Normal';
                     info.label  = model.getDisplayName();
+                    info.id = model.getDisplayName();
 
-                    info.id = info.status + "-_-" + model.getDisplayName();
-
-                    self.affectedInfo.push(info);
+                    self.tumorInfo.push(info);
                 }
             });
         }
@@ -687,7 +686,7 @@ class CohortModel {
     /* Returns all normal and tumor models */
     getCanonicalModels() {
         let models = this.sampleModels.filter(function (model) {
-            return model.id !== 'known-variants';
+            return model.id !== 'known-variants' && model.id !== 'cosmic-variants';
         });
         return models;
     }

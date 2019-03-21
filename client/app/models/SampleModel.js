@@ -140,9 +140,9 @@ class SampleModel {
         return this.cohort.geneModel;
     }
 
-
+    // TODO: change this name and all references
     getAffectedInfo() {
-        return this.cohort.affectedInfo;
+        return this.cohort.tumorInfo;
     }
 
     getTranslator() {
@@ -2462,8 +2462,8 @@ class SampleModel {
         let intronsExcludedCount = 0;
 
         let affectedFilters = null;
-        if (filterObject.affectedInfo) {
-            affectedFilters = filterObject.affectedInfo.filter(function (info) {
+        if (filterObject.tumorInfo) {
+            affectedFilters = filterObject.tumorInfo.filter(function (info) {
                 return info.filter;
             });
         } else {
