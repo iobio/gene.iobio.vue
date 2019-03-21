@@ -1949,13 +1949,23 @@ class CohortModel {
         }
     }
 
-    removeFlaggedVariant(theGene, theTranscript, variant) {
-        debugger;
+    removeUserFlaggedVariant(theGene, theTranscript, variant) {
         var self = this;
         var index = -1;
         var i = 0;
+
+        variant.isFlagged = false;
+        variant.isUserFlagged = false;
         this.removeFilterPassed(variant, "userFlagged");
-        this.flaggedVariants.forEach(function (v) {
+        this._removeFlaggedVariantImpl(variant);
+        this._recacheForFlaggedVariant(theGene, theTranscript, variant, {summarizeDanger: true});
+    }
+
+    _removeFlaggedVariantImpl(variant) {
+        let self = this;
+        var index = -1;
+        var i = 0;
+        this.flaggedVariants.forEach(function(v) {
             var matches = (
                 self.globalApp.utility.stripRefName(v.chrom) === self.globalApp.utility.stripRefName(variant.chrom)
                 && v.start === variant.start
@@ -1964,15 +1974,39 @@ class CohortModel {
             if (matches) {
                 index = i;
                 v.isUserFlagged = false;
+                v.isFlagged = false;
                 self.removeFilterPassed(v, "userFlagged");
             }
             i++;
-        })
+        });
         if (index >= 0) {
             this.flaggedVariants.splice(index, 1);
         }
-        this._recacheForFlaggedVariant(theGene, theTranscript, variant);
     }
+
+    // removeFlaggedVariant(theGene, theTranscript, variant) {
+    //     var self = this;
+    //     var index = -1;
+    //     var i = 0;
+    //     this.removeFilterPassed(variant, "userFlagged");
+    //     this.flaggedVariants.forEach(function (v) {
+    //         var matches = (
+    //             self.globalApp.utility.stripRefName(v.chrom) === self.globalApp.utility.stripRefName(variant.chrom)
+    //             && v.start === variant.start
+    //             && v.ref === variant.ref
+    //             && v.alt === variant.alt);
+    //         if (matches) {
+    //             index = i;
+    //             v.isUserFlagged = false;
+    //             self.removeFilterPassed(v, "userFlagged");
+    //         }
+    //         i++;
+    //     })
+    //     if (index >= 0) {
+    //         this.flaggedVariants.splice(index, 1);
+    //     }
+    //     this._recacheForFlaggedVariant(theGene, theTranscript, variant);
+    // }
 
     _recacheForFlaggedVariant(theGene, theTranscript, variant) {
         let self = this;

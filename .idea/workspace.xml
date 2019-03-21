@@ -19,11 +19,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="GeneHome.vue" pinned="false" current-in-tab="false">
+      <file leaf-file-name="GeneHome.vue" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/app/components/pages/GeneHome.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="208" column="63" lean-forward="true" selection-start-line="208" selection-start-column="63" selection-end-line="208" selection-end-column="63" />
+            <state relative-caret-position="401">
+              <caret line="1180" column="23" selection-start-line="1180" selection-start-column="23" selection-end-line="1180" selection-end-column="23" />
               <folding>
                 <element signature="n#style#0;n#v-card#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
@@ -48,8 +48,8 @@
       <file leaf-file-name="CohortModel.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="235">
-              <caret line="1334" column="153" selection-start-line="1334" selection-start-column="141" selection-end-line="1334" selection-end-column="153" />
+            <state relative-caret-position="5155">
+              <caret line="2010" column="4" selection-start-line="2010" selection-start-column="4" selection-end-line="2010" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -59,15 +59,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="213">
               <caret line="338" column="6" lean-forward="true" selection-start-line="338" selection-start-column="6" selection-end-line="338" selection-end-column="6" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Glyph.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/app/partials/Glyph.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="93" selection-start-line="93" selection-end-line="93" />
             </state>
           </provider>
         </entry>
@@ -89,14 +80,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="VariantDetailCard.vue" pinned="false" current-in-tab="true">
+      <file leaf-file-name="VariantDetailCard.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/viz/VariantDetailCard.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-431">
-              <caret line="606" column="46" selection-start-line="606" selection-start-column="46" selection-end-line="606" selection-end-column="46" />
+            <state relative-caret-position="235">
+              <caret line="1141" column="34" selection-start-line="1141" selection-start-column="28" selection-end-line="1141" selection-end-column="34" />
               <folding>
                 <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GeneModel.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/app/models/GeneModel.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="385">
+              <caret line="923" column="32" lean-forward="true" selection-start-line="923" selection-start-column="32" selection-end-line="923" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -148,14 +148,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>colorby</find>
-      <find>byimpac</find>
-      <find>setfeaturesfor</find>
-      <find>uniquevariatns</find>
-      <find>uniquefeatures</find>
-      <find>id</find>
-      <find>setLoadedVariants</find>
-      <find>onvariantclick</find>
       <find>cohort-varian</find>
       <find>oncohortv</find>
       <find>setFeaturesForVariants</find>
@@ -178,6 +170,14 @@
       <find>_getsamples</find>
       <find>affectedinfo</find>
       <find>length</find>
+      <find>.length</find>
+      <find>isknown</find>
+      <find>onflagvaria</find>
+      <find>remove</find>
+      <find>remove-flagged</find>
+      <find>onflagva</find>
+      <find>removefla</find>
+      <find>on</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -214,7 +214,6 @@
         <option value="$PROJECT_DIR$/client/app/components/viz/GeneCard.vue" />
         <option value="$PROJECT_DIR$/client/app/components/partials/GeneLinksMenu.vue" />
         <option value="$PROJECT_DIR$/client/assets/sass/_variables.sass" />
-        <option value="$PROJECT_DIR$/client/app/models/GeneModel.js" />
         <option value="$PROJECT_DIR$/client/app/models/COHORT_CohortModel.vue" />
         <option value="$PROJECT_DIR$/client/app/models/COHORT_CohortModel.js" />
         <option value="$PROJECT_DIR$/client/app/components/viz/GenesCard.vue" />
@@ -239,10 +238,11 @@
         <option value="$PROJECT_DIR$/client/app/components/viz/VariantCard.vue" />
         <option value="$PROJECT_DIR$/client/app/models/FeatureMatrixModel.js" />
         <option value="$PROJECT_DIR$/client/app/components/viz/FeatureMatrixCard.vue" />
-        <option value="$PROJECT_DIR$/client/app/components/pages/GeneHome.vue" />
-        <option value="$PROJECT_DIR$/client/app/models/CohortModel.js" />
         <option value="$PROJECT_DIR$/client/app/models/SampleModel.js" />
         <option value="$PROJECT_DIR$/client/app/components/viz/VariantDetailCard.vue" />
+        <option value="$PROJECT_DIR$/client/app/models/GeneModel.js" />
+        <option value="$PROJECT_DIR$/client/app/components/pages/GeneHome.vue" />
+        <option value="$PROJECT_DIR$/client/app/models/CohortModel.js" />
       </list>
     </option>
   </component>
@@ -330,6 +330,13 @@
               <item name="client" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
               <item name="d3" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="gene.iobio.vue" type="b2602c69:ProjectViewProjectNode" />
+              <item name="gene.iobio.vue" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="gene.iobio.vue" type="b2602c69:ProjectViewProjectNode" />
@@ -424,12 +431,12 @@
       <workItem from="1547923648666" duration="437000" />
       <workItem from="1551388044207" duration="676000" />
       <workItem from="1552411172768" duration="71445000" />
-      <workItem from="1552928210792" duration="35597000" />
+      <workItem from="1552928210792" duration="37353000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="418793000" />
+    <option name="totallyTimeSpent" value="420549000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="6" />
@@ -732,13 +739,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/GeneModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6249">
-          <caret line="963" column="40" selection-start-line="963" selection-start-column="40" selection-end-line="963" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/partials/VariantTooltip.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="272">
@@ -851,21 +851,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/pages/GeneHome.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="208" column="63" lean-forward="true" selection-start-line="208" selection-start-column="63" selection-end-line="208" selection-end-column="63" />
-          <folding>
-            <element signature="n#style#0;n#v-card#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#v-tab-item#0;n#v-tabs#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#feature-matrix-card#0;n#v-tab-item#0;n#v-tabs#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#v-tab-item#1;n#v-tabs#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/models/FeatureMatrixModel.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="148">
@@ -877,13 +862,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="244">
           <caret line="952" column="2" selection-start-line="952" selection-start-column="2" selection-end-line="952" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="235">
-          <caret line="1334" column="153" selection-start-line="1334" selection-start-column="141" selection-end-line="1334" selection-end-column="153" />
         </state>
       </provider>
     </entry>
@@ -902,12 +880,41 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/models/GeneModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="385">
+          <caret line="923" column="32" lean-forward="true" selection-start-line="923" selection-start-column="32" selection-end-line="923" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/components/viz/VariantDetailCard.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-431">
-          <caret line="606" column="46" selection-start-line="606" selection-start-column="46" selection-end-line="606" selection-end-column="46" />
+        <state relative-caret-position="235">
+          <caret line="1141" column="34" selection-start-line="1141" selection-start-column="28" selection-end-line="1141" selection-end-column="34" />
           <folding>
             <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5155">
+          <caret line="2010" column="4" selection-start-line="2010" selection-start-column="4" selection-end-line="2010" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/pages/GeneHome.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="401">
+          <caret line="1180" column="23" selection-start-line="1180" selection-start-column="23" selection-end-line="1180" selection-end-column="23" />
+          <folding>
+            <element signature="n#style#0;n#v-card#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#v-tab-item#0;n#v-tabs#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#feature-matrix-card#0;n#v-tab-item#0;n#v-tabs#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#v-tab-item#1;n#v-tabs#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>

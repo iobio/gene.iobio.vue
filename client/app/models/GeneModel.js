@@ -856,6 +856,89 @@ class GeneModel {
     return links;
   }
 
+    getVariantLinks(geneName, variant) {
+
+        let me = this;
+        let variantLinks = [];
+
+        var variantCoordUCSC = null;
+        var variantCoordVarSome = null;
+        var variantCoordGNomAD
+        var geneObject = me.geneObjects[geneName];
+
+        var buildAliasUCSC = me.genomeBuildHelper.getBuildAlias('UCSC');
+
+        if (geneObject) {
+            variantCoordUCSC    = geneObject.chr + ":" + variant.start + "-" + variant.end;
+
+            if (variant.alt.length > variant.ref.length && variant.ref.length == 1) {
+                // ins
+                variantCoordVarSome = geneObject.chr + "-" + (variant.start+1) + "-"  + '-' + variant.alt.substr(1);
+            } else if (variant.ref.length > variant.alt.length && variant.alt.length == 1) {
+                // del
+                variantCoordVarSome = geneObject.chr + "-" + (variant.start+1) + "-"  + variant.ref.substr(1) ;
+            } else if (variant.ref.length == variant.alt.length) {
+                // snp
+                variantCoordVarSome = geneObject.chr + "-" + variant.start + "-" + variant.ref + '-' + variant.alt;
+            } else {
+                // complex - just show varsome = at given loci
+                variantCoordVarSome = geneObject.chr + "-" + variant.start
+            }
+
+            variantCoordGNomAD  = me.globalApp.utility.stripRefName(geneObject.chr) + "-" + variant.start + "-" + variant.ref + '-' + variant.alt;
+        }
+
+        var info = me.globalApp.utility.formatDisplay(variant, me.translator, false);
+
+
+        for (var linkName in me.variantLinkTemplates) {
+            var theLink = $.extend({}, me.variantLinkTemplates[linkName]);
+            theLink.name = linkName;
+
+            if (variantCoordGNomAD) {
+                theLink.url = theLink.url.replace(/VARIANTCOORD-GNOMAD/g, variantCoordGNomAD);
+            }
+            if (variantCoordUCSC) {
+                theLink.url = theLink.url.replace(/VARIANTCOORD-UCSC/g, variantCoordUCSC);
+            }
+            if (variantCoordVarSome) {
+                theLink.url = theLink.url.replace(/VARIANTCOORD-VARSOME/g, variantCoordVarSome);
+            }
+            if (buildAliasUCSC) {
+                theLink.url = theLink.url.replace(/GENOMEBUILD-ALIAS-UCSC/g, buildAliasUCSC);
+            }
+            if (info && info.rsId &&  info.rsId.length > 0) {
+                theLink.url = theLink.url.replace(/VARIANT-RSID/g, info.rsId);
+            }
+            if (variant.clinvarUid) {
+                theLink.url = theLink.url.replace(/VARIANT-CLINVAR-UID/g, variant.clinvarUid);
+            }
+            var keep = false;
+
+            if (linkName === 'gnomad') {
+                if (variant.vepAf && variant.vepAf.gnomAD && variant.vepAf.gnomAD.AF && variant.vepAf.gnomAD.AF != ".") {
+                    keep = true;
+                }
+            } else if (linkName === 'dbsnp') {
+                if (info && info.rsId &&  info.rsId.length > 0) {
+                    keep = true;
+                }
+            } else if (linkName === 'clinvar') {
+                if (variant.clinvarUid && variant.clinvarUid.length > 0) {
+                    keep = true;
+                }
+            } else {
+                keep = true;
+            }
+            if (keep) {
+                variantLinks.push(theLink);
+            }
+        }
+
+        return variantLinks;
+
+    }
+
 
   isKnownGene(geneName) {
     return this.allKnownGeneNames[geneName] || this.allKnownGeneNames[geneName.toUpperCase()]

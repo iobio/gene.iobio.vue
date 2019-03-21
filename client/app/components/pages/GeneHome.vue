@@ -235,6 +235,7 @@
                                         :info="selectedVariantInfo"
                                         @transcript-id-selected="onTranscriptIdSelected"
                                         @flag-variant="onFlagVariant"
+                                        @remove-flagged-variant="onRemoveUserFlaggedVariant"
                                 >
                                 </variant-detail-card>
 
@@ -1662,37 +1663,59 @@
                 // reflects the flagged variants
                 self.promiseLoadGene(self.selectedGene.gene_name)
                     .then(function () {
-                        self.onCohortVariantClick(variant, self.$refs.variantCardRef[0], 'proband');
+                        self.onCohortVariantClick(variant, self.$refs.variantCardRef[0], 's0');
                     })
 
                 //if (self.launchedFromClin) {
                 //  self.onSendFlaggedVariantsToClin();
                 //}
             },
-            onRemoveFlaggedVariant: function (variant) {
+            onRemoveUserFlaggedVariant: function(variant) {
                 let self = this;
+
                 variant.isFlagged = false;
                 variant.featureClass = "";
-                if (variant.filtersPassed == null) {
-                    variant.filtersPassed = ['userFlagged'];
-                }
-                self.cohortModel.removeFlaggedVariant(self.selectedGene, self.selectedTranscript, variant);
-                self.flaggedVariants = this.cohortModel.flaggedVariants;
-                if (!self.isEduMode) {
-                    self.$refs.navRef.onShowFlaggedVariants();
-                }
+                self.cohortModel.removeUserFlaggedVariant(self.selectedGene, self.selectedTranscript, variant);
+
+
+                // if (!self.isEduMode) {
+                //     self.$refs.navRef.onShowVariantsTab();
+                // }
                 // Refresh the loaded variants so that the ranked variants table
                 // reflects the flagged variants
                 self.promiseLoadGene(self.selectedGene.gene_name)
-                    .then(function () {
-                        self.onCohortVariantClick(variant, self.$refs.variantCardRef[0], 'proband');
+                    .then(function() {
+                        self.onCohortVariantClick(variant, self.$refs.variantCardRef[0], 's0');
                     })
 
-                if (self.launchedFromClin) {
-                    self.onSendFlaggedVariantsToClin();
-                }
-
+                // if (self.launchedFromClin) {
+                //     self.sendFlaggedVariantToClin(variant, 'delete');
+                // }
             },
+            // onRemoveFlaggedVariant: function (variant) {
+            //     let self = this;
+            //     variant.isFlagged = false;
+            //     variant.featureClass = "";
+            //     if (variant.filtersPassed == null) {
+            //         variant.filtersPassed = ['userFlagged'];
+            //     }
+            //     self.cohortModel.removeFlaggedVariant(self.selectedGene, self.selectedTranscript, variant);
+            //     self.flaggedVariants = this.cohortModel.flaggedVariants;
+            //     if (!self.isEduMode) {
+            //         self.$refs.navRef.onShowFlaggedVariants();
+            //     }
+            //     // Refresh the loaded variants so that the ranked variants table
+            //     // reflects the flagged variants
+            //     self.promiseLoadGene(self.selectedGene.gene_name)
+            //         .then(function () {
+            //             self.onCohortVariantClick(variant, self.$refs.variantCardRef[0], 'proband');
+            //         })
+            //
+            //     if (self.launchedFromClin) {
+            //         self.onSendFlaggedVariantsToClin();
+            //     }
+            //
+            // },
             onAddFlaggedVariants: function (flaggedVariants) {
                 let self = this;
                 flaggedVariants.forEach(function (variant) {
