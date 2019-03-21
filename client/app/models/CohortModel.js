@@ -65,7 +65,7 @@ class CohortModel {
             };
         } else {
             return {
-                'timeSeries': "https://s3.amazonaws.com/iobio/samples/vcf/platinum-exome.vcf.gz",
+                'timeSeries': "https://s3.amazonaws.com/iobio/samples/vcf/platinum-trio.vcf.gz",
                 'dual': "https://s3.amazonaws.com/iobio/gene/wgs_platinum/platinum-trio.vcf.gz"
             };
         }

@@ -878,13 +878,11 @@
             onFilesLoaded: function (analyzeAll) {
                 let self = this;
                 self.showVariantCards = true;
-                self.setUrlParameters();
+                //self.setUrlParameters();
 
                 self.promiseClearCache()
                     .then(function () {
                         self.featureMatrixModel.init();
-                        // TODO: filter nonRefSamples
-                        // TODO: call featureMatrixModel.addAllLoadedSamples(self.cohortModel.nonRefSamples)
                         if (self.firstLaunchFromFileMenu) {
                             self.firstLaunchFromFileMenu = false;
                             return Promise.resolve();
@@ -993,7 +991,7 @@
                     .then(function () {
                         self.onSendGenesToClin();
                         self.activeGeneVariantTab = "0";
-                        self.setUrlGeneParameters();
+                        //self.setUrlGeneParameters();
                         self.showLeftPanelWhenFlaggedVariants();
                     })
             },
@@ -1005,7 +1003,7 @@
 
                 self.promiseLoadGene(geneName)
                     .then(function () {
-                        self.setUrlGeneParameters();
+                        //self.setUrlGeneParameters();
                         self.showLeftPanelWhenFlaggedVariants();
                     })
                 self.activeGeneVariantTab = "0";
