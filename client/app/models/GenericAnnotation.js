@@ -290,9 +290,9 @@ GenericAnnotation.prototype.getValue = function(variant, fieldPath) {
   var node = variant;
   fieldPath.forEach(function(fieldName) {
     if (node) {
-      if (fieldName == 'OBJECT.KEY' && Object.keys(node).length > 0) {
+      if (fieldName === 'OBJECT.KEY' && Object.keys(node).length > 0) {
         node = Object.keys(node).join(",");
-      } else if (fieldName == 'OBJECT.VALUE' && Object.values(node).length > 0) {
+      } else if (fieldName === 'OBJECT.VALUE' && Object.values(node).length > 0) {
         node = Object.values(node).join(",");
       } else if (node[fieldName]) {
         node = node[fieldName];

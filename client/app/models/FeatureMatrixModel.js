@@ -21,7 +21,7 @@ class FeatureMatrixModel {
 
 
       this.matrixRows = [
-        {name:'Flagged'                      , id:'isFlagged',      order:0, index:0, match: 'exact', attribute: 'filtersPassed',                    map: this.getTranslator().filtersPassedMap },
+        {name:'Flagged'                      , id:'isFlagged',      order:0, index:0, match: 'exact', attribute: 'filtersPassed',                    map: this.getTranslator().filtersPassedMap},
         {name:'Somatic'                      , id:'isSomatic',      order:1, index:1, match: 'exact', attribute: 'isInherited',                      map: this.getTranslator().somaticMap},
         {name:'Pathogenicity - ClinVar'      , id:'clinvar',        order:2, index:2, match: 'exact', attribute: 'clinVarClinicalSignificance',      map: this.getTranslator().clinvarMap },
         {name:'Impact (VEP)'                 , id:'impact',         order:3, index:3, match: 'exact', attribute: this.globalApp.impactFieldToColor,  map: this.getTranslator().impactMap},
@@ -319,7 +319,7 @@ class FeatureMatrixModel {
 
   }
 
-  /* Does the actual cell populating */
+  /* Assigns feature objects to each variant which coordinates their sorting in the feature matrix model. */
   setFeaturesForVariants(theVariants) {
     let self = this;
 
@@ -465,16 +465,14 @@ class FeatureMatrixModel {
     // Sort the variants by the criteria that matches
     // For mygene2 basic, filter out everything that isn't clinvar pathogenic < 1% af
     return theVariants.sort(function (a, b) {
-      var featuresA = "";
-      var featuresB = "";
-
       // The features have been initialized in the same order as
-      // the matrix column order. In each interation,
+      // the matrix column order. In each iteration,
       // exit with -1 or 1 if we have non-matching values;
       // otherwise, go to next iteration.  After iterating
       // through every column, if we haven't exited the
       // loop, that means all features of a and b match
       // so return 0;
+
       for (var i = 0; i < self.filteredMatrixRows.length; i++) {
         if (a.features[i] == null) {
           return 1;

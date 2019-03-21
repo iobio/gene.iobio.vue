@@ -56,6 +56,10 @@ class GeneModel {
     this.NUMBER_PHENOLYZER_GENES = 300;
     this.phenolyzerGenes = [];
 
+      this.rankedGenes = {};
+
+      this.dispatch = d3.dispatch("geneDangerSummarized");
+      d3.rebind(this, this.dispatch, "on");
   }
 
   promiseAddGeneName(theGeneName) {

@@ -83,7 +83,8 @@
                 :forMyGene2="forMyGene2"
                 :cohortModel="cohortModel"
                 :geneModel="geneModel"
-                :flaggedVariants="flaggedVariants"
+                :filteredGeneNames="filteredGeneNames"
+                :activeFilterName="activeFilterName"
                 :launchedFromClin="launchedFromClin"
                 :launchedFromHub="launchedFromHub"
                 :bringAttention="bringAttention"
@@ -212,7 +213,7 @@
                                                      @cohort-variant-click="onCohortVariantClick"
                                                      @cohort-variant-hover="onCohortVariantHover"
                                                      @cohort-variant-hover-end="onCohortVariantHoverEnd"
-                                                     @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.getModel('proband').loadedVariants);"
+                                                     @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.getModel('s0').loadedVariants);"
                                 >
                                 </feature-matrix-card>
 
@@ -427,8 +428,8 @@
                 geneRegionEnd: null,
 
                 genesInProgress: {},
-
-                flaggedVariants: [],
+                activeFilterName: null,
+                filteredGeneNames: null,
 
                 cohortModel: null,
                 models: [],
@@ -572,6 +573,10 @@
                             self.cacheHelper,
                             self.genomeBuildHelper,
                             new FreebayesSettings());
+
+                        self.geneModel.on("geneDangerSummarized", function (dangerSummary) {
+                            self.cohortModel.captureFlaggedVariants(dangerSummary)
+                        });
 
                         self.cacheHelper.cohort = self.cohortModel;
 
@@ -733,7 +738,7 @@
                 let self = this;
 
                 this.clearFilter();
-                this.flaggedVariants = [];
+                self.cohortModel.clearFlaggedVariants();
 
                 return new Promise(function (resolve, reject) {
                     if (self.isEduMode) {
@@ -1161,7 +1166,7 @@
                 var variant = self.cohortModel.getProbandModel().loadedVariants.features[2];
                 self.onCohortVariantClick(variant, null, 's0'); // TODO: test this, used to be proband
             },
-            onCohortVariantClick: function(variant, sourceComponent, sampleModelId) {
+            onCohortVariantClick: function (variant, sourceComponent, sampleModelId) {
                 let self = this;
                 if (variant) {
                     self.calcFeatureMatrixWidthPercent();
@@ -1172,7 +1177,7 @@
                     self.activeGeneVariantTab = self.isBasicMode ? "0" : "1";
                     self.showVariantExtraAnnots(sampleModelId, variant);
 
-                    self.$refs.variantCardRef.forEach(function(variantCard) {
+                    self.$refs.variantCardRef.forEach(function (variantCard) {
                         if (sourceComponent == null || variantCard != sourceComponent) {
                             variantCard.hideVariantCircle(true);
                             variantCard.showVariantCircle(variant, true);
@@ -1244,7 +1249,7 @@
                             .then(function (refreshedVariant) {
                                 self.refreshVariantExtraAnnots(parentSampleId, variant, [refreshedVariant]);
                             })
-                    // TODO: need to put else if cosmic-variants
+                        // TODO: need to put else if cosmic-variants
                     } else {
                         self.cohortModel
                             .getModel(parentSampleId)
@@ -1307,7 +1312,7 @@
                     self.cohortModel.promiseLoadKnownVariants(self.selectedGene, self.selectedTranscript);
                 }
             },
-            onCosmicVariantsVizChange: function(viz) {
+            onCosmicVariantsVizChange: function (viz) {
                 let self = this;
                 if (viz) {
                     self.cohortModel.cosmicVariantsViz = viz;
@@ -1322,7 +1327,7 @@
 
                 self.cohortModel.setLoadedVariants(self.selectedGene, 'known-variants');
             },
-            onCosmicVariantsFilterChange: function(selectedCategories) {
+            onCosmicVariantsFilterChange: function (selectedCategories) {
                 let self = this;
                 self.filterModel.setModelFilter('cosmic-variants', 'vepImpact', selectedCategories);
                 self.cohortModel.setLoadedVariants(self.selectedGene, 'cosmic-variants');
@@ -1356,6 +1361,7 @@
 
             removeGeneImpl: function (geneName) {
                 let self = this;
+
                 self.geneModel.removeGene(geneName);
                 self.cohortModel.removeFlaggedVariantsForGene(geneName);
                 self.clearFilter();
@@ -1394,11 +1400,11 @@
             onAnalyzeAll: function () {
                 this.cacheHelper.analyzeAll(this.cohortModel);
             },
-            onFilterSelected: function(filterName, filteredGeneNames) {
+            onFilterSelected: function (filterName, filteredGeneNames) {
                 this.activeFilterName = filterName;
                 this.filteredGeneNames = filteredGeneNames;
                 if (filterName === 'coverage') {
-                    this.showLeftPanelForGenes();
+                    //this.showLeftPanelForGenes(); NOTE: ignoring left panel for aacr
                     this.onGeneSelected(this.selectedGene.gene_name);
                 }
             },
@@ -1406,7 +1412,6 @@
                 this.clearFilter();
                 this.selectedGene = {};
                 this.geneModel.clearAllGenes();
-                this.flaggedVariants = [];
                 this.cohortModel.flaggedVariants = [];
             },
             onStartSearchGenes: function () {
@@ -1428,7 +1433,6 @@
                         let genesToReapply = $.extend([], self.geneModel.sortedGeneNames);
 
                         self.geneModel.clearAllGenes();
-                        self.flaggedVariants = [];
                         self.cohortModel.flaggedVariants = [];
 
                         self.applyGenesImpl(genesToReapply.join(","), {
@@ -1653,24 +1657,25 @@
             },
             onFlagVariant: function (variant) {
                 let self = this;
-                variant.isFlagged = true;
-                variant.featureClass = "flagged";
+
                 variant.gene = this.selectedGene;
                 variant.transcript = this.selectedTranscript;
-                self.cohortModel.addFlaggedVariant(self.selectedGene, self.selectedTranscript, variant);
-                self.flaggedVariants = this.cohortModel.flaggedVariants;
+                self.cohortModel.addUserFlaggedVariant(self.selectedGene, self.selectedTranscript, variant);
+
+
                 // Refresh the loaded variants so that the ranked variants table
                 // reflects the flagged variants
                 self.promiseLoadGene(self.selectedGene.gene_name)
                     .then(function () {
-                        self.onCohortVariantClick(variant, self.$refs.variantCardRef[0], 's0');
-                    })
+                        // self.onCohortVariantClick(variant, self.$refs.variantCardRef[0], 's0');
+                        self.onCohortVariantClick(variant, null, 's0');
+                    });
 
-                //if (self.launchedFromClin) {
-                //  self.onSendFlaggedVariantsToClin();
-                //}
+                // if (self.launchedFromClin) {
+                //     self.sendFlaggedVariantToClin(variant);
+                // }
             },
-            onRemoveUserFlaggedVariant: function(variant) {
+            onRemoveUserFlaggedVariant: function (variant) {
                 let self = this;
 
                 variant.isFlagged = false;
@@ -1678,19 +1683,12 @@
                 self.cohortModel.removeUserFlaggedVariant(self.selectedGene, self.selectedTranscript, variant);
 
 
-                // if (!self.isEduMode) {
-                //     self.$refs.navRef.onShowVariantsTab();
-                // }
                 // Refresh the loaded variants so that the ranked variants table
                 // reflects the flagged variants
                 self.promiseLoadGene(self.selectedGene.gene_name)
-                    .then(function() {
+                    .then(function () {
                         self.onCohortVariantClick(variant, self.$refs.variantCardRef[0], 's0');
                     })
-
-                // if (self.launchedFromClin) {
-                //     self.sendFlaggedVariantToClin(variant, 'delete');
-                // }
             },
             // onRemoveFlaggedVariant: function (variant) {
             //     let self = this;
@@ -1723,27 +1721,16 @@
                     self.cohortModel.addFlaggedVariant(self.selectedGene, self.selectedTranscript, variant);
                 })
             },
-            onRegisterFlaggedVariants: function (flaggedGeneNames, flaggedVariants) {
-                let self = this;
-                self.flaggedVariants = [];
-                self.flaggedVariants = flaggedVariants;
-                if (self.launchedFromClin) {
-                    self.onSendFlaggedVariantsToClin();
-                }
-
-            },
+            // onRegisterFlaggedVariants: function (flaggedGeneNames, flaggedVariants) {
+            //     let self = this;
+            //     self.flaggedVariants = [];
+            //     self.flaggedVariants = flaggedVariants;
+            //     if (self.launchedFromClin) {
+            //         self.onSendFlaggedVariantsToClin();
+            //     }
+            // },
             onFlaggedVariantsImported: function () {
-                let self = this;
-                self.flaggedVariants = [];
-                self.flaggedVariants = this.cohortModel.flaggedVariants;
-                if (self.$refs.genesCardRef) {
-                    self.$refs.genesCardRef.determineFlaggedGenes();
-                    self.$refs.genesCardRef.updateGeneBadgeCounts();
-                }
-                if (self.$refs.navRef && self.$refs.navRef.$refs.flagedVariantsRef) {
-                    self.$refs.navRef.$refs.flaggedVariantsRef.populateGeneLists();
-                }
-
+                // Not implemented in dev gene yet
             },
             onFlaggedVariantSelected: function (flaggedVariant) {
                 let self = this;
@@ -1807,14 +1794,14 @@
 
                     });
             },
-            onShowKnownVariantsCard: function(showIt) {
+            onShowKnownVariantsCard: function (showIt) {
                 let self = this;
                 self.showKnownVariantsCard = showIt;
                 if (self.showKnownVariantsCard) {
                     self.onKnownVariantsVizChange();
                 }
             },
-            onShowCosmicVariantsCard: function(showIt) {
+            onShowCosmicVariantsCard: function (showIt) {
                 let self = this;
                 self.showCosmicVariantsCard = showIt;
                 if (self.showCosmicVariantsCard) {
@@ -2147,8 +2134,6 @@
                     window.parent.postMessage(JSON.stringify(msgObject), self.clinIobioUrl);
                 }
             }
-
-
         }
     }
 </script>

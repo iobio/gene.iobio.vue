@@ -294,17 +294,17 @@
                     </v-switch>
 
 
-                    <filter-badges
-                            ref="filterBadgesRef"
-                            :style="isLoaded ? 'margin-left:40px' : ''"
-                            :isFullAnalysis="isFullAnalysis"
-                            :badgeCounts="badgeCounts"
-                            :filterModel="filterModel"
-                            :showCoverageCutoffs="showCoverageCutoffs"
-                            @filter-settings-applied="onFilterSettingsApplied"
-                            @badge-click="onBadgeClick"
-                            @filter-settings-closed="onFilterSettingsClosed">
-                    </filter-badges>
+                    <!--<filter-badges-->
+                            <!--ref="filterBadgesRef"-->
+                            <!--:style="isLoaded ? 'margin-left:40px' : ''"-->
+                            <!--:isFullAnalysis="isFullAnalysis"-->
+                            <!--:badgeCounts="badgeCounts"-->
+                            <!--:filterModel="filterModel"-->
+                            <!--:showCoverageCutoffs="showCoverageCutoffs"-->
+                            <!--@filter-settings-applied="onFilterSettingsApplied"-->
+                            <!--@badge-click="onBadgeClick"-->
+                            <!--@filter-settings-closed="onFilterSettingsClosed">-->
+                    <!--</filter-badges>-->
 
                     <div v-if="false" id="analyze-genes-progress"
                          class="level-edu level-basic">

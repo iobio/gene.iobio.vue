@@ -235,7 +235,7 @@
                         :hide-details="true"
                         v-model="geneEntered" label="Gene" prepend-icon="search">
           </v-text-field>
-          <typeahead v-model="selectedGene"
+          <typeahead v-model="lookupGene"
                      force-select v-bind:limit="typeaheadLimit" match-start
                      target="#search-gene-name" :data="geneModel.allKnownGenes"
                      item-key="gene_name"/>
@@ -352,43 +352,43 @@
                 </v-list>
             </v-menu>
         </v-toolbar>
-        <v-navigation-drawer
-                mobile-break-point="800"
-                clipped
-                fixed
-                app
-                :hide-overlay="true"
-                v-model="leftDrawer"
-                :stateless="true"
-                width=330
-        >
-            <div id="side-panel-container">
+        <!--<v-navigation-drawer-->
+                <!--mobile-break-point="800"-->
+                <!--clipped-->
+                <!--fixed-->
+                <!--app-->
+                <!--:hide-overlay="true"-->
+                <!--v-model="leftDrawer"-->
+                <!--:stateless="true"-->
+                <!--width=330-->
+        <!--&gt;-->
+            <!--<div id="side-panel-container">-->
 
-                <flagged-variants-card
-                        v-if="leftDrawerContents === 'flagged-variants'"
-                        ref="flaggedVariantsRef"
-                        :isEduMode="isEduMode"
-                        :isBasicMode="isBasicMode"
-                        :cohortModel="cohortModel"
-                        :flaggedVariants="flaggedVariants"
-                        :launchedFromClin="launchedFromClin"
-                        @flagged-variants-imported="onFlaggedVariantsImported"
-                        @flagged-variant-selected="onFlaggedVariantSelected"
-                        @close-left-drawer="leftDrawer = false"
-                        @send-flagged-variants-to-clin="onSendFlaggedVariantsToClin"
-                >
-                </flagged-variants-card>
-
-
-                <v-card id="legend-card" v-if="isBasicMode">
-                    <legend-panel :isBasicMode="isBasicMode">
-                    </legend-panel>
-                </v-card>
+                <!--<flagged-variants-card-->
+                        <!--v-if="leftDrawerContents === 'flagged-variants'"-->
+                        <!--ref="flaggedVariantsRef"-->
+                        <!--:isEduMode="isEduMode"-->
+                        <!--:isBasicMode="isBasicMode"-->
+                        <!--:cohortModel="cohortModel"-->
+                        <!--:flaggedVariants="flaggedVariants"-->
+                        <!--:launchedFromClin="launchedFromClin"-->
+                        <!--@flagged-variants-imported="onFlaggedVariantsImported"-->
+                        <!--@flagged-variant-selected="onFlaggedVariantSelected"-->
+                        <!--@close-left-drawer="leftDrawer = false"-->
+                        <!--@send-flagged-variants-to-clin="onSendFlaggedVariantsToClin"-->
+                <!--&gt;-->
+                <!--</flagged-variants-card>-->
 
 
-            </div>
+                <!--<v-card id="legend-card" v-if="isBasicMode">-->
+                    <!--<legend-panel :isBasicMode="isBasicMode">-->
+                    <!--</legend-panel>-->
+                <!--</v-card>-->
 
-        </v-navigation-drawer>
+
+            <!--</div>-->
+
+        <!--</v-navigation-drawer>-->
 
         <v-dialog v-model="showDisclaimer" max-width="400">
             <v-card>
@@ -638,19 +638,31 @@
             isEduMode: null,
             isBasicMode: null,
             forMyGene2: null,
+            analyzeAllInProgress: null,
+            callAllInProgress: null,
+            selectedGene: null,
+            selectedVariant: null,
+            filteredGeneNames: null,
             geneModel: null,
             cohortModel: null,
-            flaggedVariants: null,
+            cacheHelper: null,
+            activeFilterName: null,
             launchedFromClin: null,
             launchedFromHub: null,
-            bringAttention: null
+            isFullAnalysis: null,
+            isClinFrameVisible: null,
+            bringAttention: null,
+            phenotypeLookupUrl: null,
+            geneNames: null,
+            genesInProgress: null,
+            // interpretationMap: null
         },
         data() {
             let self = this;
             return {
-                title: 'gene.iobio',
+                title: 'oncogene.iobio',
 
-                selectedGene: {},
+                lookupGene: {},
                 geneEntered: null,
                 clipped: false,
                 leftDrawer: self.forMyGene2 ? true : false,
@@ -666,10 +678,10 @@
             }
         },
         watch: {
-            selectedGene: function (a, b) {
-                if (this.selectedGene) {
-                    this.geneEntered = this.selectedGene.gene_name;
-                    this.$emit("input", this.selectedGene.gene_name);
+            lookupGene: function (a, b) {
+                if (this.lookupGene) {
+                    this.geneEntered = this.lookupGene.gene_name;
+                    this.$emit("input", this.lookupGene.gene_name);
                 }
             },
             leftDrawer: function () {
@@ -787,7 +799,7 @@
         },
         computed: {
             clazzAttention: function () {
-                if (this.bringAttention && this.bringAttention == 'gene' && this.selectedGene && Object.keys(this.selectedGene).length == 0) {
+                if (this.bringAttention && this.bringAttention === 'gene' && this.lookupGene && Object.keys(this.lookupGene).length === 0) {
                     return 'attention';
                 } else {
                     return '';
