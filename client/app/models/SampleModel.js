@@ -1269,7 +1269,8 @@ class SampleModel {
                         true,  // hgvs notation
                         true,  // rsid
                         true, // vep af
-                        me.globalApp.useServerCache // serverside cache
+                        me.globalApp.useServerCache, // serverside cache
+                        me.id
                     ).then(function (data) {
 
                         var rawVcfRecords = data[0];
@@ -1455,7 +1456,8 @@ class SampleModel {
                                 true,  // hgvs notation
                                 true,  // rsid
                                 false, // vep af
-                                me.globalApp.useServerCache // serverside cache
+                                me.globalApp.useServerCache, // serverside cache
+                                me.id
                             ).then(function (data) {
 
                                 var annotVcfData = data[1];
@@ -1546,7 +1548,9 @@ class SampleModel {
                                         me.getGeneModel().geneSource === 'refseq',
                                         me.isBasicMode || me.globalApp.getVariantIdsForGene,  // hgvs notation
                                         me.globalApp.getVariantIdsForGene,  // rsid
-                                        me.globalApp.vepAF    // vep af
+                                        me.globalApp.vepAF,   // vep af
+                                        null,   // cache
+                                        me.id
                                     );
                                 })
                                 .then(function(data) {

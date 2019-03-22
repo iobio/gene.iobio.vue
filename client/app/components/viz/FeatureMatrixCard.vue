@@ -339,7 +339,7 @@ export default {
     },
 
     onVariantClick: function(variant) {
-      this.$emit('cohort-variant-click', variant, this, this.id);
+      this.$emit('cohort-variant-click', variant, this, variant.sampleModelId);
     },
 
     onVariantHover: function(variant) {

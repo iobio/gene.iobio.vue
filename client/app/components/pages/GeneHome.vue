@@ -213,7 +213,7 @@
                                                      @cohort-variant-click="onCohortVariantClick"
                                                      @cohort-variant-hover="onCohortVariantHover"
                                                      @cohort-variant-hover-end="onCohortVariantHoverEnd"
-                                                     @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.getModel('s0').loadedVariants);"
+                                                     @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj)"
                                 >
                                 </feature-matrix-card>
 
@@ -830,7 +830,7 @@
                     self.$refs.navRef.openFileSelection();
                 }
             },
-            promiseLoadData: function () {
+            promiseLoadData: function (loadingFromFlagEvent = false) {
                 let self = this;
 
                 return new Promise(function (resolve, reject) {
@@ -838,6 +838,7 @@
                     if (self.models && self.models.length > 0) {
                         self.cardWidth = $('#genes-card').innerWidth();
                         var options = {'getKnownVariants': self.showKnownVariantsCard};
+                        options['loadFromFlag'] = loadingFromFlagEvent;
 
                         self.cohortModel.promiseLoadData(self.selectedGene,
                             self.selectedTranscript,
@@ -1034,7 +1035,7 @@
                 }
             },
 
-            promiseLoadGene: function (geneName, theTranscript) {
+            promiseLoadGene: function (geneName, theTranscript, loadingFromFlagEvent = false) {
                 let self = this;
                 this.showWelcome = false;
                 return new Promise(function (resolve, reject) {
@@ -1081,7 +1082,7 @@
                                         self.$refs.scrollButtonRefGene.showScrollButtons();
                                     }
                                     if (self.cohortModel.isLoaded) {
-                                        self.promiseLoadData()
+                                        self.promiseLoadData(loadingFromFlagEvent)
                                             .then(function () {
                                                 self.clearZoom = false;
                                                 resolve();
@@ -1164,7 +1165,7 @@
             onCircleVariant: function (idx) {
                 let self = this;
                 var variant = self.cohortModel.getProbandModel().loadedVariants.features[2];
-                self.onCohortVariantClick(variant, null, 's0'); // TODO: test this, used to be proband
+                self.onCohortVariantClick(variant, null, variant.sampleModelId);
             },
             onCohortVariantClick: function (variant, sourceComponent, sampleModelId) {
                 let self = this;
@@ -1279,9 +1280,9 @@
                 let self = this;
                 var targetVariants = annotatedVariants.filter(function (v) {
                     return variant &&
-                        variant.start == v.start &&
-                        variant.ref == v.ref &&
-                        variant.alt == v.alt;
+                        variant.start === v.start &&
+                        variant.ref === v.ref &&
+                        variant.alt === v.alt;
                 });
                 if (targetVariants.length > 0) {
                     var annotatedVariant = targetVariants[0];
@@ -1662,18 +1663,12 @@
                 variant.transcript = this.selectedTranscript;
                 self.cohortModel.addUserFlaggedVariant(self.selectedGene, self.selectedTranscript, variant);
 
-
                 // Refresh the loaded variants so that the ranked variants table
                 // reflects the flagged variants
-                self.promiseLoadGene(self.selectedGene.gene_name)
+                self.promiseLoadGene(self.selectedGene.gene_name, null, true)
                     .then(function () {
-                        // self.onCohortVariantClick(variant, self.$refs.variantCardRef[0], 's0');
-                        self.onCohortVariantClick(variant, null, 's0');
+                        self.onCohortVariantClick(variant, null, variant.sampleModelId);
                     });
-
-                // if (self.launchedFromClin) {
-                //     self.sendFlaggedVariantToClin(variant);
-                // }
             },
             onRemoveUserFlaggedVariant: function (variant) {
                 let self = this;
@@ -1687,7 +1682,7 @@
                 // reflects the flagged variants
                 self.promiseLoadGene(self.selectedGene.gene_name)
                     .then(function () {
-                        self.onCohortVariantClick(variant, self.$refs.variantCardRef[0], 's0');
+                        self.onCohortVariantClick(variant, self.$refs.variantCardRef[0], variant.sampleModelId);
                     })
             },
             // onRemoveFlaggedVariant: function (variant) {

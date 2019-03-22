@@ -30,6 +30,7 @@ class CohortModel {
 
         this.sampleModels = [];                 // List of sample models correlated with this cohort
         this.sampleMap = {};                    // Relateds IDs to model objects
+        this.allUniqueFeaturesObj = null;       // A vcf object with all unique features from all sample models in this cohort (used for feature matrix)
 
         this.mode = 'time';                     // Indicates time-series mode
         this.maxAlleleCount = null;
@@ -772,7 +773,8 @@ class CohortModel {
                         // Now summarize the danger for the selected gene
                         self.promiseSummarizeDanger(theGene, theTranscript, resultMap.s0, null)
                             .then(function () {
-                                self.setLoadedVariants(theGene);
+                                let geneChanged = options.loadFromFlag;
+                                self.setLoadedVariants(theGene, null, geneChanged);
                                 self.endGeneProgress(theGene.gene_name);
                                 resolve(resultMap);
                             })
@@ -954,7 +956,8 @@ class CohortModel {
         })
     }
 
-    setLoadedVariants(gene, id = null) {
+    /* GeneChanged = true if the last time this method was called we were looking at a diff gene */
+    setLoadedVariants(gene, id = null, loadFromFlag = false) {
         let self = this;
 
         let filterAndPileupVariants = function (model, start, end, target = 'loaded') {
@@ -990,6 +993,7 @@ class CohortModel {
             return filteredVariants;
         };
 
+
         let allVariants = $.extend({}, self.getNormalModel().loadedVariants);
         allVariants.features = [];      // Start empty so when we get normal in loop below, we don't duplicate
         let uniqueMatrixFeatures = {};  // The features to rank in the matrix
@@ -1023,21 +1027,23 @@ class CohortModel {
                                 }
                             });
                         }
-                    // For onc, we want all variants in matrix
-                    // if (model.getId() === 's0') {
-                    //     var allVariants = $.extend({}, model.loadedVariants);
-                    //     allVariants.features = model.loadedVariants.features.concat(model.calledVariants.features);
-                    //     self.featureMatrixModel.promiseRankVariants(allVariants);
-                    // }
                 } else {
                     model.loadedVariants = {loadState: {}, features: []};
                     model.calledVariants = {loadState: {}, features: []}
                 }
             }
         });
+
         // Plug combined, unique features into feature matrix model
         if (id !== 'known-variants' && id !== 'cosmic-variants') {
-            self.featureMatrixModel.promiseRankVariants(allVariants);
+            if (self.allUniqueFeaturesObj != null && self.allUniqueFeaturesObj.features
+                    && self.allUniqueFeaturesObj.features.length > 0
+                    && loadFromFlag) {
+                self.featureMatrixModel.promiseRankVariants(self.allUniqueFeaturesObj)
+            } else {
+                self.featureMatrixModel.promiseRankVariants(allVariants);
+                self.allUniqueFeaturesObj = allVariants;
+            }
         }
     }
 
@@ -1940,17 +1946,41 @@ class CohortModel {
     //     }
     // }
 
+    /* Returns the matching variant object in the combined unique feature list.*/
+    getMatrixMatchVar(variantId) {
+        let self = this;
+
+        let matchingVar = null;
+        if (self.allUniqueFeaturesObj && self.allUniqueFeaturesObj.features) {
+            for (let i = 0; i < self.allUniqueFeaturesObj.features.length; i++) {
+                let feat = self.allUniqueFeaturesObj.features[i];
+                if (feat.id === variantId) {
+                    matchingVar = feat;
+                    break;
+                }
+            }
+        }
+        return matchingVar;
+    }
+
     addUserFlaggedVariant(theGene, theTranscript, variant) {
         var self = this;
-        variant.isFlagged = true;
-        variant.isUserFlagged = true;
-        if (variant.filtersPassed == null) {
-            variant.filtersPassed = [];
-        }
-        variant.filtersPassed.push("userFlagged");
-        variant.featureClass = "flagged";
 
-        self._recacheForFlaggedVariant(theGene, theTranscript, variant, {summarizeDanger: true});
+        // Get matching variant from unique variant joint list
+        let matchingVar = self.getMatrixMatchVar(variant.id);
+        if (matchingVar == null) {
+            console.log('Could not find matching variant')
+        }
+
+        matchingVar.isFlagged = true;
+        matchingVar.isUserFlagged = true;
+        if (matchingVar.filtersPassed == null) {
+            matchingVar.filtersPassed = [];
+        }
+        matchingVar.filtersPassed.push("userFlagged");
+        matchingVar.featureClass = "flagged";
+
+        self._recacheForFlaggedVariant(theGene, theTranscript, matchingVar, {summarizeDanger: true});
 
     }
 
@@ -1971,11 +2001,17 @@ class CohortModel {
         var index = -1;
         var i = 0;
 
-        variant.isFlagged = false;
-        variant.isUserFlagged = false;
-        this.removeFilterPassed(variant, "userFlagged");
-        this._removeFlaggedVariantImpl(variant);
-        this._recacheForFlaggedVariant(theGene, theTranscript, variant, {summarizeDanger: true});
+        // Get matching variant from unique variant joint list
+        let matchingVar = self.getMatrixMatchVar(variant.id);
+        if (matchingVar == null) {
+            console.log('Could not find matching variant')
+        }
+
+        matchingVar.isFlagged = false;
+        matchingVar.isUserFlagged = false;
+        this.removeFilterPassed(matchingVar, "userFlagged");
+        this._removeFlaggedVariantImpl(matchingVar);
+        this._recacheForFlaggedVariant(theGene, theTranscript, matchingVar, {summarizeDanger: true});
     }
 
     _removeFlaggedVariantImpl(variant) {
