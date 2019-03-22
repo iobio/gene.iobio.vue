@@ -267,7 +267,7 @@
             selectedSample: function(newVal, oldVal) {
                 let self = this;
                 if (newVal != null && newVal !== oldVal && self.modelInfo && self.modelInfo.model) {
-                    self.modelInfo.model.markEntryDataChanged();
+                    self.modelInfo.model.markEntryDataChanged(true);
                 }
             }
         },
@@ -380,7 +380,7 @@
             },
             onIsAffected: function () {
                 this.modelInfo.isTumor = this.isTumor;
-                this.modelInfo.model.isTumor = this.modelInfo.affectedStatus;
+                this.modelInfo.model.isTumor = this.isTumor;
                 this.rowLabel = this.getRowLabel();
             },
             updateSamples: function (samples, sampleToSelect) {

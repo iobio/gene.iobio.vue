@@ -761,11 +761,7 @@ class SampleModel {
 
     markEntryDataChanged(changedStatus) {
         let self = this;
-        if (changedStatus) {
-            self.entryDataChanged = changedStatus;
-        } else {
-            self.entryDataChanged = true;
-        }
+        self.entryDataChanged = changedStatus;
     }
 
     init(cohort) {

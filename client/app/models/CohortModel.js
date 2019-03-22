@@ -413,7 +413,6 @@ class CohortModel {
                 vcfPromise = Promise.resolve();
             }
 
-
             let bamPromise = null;
             if (modelInfo.bam) {
                 bamPromise = new Promise(function (bamResolve, bamReject) {

@@ -882,37 +882,39 @@
                 }
             },
 
+            /* Assumes only called when something changes in files menu (or on first load) */
             onFilesLoaded: function (analyzeAll) {
                 let self = this;
                 self.showVariantCards = true;
                 //self.setUrlParameters();
 
-                self.promiseClearCache()
-                    .then(function () {
-                        self.featureMatrixModel.init();
-                        if (self.firstLaunchFromFileMenu) {
-                            self.firstLaunchFromFileMenu = false;
-                            return Promise.resolve();
-                        } else {
-                            return self.promiseResetAllGenes();
-                        }
-                    })
-                    .then(function () {
-                        if (self.selectedGene && self.selectedGene.gene_name) {
-                            self.promiseLoadGene(self.selectedGene.gene_name);
+                // self.promiseClearCache()
+                //     .then(function () {
+                //         self.featureMatrixModel.init();
+                //         if (self.firstLaunchFromFileMenu) {
+                //             self.firstLaunchFromFileMenu = false;
+                //             return Promise.resolve();
+                //         } else {
+                //             return self.promiseResetAllGenes();
+                //         }
+                    // })
+                    self.promiseResetAllGenes()
+                        .then(function () {
+                            if (self.selectedGene && self.selectedGene.gene_name) {
+                                self.promiseLoadGene(self.selectedGene.gene_name);
 
-                            if (analyzeAll) {
-                                if (self.cohortModel && self.cohortModel.isLoaded) {
-                                    self.cacheHelper.analyzeAll(self.cohortModel, false);
-                                }
+                                // if (analyzeAll) {
+                                //     if (self.cohortModel && self.cohortModel.isLoaded) {
+                                //         self.cacheHelper.analyzeAll(self.cohortModel, false);
+                                //     }
+                                // }
+                            } else if (self.geneModel.sortedGeneNames && self.geneModel.sortedGeneNames.length > 0) {
+                                self.onGeneSelected(self.geneModel.sortedGeneNames[0]);
+                            } else {
+                                self.onShowSnackbar({message: 'Enter a gene name or a phenotype term.', timeout: 5000});
+                                self.bringAttention = 'gene';
                             }
-                        } else if (self.geneModel.sortedGeneNames && self.geneModel.sortedGeneNames.length > 0) {
-                            self.onGeneSelected(self.geneModel.sortedGeneNames[0]);
-                        } else {
-                            self.onShowSnackbar({message: 'Enter a gene name or a phenotype term.', timeout: 5000});
-                            self.bringAttention = 'gene';
-                        }
-                    })
+                        })
                 // self.promiseClearCache()
                 //     .then(function() {
                 //         // if (self.variantModel.filterModel == null && self.selectedGene != null) {
@@ -1078,6 +1080,10 @@
 
                                     }
 
+                                    // Trick vue to update view if we've added a new sample
+                                    self.models.push('foo');
+                                    self.models.pop();
+
                                     if (self.$refs.scrollButtonRefGene) {
                                         self.$refs.scrollButtonRefGene.showScrollButtons();
                                     }
@@ -1088,7 +1094,7 @@
                                                 resolve();
                                             })
                                             .catch(function (err) {
-                                                console.log(err)
+                                                console.log(err);
                                                 reject(err);
                                             })
                                     } else {
@@ -1518,12 +1524,15 @@
             },
             applyGenesImpl: function (genesString, options, callback) {
                 let self = this;
-                self.selectedGene = {};
+                // TODO: is this forcing view reload
+                //self.selectedGene = {};
                 self.geneModel.promiseCopyPasteGenes(genesString, options)
                     .then(function () {
-                        if (!self.launchedFromClin) {
-                            self.setUrlGeneParameters();
-                        }
+
+                        // TODO: this gets called on second file launch
+                        // if (!self.launchedFromClin) {
+                        //     self.setUrlGeneParameters();
+                        // }
                         if (self.geneModel.sortedGeneNames && self.geneModel.sortedGeneNames.length > 0) {
                             let geneName = self.geneModel.sortedGeneNames[0];
                             return self.promiseLoadGene(geneName);

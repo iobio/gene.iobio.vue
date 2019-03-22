@@ -738,7 +738,9 @@ export default {
             label += ' (' + this.sampleModel.selectedSample + ')';
         }
       } else {
-          label += this.sampleModel.selectedSample.toUpper();
+          if (this.sampleModel.selectedSample) {
+              label += this.sampleModel.selectedSample.toUpper();
+          }
       }
       return label;
     },

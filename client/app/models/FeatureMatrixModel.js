@@ -26,10 +26,10 @@ class FeatureMatrixModel {
         {name:'Pathogenicity - ClinVar'      , id:'clinvar',        order:2, index:2, match: 'exact', attribute: 'clinVarClinicalSignificance',      map: this.getTranslator().clinvarMap },
         {name:'Impact (VEP)'                 , id:'impact',         order:3, index:3, match: 'exact', attribute: this.globalApp.impactFieldToColor,  map: this.getTranslator().impactMap},
         {name:'Most severe impact (VEP)'     , id:'highest-impact', order:4, index:4, match: 'exact', attribute: this.globalApp.impactFieldToFilter, map: this.getTranslator().highestImpactMap},
-        {name:'SIFT'                         , id:'sift',           order:5, index:5, match: 'exact', attribute: 'sift',                             map: this.getTranslator().siftMap},
-        {name:'PolyPhen'                     , id:'polyphen',       order:6, index:6, match: 'exact', attribute: 'polyphen',                         map: this.getTranslator().polyphenMap},
-        {name:'Zygosity'                     , id:'zygosity',       order:7, index:7, match: 'exact', attribute: 'zygosity',                         map: this.getTranslator().zygosityMap},
-        {name:'Genotype'                     , id:'genotype',       order:8, index:8, match: 'field', attribute: 'eduGenotypeReversed' }
+        // {name:'SIFT'                         , id:'sift',           order:5, index:5, match: 'exact', attribute: 'sift',                             map: this.getTranslator().siftMap},
+        // {name:'PolyPhen'                     , id:'polyphen',       order:6, index:6, match: 'exact', attribute: 'polyphen',                         map: this.getTranslator().polyphenMap},
+        {name:'Zygosity'                     , id:'zygosity',       order:5, index:5, match: 'exact', attribute: 'zygosity',                         map: this.getTranslator().zygosityMap},
+        {name:'Genotype'                     , id:'genotype',       order:6, index:6, match: 'field', attribute: 'eduGenotypeReversed' }
         // TODO: need to add all loaded samples here
       ];
 
