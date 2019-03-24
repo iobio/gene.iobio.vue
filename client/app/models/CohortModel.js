@@ -693,6 +693,15 @@ class CohortModel {
         let existingModels = self.getCanonicalModels();
 
         let modelsToKeep = [];
+
+        // Don't get rid of ref models
+        if (self.sampleMap['known-variants']) {
+            modelsToKeep.push(self.sampleMap['known-variants']);
+        }
+        if (self.sampleMap['cosmic-variants']) {
+            modelsToKeep.push(self.sampleMap['cosmic-variants']);
+        }
+
         for (let i = 0; i < existingModels.length; i++) {
             let model = existingModels[i];
             if (idList.indexOf(model.id) >= 0) {

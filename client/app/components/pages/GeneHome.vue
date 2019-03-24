@@ -846,6 +846,8 @@
                             self.selectedTranscript,
                             options)
                             .then(function (resultMap) {
+                                self.onUpdateSamples();
+
                                 self.calcFeatureMatrixWidthPercent();
 
                                 self.filterModel.populateEffectFilters(resultMap);
