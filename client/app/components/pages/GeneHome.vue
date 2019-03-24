@@ -840,6 +840,7 @@
                     if (self.models && self.models.length > 0) {
                         self.cardWidth = $('#genes-card').innerWidth();
                         var options = {'getKnownVariants': self.showKnownVariantsCard};
+                        options['getCosmicVariants'] = self.showCosmicVariantsCard;
                         options['loadFromFlag'] = loadingFromFlagEvent;
 
                         self.cohortModel.promiseLoadData(self.selectedGene,

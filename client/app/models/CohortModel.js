@@ -1062,7 +1062,7 @@ class CohortModel {
         if (id !== 'known-variants' && id !== 'cosmic-variants') {
             if (self.allUniqueFeaturesObj != null && self.allUniqueFeaturesObj.features
                     && self.allUniqueFeaturesObj.features.length > 0
-                    /*&& loadFromFlag*/) {
+                    && loadFromFlag) {
                 self.featureMatrixModel.promiseRankVariants(self.allUniqueFeaturesObj)
             } else {
                 self.featureMatrixModel.promiseRankVariants(allVariants);
@@ -1140,6 +1140,7 @@ class CohortModel {
                 }
             }
 
+            // Load clinvar track
             if (options.getKnownVariants) {
                 let p = self.promiseLoadKnownVariants(theGene, theTranscript)
                     .then(function (resultMap) {
@@ -1151,6 +1152,20 @@ class CohortModel {
                     });
                 annotatePromises.push(p);
             }
+
+            // Load cosmic track
+            if (options.getCosmicVariants) {
+                let p = self.promiseLoadCosmicVariants(theGene, theTranscript)
+                    .then(function (resultMap) {
+                        if (self.cosmicVariantViz === 'variants') {
+                            for (let id in resultMap) {
+                                theResultMap[id] = resultMap[id];
+                            }
+                        }
+                    });
+                annotatePromises.push(p);
+            }
+
 
             Promise.all(annotatePromises)
                 .then(function () {
