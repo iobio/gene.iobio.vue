@@ -113,7 +113,7 @@
                 </v-flex>
                 <v-flex d-flex xs2 v-else-if="!isStaticSlot" style="padding-left: 70px">
                     <v-btn small flat icon style="margin: 0 !important"
-                           @click="removeSample">
+                           @click="openConfirmationDialog">
                         <v-icon color="appColor">clear</v-icon>
                     </v-btn>
                 </v-flex>

@@ -523,6 +523,9 @@
                             self.cohortModel.sampleModels[i] = currModel;
                         }
                     }
+                    // Update view from gene home
+                    self.$emit('update-samples');
+
                     Promise.all(addPromises)
                         .then(() => {
                             // Turn on loading spinners
@@ -742,7 +745,8 @@
                         }
                     });
                 }
-                self.debugOrder();
+                self.$emit('update-samples');
+                //self.debugOrder();
             },
             onDragEnd: function (evt) {
                 let self = this;

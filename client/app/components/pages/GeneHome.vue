@@ -88,6 +88,7 @@
                 :launchedFromClin="launchedFromClin"
                 :launchedFromHub="launchedFromHub"
                 :bringAttention="bringAttention"
+                @update-samples="onUpdateSamples"
                 @input="onGeneNameEntered"
                 @load-demo-data="onLoadDemoData"
                 @clear-cache="promiseClearCache"
@@ -2124,6 +2125,14 @@
                     };
                     window.parent.postMessage(JSON.stringify(msgObject), self.clinIobioUrl);
                 }
+            },
+            /* Called when we need Vue to update the track view */
+            onUpdateSamples: function() {
+                let self = this;
+                self.models = self.cohortModel.sampleModels;
+                self.models.push('foo');
+                self.models.pop();
+
             }
         }
     }

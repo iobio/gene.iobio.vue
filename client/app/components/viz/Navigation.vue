@@ -278,6 +278,7 @@
                     v-if="!isEduMode && !isBasicMode"
                     :cohortModel="cohortModel"
                     :launchedFromHub="launchedFromHub"
+                    @update-samples="onUpdateSamples"
                     @on-files-loaded="onFilesLoaded"
                     @load-demo-data="onLoadDemoData"
             >
@@ -790,6 +791,9 @@
                 if (self.$refs.fileMenuRef) {
                     self.$refs.fileMenuRef.openFileSelection();
                 }
+            },
+            onUpdateSamples: function() {
+                this.$emit('update-samples');
             }
         },
         created: function () {

@@ -469,6 +469,9 @@ class CohortModel {
             self.sampleModels.splice(newIndex, 0, self.sampleModels[oldIndex]);
             self.sampleModels.splice(oldIndex + 1, 1);
         }
+
+        self.sampleModels.push('foo');
+        self.sampleModels.pop();
     }
 
     promiseSetSibs(affectedSamples, unaffectedSamples) {
@@ -612,30 +615,21 @@ class CohortModel {
 
     /* Ensure sample models sorted by correct order */
     sortSampleModels() {
-        let firstNonRefInfo = this.sampleMap['s0'];
-        // If we've already correctly sorted our models, don't do it again
-        if (firstNonRefInfo.order > 0) {
-            return;
-        }
-
-        // Sort orders in model infos
-        Object.values(this.sampleMap).forEach((info) => {
-            if (info.id === 'known-variants') {
-                info.order = 0;
-            } else if (info.id === 'cosmic-variants') {
-                info.order = 1;
-            } else {
-                info.order += 2;
-            }
-        });
-
         var currMap = this.sampleMap;
+
         // Sort models according to order variable
-        let sortedModels = this.sampleModels.sort(function(a,b) {
+        let sortedModels = this.getCanonicalModels().sort(function(a,b) {
             return currMap[a.id].order - currMap[b.id].order;
         });
+
+        // Always add clinvar & cosmic first
+        let refModels = [];
+        refModels.push(this.sampleMap['known-variants'].model);
+        refModels.push(this.sampleMap['cosmic-variants'].model);
+        let combinedModels = refModels.concat(sortedModels);
+
         this.sampleModels = [];
-        this.sampleModels = sortedModels;
+        this.sampleModels = combinedModels;
     }
 
     setTumorInfo(forceRefresh) {
@@ -669,17 +663,20 @@ class CohortModel {
     /* Returns first model in sample array that is normal, not tumor. */
     getNormalModel() {
         let self = this;
-        let retModel = null;
-        for (let i = 0; i < self.sampleModels.length; i++) {
-            if (!(self.sampleModels[i].isTumor)) {
-                retModel = self.sampleModels[i];
-                break;
-            }
-        }
-        if (retModel == null) {
-            console.log('No normal models available in getNormalModel');
-        }
-        return retModel;
+        // let retModel = null;
+        //
+        // for (let i = 0; i < self.sampleModels.length; i++) {
+        //     if (!(self.sampleModels[i].isTumor)) {
+        //         retModel = self.sampleModels[i];
+        //         break;
+        //     }
+        // }
+        // if (retModel == null) {
+        //     console.log('No normal models available in getNormalModel');
+        // }
+        // return retModel;
+
+        return self.sampleMap['s0'].model;
     }
 
     /* Returns all normal and tumor models */
@@ -695,13 +692,16 @@ class CohortModel {
         let self = this;
         let existingModels = self.getCanonicalModels();
 
+        let modelsToKeep = [];
         for (let i = 0; i < existingModels.length; i++) {
             let model = existingModels[i];
-            if (idList.indexOf(model.id) < 0) {
-                self.sampleModels.splice(i, 1);
+            if (idList.indexOf(model.id) >= 0) {
+                modelsToKeep.push(model);
+            } else {
                 delete self.sampleMap[model.id];
             }
         }
+        self.sampleModels = modelsToKeep;
     }
 
     isAlignmentsOnly() {
