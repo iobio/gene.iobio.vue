@@ -248,7 +248,7 @@
 
         <variant-viz id="called-variant-viz"
           ref="calledVariantVizRef"
-          v-if="showVariantViz"
+          v-show="showVariantViz"
           v-bind:class="{hide: sampleModel.id === 'known-variants' && knownVariantsViz !== 'variants'}"
           :data="sampleModel.calledVariants"
           :regionStart="regionStart"
@@ -276,7 +276,7 @@
 
         <variant-viz id="loaded-variant-viz"
           ref="variantVizRef"
-          v-if="showVariantViz"
+          v-show="showVariantViz"
           v-bind:class="{hide: sampleModel.id === 'known-variants' && knownVariantsViz !== 'variants'}"
           :data="sampleModel.loadedVariants"
           :regionStart="regionStart"
@@ -719,6 +719,10 @@ export default {
     onRegionZoomReset: function() {
       this.zoomMessage = "Drag to zoom";
       this.$emit('gene-region-zoom-reset');
+    },
+    // NOTE: this only refreshes loaded variant tracks for now
+    redrawTrack: function() {
+        this.$refs.variantVizRef.draw();
     }
   },
 
@@ -739,7 +743,7 @@ export default {
         }
       } else {
           if (this.sampleModel.selectedSample) {
-              label += this.sampleModel.selectedSample.toUpper();
+              label += this.sampleModel.selectedSample.toUpperCase();
           }
       }
       return label;

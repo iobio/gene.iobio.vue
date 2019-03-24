@@ -1550,7 +1550,7 @@ var effectCategories = [
                     'strand':                   geneObject.strand,
                     'chrom':                    refName,
                     'type':                     annot.typeAnnotated && annot.typeAnnotated !== '' ? annot.typeAnnotated : type,
-                    'id':                       (rec.pos + '.' + refName + '.' + geneObject.strand + '.' + rec.ref + '.' + rec.alt),  // key = start.chromosome.strand.ref.alt
+                    'id':                       (rec.pos + '.' + refName + '.' + geneObject.strand + '.' + rec.ref + '.' + alt),  // key = start.chromosome.strand.ref.alt NOTE: have to use alt instead of rec.alt b/c rec.alt is comma-delim combined of all alts
                     'ref':                      rec.ref,
                     'alt':                      alt,
                     'qual':                     rec.qual,

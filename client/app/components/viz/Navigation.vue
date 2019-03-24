@@ -417,7 +417,8 @@
         <v-dialog v-model="showVersion" max-width="580">
             <v-card>
                 <svg></svg>
-                <v-card-title class="headline">oncogene.iobio {{ globalApp.version }}</v-card-title>
+                <!--onco is appended to title via symbol-->
+                <v-card-title class="headline">gene.iobio {{ globalApp.version }}</v-card-title>
                 <v-card-text>
 
 
@@ -660,7 +661,7 @@
         data() {
             let self = this;
             return {
-                title: 'oncogene.iobio',
+                title: 'gene.iobio',    // onco portion is prepended via symbol
 
                 lookupGene: {},
                 geneEntered: null,

@@ -2727,6 +2727,7 @@ class SampleModel {
 
     classifyByImpact(d, annotationScheme, inTumorTrack, inKnownTrack) {
         let self = this;
+
         var impacts = "";
         var colorimpacts = "";
         var borderColor = "";

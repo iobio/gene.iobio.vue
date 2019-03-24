@@ -290,7 +290,7 @@
                         :width="cardWidth"
                         :showGeneViz="true"
                         :showDepthViz="model.id !== 'known-variants' && model.id !== 'cosmic-variants'"
-                        :showVariantViz="(model.id !== 'known-variants' || showKnownVariantsCard) || (model.id !== 'cosmic-variants' || showCosmicVariantsCard)"
+                        :showVariantViz="showVarViz && ((model.id !== 'known-variants' || showKnownVariantsCard) || (model.id !== 'cosmic-variants' || showCosmicVariantsCard))"
                         :geneVizShowXAxis="model.id === 's0' || model.id === 'known-variants' || model.id === 'cosmic-variants'"
                         @cohort-variant-click="onCohortVariantClick"
                         @cohort-variant-hover="onCohortVariantHover"
@@ -493,7 +493,8 @@
                 clinIobioUrls: ["http://localhost:4030", "http://clin.iobio.io"],
                 clinIobioUrl: null,
 
-                forceLocalStorage: null
+                forceLocalStorage: null,
+                showVarViz: true
 
             }
         },
@@ -888,49 +889,39 @@
                 self.showVariantCards = true;
                 //self.setUrlParameters();
 
-                // self.promiseClearCache()
-                //     .then(function () {
-                //         self.featureMatrixModel.init();
-                //         if (self.firstLaunchFromFileMenu) {
-                //             self.firstLaunchFromFileMenu = false;
-                //             return Promise.resolve();
-                //         } else {
-                //             return self.promiseResetAllGenes();
-                //         }
-                    // })
-                    self.promiseResetAllGenes()
-                        .then(function () {
-                            if (self.selectedGene && self.selectedGene.gene_name) {
-                                self.promiseLoadGene(self.selectedGene.gene_name);
+                // Hide viz ref until we've re-rendered
+                self.showVarViz = false;
 
-                                // if (analyzeAll) {
-                                //     if (self.cohortModel && self.cohortModel.isLoaded) {
-                                //         self.cacheHelper.analyzeAll(self.cohortModel, false);
-                                //     }
-                                // }
-                            } else if (self.geneModel.sortedGeneNames && self.geneModel.sortedGeneNames.length > 0) {
-                                self.onGeneSelected(self.geneModel.sortedGeneNames[0]);
-                            } else {
-                                self.onShowSnackbar({message: 'Enter a gene name or a phenotype term.', timeout: 5000});
-                                self.bringAttention = 'gene';
-                            }
-                        })
-                // self.promiseClearCache()
-                //     .then(function() {
-                //         // if (self.variantModel.filterModel == null && self.selectedGene != null) {
-                //         //     self.initializeFiltering();
-                //         // }
-                //         if (self.selectedGene && self.selectedGene.gene_name) {
-                //             self.promiseLoadGene(self.selectedGene.gene_name);
-                //         } else if (self.geneModel.sortedGeneNames && self.geneModel.sortedGeneNames.length > 0) {
-                //             self.onGeneSelected(self.geneModel.sortedGeneNames[0]);
-                //         } else {
-                //             self.onShowSnackbar({message: 'Enter a gene name or a phenotype term.', timeout: 5000});
-                //             self.bringAttention = 'gene';
-                //         }
-                //     });
+                self.promiseClearCache()
+                    .then(function () {
+                        self.featureMatrixModel.init();
+                        Promise.resolve();
+
+                        // TODO: once we get multiple sites incorporated get this fixed
+                        // if (self.firstLaunchFromFileMenu) {
+                        //     self.firstLaunchFromFileMenu = false;
+                        //     return Promise.resolve();
+                        // } else {
+                        //     return self.promiseResetAllGenes();
+                        // }
+                    })
+                    .then(function () {
+                        if (self.selectedGene && self.selectedGene.gene_name) {
+                            self.promiseLoadGene(self.selectedGene.gene_name);
+
+                            // if (analyzeAll) {
+                            //     if (self.cohortModel && self.cohortModel.isLoaded) {
+                            //         self.cacheHelper.analyzeAll(self.cohortModel, false);
+                            //     }
+                            // }
+                        } else if (self.geneModel.sortedGeneNames && self.geneModel.sortedGeneNames.length > 0) {
+                            self.onGeneSelected(self.geneModel.sortedGeneNames[0]);
+                        } else {
+                            self.onShowSnackbar({message: 'Enter a gene name or a phenotype term.', timeout: 5000});
+                            self.bringAttention = 'gene';
+                        }
+                    });
             },
-
             setUrlParameters: function () {
                 let self = this;
 
@@ -1080,10 +1071,6 @@
 
                                     }
 
-                                    // Trick vue to update view if we've added a new sample
-                                    self.models.push('foo');
-                                    self.models.pop();
-
                                     if (self.$refs.scrollButtonRefGene) {
                                         self.$refs.scrollButtonRefGene.showScrollButtons();
                                     }
@@ -1091,6 +1078,7 @@
                                         self.promiseLoadData(loadingFromFlagEvent)
                                             .then(function () {
                                                 self.clearZoom = false;
+                                                self.showVarViz = true;
                                                 resolve();
                                             })
                                             .catch(function (err) {
@@ -1524,8 +1512,7 @@
             },
             applyGenesImpl: function (genesString, options, callback) {
                 let self = this;
-                // TODO: is this forcing view reload
-                //self.selectedGene = {};
+                self.selectedGene = {};
                 self.geneModel.promiseCopyPasteGenes(genesString, options)
                     .then(function () {
 

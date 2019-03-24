@@ -436,7 +436,6 @@ class CohortModel {
                     } else {
                         self.sampleModels.push(vm);
                     }
-                    // TODO: why aren't we adding info here instead of model
                     self.sampleMap[modelInfo.id] = modelInfo;
                     resolve(vm);
                 });
@@ -769,10 +768,14 @@ class CohortModel {
                            currModel.markEntryDataChanged(false);
                         });
 
+                        // Need to do this before we populate feature matrix
+                        self._annotateVariantInheritance(self.sampleMap);
+
                         // Now summarize the danger for the selected gene
                         self.promiseSummarizeDanger(theGene, theTranscript, resultMap.s0, null)
                             .then(function () {
                                 let geneChanged = options.loadFromFlag;
+
                                 self.setLoadedVariants(theGene, null, geneChanged);
                                 self.endGeneProgress(theGene.gene_name);
                                 resolve(resultMap);
@@ -911,7 +914,6 @@ class CohortModel {
 
     promiseLoadCoverage(theGene, theTranscript) {
         let self = this;
-        // TODO: left off why when switch gene does coverage not work
         return new Promise(function (resolve, reject) {
 
             self.promiseGetCachedGeneCoverage(theGene, theTranscript, true)
@@ -942,6 +944,20 @@ class CohortModel {
                 model.noMatchingSamples = false;
             }
         });
+    }
+
+    clearLoadedVariants() {
+        let self = this;
+        self.sampleModels.forEach((model) => {
+            model.loadedVariants = [];
+            model.loadedVariants.push('foo');
+            model.loadedVariants.pop();
+            model.loadedVariants = null;
+
+            model.coverage = [[]];
+            model.coverage.push('foo');
+            model.coverage.pop();
+        })
     }
 
     stopAnalysis() {
@@ -1092,58 +1108,28 @@ class CohortModel {
         return new Promise(function (resolve, reject) {
             let annotatePromises = [];
             let theResultMap = {};
-            // if (isMultiSample) {
-            //     // self.getCanonicalModels().forEach(function (model) {
-            //     //     let noReloadNecessary = model.lastGeneLoaded === theGene.gene_name && model.loadedVariants != null && !model.entryDataChanged;
-            //     //     if (!isBackground && !noReloadNecessary) {
-            //     //         model.inProgress.loadingVariants = true;
-            //     //     }
-            //     // });
-            //     // Annotate if something in the file loader has changed
-            //     let firstModel = self.sampleMap['s0'].model;
-            //     let noReloadNecessary = firstModel.lastGeneLoaded === theGene.gene_name && firstModel.loadedVariants != null && !firstModel.entryDataChanged;
-            //     let p = null;
-            //     if (!noReloadNecessary) {
-            //         firstModel.inProgress.loadingVariants = true;
-            //         firstModel.lastGeneLoaded = theGene.gene_name;
-            //         firstModel.entryDataChanged = false;
-            //         p = firstModel.promiseAnnotateVariants(theGene, theTranscript, self.getCanonicalModels(), isMultiSample, isBackground)
-            //             .then(function (resultMap) {
-            //                 if (!isBackground) {
-            //                     self.getCanonicalModels().forEach(function (model) {
-            //                         model.inProgress.loadingVariants = false;
-            //                     })
-            //                 }
-            //                 theResultMap = resultMap;
-            //             });
-            //     } else {
-            //         p = Promise.resolve();
-            //     }
-            //     annotatePromises.push(p);
-            // } else {
-                for (var id in self.sampleMap) {
-                    let model = self.sampleMap[id].model;
-                    let noReloadNecessary = model.lastGeneLoaded === theGene.gene_name && model.loadedVariants != null && !model.entryDataChanged;
-                    if ((model.isVcfReadyToLoad() || model.isLoaded()) && !noReloadNecessary) {
-                        model.lastGeneLoaded = theGene.gene_name;
-                        if (!isBackground) {
-                            model.inProgress.loadingVariants = true;
-                        }
-                        if (id !== 'known-variants' && id !== 'cosmic-variants') {
-                            let p = model.promiseAnnotateVariants(theGene, theTranscript, [model], isMultiSample, isBackground)
-                                .then(function (resultMap) {
-                                    for (var theId in resultMap) {
-                                        if (!isBackground) {
-                                            self.getModel(theId).inProgress.loadingVariants = false;
-                                        }
-                                        theResultMap[theId] = resultMap[theId];
+            for (var id in self.sampleMap) {
+                let model = self.sampleMap[id].model;
+                let noReloadNecessary = model.lastGeneLoaded === theGene.gene_name && model.loadedVariants != null && !model.entryDataChanged;
+                if ((model.isVcfReadyToLoad() || model.isLoaded()) /*&& !noReloadNecessary*/) {
+                    model.lastGeneLoaded = theGene.gene_name;
+                    if (!isBackground) {
+                        model.inProgress.loadingVariants = true;
+                    }
+                    if (id !== 'known-variants' && id !== 'cosmic-variants') {
+                        let p = model.promiseAnnotateVariants(theGene, theTranscript, [model], isMultiSample, isBackground)
+                            .then(function (resultMap) {
+                                for (var theId in resultMap) {
+                                    if (!isBackground) {
+                                        self.getModel(theId).inProgress.loadingVariants = false;
                                     }
-                                });
-                            annotatePromises.push(p);
-                        }
+                                    theResultMap[theId] = resultMap[theId];
+                                }
+                            });
+                        annotatePromises.push(p);
                     }
                 }
-            //}
+            }
 
             if (options.getKnownVariants) {
                 let p = self.promiseLoadKnownVariants(theGene, theTranscript)
@@ -1159,7 +1145,8 @@ class CohortModel {
 
             Promise.all(annotatePromises)
                 .then(function () {
-                    self._annotateVariantInheritance(theResultMap);
+                    // // We have to check all samples anytime a new one is added (affects somatic marking for tumor tracks)
+                    // self._annotateVariantInheritance(self.sampleMap);
 
                     self.promiseAnnotateWithClinvar(theResultMap, theGene, theTranscript, isBackground)
                         .then(function (data) {
@@ -1169,27 +1156,45 @@ class CohortModel {
         })
     }
 
-    /* Marks variants that are 'inherited' from normal. Assumes normal is always the 's0' sample. */
+    /* Marks variants that are 'inherited' from all samples for which isTumor = false. */
     _annotateVariantInheritance(resultMap) {
-        let normalSample = resultMap['s0'];
-        let idLookup = {};
+        let self = this;
+        let normalSamples = [];
+        let tumorSamples = [];
+        let tumorSampleModelIds = [];
 
-        // Make hash table
-        if (normalSample && normalSample.features.length > 0) {
-            let normFeatures = normalSample.features;
-            normFeatures.forEach((feature) => {
-               idLookup[feature.id] = true;
-            });
+        // Classify samples
+        for (let i = 0; i < Object.keys(resultMap).length; i++) {
+            let sampleId = Object.keys(resultMap)[i];
+            let currData = $.extend({}, Object.values(resultMap)[i].model.vcfData);
+            if (!self.sampleMap[sampleId].isTumor && sampleId !== 'known-variants' && sampleId !== 'cosmic-variants') {
+                normalSamples.push(currData);
+            } else if (sampleId !== 'known-variants' && sampleId !== 'cosmic-variants') {
+                tumorSamples.push(currData);
+                tumorSampleModelIds.push(sampleId);
+            }
         }
 
-        let tumorSamples = Object.keys(resultMap);
-        let normalIndex = tumorSamples.indexOf('s0');
-        tumorSamples.splice(normalIndex, 1);
+        // Make normal variant hash table
+        let idLookup = {};
+        normalSamples.forEach((currNorm) => {
+            if (currNorm && currNorm.features.length > 0) {
+                let normFeatures = currNorm.features;
+                for (let i = 0; i < normFeatures.length; i++) {
+                    let currFeat = normFeatures[i];
+                    if (currFeat.id != null && idLookup[currFeat.id] == null) {
+                        idLookup[currFeat.id] = true;
+                    }
+                }
+            }
+        });
+
+        // Mark somatic variants
         for (let i = 0; i < tumorSamples.length; i++) {
-            let currSample = resultMap[tumorSamples[i]];
-            if (currSample && currSample.features.length > 0) {
-                let currFeatures = currSample.features;
-                currFeatures.forEach((feature) => {
+            let currTumor = tumorSamples[i];
+            if (currTumor.features && currTumor.features.length > 0) {
+                let tumorFeatures = currTumor.features;
+                tumorFeatures.forEach((feature) => {
                     if (idLookup[feature.id] == null) {
                         feature.isInherited = false;
                     }

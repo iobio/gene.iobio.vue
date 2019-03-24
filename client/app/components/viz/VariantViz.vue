@@ -188,8 +188,7 @@ export default {
           })
           .on('d3mouseout', function() {
             self.onVariantHoverEnd();
-          })
-
+          });
 
           this.setVariantChart();
       },

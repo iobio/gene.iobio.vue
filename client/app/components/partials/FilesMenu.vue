@@ -230,8 +230,7 @@
                 debugMe: false,
                 inputClass: 'fileSelect',
                 loadDemoFromWelcome: false,
-                loadDemoFromDropdown: false,
-                haveLoadedOnce: false   // true if we haven't clicked 'Load' button a single time
+                loadDemoFromDropdown: false
             }
         },
         watch: {
@@ -312,40 +311,26 @@
                 let self = this;
                 self.inProgress = true;
                 self.cohortModel.genomeBuildHelper.setCurrentBuild(self.buildName);
+                self.cohortModel.promiseAddClinvarSample()
+                    .then(() => {
+                        self.cohortModel.promiseAddCosmicSample()
+                            .then(() => {
+                                self.cohortModel.setTumorInfo(true);
+                                self.cohortModel.isLoaded = true;
+                                self.cohortModel.getCanonicalModels().forEach(function (model) {
+                                    if (model.displayName == null || model.displayName.length === 0) {
+                                        model.displayName = model.id;
+                                    }
+                                });
+                            })
+                    })
+                    .then(function () {
+                        // let performAnalyzeAll = self.autofillAction ? true : false;
+                        self.inProgress = false;
 
-                // On initial load
-                if (!self.haveLoadedOnce) {
-                    self.cohortModel.promiseAddClinvarSample()
-                        .then(() => {
-                            self.cohortModel.promiseAddCosmicSample()
-                                .then(() => {
-                                    self.cohortModel.setTumorInfo(true);
-                                    self.cohortModel.isLoaded = true;
-                                    self.cohortModel.getCanonicalModels().forEach(function (model) {
-                                        if (model.displayName == null || model.displayName.length === 0) {
-                                            model.displayName = model.id;
-                                        }
-                                    });
-                                })
-                        })
-                        .then(function () {
-                            // let performAnalyzeAll = self.autofillAction ? true : false;
-                            self.inProgress = false;
-
-                            self.$emit("on-files-loaded", null);
-                            self.showFilesMenu = false;
-                        });
-                // Else if we're adding another sample or have changed info
-                } else {
-                    // TODO: need to update tumor info too
-                    self.cohortModel.getCanonicalModels().forEach(function (model) {
-                        if (model.displayName == null || model.displayName.length === 0) {
-                            model.displayName = model.id;
-                        }
+                        self.$emit("on-files-loaded", null);
+                        self.showFilesMenu = false;
                     });
-                    self.$emit("on-files-loaded", null);
-                    self.showFilesMenu = false;
-                }
             },
             onCancel: function () {
                 this.showFilesMenu = false;
