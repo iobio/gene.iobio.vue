@@ -1062,7 +1062,7 @@ class CohortModel {
         if (id !== 'known-variants' && id !== 'cosmic-variants') {
             if (self.allUniqueFeaturesObj != null && self.allUniqueFeaturesObj.features
                     && self.allUniqueFeaturesObj.features.length > 0
-                    && loadFromFlag) {
+                    /*&& loadFromFlag*/) {
                 self.featureMatrixModel.promiseRankVariants(self.allUniqueFeaturesObj)
             } else {
                 self.featureMatrixModel.promiseRankVariants(allVariants);
