@@ -746,6 +746,7 @@
                     });
                 }
                 self.$emit('update-samples');
+                self.validate();
                 //self.debugOrder();
             },
             onDragEnd: function (evt) {
