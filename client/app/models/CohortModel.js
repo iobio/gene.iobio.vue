@@ -1035,6 +1035,8 @@ class CohortModel {
                     let calledVariants = filterAndPileupVariants(model, start, end, 'called');
                     model.calledVariants = calledVariants;
 
+                    // Don't add known variants to our feature matrix
+                    if (model.id !== 'cosmic-variants' && model.id !== 'known-variants') {
                         let currVariants = model.loadedVariants.features;
                         currVariants.forEach((currVar) => {
                             if (uniqueMatrixFeatures[currVar.id] == null) {
@@ -1051,6 +1053,7 @@ class CohortModel {
                                 }
                             });
                         }
+                    }
                 } else {
                     model.loadedVariants = {loadState: {}, features: []};
                     model.calledVariants = {loadState: {}, features: []}
