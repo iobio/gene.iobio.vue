@@ -66,14 +66,15 @@
         </span>
         <div id="rank-variants-title" class="hide card-label" style="">Evaluate Variants</div>
 
-        <v-btn flat fab small slot="activator" class="show-settings-button" @click="showSettings = !showSettings"
-        light>
-          <v-icon style="font-size:17px" >settings</v-icon>
-        </v-btn>
-        <a v-if="showSettings" id="move-rows" class="level-edu level-basic" v-bind:class="{ hide: featureMatrixModel.rankedVariants.length == 0 }" href="javascript:void(0)" @click="toggleMoveRows">
-           <i class="material-icons">swap_vert</i>
-          Reorder
-        </a>
+      <!--TODO: took out for AACR, reincorporate-->
+        <!--<v-btn flat fab small slot="activator" class="show-settings-button" @click="showSettings = !showSettings"-->
+        <!--light>-->
+          <!--<v-icon style="font-size:17px" >settings</v-icon>-->
+        <!--</v-btn>-->
+        <!--<a v-if="showSettings" id="move-rows" class="level-edu level-basic" v-bind:class="{ hide: featureMatrixModel.rankedVariants.length == 0 }" href="javascript:void(0)" @click="toggleMoveRows">-->
+           <!--<i class="material-icons">swap_vert</i>-->
+          <!--Reorder-->
+        <!--</a>-->
 
 
 
@@ -121,22 +122,23 @@
 
         <div id="feature-matrix-note" v-bind:class="{ hide: featureMatrixModel.rankedVariants.length == 0 }" >
 
-          <div style="display:inline-block;margin-left:110px">
-            <svg style="height: 10px;width:108px">
-              <g transform="translate(8,6)">
-                <line x1="0" y1="0" x2="100" y2="0" style="stroke: lightgrey;stroke-width: 4;"></line>
-              </g>
-              <g transform="translate(-10,0),rotate(-90,10,0)">
-                <polygon points="0,8 4,2 8,8" style="fill: lightgrey; stroke: lightgrey; stroke-width: 1px; opacity: 1;"></polygon>
-              </g>
-            </svg>
+          <!--<div style="display:inline-block;margin-left:110px">-->
+            <!--<svg style="height: 10px;width:108px">-->
+              <!--<g transform="translate(8,6)">-->
+                <!--<line x1="0" y1="0" x2="100" y2="0" style="stroke: lightgrey;stroke-width: 4;"></line>-->
+              <!--</g>-->
+              <!--<g transform="translate(-10,0),rotate(-90,10,0)">-->
+                <!--<polygon points="0,8 4,2 8,8" style="fill: lightgrey; stroke: lightgrey; stroke-width: 1px; opacity: 1;"></polygon>-->
+              <!--</g>-->
+            <!--</svg>-->
 
-            <div class="matrix-note-text level-edu level-basic">
-              More likely causative
-            </div>
-            <div id="matrix-harmful-note" class="matrix-note-text hide level-basic level-edu">
-              Most harmful
-            </div>
+            <!--TODO: rework wording here-->
+            <!--<div class="matrix-note-text level-edu level-basic">-->
+              <!--More likely causative-->
+            <!--</div>-->
+            <!--<div id="matrix-harmful-note" class="matrix-note-text hide level-basic level-edu">-->
+              <!--Most harmful-->
+            <!--</div>-->
 
           </div>
 

@@ -16,7 +16,7 @@
             vertical-align: top
             text-align: left
             padding-top: 16px
-            margin-left: 30px
+            margin-left: 7px
 
             label
                 padding-left: 7px
@@ -50,6 +50,16 @@
             margin-left: 0px
             margin-right: 10px
             float: left
+            color: $app-color
+            font-size: 15px
+
+        #optional-button
+            display: inline-block
+            vertical-align: top
+            margin-top: 10px
+            margin-left: 0px
+            margin-right: 10px
+            float: left
 
         #call-variants-dropdown
             display: inline-block
@@ -71,6 +81,13 @@
             display: inline-block
             width: 100%
             text-align: left
+
+            .btn
+                padding: 0px
+
+            .btn__content
+                color: $app-color
+                font-size: 15px
 
             .stop-analysis-button
                 float: left
@@ -237,49 +254,56 @@
 
                 <div id="genes-toolbar" v-bind:class="isEduMode || isBasicMode ? 'hide' : ''">
 
+                    <!--TODO: took out for AACR, reincorporate-->
+                    <!--<v-btn  id="analyze-all-button"-->
+                            <!--v-if="isLoaded"-->
+                            <!--class="level-edu"-->
+                            <!--raised-->
+                            <!--@click="onAnalyzeAll"-->
+                            <!--v-tooltip.top-center="`Analyze variants in all genes`" >-->
+                        <!--Analyze all-->
+                    <!--</v-btn>-->
 
-                    <v-btn  id="analyze-all-button"
+
+                    <!--<v-btn-->
+                            <!--v-if="analyzeAllInProgress"-->
+                            <!--class="stop-analysis-button"-->
+                            <!--@click="onStopAnalysis" small raised-->
+                            <!--v-tooltip.top-center="`Stop analysis`" >-->
+                        <!--<v-icon>stop</v-icon>-->
+                    <!--</v-btn>-->
+
+
+                    <!--<div id="call-variants-dropdown"-->
+                         <!--v-if="isLoaded && hasAlignments"-->
+                    <!--&gt;-->
+                        <!--<v-menu offset-y>-->
+                            <!--<v-btn raised slot="activator"-->
+                                   <!--v-tooltip.top-center="`Call variants from alignments`">Call variants</v-btn>-->
+                            <!--<v-list>-->
+                                <!--<v-list-tile v-for="action in callVariantsActions" :key="action" @click="onCallVariants(action)">-->
+                                    <!--<v-list-tile-title>{{ action }}</v-list-tile-title>-->
+                                <!--</v-list-tile>-->
+                            <!--</v-list>-->
+                        <!--</v-menu>-->
+                    <!--</div>-->
+
+                    <!--<v-btn-->
+                            <!--v-if="callAllInProgress"-->
+                            <!--class="stop-analysis-button"-->
+                            <!--@click="onStopAnalysis" small raised-->
+                            <!--v-tooltip.top-center="`Stop calling variants`" >-->
+                        <!--<v-icon>stop</v-icon>-->
+                    <!--</v-btn>-->
+
+                    <v-btn id="optional-button"
                             v-if="isLoaded"
-                            class="level-edu"
-                            raised
-                            @click="onAnalyzeAll"
-                            v-tooltip.top-center="`Analyze variants in all genes`" >
-                        Analyze all
+                            flat
+                            v-tooltip.top-center="`Flip toggles to display tracks`" >
+                        Optional Tracks
                     </v-btn>
 
-
-                    <v-btn
-                            v-if="analyzeAllInProgress"
-                            class="stop-analysis-button"
-                            @click="onStopAnalysis" small raised
-                            v-tooltip.top-center="`Stop analysis`" >
-                        <v-icon>stop</v-icon>
-                    </v-btn>
-
-
-                    <div id="call-variants-dropdown"
-                         v-if="isLoaded && hasAlignments"
-                    >
-                        <v-menu offset-y>
-                            <v-btn raised slot="activator"
-                                   v-tooltip.top-center="`Call variants from alignments`">Call variants</v-btn>
-                            <v-list>
-                                <v-list-tile v-for="action in callVariantsActions" :key="action" @click="onCallVariants(action)">
-                                    <v-list-tile-title>{{ action }}</v-list-tile-title>
-                                </v-list-tile>
-                            </v-list>
-                        </v-menu>
-                    </div>
-
-                    <v-btn
-                            v-if="callAllInProgress"
-                            class="stop-analysis-button"
-                            @click="onStopAnalysis" small raised
-                            v-tooltip.top-center="`Stop calling variants`" >
-                        <v-icon>stop</v-icon>
-                    </v-btn>
-
-                    <v-switch class="first-optional-track-switch"
+                    <v-switch class="optional-track-switch"
                               v-if=" isLoaded && !isEduMode && !isBasicMode"
                               label="ClinVar track"
                               v-model="showKnownVariantsCard"

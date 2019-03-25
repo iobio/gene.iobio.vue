@@ -765,7 +765,6 @@ class CohortModel {
 
                 let p2 = self.promiseLoadCoverage(theGene, theTranscript)
                     .then(function () {
-                        debugger;
                         self.setCoverage();
                     });
                 promises.push(p2);
@@ -1549,12 +1548,10 @@ class CohortModel {
                             theResultMap[theModel.relationship] = coverageData;
                             innerResolve();
                         });
-                    })
+                    });
                     promises.push(p);
-
                 }
-            })
-
+            });
             Promise.all(promises)
                 .then(function () {
                     resolve(theResultMap);
