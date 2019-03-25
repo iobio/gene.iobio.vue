@@ -237,7 +237,7 @@
             .header-small
                 overflow-wrap: break-word
                 text-align: left
-                width: 100px
+                width: 120px
                 float: left
                 color: #9c9a9a
                 fill:  #9c9a9a
@@ -853,7 +853,7 @@
 
                         var selectedClazz  = info.model.id === id ? 'selected' : '';
 
-                        var displayName      = info.displayName;
+                        var displayName      = info.model.displayName ? info.model.displayName : sampleName;
                         var row = container.append("div")
                             .attr("class", "ped-info");
 
@@ -865,8 +865,7 @@
                             .attr("class", "header-small ")
                             .html("<span class='ped-label "
                                 + selectedClazz + "'>"
-                                + (displayName !== '' ? (" " + displayName) : '')
-                                + " " + sampleName
+                                + (" " + displayName)
                                 + "</span>"
                                 + (isSomatic === true ? me.AFFECTED_GLYPH : ''));
 
