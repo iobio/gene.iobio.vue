@@ -108,10 +108,10 @@
         .toolbar__title
             font-family: Quicksand
             font-size: 24px
-            margin-right: 5px
+            margin-right: 0px
             margin-left: 5px
             padding-bottom: 5px
-            min-width: 130px
+            min-width: 120px
 
         #phenotype-input, #gene-name-input, #phenolyzer-top-input
             label
@@ -208,6 +208,17 @@
             padding-top: 2px
             color: $nav-text-color
 
+    #beta-title
+        .toolbar__title
+        font-family: Quicksand
+        font-style: italic
+        font-size: 16px
+        margin-right: 5px
+        margin-left: 0px
+        padding-bottom: 15px
+        min-width: 130px
+        color: yellow
+
 </style>
 
 <template>
@@ -221,6 +232,7 @@
             <img src="../../../assets/animations/images/oncoIcon.svg" height="33">
             <v-toolbar-title v-text="title" style="margin-left: 1px">
             </v-toolbar-title>
+            <v-toolbar-title v-text="betaTitle" id="beta-title"></v-toolbar-title>
 
 
             <v-spacer></v-spacer>
@@ -240,8 +252,6 @@
                      target="#search-gene-name" :data="geneModel.allKnownGenes"
                      item-key="gene_name"/>
         </span>
-
-
                 <genes-menu
                         ref="genesMenuRef"
                         v-if="!isEduMode && !isBasicMode"
@@ -663,6 +673,7 @@
             let self = this;
             return {
                 title: 'gene.iobio',    // onco portion is prepended via symbol
+                betaTitle: 'beta',
 
                 lookupGene: {},
                 geneEntered: null,
