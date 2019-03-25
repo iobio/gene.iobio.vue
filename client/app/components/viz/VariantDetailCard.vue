@@ -1150,11 +1150,13 @@
             getRevelClass: function(info) {
                 let self = this;
                 let clazz = "field-value revel-field";
-                self.cohortModel.translator.revelMap.forEach(function(revelRange) {
-                    if (info.revel >= revelRange.min && info.revel < revelRange.max) {
-                        clazz += " " + revelRange.clazz;
-                    }
-                })
+                if (self.cohortModel && self.cohortModel.translator && self.cohortModel.translator.revelMap) {
+                    self.cohortModel.translator.revelMap.forEach(function(revelRange) {
+                        if (info.revel >= revelRange.min && info.revel < revelRange.max) {
+                            clazz += " " + revelRange.clazz;
+                        }
+                    })
+                }
                 return clazz;
             },
             getSiftClass: function(variant) {

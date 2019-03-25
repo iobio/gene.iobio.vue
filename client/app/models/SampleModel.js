@@ -823,7 +823,7 @@ class SampleModel {
         this.bamData = null;
         this.fbData = null;
 
-        if (bamUrl == null || bamUrl.trim() == "") {
+        if (bamUrl == null || bamUrl === "") {
             this.bamUrlEntered = false;
             this.bam = null;
             if (callback) {

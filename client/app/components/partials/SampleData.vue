@@ -307,6 +307,10 @@
                         self.modelInfo.model.onVcfUrlEntered(vcfUrl, tbiUrl, function (success, sampleNames) {
                             if (success) {
                                 self.samples = sampleNames;
+                                self.modelInfo.vcf = vcfUrl;
+                                if (tbiUrl != null || tbiUrl !== '') {
+                                    self.modelInfo.tbi = tbiUrl;
+                                }
                                 self.retrievingIds = false;
                                 if (self.modelInfo.selectedSample && self.samples.indexOf(self.modelInfo.selectedSample) >= 0) {
                                     self.selectedSample = self.modelInfo.selectedSample;
@@ -410,9 +414,9 @@
                     self.modelInfo.model.onBamUrlEntered(bamUrl, baiUrl, function (success) {
                         self.checkingBam = false;
                         if (success) {
-                            self.modelInfo.bam = [bamUrl];
+                            self.modelInfo.bam = bamUrl;
                             if (baiUrl) {
-                                self.modelInfo.bai = [baiUrl];
+                                self.modelInfo.bai = baiUrl;
                             }
                         } else {
                             self.bamError = true;
