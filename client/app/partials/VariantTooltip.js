@@ -24,7 +24,7 @@ export default class VariantTooltip {
   }
 
 
-  fillAndPositionTooltip(tooltip, variant, geneObject, theTranscript, lock, coord, relationship, affectedInfo, cohortMode, maxAlleleCount, html) {
+  fillAndPositionTooltip(tooltip, variant, geneObject, theTranscript, lock, coord, trackId, affectedInfo, cohortMode, maxAlleleCount, html) {
     var me = this;
 
     if (lock) {
@@ -44,7 +44,7 @@ export default class VariantTooltip {
 
     if (html == null) {
       var pinMessage = "click on variant for more details";
-      html = me.formatContent(variant, pinMessage, 'tooltip', geneObject, theTranscript, relationship, lock);
+      html = me.formatContent(variant, pinMessage, 'tooltip', geneObject, theTranscript, trackId, lock);
     }
     tooltip.html(html);
     me.injectVariantGlyphs(tooltip, variant, lock ? '.tooltip-wide' : '.tooltip');
@@ -255,7 +255,7 @@ export default class VariantTooltip {
   }
 
 
-  formatContent(variant, pinMessage, tooltipClazz, geneObject, theTranscript, relationship, lock) {
+  formatContent(variant, pinMessage, tooltipClazz, geneObject, theTranscript, trackId, lock) {
     var me = this;
 
     var info = me.globalApp.utility.formatDisplay(variant, me.translator, me.isEduMode);
@@ -273,7 +273,7 @@ export default class VariantTooltip {
     var clinvarSimpleRow1 = '';
     var clinvarSimpleRow2 = '';
     if (me.isEduMode) {
-      if (info.clinvarSig != "") {
+      if (info.clinvarSig !== "") {
         clinvarSimpleRow1 = me._tooltipWideHeadingRow('Known from research', info.clinvarSig, '2px');
         if (info.phenotype) {
           clinvarSimpleRow2 = me._tooltipWideHeadingSecondRow('', info.phenotype, null, 'tooltip-clinvar-pheno');
@@ -281,8 +281,8 @@ export default class VariantTooltip {
       }
     }
 
-    if (info.clinvarSig != "") {
-      if (variant.clinVarUid != null && variant.clinVarUid != '') {
+    if (info.clinvarSig !== "") {
+      if (variant.clinVarUid != null && variant.clinVarUid !== '') {
         clinvarSimpleRow1 = me._tooltipWideHeadingSecondRow('ClinVar', '<span class="tooltip-clinsig-link0">' + info.clinvarSig + '</span>', null);
         if (info.phenotype) {
           clinvarSimpleRow2 = me._tooltipWideHeadingSecondRow('&nbsp;', info.phenotype, null, 'tooltip-clinvar-pheno');
@@ -290,7 +290,7 @@ export default class VariantTooltip {
 
       } else if (variant.clinvarSubmissions != null && variant.clinvarSubmissions.length > 0) {
         clinvarSimpleRow1 = me._tooltipSimpleClinvarSigRow('ClinVar', info.clinvarSigSummary );
-        clinvarSimpleRow2 = me._tooltipHeaderRow(info.phenotypeSimple != '' ? info.phenotypeSimple : info.phenotype, '', '', '', '', null, 'style=padding-top:0px');
+        clinvarSimpleRow2 = me._tooltipHeaderRow(info.phenotypeSimple !== '' ? info.phenotypeSimple : info.phenotype, '', '', '', '', null, 'style=padding-top:0px');
       }
     }
 
@@ -300,29 +300,33 @@ export default class VariantTooltip {
       vepHighestImpactRowSimple = me._tooltipHeaderRow(info.vepHighestImpactSimple, '', '', '', 'highest-impact-badge');
     }
 
-    var inheritanceModeRow =  variant.inheritance == null || variant.inheritance == '' || variant.inheritance == 'none'
+    var inheritanceModeRow =  variant.isInherited == null || variant.isInherited === ''
                               ? ''
-                    : me._tooltipHeaderRow('<span class="tooltip-inheritance-mode-label">' + me.translator.getInheritanceLabel(variant.inheritance) + ' inheritance</span>', '', '', '', null, 'padding-top:0px;');
+                    : me._tooltipHeaderRow('<span class="tooltip-inheritance-mode-label">' + me.translator.getSomaticLabel(variant.isInherited) + ' </span>', '', '', '', null, 'padding-top:0px;');
 
 
-    var siftLabel = info.sift != ''  && info.sift  != 'unknown'
+    var siftLabel = info.sift !== ''  && info.sift  !== 'unknown'
                     ? 'SIFT ' + info.sift
                     : "";
-    var polyphenLabel = info.polyphen  != '' && info.polyphen != 'unknown'
+    var polyphenLabel = info.polyphen  !== '' && info.polyphen !== 'unknown'
                         ? 'PolyPhen ' + info.polyphen
                         : "";
-    var sep = siftLabel != '' && polyphenLabel != '' ? '&nbsp;&nbsp;&nbsp;&nbsp;' : ''
+    var sep = siftLabel !== '' && polyphenLabel !== '' ? '&nbsp;&nbsp;&nbsp;&nbsp;' : ''
     var siftPolyphenRow = '';
     if (siftLabel || polyphenLabel) {
       siftPolyphenRow = me._tooltipClassedRow(polyphenLabel + sep, 'polyphen', siftLabel, 'sift', 'padding-top:2px;');
     }
 
 
-    var polyphenRowSimple = info.polyphen != "" ? me._tooltipWideHeadingRow('Predicted effect', info.polyphen + ' to protein', '2px') : "";
+    var polyphenRowSimple = info.polyphen !== "" ? me._tooltipWideHeadingRow('Predicted effect', info.polyphen + ' to protein', '2px') : "";
 
-    var genotypeRow = me.isEduMode && me.tourNumber == 2 ? me._tooltipHeaderRow('Genotype', me.globalApp.utility.switchGenotype(variant.eduGenotype), '','')  : "";
+    var genotypeRow = me.isEduMode && me.tourNumber === 2 ? me._tooltipHeaderRow('Genotype', me.globalApp.utility.switchGenotype(variant.eduGenotype), '','')  : "";
 
-    var afRow = me._tooltipMainHeaderRow('Allele Freq', (variant.afHighest == "." ? "0%" : me.globalApp.utility.percentage(variant.afHighest)),'','');
+    var sampleAf = 0;
+    if (parseInt(variant.genotypeDepth) > 0) {
+        sampleAf = parseInt(variant.genotypeAltCount) / parseInt(variant.genotypeDepth);
+    }
+    var afRow = me._tooltipMainHeaderRow('Allele Freq', (sampleAf > 0 ?  me.globalApp.utility.percentage(sampleAf) : '0%'),'','');
 
     if (me.isEduMode) {
       return (
@@ -339,7 +343,8 @@ export default class VariantTooltip {
         + vepHighestImpactRowSimple
         + clinvarSimpleRow1
         + clinvarSimpleRow2 );
-    } else {
+    } else if (trackId === 'matrix') {
+      // Don't show AF if we're hovering over matrix - may be in multiple tracks at diff AFs
       return (
         me._tooltipMainHeaderRow(geneObject ? geneObject.gene_name : "", variant.type ? variant.type.toUpperCase() : "", info.refalt + " " + info.coord, info.dbSnpLink, 'ref-alt')
         + calledVariantRow
@@ -347,20 +352,26 @@ export default class VariantTooltip {
         + vepHighestImpactRowSimple
         + inheritanceModeRow
         + siftPolyphenRow
-        + afRow
-        + (relationship == 'known-variants' ? me._tooltipRow('&nbsp;', info.clinvarLinkKnownVariants, '6px')  : clinvarSimpleRow1)
+        + (trackId === 'known-variants' ? me._tooltipRow('&nbsp;', info.clinvarLinkKnownVariants, '6px')  : clinvarSimpleRow1)
         + clinvarSimpleRow2
         + me._linksRow(variant, pinMessage)
       );
 
-    }
-
-
-
-
+    } else {
+          return (
+              me._tooltipMainHeaderRow(geneObject ? geneObject.gene_name : "", variant.type ? variant.type.toUpperCase() : "", info.refalt + " " + info.coord, info.dbSnpLink, 'ref-alt')
+              + calledVariantRow
+              + me._tooltipMainHeaderRow(info.vepImpact, info.vepConsequence, '', '', 'impact-badge')
+              + vepHighestImpactRowSimple
+              + inheritanceModeRow
+              + siftPolyphenRow
+              + afRow
+              + (trackId === 'known-variants' ? me._tooltipRow('&nbsp;', info.clinvarLinkKnownVariants, '6px')  : clinvarSimpleRow1)
+              + clinvarSimpleRow2
+              + me._linksRow(variant, pinMessage)
+          );
+      }
   }
-
-
 
 
   _linksRow(variant, pinMessage) {

@@ -1807,7 +1807,7 @@ class SampleModel {
             var current = variant;
             subfields.forEach(function (subfield) {
                 current = current[subfield];
-            })
+            });
             return current;
         } else {
             return null;

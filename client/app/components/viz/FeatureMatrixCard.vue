@@ -383,7 +383,7 @@ export default {
         self.selectedTranscript,
         lock,
         coord,
-        'proband',
+        'matrix',
         self.featureMatrixModel.cohort.affectedInfo,
         self.featureMatrixModel.cohort.mode,
         self.featureMatrixModel.cohort.maxAlleleCount);

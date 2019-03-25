@@ -119,6 +119,10 @@ export default class Translator {
     return map ? map.display : inheritance;
   }
 
+  getSomaticLabel(isInherited) {
+      return isInherited === true ? 'inherited' : 'somatic';
+  }
+
   showHighestImpactSymbol(selection, options) {
     var variant = d3.select(selection.node().parentNode).datum();
     var vepHighestImpacts = options.self.globalApp.utility.getNonCanonicalHighestImpactsVep(variant, options.self.impactMap);

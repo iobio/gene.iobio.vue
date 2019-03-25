@@ -876,7 +876,7 @@
 
 
                         var barContainer = row.append("div")
-                            .attr("class", "allele-count-bar")
+                            .attr("class", "allele-count-bar");
                         if (genotype) {
                             me._appendAlleleCountSVG(barContainer,
                                 genotype.altCount,

@@ -377,6 +377,7 @@ export default {
     isBasicMode: null,
     clearZoom: null,
     sampleModel: null,
+    canonicalSampleIds: null,
     annotationScheme: null,
     classifyVariantSymbolFunc: null,
 
@@ -529,9 +530,23 @@ export default {
                                            {left:   ['middle', 'top',  'bottom']},
                                            {bottom: ['center', 'right','left'  ]} ] };
 
+      // If we're displaying a tooltip for a canonical track, want to get variant from THIS track to show correct AF
+      // (the sent in variant is from the s0 track)
+      let trackVariant = variant;
+      if (self.canonicalSampleIds && self.canonicalSampleIds.indexOf(self.sampleModel.id) >= 0) {
+          let matchingFeat = null;
+          if (self.sampleModel.vcfData && self.sampleModel.features) {
+              matchingFeat = self.sampleModel.vcfData.features.filter((feat) => {
+                  return feat.id === variant.id;
+              })
+          }
+          if (matchingFeat) {
+              trackVariant = matchingFeat;
+          }
+      }
 
       self.variantTooltip.fillAndPositionTooltip(tooltip,
-        variant,
+        trackVariant,
         self.selectedGene,
         self.selectedTranscript,
         lock,

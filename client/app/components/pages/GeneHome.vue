@@ -281,6 +281,7 @@
                         :isBasicMode="isBasicMode"
                         :clearZoom="clearZoom"
                         :sampleModel="model"
+                        :canonicalSampleIds="canonicalSampleIds"
                         :classifyVariantSymbolFunc="model.id === 'known-variants' ? model.classifyByClinvar : model.classifyByImpact"
                         :variantTooltip="variantTooltip"
                         :selectedGene="selectedGene"
@@ -683,9 +684,16 @@
                 } else {
                     return null;
                 }
+            },
+            canonicalSampleIds: function() {
+                let ids = [];
+                if (this.cohortModel && this.cohortModel.getCanonicalModels() != null) {
+                    this.cohortModel.getCanonicalModels().forEach((model) => {
+                        ids.push(model.id);
+                    })
+                }
+                return ids;
             }
-
-
         },
 
         watch: {
