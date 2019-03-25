@@ -765,6 +765,7 @@ class CohortModel {
 
                 let p2 = self.promiseLoadCoverage(theGene, theTranscript)
                     .then(function () {
+                        debugger;
                         self.setCoverage();
                     });
                 promises.push(p2);
@@ -1507,7 +1508,7 @@ class CohortModel {
 
             let promises = [];
             self.sampleModels.forEach(function (model) {
-                if (model.isBamLoaded() && model.entryDataChanged) {
+                if (model.isBamLoaded() /*&& model.entryDataChanged*/) {
                     if (showProgress) {
                         //vc.showBamProgress("Analyzing coverage in coding regions");
                     }
@@ -1539,7 +1540,7 @@ class CohortModel {
             let promises = [];
             let theResultMap = {};
             self.getCanonicalModels().forEach(function (model) {
-                if (model.isBamLoaded() && model.entryDataChanged) {
+                if (model.isBamLoaded() /*&& model.entryDataChanged*/) {
                     model.inProgress.loadingCoverage = true;
                     var p = new Promise(function (innerResolve, innerReject) {
                         var theModel = model;
