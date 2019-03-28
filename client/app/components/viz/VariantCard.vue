@@ -151,6 +151,8 @@
 
   <v-card tile id="variant-card" class="app-card">
     <div>
+      <v-icon v-if="sampleModel.isTumor && sampleModel.loadedVariants  && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode">flash_on</v-icon>
+      <v-icon style="margin-top: -23px" v-if="!sampleModel.isTumor && sampleModel.loadedVariants  && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode">panorama_fish_eye</v-icon>
       <span id="sample-label" v-bind:class="sampleModel.id">
         {{ sampleLabel }}
       </span>
