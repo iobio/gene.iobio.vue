@@ -51,8 +51,6 @@ class CohortModel {
         this.demoBams = this.getDemoBams();
         this.demoModelInfos = this.getDemoModelInfos();
         this.demoGenes = ['TP53', 'APC', 'BRCA2', 'TGFB1', 'RB1'];
-
-
     }
 
     getDemoVcfs() {
@@ -386,6 +384,7 @@ class CohortModel {
             let vm = new SampleModel(self.globalApp);
             vm.init(self);
             vm.id = modelInfo.id;
+            vm.order = modelInfo.order;
             vm.displayName = modelInfo.displayName;
             vm.isTumor = modelInfo.isTumor;
             vm.isBasicMode = self.isBasicMode;
@@ -663,19 +662,6 @@ class CohortModel {
     /* Returns first model in sample array that is normal, not tumor. */
     getNormalModel() {
         let self = this;
-        // let retModel = null;
-        //
-        // for (let i = 0; i < self.sampleModels.length; i++) {
-        //     if (!(self.sampleModels[i].isTumor)) {
-        //         retModel = self.sampleModels[i];
-        //         break;
-        //     }
-        // }
-        // if (retModel == null) {
-        //     console.log('No normal models available in getNormalModel');
-        // }
-        // return retModel;
-
         return self.sampleMap['s0'].model;
     }
 
@@ -685,6 +671,38 @@ class CohortModel {
             return model.id !== 'known-variants' && model.id !== 'cosmic-variants';
         });
         return models;
+    }
+
+    /* Returns all sample models where isTumor = true, in order of track display */
+    getOrderedTumorModels() {
+        let self = this;
+        let tumorModels = [];
+        self.getCanonicalModels().forEach((model) => {
+            if (model.isTumor) {
+                tumorModels.push(model);
+            }
+        });
+
+        tumorModels.sort((a,b) => {
+            return a.order - b.order;
+        });
+        return tumorModels;
+    }
+
+    /* Returns all sample models where is Tumor = false, in order of track display */
+    getOrderedNormalModel() {
+        let self = this;
+        let normalModels = [];
+        self.getCanonicalModels().forEach((model) => {
+            if (!model.isTumor) {
+                normalModels.push(model);
+            }
+        });
+
+        normalModels.sort((a,b) => {
+            return a.order - b.order;
+        });
+        return normalModels;
     }
 
     /* Removes any models with ids that are not on the provided list */

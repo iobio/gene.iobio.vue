@@ -9,8 +9,6 @@
 #bam-track
   margin-top: -5px
 
-
-
 #variant-card
   #sample-label
     vertical-align: top
@@ -153,8 +151,13 @@
 
   <v-card tile id="variant-card" class="app-card">
     <div>
-      <v-icon v-if="sampleModel.isTumor && sampleModel.loadedVariants  && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode">flash_on</v-icon>
-      <v-icon v-bind:class="[sampleModel.id === 's0' ? 'symbol-spacing-styling' : '']" v-if="!sampleModel.isTumor && sampleModel.loadedVariants  && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode">panorama_fish_eye</v-icon>
+      <v-icon v-if="sampleModel.isTumor && sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode"
+        v-bind:style="{color: trackColor}">
+        flash_on</v-icon>
+      <!--Need a little space here for s0 track due to zoom toggle making div taller-->
+      <v-icon v-bind:class="[sampleModel.id === 's0' ? 'symbol-spacing-styling' : '']" v-if="!sampleModel.isTumor && sampleModel.loadedVariants  && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode"
+              v-bind:style="{color: trackColor}">
+        fiber_manual_record</v-icon>
       <span id="sample-label" v-bind:class="sampleModel.id">
         {{ sampleLabel }}
       </span>
@@ -795,6 +798,31 @@ export default {
       } else {
           return false;
       }
+    },
+    trackColor: function() {
+        let self = this;
+
+        let models = null;
+        if (self.sampleModel.isTumor) {
+            models = self.sampleModel.getCohortModel().getOrderedTumorModels();
+        } else {
+            models = self.sampleModel.getCohortModel().getOrderedNormalModel();
+        }
+        if (models) {
+            let orders = [];
+            models.forEach((model) => {
+                orders.push(model.order);
+            });
+            let colorIdx = orders.indexOf(self.sampleModel.order);
+            if (colorIdx >= 0) {
+                let color = self.sampleModel.getCohortModel().globalApp.utility.getTrackColor(colorIdx, self.sampleModel.isTumor);
+                return color;
+            } else {
+                return 'gray';
+            }
+        } else {
+            return 'gray';
+        }
     }
   },
 

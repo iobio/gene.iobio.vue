@@ -926,6 +926,18 @@ class Util {
 
     return info;
   }
+
+  getTrackColor(idx, isTumor) {
+    let tumorColors = ['#7f1010', '#ce0e4b', '#ce8510', '#ef0000'];
+    let normalColors = ['#10487f', '#107f7f', '#487f10', '#10117f'];
+
+    if (isTumor) {
+      return tumorColors[idx];
+    } else {
+      return normalColors[idx];
+    }
+  }
+
 }
 export default Util
 

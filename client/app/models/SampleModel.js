@@ -27,6 +27,7 @@ class SampleModel {
         this.getBamRefName = null;
 
         this.id = '';               // Must be unique, format s0, s1... used to coordinate order in FilesMenu
+        this.order = -1;            // The order in which the track is displayed vertically, relative to all other tracks, both normal and tumor
         this.displayName = '';      // Display name entered in filesMenu
         this.selectedSample = '';   // The sample id corresponding to vcf column we're analyzing
         this.vcfRefNamesMap = {};
@@ -153,7 +154,6 @@ class SampleModel {
         return this.cohort.cacheHelper;
     }
 
-
     getGenomeBuildHelper() {
         return this.cohort.genomeBuildHelper;
     }
@@ -168,6 +168,12 @@ class SampleModel {
         } else {
             return this.cohort.annotationScheme;
         }
+    }
+
+    // A little bit of faking private props
+    getCohortModel() {
+        let self = this;
+        return self.cohort;
     }
 
 
