@@ -59,9 +59,9 @@
       fill:  $text-color
       font-size: 12px
 
-  .called-variant
+  .somatic-variant
     font-size: 15px
-    color: $called-variant-color
+    color: $somatic-variant-color
     vertical-align: top
 
   .legend-text
@@ -162,40 +162,40 @@
         </legend-icon>
 
       </div>
-      <div v-if="!isBasicMode" style="text-align:left;width:150px;margin-right:10px;margin-bottom:15px">
-        <div class="legend-label" style="width:130px">Inheritance</div>
+      <!--<div v-if="!isBasicMode" style="text-align:left;width:150px;margin-right:10px;margin-bottom:15px">-->
+        <!--<div class="legend-label" style="width:130px">Inheritance</div>-->
 
-        <legend-icon
-         icon="autosomal dominant"
-         width="16"
-         height="16"
-         label="Autosomal dominant">
-        </legend-icon>
-        <legend-icon
-         icon="denovo"
-         width="16"
-         height="16"
-         label="De novo">
-        </legend-icon>
-        <legend-icon
-         icon="recessive"
-         width="16"
-         height="16"
-         label="Recessive">
-        </legend-icon>
-        <legend-icon
-         icon="x-linked"
-         width="16"
-         height="16"
-         label="X-linked">
-        </legend-icon>
-        <legend-icon
-         icon="compound-het"
-         width="16"
-         height="16"
-         label="Compound het">
-        </legend-icon>
-     </div>
+        <!--<legend-icon-->
+         <!--icon="autosomal dominant"-->
+         <!--width="16"-->
+         <!--height="16"-->
+         <!--label="Autosomal dominant">-->
+        <!--</legend-icon>-->
+        <!--<legend-icon-->
+         <!--icon="denovo"-->
+         <!--width="16"-->
+         <!--height="16"-->
+         <!--label="De novo">-->
+        <!--</legend-icon>-->
+        <!--<legend-icon-->
+         <!--icon="recessive"-->
+         <!--width="16"-->
+         <!--height="16"-->
+         <!--label="Recessive">-->
+        <!--</legend-icon>-->
+        <!--<legend-icon-->
+         <!--icon="x-linked"-->
+         <!--width="16"-->
+         <!--height="16"-->
+         <!--label="X-linked">-->
+        <!--</legend-icon>-->
+        <!--<legend-icon-->
+         <!--icon="compound-het"-->
+         <!--width="16"-->
+         <!--height="16"-->
+         <!--label="Compound het">-->
+        <!--</legend-icon>-->
+     <!--</div>-->
 
 
 
@@ -300,29 +300,28 @@
 
       </div>
 
-      <div v-if="!isBasicMode" style="width:70px;margin-right:10px;margin-bottom:15px">
-        <div class="legend-label">Allele Frequency</div>
-        <legend-icon
-          icon="af"
-          width="12"
-          height="12"
-          level="high"
-          label="< 5%">
-        </legend-icon>
-      </div>
+      <!--<div v-if="!isBasicMode" style="width:70px;margin-right:10px;margin-bottom:15px">-->
+        <!--<div class="legend-label">Allele Frequency</div>-->
+        <!--<legend-icon-->
+          <!--icon="af"-->
+          <!--width="12"-->
+          <!--height="12"-->
+          <!--level="high"-->
+          <!--label="< 5%">-->
+        <!--</legend-icon>-->
+      <!--</div>-->
 
       <div v-if="!isBasicMode" style="width:120px;margin-right:10px;">
-        <div class="legend-label">Called variant</div>
+        <div class="legend-label">Somatic variants</div>
         <legend-icon
-          icon="called-variant"
-          label="Variants called from alignments"
+          icon="somatic-variant"
+          label="Variants not found in any normal sample"
           wrapLabel="true">
         </legend-icon>
       </div>
 
       <div v-if="!isBasicMode" style="width:80px;margin-right:0px;">
           <div class="legend-label">Coverage</div>
-
           <legend-icon
             icon="coverage"
             width="13"
@@ -331,7 +330,6 @@
             wrapLabel="true"
             label="Insufficient coverage in exons">
           </legend-icon>
-
       </div>
 
 
@@ -377,62 +375,62 @@
         </legend-icon>
       </div>
 
-     <div v-if="!isBasicMode" style="width:150px;margin-right:10px;margin-bottom:15px">
-       <div class="legend-label">Affected Siblings</div>
-        <legend-icon id="thumbs-green-symbol"
-         icon="thumbs-up"
-         width="14"
-         height="14"
-         wrapWidth="130"
-         wrapLabel="true"
-         label="All affected sibs have variant">
-        </legend-icon>
-        <legend-icon
-         icon="thumbs-down"
-         width="14"
-         height="14"
-         wrapLabel="true"
-         wrapWidth="130"
-         label="None of affected sibs have variant">
-        </legend-icon>
-        <legend-icon
-         icon="question-mark"
-         width="14"
-         height="14"
-         wrapWidth="130"
-         wrapLabel="true"
-         label="Only some affected sibs have variant">
-        </legend-icon>
-      </div>
+     <!--<div v-if="!isBasicMode" style="width:150px;margin-right:10px;margin-bottom:15px">-->
+       <!--<div class="legend-label">Affected Siblings</div>-->
+        <!--<legend-icon id="thumbs-green-symbol"-->
+         <!--icon="thumbs-up"-->
+         <!--width="14"-->
+         <!--height="14"-->
+         <!--wrapWidth="130"-->
+         <!--wrapLabel="true"-->
+         <!--label="All affected sibs have variant">-->
+        <!--</legend-icon>-->
+        <!--<legend-icon-->
+         <!--icon="thumbs-down"-->
+         <!--width="14"-->
+         <!--height="14"-->
+         <!--wrapLabel="true"-->
+         <!--wrapWidth="130"-->
+         <!--label="None of affected sibs have variant">-->
+        <!--</legend-icon>-->
+        <!--<legend-icon-->
+         <!--icon="question-mark"-->
+         <!--width="14"-->
+         <!--height="14"-->
+         <!--wrapWidth="130"-->
+         <!--wrapLabel="true"-->
+         <!--label="Only some affected sibs have variant">-->
+        <!--</legend-icon>-->
+      <!--</div>-->
 
 
-     <div v-if="!isBasicMode" style="width:150px;margin-right:10px;margin-bottom:15px">
-       <div class="legend-label">Unaffected Siblings</div>
-        <legend-icon id="thumbs-green-symbol"
-         icon="thumbs-up"
-         width="14"
-         height="14"
-         wrapWidth="130"
-         wrapLabel="true"
-         label="None of unaffected sibs have variant">
-        </legend-icon>
-        <legend-icon
-         icon="thumbs-down"
-         width="14"
-         height="14"
-         wrapWidth="130"
-         wrapLabel="true"
-         label="All unaffected sibs have variant">
-        </legend-icon>
-        <legend-icon
-         icon="question-mark"
-         width="14"
-         height="14"
-         wrapWidth="130"
-         wrapLabel="true"
-         label="Some unaffected sibs have variant">
-        </legend-icon>
-      </div>
+     <!--<div v-if="!isBasicMode" style="width:150px;margin-right:10px;margin-bottom:15px">-->
+       <!--<div class="legend-label">Unaffected Siblings</div>-->
+        <!--<legend-icon id="thumbs-green-symbol"-->
+         <!--icon="thumbs-up"-->
+         <!--width="14"-->
+         <!--height="14"-->
+         <!--wrapWidth="130"-->
+         <!--wrapLabel="true"-->
+         <!--label="None of unaffected sibs have variant">-->
+        <!--</legend-icon>-->
+        <!--<legend-icon-->
+         <!--icon="thumbs-down"-->
+         <!--width="14"-->
+         <!--height="14"-->
+         <!--wrapWidth="130"-->
+         <!--wrapLabel="true"-->
+         <!--label="All unaffected sibs have variant">-->
+        <!--</legend-icon>-->
+        <!--<legend-icon-->
+         <!--icon="question-mark"-->
+         <!--width="14"-->
+         <!--height="14"-->
+         <!--wrapWidth="130"-->
+         <!--wrapLabel="true"-->
+         <!--label="Some unaffected sibs have variant">-->
+        <!--</legend-icon>-->
+      <!--</div>-->
 
       <div v-if="!isBasicMode" v-show="false" style="width:150px;margin-right:10px;margin-bottom:10px">
         <div class="legend-label">PolyPhen</div>

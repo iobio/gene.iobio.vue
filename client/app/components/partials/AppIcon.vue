@@ -388,7 +388,7 @@
       </svg>
 
 
-      <v-icon v-if="icon == 'called-variant'" class="called-variant">
+      <v-icon v-if="icon == 'somatic-variant'" class="somatic-variant">
         check_circle
       </v-icon>
 
