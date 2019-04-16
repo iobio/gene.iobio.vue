@@ -322,15 +322,20 @@
                                         model.displayName = model.id;
                                     }
                                 });
+                                // let performAnalyzeAll = self.autofillAction ? true : false;
+                                self.inProgress = false;
+
+                                self.$emit("on-files-loaded", null);
+                                self.showFilesMenu = false;
                             })
                     })
-                    .then(function () {
-                        // let performAnalyzeAll = self.autofillAction ? true : false;
-                        self.inProgress = false;
-
-                        self.$emit("on-files-loaded", null);
-                        self.showFilesMenu = false;
-                    });
+                    // .then(function () {
+                    //     // let performAnalyzeAll = self.autofillAction ? true : false;
+                    //     self.inProgress = false;
+                    //
+                    //     self.$emit("on-files-loaded", null);
+                    //     self.showFilesMenu = false;
+                    // });
             },
             onCancel: function () {
                 this.showFilesMenu = false;
@@ -523,6 +528,9 @@
                             self.cohortModel.sampleModels[i] = currModel;
                         }
                     }
+                    // Set flag to get loading rolling
+                    self.cohortModel.isLoaded = true;
+
                     // Update view from gene home
                     self.$emit('update-samples');
 

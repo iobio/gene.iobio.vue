@@ -198,7 +198,6 @@
                             </v-tab>
 
                             <v-tab-item v-if="!isBasicMode" style="margin-top:5px;margin-bottom:0px;overflow-y:auto">
-
                                 <feature-matrix-card style="min-width:300px"
                                                      ref="featureMatrixCardRef"
                                                      v-bind:class="{ hide: !cohortModel || !cohortModel.isLoaded || !featureMatrixModel || !featureMatrixModel.rankedVariants }"
@@ -217,8 +216,6 @@
                                                      @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj)"
                                 >
                                 </feature-matrix-card>
-
-
                             </v-tab-item>
                             <v-tab-item style="margin-top:0px;margin-bottom:0px;overflow-y:auto">
                                 <variant-detail-card
