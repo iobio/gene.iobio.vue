@@ -313,10 +313,14 @@
                     <v-switch class="optional-track-switch"
                               v-if=" isLoaded && !isEduMode && !isBasicMode"
                               label="COSMIC track"
+                              v-on:click="displayCosmicDialog"
                               v-model="showCosmicVariantsCard"
                     >
                     </v-switch>
-
+                    <cosmic-confirmation-dialog
+                            ref="cosmicConfirmDialogRef"
+                            @confirm-cosmic-track="confirmCosmicTrack">
+                    </cosmic-confirmation-dialog>
 
                     <!--<filter-badges-->
                             <!--ref="filterBadgesRef"-->
@@ -392,10 +396,12 @@
     import GeneBadge from '../partials/GeneBadge.vue'
     import FilterBadges from '../partials/FilterBadges.vue'
     import GenesMenu from '../partials/GenesMenu.vue'
+    import CosmicConfirmationDialog from "../partials/CosmicConfirmationDialog.vue";
 
     export default {
         name: 'genes-card',
         components: {
+            CosmicConfirmationDialog,
             GeneBadge,
             FilterBadges,
             GenesMenu
@@ -446,8 +452,9 @@
 
                 loadedCount: 0,
                 calledCount: 0,
-                totalCount: 0
-
+                totalCount: 0,
+                confirmCosmicUse: false,
+                agreedToCosmic: false
             }
         },
         methods: {
@@ -627,8 +634,25 @@
             },
             onFilterSettingsClosed: function() {
                 this.$emit('filter-settings-closed');
+            },
+            displayCosmicDialog: function() {
+                let self = this;
+                if (!self.showCosmicVariantsCard && !self.agreedToCosmic) {
+                    self.$refs.cosmicConfirmDialogRef.displayDialog();
+                } else if (!self.showCosmicVariantsCard && self.agreedToCosmic) {
+                    self.confirmCosmicTrack();
+                }
+                else {
+                    self.showCosmicVariantsCard = false;
+                    self.$emit('show-cosmic-variants', false);
+                }
+            },
+            confirmCosmicTrack: function() {
+                let self = this;
+                self.agreedToCosmic = true;
+                self.showCosmicVariantsCard = true;
+                self.$emit('show-cosmic-variants', true);
             }
-
         },
         mounted: function() {
             this.updateGeneSummaries();
@@ -651,9 +675,6 @@
             },
             showKnownVariantsCard: function() {
                 this.$emit("show-known-variants", this.showKnownVariantsCard);
-            },
-            showCosmicVariantsCard: function() {
-                this.$emit("show-cosmic-variants", this.showCosmicVariantsCard);
             }
         }
     }

@@ -88,7 +88,7 @@
 
 <template>
     <div id="known-variants-toolbar">
-      <div style="width:285px;float:left;padding-top:10px;margin-top:0px;margin-right:10px">
+      <div style="width:285px;padding-top:10px;margin-top:0px;margin-right:10px;float:left">
         <v-radio-group v-model="viz" row>
             <v-radio label="Variants" value="variants"></v-radio>
             <v-radio label="Counts" value="histo"></v-radio>

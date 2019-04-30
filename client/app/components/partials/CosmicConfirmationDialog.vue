@@ -19,15 +19,16 @@
     <v-layout row justify-center>
         <v-dialog v-model="dialog" persistent max-width="500">
             <v-toolbar>
-                <v-toolbar-title style="color: white; padding-left: 6px">Delete Track</v-toolbar-title>
+                <v-toolbar-title style="color: white; padding-left: 6px">Terms of Use</v-toolbar-title>
             </v-toolbar>
             <v-card>
                 <v-card-text>
-                    Are you sure you want to delete this track?
+                    <div>By viewing COSMIC variants, you agree to the following use conditions of the Wellcome Trust
+                        Sanger Institute: </div>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="cohort-navy" @click.native="confirmDeleteTrack">Yes</v-btn>
+                    <v-btn color="cohort-navy" @click.native="confirmCosmicUse">Yes</v-btn>
                     <v-btn color="cohort-navy" @click.native="cancelDialog">Cancel</v-btn>
                 </v-card-actions>
             </v-card>
@@ -36,7 +37,7 @@
 </template>
 <script>
     export default {
-        name: 'confirmation-dialog',
+        name: 'cosmic-confirmation-dialog',
         components: {},
         props: {},
         data() {
@@ -51,10 +52,10 @@
                 let self = this;
                 self.dialog = true;
             },
-            confirmDeleteTrack: function() {
+            confirmCosmicUse: function() {
                 let self = this;
                 self.dialog = false;
-                self.$emit('confirm-delete-track');
+                self.$emit('confirm-cosmic-track');
             },
             cancelDialog: function() {
                 let self = this;
