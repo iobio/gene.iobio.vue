@@ -40,7 +40,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GenesCard.vue" pinned="false" current-in-tab="true">
+      <file leaf-file-name="GenesCard.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/viz/GenesCard.vue">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="370">
@@ -52,11 +52,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CosmicConfirmationDialog.vue" pinned="false" current-in-tab="false">
+      <file leaf-file-name="CosmicConfirmationDialog.vue" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/app/components/partials/CosmicConfirmationDialog.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="48" column="21" lean-forward="true" selection-start-line="48" selection-start-column="21" selection-end-line="48" selection-end-column="21" />
+            <state relative-caret-position="79">
+              <caret line="5" column="24" lean-forward="true" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
               <folding>
                 <element signature="n#style#0;n#v-toolbar-title#0;n#v-toolbar#0;n#v-dialog#0;n#v-layout#0;n#template#0;n#!!top" expanded="true" />
               </folding>
@@ -105,6 +105,15 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="FilesMenu.vue" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="283">
+              <caret line="144" column="44" lean-forward="true" selection-start-line="144" selection-start-column="44" selection-end-line="144" selection-end-column="44" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="Welcome.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/viz/Welcome.vue">
           <provider selected="true" editor-type-id="text-editor">
@@ -135,10 +144,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>known-var</find>
-      <find>float</find>
-      <find>left</find>
-      <find>&lt;known</find>
       <find>bottom</find>
       <find>border-</find>
       <find>&lt;know</find>
@@ -165,6 +170,10 @@
       <find>show-cosmic</find>
       <find>onShowCosmicVariantsCard</find>
       <find>confirmCosmicTrack</find>
+      <find>\</find>
+      <find>dragArea</find>
+      <find>disabled</find>
+      <find>div</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -227,10 +236,10 @@
         <option value="$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue" />
         <option value="$PROJECT_DIR$/client/app/components/viz/VariantCard.vue" />
         <option value="$PROJECT_DIR$/client/app/components/partials/KnownVariantsToolbar.vue" />
-        <option value="$PROJECT_DIR$/client/app/components/partials/CosmicConfirmationDialog.vue" />
         <option value="$PROJECT_DIR$/client/app/components/partials/ConfirmationDialog.vue" />
         <option value="$PROJECT_DIR$/client/app/components/pages/GeneHome.vue" />
         <option value="$PROJECT_DIR$/client/app/components/viz/GenesCard.vue" />
+        <option value="$PROJECT_DIR$/client/app/components/partials/CosmicConfirmationDialog.vue" />
       </list>
     </option>
   </component>
@@ -404,12 +413,12 @@
       <workItem from="1553794995145" duration="21575000" />
       <workItem from="1555450436226" duration="19063000" />
       <workItem from="1556305652286" duration="2103000" />
-      <workItem from="1556576911209" duration="14659000" />
+      <workItem from="1556576911209" duration="18590000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="566274000" />
+    <option name="totallyTimeSpent" value="570205000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="6" />
@@ -773,13 +782,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="261">
-          <caret line="133" column="81" selection-start-line="133" selection-start-column="81" selection-end-line="133" selection-end-column="81" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="288">
@@ -794,16 +796,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="139">
           <caret line="555" column="54" lean-forward="true" selection-start-line="555" selection-start-column="54" selection-end-line="555" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/partials/CosmicConfirmationDialog.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="48" column="21" lean-forward="true" selection-start-line="48" selection-start-column="21" selection-end-line="48" selection-end-column="21" />
-          <folding>
-            <element signature="n#style#0;n#v-toolbar-title#0;n#v-toolbar#0;n#v-dialog#0;n#v-layout#0;n#template#0;n#!!top" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -857,6 +849,23 @@
           <caret line="642" column="46" lean-forward="true" selection-start-line="642" selection-start-column="46" selection-end-line="642" selection-end-column="46" />
           <folding>
             <element signature="e#13348#13397#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="283">
+          <caret line="144" column="44" lean-forward="true" selection-start-line="144" selection-start-column="44" selection-end-line="144" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/partials/CosmicConfirmationDialog.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="79">
+          <caret line="5" column="24" lean-forward="true" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
+          <folding>
+            <element signature="n#style#0;n#v-toolbar-title#0;n#v-toolbar#0;n#v-dialog#0;n#v-layout#0;n#template#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
