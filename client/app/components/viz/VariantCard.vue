@@ -11,9 +11,10 @@
         #sample-label
             vertical-align: top
             display: inline-block
-            min-width: 100px
             max-width: 200px
             padding-top: 2px
+            margin-left: -3px
+            color: $text-color
             &.known-variants
                 min-width: 100px
                 max-width: 100px
@@ -51,8 +52,10 @@
                 fill: rgba(159, 159, 159, 0.63)
                 stroke: rgb(159, 159, 159)
         .zoom-switch
-            float: left
             display: inline-block
+            pointer-events: auto
+            cursor: auto
+            padding-top: 2px
             label
                 padding-left: 7px
                 line-height: 18px
@@ -119,16 +122,20 @@
                         stroke-width: .5px
 
         .expansion-panel__header
-            padding-left: 10px !important
-            padding-right: 10px !important
-            padding-bottom: 1px !important
+            padding: 10px 10px !important
+            pointer-events: none
+            cursor: default
             i
                 vertical-align: top
+            .header__icon
+                pointer-events: auto
+                cursor: pointer
+
 </style>
 
 <template>
-    <v-expansion-panel expand class="app-card" id="variant-card">
-        <v-expansion-panel-content  value="openState">
+    <v-expansion-panel expand class="app-card" id="variant-card" v-model="openState">
+        <v-expansion-panel-content :value="openState">
             <div slot="header">
                 <v-icon v-if="sampleModel.isTumor && sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode"
                         v-bind:style="{color: trackColor, 'padding-top': '2px'}">
@@ -138,7 +145,7 @@
                         v-bind:style="{color: trackColor}">
                     fiber_manual_record
                 </v-icon>
-                <span id="sample-label" v-bind:class="sampleModel.id">
+                <span id="sample-label">
                         {{ sampleLabel }}
                     </span>
                 <v-badge id="loaded-count"
@@ -158,16 +165,17 @@
                     <span slot="badge"> {{ coverageDangerRegions.length }} </span>
                     Exons with insufficient coverage
                 </v-badge>
-            </div>
-            <v-card :style="{padding: '5px 10px'}">
                 <v-switch
                         v-if="sampleModel.id === 's0' && sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode"
-                        class="zoom-switch mt-1" style="max-width:80px"
+                        v-on:click.self.stop.prevent="toggleZoom"
+                        class="zoom-switch ml-4" style="max-width:80px"
                         label="Zoom"
                         v-model="showZoom"
                 >
                 </v-switch>
-
+                <span v-if="showZoom" class=" label label-warning text-xs-center">{{ zoomMessage }}</span>
+            </div>
+            <v-card :style="{padding: '5px 10px'}">
                 <known-variants-toolbar
                         v-if="sampleModel.id === 'known-variants'"
                         @knownVariantsVizChange="onKnownVariantsVizChange"
@@ -206,7 +214,6 @@
                             <img src="../../../assets/images/wheel.gif">
                         </div>
                     </div>
-                    <span v-if="showZoom" class=" label label-warning text-xs-center">{{ zoomMessage }}</span>
                 </div>
 
                 <div style="width:100%">
@@ -720,6 +727,13 @@
             // NOTE: this only refreshes loaded variant tracks for now
             redrawTrack: function () {
                 this.$refs.variantVizRef.draw();
+            },
+            toggleZoom: function() {
+                let self = this;
+                self.showZoom = !self.showZoom;
+                if (self.showZoom === true)
+                    self.openState[0] = true;
+                    self.openState = self.openState.slice();
             }
         },
 
@@ -799,10 +813,10 @@
                 }
             }
         },
-
         watch: {
             showZoom: function () {
                 if (!this.showZoom) {
+                    // make sure expansion panel is open
                     this.zoomMessage = "Drag to zoom";
                     this.$emit('gene-region-zoom-reset');
                 }
