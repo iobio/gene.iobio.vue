@@ -473,6 +473,7 @@ class FeatureMatrixModel {
                 var mappedValue = null;
                 var mappedClazz = null;
                 var symbolFunction = null;
+                var sampleTrackColor = null;    // Only used for variable colors for sample rows
                 var bindTo = null;
                 var isText = false;
                 var clickFunction = matrixRow.clickFunction;
@@ -510,7 +511,8 @@ class FeatureMatrixModel {
                         rawValue = '';
                     }
 
-                    //self.globalApp.utility.getTrackColor() todo
+                    // Get track color
+                    sampleTrackColor = self.globalApp.utility.getTrackColor(matchingModel.categoryOrder, matchingModel.isTumor)
                 }
 
                 if (rawValue != null && (self.isNumeric(rawValue) || rawValue !== "")) {
@@ -609,7 +611,8 @@ class FeatureMatrixModel {
                     'symbolFunction': symbolFunction,
                     'isText': isText,
                     'bindTo': bindTo,
-                    'clickFunction': clickFunction
+                    'clickFunction': clickFunction,
+                    'color': sampleTrackColor
                 };
             });
 
@@ -745,7 +748,7 @@ class FeatureMatrixModel {
         return lowestRank;
     }
 
-    // TODO: will need a COSMIC rank here (if permitted)
+    // TODO: will need a COSMIC rank here
 
     getImpactRank(variant, highestImpactVep) {
         var me = this;

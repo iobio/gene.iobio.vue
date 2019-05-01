@@ -377,6 +377,33 @@ class CohortModel {
         })
     }
 
+    assignCategoryOrders() {
+        var samples = this.getCanonicalModels();
+
+        let tumorModels = samples.filter((samp) => {
+            return samp.isTumor === true;
+        });
+        let normalModels = samples.filter((samp) => {
+            return samp.isTumor === false;
+        });
+
+        let sortedTumorModels = tumorModels.sort(function(a,b) {
+            return a.order - b.order;
+        });
+
+        let sortedNormalModels = normalModels.sort(function(a,b) {
+            return a.order - b.order;
+        });
+
+        sortedTumorModels.forEach((model, i) => {
+            model.categoryOrder = i;
+        });
+
+        sortedNormalModels.forEach((model, i) => {
+            model.categoryOrder = i;
+        })
+    }
+
 
     promiseAddSample(modelInfo, destIndex = -1) {
         let self = this;
@@ -773,6 +800,8 @@ class CohortModel {
 
                 // Enforce Cosmic sample top track
                 self.sortSampleModels();
+
+                self.assignCategoryOrders();
 
                 let resultMap = null;
                 let p1 = self.promiseLoadVariants(theGene, theTranscript, options)

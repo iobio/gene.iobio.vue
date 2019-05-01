@@ -443,7 +443,7 @@ export default function featureMatrixD3() {
       cells.each( function(d,i) {
          var symbolFunction = d.symbolFunction;
          if (symbolFunction) {
-           d3.select(this).call(symbolFunction, {'self': d.bindTo, 'cellSize': (cellWidth != null ? cellWidth : cellSize)});
+           d3.select(this).call(symbolFunction, {'self': d.bindTo, 'cellSize': (cellWidth != null ? cellWidth : cellSize), 'color': d.color});
          }
       });
 
