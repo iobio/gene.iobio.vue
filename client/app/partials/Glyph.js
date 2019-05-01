@@ -143,7 +143,7 @@ export default class Glyph {
           .attr('font-family', 'Material Icons')
           .attr('style', attrs.styles)
           .attr("transform", attrs.transform)
-          .style("fill", "#28446f")
+          .style("fill", "#28446F")
           .text('copyright');
   }
 

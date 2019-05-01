@@ -1150,9 +1150,9 @@ class CohortModel {
                         let p = model.promiseAnnotateVariants(theGene, theTranscript, [model], isMultiSample, isBackground)
                             .then(function (resultMap) {
                                 for (var theId in resultMap) {
-                                    if (!isBackground) {
-                                        self.getModel(theId).inProgress.loadingVariants = false;
-                                    }
+                                    // if (!isBackground) {
+                                    //     self.getModel(theId).inProgress.loadingVariants = false;
+                                    // }
                                     theResultMap[theId] = resultMap[theId];
                                 }
                             });
@@ -1174,18 +1174,16 @@ class CohortModel {
                 annotatePromises.push(p);
             }
 
-            // Always load cosmic track to annotate each var in feature matrix
-            // if (options.getCosmicVariants) { todo: get rid of if works
-                let p = self.promiseLoadCosmicVariants(theGene, theTranscript)
-                    .then(function (resultMap) {
-                        if (self.cosmicVariantViz === 'variants') {
-                            for (let id in resultMap) {
-                                theResultMap[id] = resultMap[id];
-                            }
+            // Always annotate COSMIC so we can put status in feature matrix
+            let p = self.promiseLoadCosmicVariants(theGene, theTranscript)
+                .then(function (resultMap) {
+                    if (self.cosmicVariantViz === 'variants') {
+                        for (let id in resultMap) {
+                            theResultMap[id] = resultMap[id];
                         }
-                    });
-                annotatePromises.push(p);
-            // }
+                    }
+                });
+            annotatePromises.push(p);
 
 
             Promise.all(annotatePromises)
@@ -1194,6 +1192,11 @@ class CohortModel {
                         .then(function (updatedResultMap) {
                             self.promiseAnnotateWithClinvar(updatedResultMap, theGene, theTranscript, isBackground)
                                 .then(function (data) {
+                                    for (var theId in data) {
+                                        if (!isBackground) {
+                                            self.getModel(theId).inProgress.loadingVariants = false;
+                                        }
+                                    }
                                     resolve(data)
                                 });
                         });
