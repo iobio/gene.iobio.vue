@@ -119,37 +119,33 @@ export default class Glyph {
           .style("fill", "#7f107f");
   }
 
-    showCosmicSymbol(selection, options) {
-        var width, height, clazz;
-        options = options || {};
+  // Uses material design font lib
+  showCosmicSymbol(selection, options) {
+      options = options || {};
 
-        var attrs = {
-            width: "14",
-            height: "14",
-            transform: "translate(2,1)",
-            clazz: ""
-        };
+      var attrs = {
+          transform: "translate(1,17)",
+          styles: "font-size: 16px"
+      };
 
-        var datumAttrs = selection.datum() || {};
+      var datumAttrs = selection.datum() || {};
 
-        var cellSizeAttrs = {};
-        if (options.cellSize > 18) {
-            cellSizeAttrs.width = "17",
-                cellSizeAttrs.height = "17",
-                cellSizeAttrs.transform = "translate(2,2)"
-        }
+      var cellSizeAttrs = {};
+      if (options.cellSize > 18) {
+          cellSizeAttrs.width = "17",
+          cellSizeAttrs.height = "17",
+          cellSizeAttrs.transform = "translate(2,2)"
+      }
 
-        $.extend(attrs, datumAttrs, cellSizeAttrs, options);
+      $.extend(attrs, datumAttrs, cellSizeAttrs, options);
 
-        selection.append("g")
-            .attr("transform", attrs.transform)
-            .append("use")
-            .attr("xlink:href", "#cosmic-glyph")
-            .attr("width", attrs.width)
-            .attr("height", attrs.height)
-            .style("pointer-events", "none")
-            .style("fill", "#888888");
-    }
+      selection.append("text")
+          .attr('font-family', 'Material Icons')
+          .attr('style', attrs.styles)
+          .attr("transform", attrs.transform)
+          .style("fill", "#28446f")
+          .text('copyright');
+  }
 
   showPolyPhenSymbol(selection, options) {
     options = options || {};
