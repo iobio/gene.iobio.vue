@@ -128,7 +128,7 @@ export default class Translator {
   }
 
   getCosmicLabel(inCosmic) {
-      return inCosmic === true ? 'inCosmic' : 'notInCosmic';
+      return inCosmic === true ? 'COSMIC variant' : '';
   }
 
   showHighestImpactSymbol(selection, options) {

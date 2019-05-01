@@ -66,8 +66,8 @@
       <file leaf-file-name="VariantTooltip.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/partials/VariantTooltip.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="206" column="64" lean-forward="true" selection-start-line="206" selection-start-column="64" selection-end-line="206" selection-end-column="64" />
+            <state relative-caret-position="353">
+              <caret line="308" column="93" selection-start-line="308" selection-start-column="93" selection-end-line="308" selection-end-column="93" />
               <folding>
                 <element signature="n#style#0;n#svg#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#i#0;n#!!top" expanded="true" />
@@ -92,20 +92,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_symbols.sass" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/assets/sass/_symbols.sass">
+      <file leaf-file-name="Translator.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/client/app/models/Translator.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="478">
-              <caret line="41" column="15" lean-forward="true" selection-start-line="41" selection-start-column="15" selection-end-line="41" selection-end-column="15" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_variables.sass" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/client/assets/sass/_variables.sass">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="464">
-              <caret line="29" column="38" lean-forward="true" selection-start-line="29" selection-start-column="38" selection-end-line="29" selection-end-column="38" />
+            <state relative-caret-position="827">
+              <caret line="130" column="48" selection-start-line="130" selection-start-column="48" selection-end-line="130" selection-end-column="48" />
             </state>
           </provider>
         </entry>
@@ -173,7 +164,6 @@
       <find>getCosmicLabel</find>
       <find>inheritanceModeRow</find>
       <find>rankedVariants</find>
-      <find>incosmic</find>
       <find>isInherited</find>
       <find>onfileslo</find>
       <find>promiseLoadKnownVariants</find>
@@ -190,6 +180,7 @@
       <find>cosmic-glyph</find>
       <find>somatic-glyph</find>
       <find>cosmic</find>
+      <find>incosmic</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -245,8 +236,6 @@
         <option value="$PROJECT_DIR$/client/app/components/viz/GenesCard.vue" />
         <option value="$PROJECT_DIR$/client/app/components/partials/CosmicConfirmationDialog.vue" />
         <option value="$PROJECT_DIR$/client/app/components/viz/FeatureMatrixCard.vue" />
-        <option value="$PROJECT_DIR$/client/app/models/Translator.js" />
-        <option value="$PROJECT_DIR$/client/app/partials/VariantTooltip.js" />
         <option value="$PROJECT_DIR$/client/app/components/pages/GeneHome.vue" />
         <option value="$PROJECT_DIR$/client/app/models/Vcf.iobio.js" />
         <option value="$PROJECT_DIR$/client/app/models/CohortModel.js" />
@@ -256,6 +245,8 @@
         <option value="$PROJECT_DIR$/client/app/partials/Glyph.js" />
         <option value="$PROJECT_DIR$/client/assets/sass/_symbols.sass" />
         <option value="$PROJECT_DIR$/client/assets/sass/_variables.sass" />
+        <option value="$PROJECT_DIR$/client/app/partials/VariantTooltip.js" />
+        <option value="$PROJECT_DIR$/client/app/models/Translator.js" />
       </list>
     </option>
   </component>
@@ -454,12 +445,12 @@
       <workItem from="1553794995145" duration="21575000" />
       <workItem from="1555450436226" duration="19063000" />
       <workItem from="1556305652286" duration="2103000" />
-      <workItem from="1556576911209" duration="37074000" />
+      <workItem from="1556576911209" duration="37164000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="588689000" />
+    <option name="totallyTimeSpent" value="588779000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1920" y="23" width="1920" height="1057" extended-state="6" />
@@ -778,13 +769,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/Translator.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="811">
-          <caret line="74" column="4" selection-start-line="74" selection-start-column="4" selection-end-line="74" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/components/viz/FeatureMatrixViz.vue">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="244">
@@ -893,10 +877,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/assets/sass/_variables.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="12" column="17" lean-forward="true" selection-start-line="12" selection-start-column="17" selection-end-line="12" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/assets/sass/_symbols.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="478">
+          <caret line="41" column="15" lean-forward="true" selection-start-line="41" selection-start-column="15" selection-end-line="41" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/partials/VariantTooltip.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="206" column="64" lean-forward="true" selection-start-line="206" selection-start-column="64" selection-end-line="206" selection-end-column="64" />
+        <state relative-caret-position="353">
+          <caret line="308" column="93" selection-start-line="308" selection-start-column="93" selection-end-line="308" selection-end-column="93" />
           <folding>
             <element signature="n#style#0;n#svg#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#i#0;n#!!top" expanded="true" />
@@ -920,17 +918,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/assets/sass/_symbols.sass">
+    <entry file="file://$PROJECT_DIR$/client/app/models/Translator.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="478">
-          <caret line="41" column="15" lean-forward="true" selection-start-line="41" selection-start-column="15" selection-end-line="41" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/assets/sass/_variables.sass">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="464">
-          <caret line="29" column="38" lean-forward="true" selection-start-line="29" selection-start-column="38" selection-end-line="29" selection-end-column="38" />
+        <state relative-caret-position="827">
+          <caret line="130" column="48" selection-start-line="130" selection-start-column="48" selection-end-line="130" selection-end-column="48" />
         </state>
       </provider>
     </entry>
