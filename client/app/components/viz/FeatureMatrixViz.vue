@@ -130,12 +130,6 @@ export default {
           return [];
         }
       },
-      matrixRows: {
-        type: Array,
-        default: function() {
-          return [];
-        }
-      },
       width: {
         type: Number,
         default: 0
@@ -204,15 +198,15 @@ export default {
     created: function() {
     },
     mounted: function() {
-      this.draw();
+      //this.draw();
     },
     methods: {
-      draw: function() {
+      draw: function(matrixRows) {
         var self = this;
 
         this.featureMatrixChart = featureMatrixD3()
           .margin(this.margin)
-          .matrixRows(this.matrixRows)
+          .matrixRows(matrixRows)
           .cellSize(this.cellSize)
           .cellWidth(this.cellWidth)
           .cellHeights(this.cellHeights)

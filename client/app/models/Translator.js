@@ -78,16 +78,23 @@ export default class Translator {
                       HOMREF:     {value: 3, badge: false, clazz: 'homref'     },
                       gt_unknown: {value: 4, badge: false, clazz: 'gt_unknown' }
                        };
-      this.filtersPassedMap = {
-          'pathogenic':        {value: 1, badge: false, clazz: 'system-flagged',  symbolFunction: this.glyph.showFlaggedSymbol},
-          'somatic':           {value: 1, badge: false, clazz: 'system-flagged',  symbolFunction: this.glyph.showFlaggedSymbol},
-          'compoundHet':       {value: 1, badge: false, clazz: 'system-flagged',  symbolFunction: this.glyph.showFlaggedSymbol},
-          'high':              {value: 2, badge: false, clazz: 'system-flagged',  symbolFunction: this.glyph.showFlaggedSymbol},
-          'userFlagged':       {value: 3, badge: false, clazz: 'user-flagged',    symbolFunction: this.glyph.showFlaggedSymbol},
-          'notCategorized':    {value: 3, badge: false, clazz: 'user-flagged',    symbolFunction: this.glyph.showFlaggedSymbol},
-          'notFound':          {value: 3, badge: false, clazz: 'user-flagged',    symbolFunction: this.glyph.showFlaggedSymbol},
-          '':                  {value: 3, badge: false, clazz: '',                symbolFunction: ''}
-      };
+
+    this.samplePresenceMap = {
+                      'tumorSample'  : {value: 1,   badge: true, examineBadge: true, clazz: '', symbolFunction: this.glyph.showTumorSampleSymbol},
+                      'normalSample' : {value: 2,   badge: true, examineBadge: true, clazz: '', symbolFunction: this.glyph.showNormalSampleSymbol},
+    };
+
+  this.filtersPassedMap = {
+      'pathogenic':        {value: 1, badge: false, clazz: 'system-flagged',  symbolFunction: this.glyph.showFlaggedSymbol},
+      'somatic':           {value: 1, badge: false, clazz: 'system-flagged',  symbolFunction: this.glyph.showFlaggedSymbol},
+      'compoundHet':       {value: 1, badge: false, clazz: 'system-flagged',  symbolFunction: this.glyph.showFlaggedSymbol},
+      'high':              {value: 2, badge: false, clazz: 'system-flagged',  symbolFunction: this.glyph.showFlaggedSymbol},
+      'userFlagged':       {value: 3, badge: false, clazz: 'user-flagged',    symbolFunction: this.glyph.showFlaggedSymbol},
+      'notCategorized':    {value: 3, badge: false, clazz: 'user-flagged',    symbolFunction: this.glyph.showFlaggedSymbol},
+      'notFound':          {value: 3, badge: false, clazz: 'user-flagged',    symbolFunction: this.glyph.showFlaggedSymbol},
+      '':                  {value: 3, badge: false, clazz: '',                symbolFunction: ''}
+  };
+
     this.unaffectedMap = {
                           present_some:   {value: 104, badge: false, clazz: 'unaffected', symbolFunction: this.glyph.showAffectedPresentSymbol},
                           present_all:    {value: 104, badge: false, clazz: 'unaffected', symbolFunction: this.glyph.showAffectedPresentSymbol},

@@ -543,7 +543,7 @@
                 })
                 .then(function () {
                         let glyph = new Glyph();
-                        let translator = new Translator(self.globalApp, glyph);
+                        let translator = new Translator(self.globalApp, glyph, self.globalApp.utility);
                         let genericAnnotation = new GenericAnnotation(glyph);
 
                         self.geneModel = new GeneModel(self.globalApp, self.forceLocalStorage);
@@ -903,7 +903,9 @@
 
                 self.promiseClearCache()
                     .then(function () {
-                        self.featureMatrixModel.init();
+                        self.featureMatrixModel.init(self.cohortModel.getCanonicalModels());
+                        // Have to manually call this instead of on render to ensure sample model rows added
+                        self.$refs.featureMatrixCardRef.drawViz();
                         Promise.resolve();
 
                         // TODO: once we get multiple sites incorporated get this fixed
@@ -917,8 +919,8 @@
                     .then(function () {
                         if (self.selectedGene && self.selectedGene.gene_name) {
                             self.promiseLoadGene(self.selectedGene.gene_name);
-                            // TODO: stopped here
-                            //self.featureMatrixModel.addAllLoadedSamples(self.cohortModel.sampleModels)
+                            // TODO: take out if above works
+                            //self.featureMatrixModel.addAllLoadedSamples(self.cohortModel.getCanonicalModels());
 
                             // if (analyzeAll) {
                             //     if (self.cohortModel && self.cohortModel.isLoaded) {

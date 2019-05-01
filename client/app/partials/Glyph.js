@@ -147,6 +147,60 @@ export default class Glyph {
           .text('copyright');
   }
 
+  showNormalSampleSymbol(selection, options) {
+      options = options || {};
+
+      var attrs = {
+          transform: "translate(1,17)",
+          styles: "font-size: 16px"
+      };
+
+      var datumAttrs = selection.datum() || {};
+
+      var cellSizeAttrs = {};
+      if (options.cellSize > 18) {
+          cellSizeAttrs.width = "17",
+              cellSizeAttrs.height = "17",
+              cellSizeAttrs.transform = "translate(2,2)"
+      }
+
+      $.extend(attrs, datumAttrs, cellSizeAttrs, options);
+
+      selection.append("text")
+          .attr('font-family', 'Material Icons')
+          .attr('style', attrs.styles)
+          .attr("transform", attrs.transform)
+          .style("fill", options.color)
+          .text('fiber_manual_record');
+  }
+
+  showTumorSampleSymbol(selection, options) {
+      options = options || {};
+
+      var attrs = {
+          transform: "translate(1,17)",
+          styles: "font-size: 16px"
+      };
+
+      var datumAttrs = selection.datum() || {};
+
+      var cellSizeAttrs = {};
+      if (options.cellSize > 18) {
+          cellSizeAttrs.width = "17",
+              cellSizeAttrs.height = "17",
+              cellSizeAttrs.transform = "translate(2,2)"
+      }
+
+      $.extend(attrs, datumAttrs, cellSizeAttrs, options);
+
+      selection.append("text")
+          .attr('font-family', 'Material Icons')
+          .attr('style', attrs.styles)
+          .attr("transform", attrs.transform)
+          .style("fill", options.color)
+          .text('flash_on');
+  }
+
   showPolyPhenSymbol(selection, options) {
     options = options || {};
     var attrs = {

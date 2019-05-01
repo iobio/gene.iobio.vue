@@ -96,7 +96,6 @@
             ref="featureMatrixVizRef"
             v-bind:class="{ hide: featureMatrixModel.rankedVariants.length === 0, 'basic' : isBasicMode}"
             :data="featureMatrixModel.rankedVariants"
-            :matrixRows="featureMatrixModel.filteredMatrixRows"
             :annotationScheme="featureMatrixModel.cohort.annotationScheme"
             :width="width"
             :margin="margin"
@@ -402,7 +401,10 @@ export default {
            .style("z-index", 0)
            .style("pointer-events", "none");
     },
-
+    drawViz() {
+      let self = this;
+      self.$refs.featureMatrixVizRef.draw(self.featureMatrixModel.filteredMatrixRows);
+    }
   },
 
 

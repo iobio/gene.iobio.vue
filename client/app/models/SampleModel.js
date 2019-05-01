@@ -14,6 +14,8 @@ class SampleModel {
         this.fbData = null;
         this.bamData = null;
 
+        this.variantIdHash = {};    // A hash table of all IDs in this sample model's
+
         this.isBasicMode = null;
         this.isEduMode = null;
 
@@ -1522,6 +1524,11 @@ class SampleModel {
                                 model.vcfData = vcfData;
                                 model.fbData = me.reconstituteFbData(vcfData);
                             }
+
+                            // Populate hash table of variant IDs in this sample
+                            vcfData.features.forEach((feat) => {
+                                model.variantIdHash[feat.id] = true;
+                            });
                         }
                     });
                 promises.push(p);
@@ -1607,6 +1614,7 @@ class SampleModel {
                                                         if (theVcfData && theVcfData.features) {
                                                             theVcfData.features.forEach(function (variant) {
                                                                 me._determineHighestAf(variant);
+                                                                me.variantIdHash[variant.id] = true;
                                                             })
                                                         }
                                                     }

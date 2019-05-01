@@ -174,7 +174,7 @@ class FeatureMatrixModel {
     }
 
     // Called on home page mount
-    init() {
+    init(sampleModels = null) {
         let self = this;
         this.matrixRowsEvaluated = false;
         this.clearRankedVariants();
@@ -210,6 +210,9 @@ class FeatureMatrixModel {
         //   this.setRowLabel('Pathogenicity - PolyPhen',    'Predicted effect');
         //   this.setRowLabel('Inheritance Mode',            'Inheritance');
         // } else {
+        if (sampleModels != null) {
+            this.addAllLoadedSamples(sampleModels);
+        }
         this.filteredMatrixRows = $.extend([], this.matrixRows);
         this.removeRow('Genotype', self.filteredMatrixRows);
         //}
@@ -248,12 +251,13 @@ class FeatureMatrixModel {
 
         nonRefSampleModels.forEach((model) => {
             let rowObj = {};
-            rowObj['name'] = model.name;
+            rowObj['name'] = model.displayName;
             rowObj['id'] = model.id;
             rowObj['order'] = self.matrixRows.length;
             rowObj['index'] = self.matrixRows.length;
             rowObj['match'] = 'exact';
             rowObj['attribute'] = 'sampleRow';
+            rowObj['map'] = self.getTranslator().samplePresenceMap;
             self.matrixRows.push(rowObj);
         })
     }
@@ -489,6 +493,24 @@ class FeatureMatrixModel {
                     rawValue = 'inCosmic';
                 } else if (matrixRow.attribute === 'inCosmic') {
                     rawValue = 'notInCosmic';
+                }
+
+                // For sample presence rows
+                if (matrixRow.attribute === 'sampleRow') {
+                    // Get matching variants from cohort model
+                    let matchingModel = self.cohort.getModel(matrixRow.id);
+                    let varIdHash = matchingModel.variantIdHash;
+                    if (varIdHash[variant.id] === true) {
+                        if (matchingModel.isTumor) {
+                            rawValue = 'tumorSample';
+                        } else {
+                            rawValue = 'normalSample';
+                        }
+                    } else {
+                        rawValue = '';
+                    }
+
+                    //self.globalApp.utility.getTrackColor() todo
                 }
 
                 if (rawValue != null && (self.isNumeric(rawValue) || rawValue !== "")) {
