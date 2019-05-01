@@ -304,6 +304,9 @@ export default class VariantTooltip {
                               ? ''
                     : me._tooltipHeaderRow('<span class="tooltip-inheritance-mode-label">' + me.translator.getSomaticLabel(variant.isInherited) + ' </span>', '', '', '', null, 'padding-top:0px;');
 
+    var cosmicRow =  variant.inCosmic == null || variant.inCosmic === false
+          ? ''
+          : me._tooltipHeaderRow('<span class="tooltip-cosmic-label">' + me.translator.getCosmicLabel(variant.inCosmic) + ' </span>', '', '', '', null, 'padding-top:0px;');
 
     var siftLabel = info.sift !== ''  && info.sift  !== 'unknown'
                     ? 'SIFT ' + info.sift
@@ -354,6 +357,7 @@ export default class VariantTooltip {
         + siftPolyphenRow
         + (trackId === 'known-variants' ? me._tooltipRow('&nbsp;', info.clinvarLinkKnownVariants, '6px')  : clinvarSimpleRow1)
         + clinvarSimpleRow2
+        + cosmicRow
         + me._linksRow(variant, pinMessage)
       );
 
@@ -368,6 +372,7 @@ export default class VariantTooltip {
               + afRow
               + (trackId === 'known-variants' ? me._tooltipRow('&nbsp;', info.clinvarLinkKnownVariants, '6px')  : clinvarSimpleRow1)
               + clinvarSimpleRow2
+              + cosmicRow
               + me._linksRow(variant, pinMessage)
           );
       }

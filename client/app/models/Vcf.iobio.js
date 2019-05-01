@@ -1095,7 +1095,6 @@ var effectCategories = [
               genotypes.push(fields[i]);
             }
 
-
             // Turn vcf record into a JSON object and add it to an array
             var vcfObject = {'pos': pos, 'id': 'id', 'ref': ref, 'alt': alt,
                              'qual': qual, 'filter': filter, 'info': info, 'format': format, 'genotypes': genotypes};
@@ -1624,6 +1623,7 @@ var effectCategories = [
                     'highestPolyphen':         highestPolyphen,
                     'highestREVEL':            highestREVEL,
                     'isInherited':             true,
+                    'inCosmic':                false,
                     'sampleModelId':           sampleModelId   // Used for feature matrix tracking
                   };
 
@@ -2176,7 +2176,6 @@ exports.parseClinvarInfo = function(info, clinvarMap) {
       genotypeMap: {} };
 
 
-
     // The results will contain an array of genotype objects for
     // each sample index provided.  The first element in the
     // array is assumed to be the "target" genotype.  For example,
@@ -2193,12 +2192,12 @@ exports.parseClinvarInfo = function(info, clinvarMap) {
     result.genotypes.forEach(function(gt) {
       var key = sampleNames ? sampleNames[gt.sampleIndex] : gt.sampleIndex.toString();
       result.genotypeMap[key] = gt;
-    })
+    });
 
     // Determine the format of the genotype fields
     var gtTokens = {};
     var idx = 0;
-    if (rec.format && rec.format != '') {
+    if (rec.format && rec.format !== '') {
       var tokens = rec.format.split(":");
       tokens.forEach(function(token) {
         gtTokens[token] = idx;
@@ -2260,7 +2259,7 @@ exports.parseClinvarInfo = function(info, clinvarMap) {
               if (allelicDepth) {
                 totalAllelicDepth += +allelicDepth;
               }
-            })
+            });
 
             gt.altCount      = altAlleleCounts;
             gt.refCount      = refAlleleCount;

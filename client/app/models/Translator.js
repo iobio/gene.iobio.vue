@@ -31,6 +31,10 @@ export default class Translator {
               'isSomatic'             : {value: 1,   badge: true, examineBadge: true, clazz: 'impact_SOMATIC', symbolFunction: this.glyph.showSomaticSymbol},
               'isInherited'           : {value: 104,   badge: false, examineBadge: false, clazz: ''}
                       };
+    this.cosmicMap = {
+              'inCosmic'             : {value: 1,   badge: true, examineBadge: true, clazz: 'in_cosmic', symbolFunction: this.glyph.showCosmicSymbol},
+              'notInCosmic'          : {value: 104, badge: true, examineBadge: true, clazz: ''},
+    };
 
     this.impactMap = {
                         HIGH:     {value: 1, badge: true, clazz: 'impact_HIGH',     symbolFunction: this.glyph.showImpactSymbol},
@@ -121,6 +125,10 @@ export default class Translator {
 
   getSomaticLabel(isInherited) {
       return isInherited === true ? 'inherited' : 'somatic';
+  }
+
+  getCosmicLabel(inCosmic) {
+      return inCosmic === true ? 'inCosmic' : 'notInCosmic';
   }
 
   showHighestImpactSymbol(selection, options) {

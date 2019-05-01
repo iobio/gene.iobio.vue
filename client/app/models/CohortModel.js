@@ -44,13 +44,13 @@ class CohortModel {
         this.genesInProgress = [];
         this.flaggedVariants = [];
 
-        this.knownVariantsViz = 'variants';     // variants, histo, histoExon
-        this.cosmicVariantsViz = 'variants';
+        this.knownVariantViz = 'variants';     // variants, histo, histoExon
+        this.cosmicVariantViz = 'variants';
         this.demoCmmlFiles = false;             // If true, loads demo CMML data - ONLY LOCAL
         this.demoVcfs = this.getDemoVcfs();
         this.demoBams = this.getDemoBams();
         this.demoModelInfos = this.getDemoModelInfos();
-        this.demoGenes = ['TP53', 'APC', 'BRCA2', 'TGFB1', 'RB1'];
+        this.demoGenes = ['KRAS', 'APC', 'BRCA2', 'TGFB1', 'RB1'];
     }
 
     getDemoVcfs() {
@@ -834,7 +834,7 @@ class CohortModel {
 
     promiseLoadKnownVariants(theGene, theTranscript) {
         let self = this;
-        if (self.knownVariantsViz == 'variants') {
+        if (self.knownVariantViz === 'variants') {
             return self._promiseLoadKnownVariants(theGene, theTranscript);
         } else {
             return self._promiseLoadKnownVariantCounts(theGene, theTranscript);
@@ -860,7 +860,7 @@ class CohortModel {
         return new Promise(function (resolve, reject) {
             self.getModel('known-variants').inProgress.loadingVariants = true;
             var binLength = null;
-            if (self.knownVariantsViz == 'histo') {
+            if (self.knownVariantViz === 'histo') {
                 binLength = Math.floor(((+theGene.end - +theGene.start) / $('#gene-viz').innerWidth()) * 8);
             }
             self.sampleMap['known-variants'].model.promiseGetKnownVariantHistoData(theGene, theTranscript, binLength)
@@ -874,7 +874,7 @@ class CohortModel {
 
     promiseLoadCosmicVariants(theGene, theTranscript) {
         let self = this;
-        if (self.cosmicVariantsViz === 'variants') {
+        if (self.cosmicVariantViz === 'variants') {
             return self._promiseLoadCosmicVariants(theGene, theTranscript);
         } else  {
             return self._promiseLoadCosmicVariantCounts(theGene, theTranscript);
@@ -902,10 +902,10 @@ class CohortModel {
         return new Promise(function(resolve, reject) {
             self.getModel('cosmic-variants').inProgress.loadingVariants = true;
             var binLength = null;
-            if (self.cosmicVariantsViz === 'histo') {
+            if (self.cosmicVariantViz === 'histo') {
                 binLength = Math.floor( ((+theGene.end - +theGene.start) / $('#gene-viz').innerWidth()) * 8);
             }
-            self.sampleMap['cosimc-variants'].model.promiseGetCosmicVariantHistoData(theGene, theTranscript, binLength)
+            self.sampleMap['cosmic-variants'].model.promiseGetCosmicVariantHistoData(theGene, theTranscript, binLength)
                 .then(function(data) {
                     self.getModel('cosmic-variants').inProgress.loadingVariants = false;
                     self.setVariantHistoData('cosmic-variants', data);
@@ -1174,8 +1174,8 @@ class CohortModel {
                 annotatePromises.push(p);
             }
 
-            // Load cosmic track
-            if (options.getCosmicVariants) {
+            // Always load cosmic track to annotate each var in feature matrix
+            // if (options.getCosmicVariants) { todo: get rid of if works
                 let p = self.promiseLoadCosmicVariants(theGene, theTranscript)
                     .then(function (resultMap) {
                         if (self.cosmicVariantViz === 'variants') {
@@ -1185,18 +1185,18 @@ class CohortModel {
                         }
                     });
                 annotatePromises.push(p);
-            }
+            // }
 
 
             Promise.all(annotatePromises)
                 .then(function () {
-                    // // We have to check all samples anytime a new one is added (affects somatic marking for tumor tracks)
-                    // self._annotateVariantInheritance(self.sampleMap);
-
-                    self.promiseAnnotateWithClinvar(theResultMap, theGene, theTranscript, isBackground)
-                        .then(function (data) {
-                            resolve(data)
-                        })
+                    self.promiseAnnotateWithCosmic(theResultMap)
+                        .then(function (updatedResultMap) {
+                            self.promiseAnnotateWithClinvar(updatedResultMap, theGene, theTranscript, isBackground)
+                                .then(function (data) {
+                                    resolve(data)
+                                });
+                        });
                 });
         })
     }
@@ -1248,6 +1248,36 @@ class CohortModel {
         }
     }
 
+    /* Assigns bool to each variant telling if in COSMIC or not.
+    NOTE: this is double annotating COSMIC vars (2nd for track)
+    TODO: think of a smarter way to store this */
+    promiseAnnotateWithCosmic(resultMap) {
+        return new Promise((resolve, reject) => {
+            let cosmicVcfData = resultMap['cosmic-variants'];
+            if (!cosmicVcfData) {
+                reject('Could not annotate cosmic status per variants');
+            } else {
+                // Populate hash table for cosmic ids
+                let cosmicHash = {};
+                cosmicVcfData.features.forEach((feat) => {
+                    cosmicHash[feat.id] = true;
+                });
+
+                // for each non-ref sample, assign inCosmic field for variants
+                for (var id in resultMap) {
+                    if (id !== 'known-variants' && id !=='cosmic-variants') {
+                        let currSample = resultMap[id];
+                        currSample.features.forEach((feat) => {
+                            if (cosmicHash[feat.id] === true) {
+                                feat.inCosmic = true;
+                            }
+                        })
+                    }
+                }
+                resolve(resultMap);
+            }
+        });
+    }
 
     promiseAnnotateWithClinvar(resultMap, geneObject, transcript, isBackground) {
         let self = this;

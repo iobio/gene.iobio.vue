@@ -917,12 +917,15 @@
                     .then(function () {
                         if (self.selectedGene && self.selectedGene.gene_name) {
                             self.promiseLoadGene(self.selectedGene.gene_name);
+                            // TODO: stopped here
+                            //self.featureMatrixModel.addAllLoadedSamples(self.cohortModel.sampleModels)
 
                             // if (analyzeAll) {
                             //     if (self.cohortModel && self.cohortModel.isLoaded) {
                             //         self.cacheHelper.analyzeAll(self.cohortModel, false);
                             //     }
                             // }
+
                         } else if (self.geneModel.sortedGeneNames && self.geneModel.sortedGeneNames.length > 0) {
                             self.onGeneSelected(self.geneModel.sortedGeneNames[0]);
                         } else {
