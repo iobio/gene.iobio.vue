@@ -87,7 +87,7 @@ class FeatureMatrixModel {
                 attribute: 'zygosity',
                 map: this.getTranslator().zygosityMap
             },
-            {name: 'Genotype', id: 'genotype', order: 6, index: 6, match: 'field', attribute: 'eduGenotypeReversed'}
+            // {name: 'Genotype', id: 'genotype', order: 6, index: 6, match: 'field', attribute: 'eduGenotypeReversed'}
         ];
 
         this.matrixRowsBasic = [
@@ -214,7 +214,7 @@ class FeatureMatrixModel {
             this.addAllLoadedSamples(sampleModels);
         }
         this.filteredMatrixRows = $.extend([], this.matrixRows);
-        this.removeRow('Genotype', self.filteredMatrixRows);
+        //this.removeRow('Genotype', self.filteredMatrixRows);
         //}
 
     }

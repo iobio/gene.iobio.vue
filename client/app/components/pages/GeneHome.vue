@@ -200,6 +200,7 @@
                             <v-tab-item v-if="!isBasicMode" style="margin-top:5px;margin-bottom:0px;overflow-y:auto">
                                 <feature-matrix-card style="min-width:300px"
                                                      ref="featureMatrixCardRef"
+                                                     v-if="featureMatrixModel.filteredMatrixRows.length > 0"
                                                      v-bind:class="{ hide: !cohortModel || !cohortModel.isLoaded || !featureMatrixModel || !featureMatrixModel.rankedVariants }"
                                                      :isEduMode="isEduMode"
                                                      :isBasicMode="isBasicMode"
@@ -904,8 +905,6 @@
                 self.promiseClearCache()
                     .then(function () {
                         self.featureMatrixModel.init(self.cohortModel.getCanonicalModels());
-                        // Have to manually call this instead of on render to ensure sample model rows added
-                        self.$refs.featureMatrixCardRef.drawViz();
                         Promise.resolve();
 
                         // TODO: once we get multiple sites incorporated get this fixed

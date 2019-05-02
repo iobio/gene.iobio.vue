@@ -97,6 +97,7 @@
             v-bind:class="{ hide: featureMatrixModel.rankedVariants.length === 0, 'basic' : isBasicMode}"
             :data="featureMatrixModel.rankedVariants"
             :annotationScheme="featureMatrixModel.cohort.annotationScheme"
+            :matrixRows="featureMatrixModel.matrixRows"
             :width="width"
             :margin="margin"
             :cellSize="cellSize"
