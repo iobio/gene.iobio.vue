@@ -36,6 +36,7 @@ class CohortModel {
         this.maxAlleleCount = null;
         this.tumorInfo = null;                  // Used in variant detail cards & tooltips
         this.maxDepth = 0;
+        this.annotationComplete = false;        // True when all tracks have finished annotation
 
         this.inProgress = {
             'loadingDataSources': false
@@ -689,7 +690,11 @@ class CohortModel {
     /* Returns first model in sample array that is normal, not tumor. */
     getNormalModel() {
         let self = this;
-        return self.sampleMap['s0'].model;
+        if (self.sampleMap && self.sampleMap['s0']) {
+            return self.sampleMap['s0'].model;
+        } else {
+            return null;
+        }
     }
 
     /* Returns all normal and tumor models */
@@ -1184,6 +1189,7 @@ class CohortModel {
                                     // }
                                     theResultMap[theId] = resultMap[theId];
                                 }
+                                self.annotationComplete = false;
                             });
                         annotatePromises.push(p);
                     }
@@ -1226,6 +1232,7 @@ class CohortModel {
                                             self.getModel(theId).inProgress.loadingVariants = false;
                                         }
                                     }
+                                    self.annotationComplete = true;
                                     resolve(data)
                                 });
                         });

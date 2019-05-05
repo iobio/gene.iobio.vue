@@ -20,9 +20,9 @@
                 <v-checkbox v-for="item in checkboxLists[parentFilterName]"
                             :key="item.name"
                             :label="item.displayName"
-                            v-bind:disabled="!fullAnnotationComplete && isAnnotationCategory"
+                            v-bind:disabled="!annotationComplete"
                             v-model="item.model"
-                            color="cohortGold"
+                            color="appColor"
                             style="padding-left: 15px; margin-top: 0; margin-bottom: 0; max-height: 30px"
                             @click="boxChecked(item)">
                 </v-checkbox>
@@ -38,7 +38,7 @@
         props: {
             parentFilterName: null,
             grandparentFilterName: null,
-            fullAnnotationComplete: true
+            annotationComplete: true
         },
         data() {
             return {
@@ -89,18 +89,6 @@
             }
         },
         computed: {
-            isAnnotationCategory: function() {
-                let self = this;
-                return true;
-
-                // TODO: used to control waiting on filtering - have to make all unavailable until second annotation return for now
-                // if (self.parentFilterName === 'impact' || self.parentFilterName === 'g1000' ||
-                //     self.parentFilterName === 'exac' || self.parentFilterName === 'gnomad') {
-                //     return true;
-                // } else {
-                //     return false;
-                // }
-            }
         },
         created: function () {},
         mounted: function () {}

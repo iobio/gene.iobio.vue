@@ -66,7 +66,7 @@
                                    v-bind:style="{maxWidth: '30px', color: filterButtonColor}"
                                    slot="activator"
                                    @click="onApplyFilter"
-                                   :disabled="!readyToApply || (!fullAnnotationComplete && isFrequencyField)">
+                                   :disabled="!readyToApply || (!annotationComplete && isFrequencyField)">
                                 <v-icon>check</v-icon>
                             </v-btn>
                             <span>{{buttonTipText}}</span>
@@ -98,7 +98,7 @@
         props: {
             filterName: null,
             parentFilterName: null,
-            fullAnnotationComplete: false
+            annotationComplete: false
         },
         data() {
             return {

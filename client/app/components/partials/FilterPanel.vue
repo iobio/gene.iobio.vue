@@ -24,8 +24,8 @@
                         :value="category.open">
                     <div slot="header">
                         <v-avatar v-if="category.active" size="12px" color="cohortGold" style="margin-right: 10px"></v-avatar>
-                        <v-avatar v-else-if="!category.active && (!isAnnotationCategory(category.name) || (isAnnotationCategory(category.name) && fullAnnotationComplete))" size="10px" color="white" style="margin-right: 12px"></v-avatar>
-                        <span v-bind:hidden="!isAnnotationCategory(category.name) || fullAnnotationComplete" class="filter-loader">
+                        <v-avatar v-else-if="!category.active && (!isAnnotationCategory(category.name) || (isAnnotationCategory(category.name) && annotationComplete))" size="10px" color="white" style="margin-right: 12px"></v-avatar>
+                        <span v-bind:hidden="!isAnnotationCategory(category.name) || annotationComplete" class="filter-loader">
                             <img src="../../../assets/images/wheel.gif">
                         </span>
                         <span class="filter-title">
@@ -38,7 +38,7 @@
                                 ref="filtCheckRef"
                                 :parentFilterName="category.name"
                                 :grandparentFilterName="filterName"
-                                :fullAnnotationComplete="fullAnnotationComplete"
+                                :annotationComplete="annotationComplete"
                                 @filter-toggled="onFilterToggled">
                         </filter-panel-checkbox>
                         <filter-panel-cutoff
@@ -46,7 +46,7 @@
                                 ref="filterCutoffRef"
                                 :filterName="category.name"
                                 :parentFilterName="filterName"
-                                :fullAnnotationComplete="fullAnnotationComplete"
+                                :annotationComplete="annotationComplete"
                                 @filter-applied="onFilterApplied"
                                 @cutoff-filter-cleared="onFilterCleared">
                         </filter-panel-cutoff>
@@ -71,7 +71,7 @@
             filterName: '',
             filterModel: null,
             idx: null,
-            fullAnnotationComplete: false
+            annotationComplete: false
         },
         data() {
             return {
@@ -95,9 +95,7 @@
                     'frequencies': [
                         {name: 'g1000', display: '1000G', active: false, open: false, type: 'cutoff', cohortOnly: false},
                         {name: 'exac', display: 'ExAC', active: false, open: false, type: 'cutoff', cohortOnly: false},
-                        {name: 'gnomad', display: 'gnomAD', active: false, open: false, type: 'cutoff', cohortOnly: false},
-                        {name: 'probandFreq', display: 'Proband', active: false, open: false, type: 'cutoff', cohortOnly: true},
-                        {name: 'subsetFreq', display: 'Subset', active: false, open: false, type: 'cutoff', cohortOnly: true}],
+                        {name: 'gnomad', display: 'gnomAD', active: false, open: false, type: 'cutoff', cohortOnly: false}],
                     'rawCounts': [ // Currently unused - may incorporate later
                         {name: 'rawCounts', display: 'Raw Counts', active: false, open: false, type: 'cutoff'}],
                     'samplePresence': [{name: 'samplePresence', display: 'Sample Presence', active: false, open: false, type: 'checkbox'}]

@@ -90,6 +90,7 @@
                 :bringAttention="bringAttention"
                 :workingOffline="workingOffline"
                 :filterModel="filterModel"
+                :annotationComplete="annotationComplete"
                 @update-samples="onUpdateSamples"
                 @input="onGeneNameEntered"
                 @load-demo-data="onLoadDemoData"
@@ -494,7 +495,8 @@
 
                 forceLocalStorage: null,
                 showVarViz: true,
-                workingOffline: false        // If working offline and want to style things
+                workingOffline: false,        // If working offline and want to style things
+                annotationComplete: false
             }
         },
 
@@ -729,6 +731,13 @@
                 setTimeout(function () {
                     self.onResize();
                 }, 1000)
+            },
+            'cohortModel.annotationComplete': function() {
+                if (this.cohortModel && this.cohortModel.getNormalModel()) {
+                    this.annotationComplete = !this.cohortModel.getNormalModel().inProgress.loadingVariants;
+                } else {
+                    this.annotationComplete = false;
+                }
             }
         },
 

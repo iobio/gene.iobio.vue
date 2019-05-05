@@ -410,6 +410,7 @@
                                     ref="filterSettingsMenuRef"
                                     :filterModel="filterModel"
                                     :showCoverageCutoffs="showCoverageCutoffs"
+                                    :annotationComplete="annotationComplete"
                                     @filter-box-toggled="filterBoxToggled"
                                     @filter-cutoff-applied="filterCutoffApplied"
                                     @filter-cutoff-cleared="filterCutoffCleared">
@@ -429,11 +430,11 @@
                 <v-card-title class="headline">Disclaimer</v-card-title>
                 <v-card-text>
 
-                    The University of Utah makes no claims that iobio applications, including gene.iobio are approved
-                    for clinical use. All users of iobio applications including gene.iobio understand and accept that
+                    The University of Utah makes no claims that iobio applications, including oncogene.iobio are approved
+                    for clinical use. All users of iobio applications including oncogene.iobio understand and accept that
                     any information gained by using these applications, whether the information comes from
                     visualization, processing, internal or external databases, or analysis, may not in any way be used
-                    for clinical purposes. The University of Utah makes no representation that iobio or gene.iobio is
+                    for clinical purposes. The University of Utah makes no representation that iobio or oncogene.iobio is
                     either safe or effective for any intended use for which research may currently be performed.
                     <br><br>
                     iobio, or any iobio applications ARE TO BE USED FOR RESEARCH PURPOSES ONLY. USE FOR CLINICAL
@@ -693,7 +694,8 @@
             phenotypeLookupUrl: null,
             geneNames: null,
             genesInProgress: null,
-            workingOffline: false
+            workingOffline: false,
+            annotationComplete: false
             // interpretationMap: null
         },
         data() {
@@ -716,7 +718,7 @@
                 typeaheadLimit: parseInt(100),
                 activeLeftDrawerTab: 0,
                 showCoverageCutoffs: false,
-                selectedTab: 'flagged-vars-tab',
+                selectedTab: 'flagged-vars-tab'
             }
         },
         watch: {

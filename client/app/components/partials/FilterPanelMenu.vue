@@ -36,17 +36,17 @@
                 {{ filter.display }}
             </v-card-title>
             <v-card-text><i>{{filter.description}}</i></v-card-text>
-            <filter-settings
+            <filter-panel
                     v-if="filter.name !== 'coverage'"
                     ref="filterSettingsRef"
                     :filterName="filter.name"
                     :filterModel="filterModel"
                     :filter="filter"
-                    :fullAnnotationComplete="fullAnnotationComplete"
+                    :annotationComplete="annotationComplete"
                     @filter-toggled="filterBoxToggled"
                     @filter-applied="filterCutoffApplied"
                     @cutoff-filter-cleared="filterCutoffCleared">
-            </filter-settings>
+            </filter-panel>
         </v-card>
     </v-flex>
 </template>
@@ -69,7 +69,7 @@
         props: {
             filterModel: null,
             showCoverageCutoffs: null,
-            fullAnnotationComplete: false
+            annotationComplete: false
         },
         data() {
             return {
@@ -84,11 +84,11 @@
                         icon: 'category'
                     },
                     {
-                        name: 'enrichment',
-                        display: 'ENRICHMENT FILTERS',
+                        name: 'somatic',
+                        display: 'SOMATIC FILTERS',
                         active: false,
                         custom: false,
-                        description: 'Filter by cohort variants by enrichment statistics',
+                        description: 'Customize somatic variant identification based on frequencies',
                         icon: 'poll'
                     },
                     {
