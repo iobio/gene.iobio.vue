@@ -13,7 +13,7 @@
             flex: 1 1 auto
             justify-content: space-between
             margin-bottom: 0px
-            padding-bottom: 0px
+            padding: 10px 5px
             height: calc(100% - 10px)
             overflow-y: scroll
 
@@ -288,6 +288,7 @@
                     v-if="!isEduMode && !isBasicMode"
                     :cohortModel="cohortModel"
                     :launchedFromHub="launchedFromHub"
+                    :workingOffline="workingOffline"
                     @update-samples="onUpdateSamples"
                     @on-files-loaded="onFilesLoaded"
                     @load-demo-data="onLoadDemoData"
@@ -363,43 +364,65 @@
                 </v-list>
             </v-menu>
         </v-toolbar>
-        <!--<v-navigation-drawer-->
-                <!--mobile-break-point="800"-->
-                <!--clipped-->
-                <!--fixed-->
-                <!--app-->
-                <!--:hide-overlay="true"-->
-                <!--v-model="leftDrawer"-->
-                <!--:stateless="true"-->
-                <!--width=330-->
-        <!--&gt;-->
-            <!--<div id="side-panel-container">-->
-
-                <!--<flagged-variants-card-->
-                        <!--v-if="leftDrawerContents === 'flagged-variants'"-->
-                        <!--ref="flaggedVariantsRef"-->
-                        <!--:isEduMode="isEduMode"-->
-                        <!--:isBasicMode="isBasicMode"-->
-                        <!--:cohortModel="cohortModel"-->
-                        <!--:flaggedVariants="flaggedVariants"-->
-                        <!--:launchedFromClin="launchedFromClin"-->
-                        <!--@flagged-variants-imported="onFlaggedVariantsImported"-->
-                        <!--@flagged-variant-selected="onFlaggedVariantSelected"-->
-                        <!--@close-left-drawer="leftDrawer = false"-->
-                        <!--@send-flagged-variants-to-clin="onSendFlaggedVariantsToClin"-->
-                <!--&gt;-->
-                <!--</flagged-variants-card>-->
-
-
-                <!--<v-card id="legend-card" v-if="isBasicMode">-->
-                    <!--<legend-panel :isBasicMode="isBasicMode">-->
-                    <!--</legend-panel>-->
-                <!--</v-card>-->
-
-
-            <!--</div>-->
-
-        <!--</v-navigation-drawer>-->
+        <v-navigation-drawer
+                mobile-break-point="800"
+                clipped
+                fixed
+                app
+                :hide-overlay="true"
+                v-model="leftDrawer"
+                :stateless="true"
+                width=330>
+            <div id="side-panel-container">
+                <v-tabs
+                        v-model="activeLeftDrawerTab"
+                        light
+                        :class="{'basic': isBasicMode}">
+                    <v-tab href="#flagged-vars-tab">
+                        Flagged Variants
+                    </v-tab>
+                    <v-tab href="#filter-tab">
+                        Filters
+                    </v-tab>
+                    <v-tab-item
+                            :key="'flaggedVarsTab'"
+                            :id="'flagged-vars-tab'">
+                        <flagged-variants-card
+                                v-if="leftDrawerContents === 'flagged-variants'"
+                                ref="flaggedVariantsRef"
+                                :isEduMode="isEduMode"
+                                :isBasicMode="isBasicMode"
+                                :cohortModel="cohortModel"
+                                :launchedFromClin="launchedFromClin"
+                                @flagged-variants-imported="onFlaggedVariantsImported"
+                                @flagged-variant-selected="onFlaggedVariantSelected"
+                                @close-left-drawer="leftDrawer = false"
+                                @send-flagged-variants-to-clin="onSendFlaggedVariantsToClin"
+                        >
+                        </flagged-variants-card>
+                    </v-tab-item>
+                    <v-tab-item
+                            :key="'filterTab'"
+                            :id="'filter-tab'">
+                        <v-container>
+                            <filter-panel-menu
+                                    v-if="filterModel"
+                                    ref="filterSettingsMenuRef"
+                                    :filterModel="filterModel"
+                                    :showCoverageCutoffs="showCoverageCutoffs"
+                                    @filter-box-toggled="filterBoxToggled"
+                                    @filter-cutoff-applied="filterCutoffApplied"
+                                    @filter-cutoff-cleared="filterCutoffCleared">
+                            </filter-panel-menu>
+                        </v-container>
+                    </v-tab-item>
+                </v-tabs>
+                <v-card id="legend-card" v-if="isBasicMode">
+                    <legend-panel :isBasicMode="isBasicMode">
+                    </legend-panel>
+                </v-card>
+            </div>
+        </v-navigation-drawer>
 
         <v-dialog v-model="showDisclaimer" max-width="400">
             <v-card>
@@ -508,7 +531,7 @@
 
 
                     <div id="credits">
-
+                        <!--TODO: ADD COSMIC CREDITS-->
 
                         <div class="citation-title">Human Phenotype Ontology</div>
                         Sebastian Köhler, Sandra C Doelken, Christopher J. Mungall, Sebastian Bauer, Helen V. Firth, et
@@ -635,6 +658,7 @@
     import LegendPanel from '../partials/LegendPanel.vue'
     import FlaggedVariantsCard from '../viz/FlaggedVariantsCard.vue'
     import PhenotypeSearch from '../partials/PhenotypeSearch.vue'
+    import FilterPanelMenu from '../partials/FilterPanelMenu.vue'
 
     export default {
         name: 'navigation',
@@ -644,7 +668,8 @@
             FilesMenu,
             FlaggedVariantsCard,
             LegendPanel,
-            PhenotypeSearch
+            PhenotypeSearch,
+            FilterPanelMenu
         },
         props: {
             isEduMode: null,
@@ -656,6 +681,7 @@
             selectedVariant: null,
             filteredGeneNames: null,
             geneModel: null,
+            filterModel: null,
             cohortModel: null,
             cacheHelper: null,
             activeFilterName: null,
@@ -667,6 +693,7 @@
             phenotypeLookupUrl: null,
             geneNames: null,
             genesInProgress: null,
+            workingOffline: false
             // interpretationMap: null
         },
         data() {
@@ -686,8 +713,10 @@
                 showDisclaimer: false,
                 showVersion: false,
                 showCitations: false,
-                typeaheadLimit: parseInt(100)
-
+                typeaheadLimit: parseInt(100),
+                activeLeftDrawerTab: 0,
+                showCoverageCutoffs: false,
+                selectedTab: 'flagged-vars-tab',
             }
         },
         watch: {
@@ -705,13 +734,13 @@
             onLoadDemoData: function (loadAction) {
                 this.$emit("load-demo-data", loadAction);
             },
-            closeFileMenu: function() {
+            closeFileMenu: function () {
                 let self = this;
                 if (self.$refs.fileMenuRef) {
                     self.$refs.fileMenuRef.closeFileMenu();
                 }
             },
-            onAutoLoad: function() {
+            onAutoLoad: function () {
                 let self = this;
                 if (self.$refs.fileMenuRef) {
                     self.$refs.fileMenuRef.promiseLoadDemoFromWelcome();
@@ -797,15 +826,74 @@
             onSupportIOBIO: function () {
                 window.open("http://iobio.io/support.html", "_iobio");
             },
-            openFileSelection: function() {
+            openFileSelection: function () {
                 let self = this;
                 if (self.$refs.fileMenuRef) {
                     self.$refs.fileMenuRef.openFileSelection();
                 }
             },
-            onUpdateSamples: function() {
+            onUpdateSamples: function () {
                 this.$emit('update-samples');
-            }
+            },
+            filterBoxToggled: function(filterName, filterState, cohortOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
+                let self = this;
+                let filterInfo = {
+                    name: filterName,
+                    displayName: filterDisplayName,
+                    cohortOnly: cohortOnlyFilter,
+                    type: 'checkbox',
+                    state: filterState,
+                    cutoffValue: null,
+                    parentFilterName: parentFilterName,
+                    parentFilterState: parentFilterState
+                };
+                self.onFilterSettingsApplied(filterInfo);
+            },
+            filterCutoffApplied: function(filterName, filterLogic, cutoffValue, cohortOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
+                let self = this;
+                let translatedFilterName = self.variantModel.translator.getTranslatedFilterName(filterName);
+                let filterInfo = {
+                    name: translatedFilterName,
+                    displayName: filterDisplayName,
+                    cohortOnly: cohortOnlyFilter,
+                    type: 'cutoff',
+                    state: filterLogic,
+                    cutoffValue: cutoffValue,
+                    turnOff: false,
+                    parentFilterName: parentFilterName,
+                    parentFilterState: parentFilterState
+                };
+                self.onFilterSettingsApplied(filterInfo);
+            },
+            filterCutoffCleared: function(filterName, cohortOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
+                let self = this;
+                let translatedFilterName = self.variantModel.translator.getTranslatedFilterName(filterName);
+                let filterInfo = {
+                    name: translatedFilterName,
+                    displayName: filterDisplayName,
+                    cohortOnly: cohortOnlyFilter,
+                    type: 'cutoff',
+                    state: null,
+                    cutoffValue: null,
+                    turnOff: true,
+                    parentFilterName: parentFilterName,
+                    parentFilterState: parentFilterState
+                };
+                self.onFilterSettingsApplied(filterInfo);
+            },
+            onFilterSettingsApplied: function (filterInfo) {
+                let self = this;
+                let selectedVarId = null;
+                if (self.selectedVariant) {
+                    selectedVarId = self.selectedVariant.id;
+                }
+                self.$refs.enrichCardRef[0].filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
+                if (self.$refs.variantCardRef && !filterInfo.cohortOnly) {
+                    self.$refs.variantCardRef.forEach((cardRef) => {
+                        cardRef.filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
+                    });
+                }
+            },
         },
         created: function () {
         },

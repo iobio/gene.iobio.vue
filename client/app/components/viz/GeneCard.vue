@@ -152,7 +152,7 @@
     </div>
 
     <gene-links-menu
-            v-if="showGene && !isBasicMode && !isEduMode"
+            v-if="showGene && !isBasicMode && !isEduMode && !workingOffline"
             :expanded="true"
             :geneModel="geneModel"
             :selectedGene="selectedGene">
@@ -185,7 +185,8 @@
     <div id="transcript-panel"  v-if="showGeneViz" class="level-edu fullview" >
 
 
-      <gene-viz id="gene-viz"
+      <gene-viz v-if="!workingOffline"
+                id="gene-viz"
                 :data="[selectedTranscript]"
                 :margin="margin"
                 :trackHeight="trackHeight"
@@ -251,7 +252,8 @@
             geneRegionEnd: null,
             geneModel: null,
             showGeneViz: null,
-            showTitle: null
+            showTitle: null,
+            workingOffline: false
         },
         data() {
             let self = this;

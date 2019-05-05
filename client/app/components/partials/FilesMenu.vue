@@ -207,7 +207,8 @@
         },
         props: {
             cohortModel: null,
-            launchedFromHub: false
+            launchedFromHub: false,
+            workingOffline: false
         },
         data() {
             return {
@@ -827,7 +828,7 @@
         created: function () {
         },
         mounted: function () {
-            if (this.cohortModel) {
+            if (this.cohortModel && !this.workingOffline) {
                 this.speciesName = this.cohortModel.genomeBuildHelper.getCurrentSpeciesName();
                 this.buildName = this.cohortModel.genomeBuildHelper.getCurrentBuildName();
                 this.speciesList = this.cohortModel.genomeBuildHelper.speciesList.map(function (sp) {

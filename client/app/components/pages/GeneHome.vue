@@ -88,6 +88,8 @@
                 :launchedFromClin="launchedFromClin"
                 :launchedFromHub="launchedFromHub"
                 :bringAttention="bringAttention"
+                :workingOffline="workingOffline"
+                :filterModel="filterModel"
                 @update-samples="onUpdateSamples"
                 @input="onGeneNameEntered"
                 @load-demo-data="onLoadDemoData"
@@ -119,7 +121,7 @@
                 </intro-card>
 
                 <genes-card
-                        v-if="geneModel"
+                        v-if="geneModel && !workingOffline"
                         v-show="filterModel"
                         v-bind:class="{hide : showWelcome && !isEduMode, 'full-width': true}"
                         ref="genesCardRef"
@@ -167,6 +169,7 @@
                             :geneRegionStart="geneRegionStart"
                             :geneRegionEnd="geneRegionEnd"
                             :showGeneViz="!isEduMode && !isBasicMode && (cohortModel == null || !cohortModel.isLoaded)"
+                            :workingOffline="workingOffline"
                             @transcript-selected="onTranscriptSelected"
                             @gene-source-selected="onGeneSourceSelected"
                             @gene-region-buffer-change="onGeneRegionBufferChange"
@@ -176,20 +179,17 @@
                     </gene-card>
                 </v-card>
 
-                <div
-                    v-if="geneModel && Object.keys(selectedGene).length > 0 && (!isBasicMode || selectedVariant != null)"
-                    style="height:auto;margin-bottom:10px;"
-                    v-bind:class="{hide : showWelcome, 'full-width': true }"
-                >
-
+                <div v-if="geneModel && Object.keys(selectedGene).length > 0 && (!isBasicMode || selectedVariant != null)"
+                        style="height:auto;margin-bottom:10px;"
+                        v-bind:class="{hide : showWelcome, 'full-width': true }">
                     <v-card v-if="geneModel && cohortModel.isLoaded && Object.keys(selectedGene).length > 0"
                             id="gene-and-variant-tabs" slot="right"
                             class="full-width"
                             style="margin-bottom:0px;padding-top:0px;margin-top:0px;">
                         <v-tabs
-                            v-model="activeGeneVariantTab"
-                            light
-                            :class="{'basic': isBasicMode}">
+                                v-model="activeGeneVariantTab"
+                                light
+                                :class="{'basic': isBasicMode}">
                             <v-tab v-if="!isBasicMode">
                                 Ranked Variants in Gene
                             </v-tab>
@@ -417,7 +417,6 @@
                 launchedFromHub: false,
                 launchedWithUrlParms: false,
 
-
                 allGenes: allGenesData,
 
                 selectedGene: {},
@@ -494,8 +493,8 @@
                 clinIobioUrl: null,
 
                 forceLocalStorage: null,
-                showVarViz: true
-
+                showVarViz: true,
+                workingOffline: false        // If working offline and want to style things
             }
         },
 
@@ -505,44 +504,76 @@
         mounted: function () {
             let self = this;
 
-            self.cardWidth = self.$el.offsetWidth;
-            self.cardWidth = window.innerWidth;
+            if (self.workingOffline) {
+                // If you're working offline and just want to style stuff...
+                let glyph = new Glyph();
+                let translator = new Translator(self.globalApp, glyph, self.globalApp.utility);
 
-            self.mainContentWidth = $('main.content .container').outerWidth();
-            $(window).resize(function () {
-                self.onResize();
-            });
+                self.geneModel = new GeneModel(self.globalApp, self.forceLocalStorage);
+                self.geneModel.geneSource = self.forMyGene2 ? "refseq" : "gencode";
 
-            document.addEventListener("visibilitychange", function () {
-                if (!document.hidden) {
-                    setTimeout(function () {
-                        self.onResize();
-                    }, 1000)
+                // Instantiate helper class than encapsulates IOBIO commands
+                let endpoint = new EndpointCmd(self.globalApp,
+                    null,
+                    null,
+                    []);
+
+                let genericAnnotation = new GenericAnnotation(glyph);
+
+                self.cohortModel = new CohortModel(
+                    self.globalApp,
+                    self.isEduMode,
+                    self.isBasicMode,
+                    endpoint,
+                    genericAnnotation,
+                    translator,
+                    self.geneModel,
+                    self.variantExporter,
+                    self.cacheHelper,
+                    self.genomeBuildHelper,
+                    new FreebayesSettings());
+
+                self.selectedGene = 'fakeGene1';
+                self.selectedTranscript = 'fakeTranscript1';
+            } else {
+                self.cardWidth = self.$el.offsetWidth;
+                self.cardWidth = window.innerWidth;
+
+                self.mainContentWidth = $('main.content .container').outerWidth();
+                $(window).resize(function () {
+                    self.onResize();
+                });
+
+                document.addEventListener("visibilitychange", function () {
+                    if (!document.hidden) {
+                        setTimeout(function () {
+                            self.onResize();
+                        }, 1000)
+                    }
+                }, false);
+
+                // Safari can't use IndexedDB in iframes, so in this situation, use
+                // local storage instead.
+                if (window != top && self.utility.detectSafari()) {
+                    self.forceLocalStorage = true;
                 }
-            }, false);
 
-            // Safari can't use IndexedDB in iframes, so in this situation, use
-            // local storage instead.
-            if (window != top && self.utility.detectSafari()) {
-                self.forceLocalStorage = true;
-            }
+                self.setAppMode();
 
-            self.setAppMode();
+                window.addEventListener("message", self.receiveClinMessage, false);
 
-            window.addEventListener("message", self.receiveClinMessage, false);
-
-            self.genomeBuildHelper = new GenomeBuildHelper(self.globalApp);
-            self.genomeBuildHelper.promiseInit({DEFAULT_BUILD: 'GRCh37'})
-                .then(function () {
-                    return self.promiseInitCache();
-                })
-                .then(function () {
-                    return self.cacheHelper.promiseClearOlderCache();
-                })
-                .then(function () {
-                    return self.promiseLoadSiteConfig();
-                })
-                .then(function () {
+                self.genomeBuildHelper = new GenomeBuildHelper(self.globalApp);
+                self.genomeBuildHelper.promiseInit({DEFAULT_BUILD: 'GRCh37'})
+                    .then(function () {
+                        return self.promiseInitCache();
+                    })
+                    .then(function () {
+                        return self.cacheHelper.promiseClearOlderCache();
+                    })
+                    .then(function () {
+                        return self.promiseLoadSiteConfig();
+                    })
+                    .then(function () {
                         let glyph = new Glyph();
                         let translator = new Translator(self.globalApp, glyph, self.globalApp.utility);
                         let genericAnnotation = new GenericAnnotation(glyph);
@@ -658,13 +689,11 @@
                                 }
 
                             })
-
-                    },
-                    function (error) {
-
-                    })
-
-
+                    }).catch((error) => {
+                    console.log("Probably not connected to the internet... ");
+                    console.log(error);
+                })
+            }
         },
 
 
@@ -683,7 +712,7 @@
                     return null;
                 }
             },
-            canonicalSampleIds: function() {
+            canonicalSampleIds: function () {
                 let ids = [];
                 if (this.cohortModel && this.cohortModel.getCanonicalModels() != null) {
                     this.cohortModel.getCanonicalModels().forEach((model) => {
@@ -2139,7 +2168,7 @@
                 }
             },
             /* Called when we need Vue to update the track view */
-            onUpdateSamples: function() {
+            onUpdateSamples: function () {
                 let self = this;
                 self.models = self.cohortModel.sampleModels;
                 self.models.push('foo');

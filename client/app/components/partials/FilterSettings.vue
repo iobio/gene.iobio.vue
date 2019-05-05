@@ -83,13 +83,9 @@
       </v-select>
     </v-flex>
   </v-layout>
-
 </template>
 
 <script>
-
-
-
 export default {
   name: 'filter-settings',
   components: {
