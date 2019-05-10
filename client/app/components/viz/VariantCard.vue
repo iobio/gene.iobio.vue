@@ -563,11 +563,12 @@
             },
             showVariantCircle: function (variant, lock) {
                 if (this.showVariantViz) {
-                    this.getVariantViz(variant).showVariantCircle(variant, this.getVariantSVG(variant), lock);
+                    this.getVariantViz(variant).showVariantCircle(variant, this.getTrackSVG(variant.sampleModelId), lock);
                 }
             },
             hideVariantCircle: function (lock) {
                 if (this.showVariantViz) {
+                    // TODO: this needs to be updated to work with the expansion component body
                     let container = d3.select(this.$el).select('#loaded-variant-viz > svg');
                     this.$refs.variantVizRef.hideVariantCircle(container, lock);
                     container = d3.select(this.$el).select('#called-variant-viz > svg');
@@ -580,6 +581,7 @@
                     : this.$refs.variantVizRef;
             },
             getVariantSVG: function (variant) {
+                // TODO: expansion panel messed up this hierarchy, using getTrackSVG for now...
                 return variant.fbCalled && variant.fbCalled === 'Y'
                     ? d3.select(this.$el).select('#called-variant-viz > svg')
                     : d3.select(this.$el).select('#loaded-variant-viz > svg');
@@ -627,7 +629,7 @@
             },
             showFlaggedVariant: function (variant) {
                 if (this.showVariantViz) {
-                    this.getVariantViz(variant).showFlaggedVariant(variant, this.getVariantSVG(variant));
+                    this.getVariantViz(variant).showFlaggedVariant(variant, this.getTrackSVG(variant.sampleModelId));
                 }
             },
             getExonClass: function (exon, i) {

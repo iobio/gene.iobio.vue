@@ -244,7 +244,7 @@
                     }
                     this.variantChart.showCircle()(variant,
                         container,
-                        variant.fbCalled && variant.fbCalled == 'Y' ? false : true,
+                        variant.fbCalled && variant.fbCalled !== 'Y',
                         pinned);
                 }
             },
