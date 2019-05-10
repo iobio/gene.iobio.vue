@@ -244,6 +244,8 @@
                                  v-show="showVariantViz"
                                  v-bind:class="{hide: sampleModel.id === 'known-variants' && knownVariantsViz !== 'variants'}"
                                  :data="sampleModel.calledVariants"
+                                 :id="sampleModel.getId()"
+                                 :model="sampleModel"
                                  :regionStart="regionStart"
                                  :regionEnd="regionEnd"
                                  :annotationScheme="annotationScheme"
@@ -272,6 +274,8 @@
                                  v-show="showVariantViz"
                                  v-bind:class="{hide: sampleModel.id === 'known-variants' && knownVariantsViz !== 'variants'}"
                                  :data="sampleModel.loadedVariants"
+                                 :id="sampleModel.getId()"
+                                 :model="sampleModel"
                                  :regionStart="regionStart"
                                  :regionEnd="regionEnd"
                                  :annotationScheme="annotationScheme"
@@ -580,6 +584,10 @@
                     ? d3.select(this.$el).select('#called-variant-viz > svg')
                     : d3.select(this.$el).select('#loaded-variant-viz > svg');
             },
+            getTrackSVG: function (vizTrackName) {
+                var svg = d3.select(this.$el).select('#' + vizTrackName + ' > svg');
+                return svg;
+            },
             hideCoverageCircle: function () {
                 if (this.showDepthViz) {
                     this.$refs.depthVizRef.hideCurrentPoint();
@@ -734,6 +742,19 @@
                 if (self.showZoom === true)
                     self.openState[0] = true;
                     self.openState = self.openState.slice();
+            },
+            filterVariants: function(filterInfo, selectedTrackId, selectedVariantId, parentFilterName, parentFilterState) {
+                let self = this;
+
+                let checkForSelectedVariant = false;
+                if (self.sampleModel.getId() === selectedTrackId && selectedVariantId) {
+                    checkForSelectedVariant = true;
+                }
+                // NOTE: this only filters loaded variants, not called
+                if (self.$refs.variantVizRef) {
+                    self.$refs.variantVizRef.filterVariants(filterInfo, self.getTrackSVG(self.$refs.variantVizRef.id), checkForSelectedVariant, selectedVariantId,
+                        parentFilterName, parentFilterState);
+                }
             }
         },
 

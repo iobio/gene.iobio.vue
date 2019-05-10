@@ -106,6 +106,7 @@
                 @send-flagged-variants-to-clin="onSendFlaggedVariantsToClin"
                 @show-snackbar="onShowSnackbar"
                 @hide-snackbar="onHideSnackbar"
+                @on-filter-settings-applied="onVariantFilterSettingsApplied"
         >
         </navigation>
 
@@ -2183,7 +2184,22 @@
                 self.models.push('foo');
                 self.models.pop();
 
-            }
+            },
+            onVariantFilterSettingsApplied: function (filterInfo) {
+                let self = this;
+                let selectedVarId = null;
+                if (self.selectedVariant) {
+                    selectedVarId = self.selectedVariant.id;
+                }
+                self.$refs.variantCardRef.forEach((varCard) => {
+                    varCard.filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
+                    // if (self.$refs.variantCardRef && !filterInfo.cohortOnly) {
+                    //     self.$refs.variantCardRef.forEach((cardRef) => {
+                    //         cardRef.filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
+                    //     });
+                    // }
+                });
+            },
         }
     }
 </script>

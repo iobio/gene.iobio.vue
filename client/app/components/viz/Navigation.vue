@@ -885,16 +885,7 @@
             },
             onFilterSettingsApplied: function (filterInfo) {
                 let self = this;
-                let selectedVarId = null;
-                if (self.selectedVariant) {
-                    selectedVarId = self.selectedVariant.id;
-                }
-                self.$refs.enrichCardRef[0].filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
-                if (self.$refs.variantCardRef && !filterInfo.cohortOnly) {
-                    self.$refs.variantCardRef.forEach((cardRef) => {
-                        cardRef.filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
-                    });
-                }
+                self.$emit('on-filter-settings-applied', filterInfo);
             },
         },
         created: function () {

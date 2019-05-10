@@ -2745,7 +2745,7 @@ class SampleModel {
 
         var impacts = "";
         var colorimpacts = "";
-        var borderColor = "";
+        var borderColor = "";    // TODO: Attempted to use for somatic track coloring, can be used for something else or remove
         var effects = "";
         var sift = "";
         var polyphen = "";
@@ -2769,16 +2769,19 @@ class SampleModel {
         }
 
         // TODO: refactor this so we still have filtering abilities for actual impact
+        // TODO: filtering based off of .LOW .MODIFIER etc
         if (d.isInherited && inTumorTrack && !inKnownTrack) {
             colorimpacts += " " + 'impact_INHERITED';
         } else if (inTumorTrack && !inKnownTrack) {
             colorimpacts += " " + "impact_SOMATIC";
-        } else {
-            var colorImpactList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.impact : d[self.globalApp.impactFieldToColor]);
-            for (var key in colorImpactList) {
-                colorimpacts += " " + 'impact_' + key;
-            }
         }
+        //else {
+        // Also apply regular impact classes to accommodate filtering in somatic tracks
+        var colorImpactList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.impact : d[self.globalApp.impactFieldToColor]);
+        for (var key in colorImpactList) {
+            colorimpacts += " " + 'impact_' + key;
+        }
+        //}
 
         if (colorimpacts === "") {
             colorimpacts = "impact_none";
