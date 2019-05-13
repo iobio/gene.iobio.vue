@@ -563,7 +563,7 @@
             },
             showVariantCircle: function (variant, lock) {
                 if (this.showVariantViz) {
-                    this.getVariantViz(variant).showVariantCircle(variant, this.getTrackSVG(variant.sampleModelId), lock);
+                    this.getVariantViz(variant).showVariantCircle(variant, this.getVariantSVG(variant), lock);
                 }
             },
             hideVariantCircle: function (lock) {
@@ -583,11 +583,9 @@
                     ? this.$refs.calledVariantVizRef
                     : this.$refs.variantVizRef;
             },
+            // Returns all loaded and called variant viz SVGs
             getVariantSVG: function (variant) {
-                // TODO: expansion panel messed up this hierarchy, using getTrackSVG for now...
-                return variant.fbCalled && variant.fbCalled === 'Y'
-                    ? d3.select(this.$el).select('#called-variant-viz > svg')
-                    : d3.select(this.$el).select('#loaded-variant-viz > svg');
+                return d3.select(this.$el).select('.expansion-panel__container').select('.expansion-panel__body').select('#card-viz').selectAll('.variant-viz > svg');
             },
             getTrackSVG: function (vizTrackName) {
                 var svg = d3.select(this.$el).select('#' + vizTrackName + ' > svg');

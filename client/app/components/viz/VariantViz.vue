@@ -242,9 +242,10 @@
                     if (pinned) {
                         this.variantChart.hideCircle()(container, pinned);
                     }
+                    // Note: SJG not sure if logic here is correct for highlighting when vars are called...
                     this.variantChart.showCircle()(variant,
                         container,
-                        variant.fbCalled && variant.fbCalled !== 'Y',
+                        (variant.fbCalled == null || variant.fbCalled !== 'Y'),
                         pinned);
                 }
             },

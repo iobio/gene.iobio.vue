@@ -56,20 +56,18 @@ export default function variantD3() {
         // Find the matching variant
         var matchingVariant = null;
         svgContainer.selectAll(".variant").each(function (variant, i) {
-            if (d.start == variant.start
-                && d.end == variant.end
-                && d.ref == variant.ref
-                && d.alt == variant.alt
-                && d.type.toLowerCase() == variant.type.toLowerCase()) {
+            if (d.start === variant.start
+                && d.end === variant.end
+                && d.ref === variant.ref
+                && d.alt === variant.alt
+                && d.type.toLowerCase() === variant.type.toLowerCase()) {
 
-                if (variant.zygosity != null && variant.zygosity.toLowerCase() == 'homref') {
+                if (variant.zygosity != null && variant.zygosity.toLowerCase() === 'homref') {
                     // we want to show an "x" for homozygous reference variants
                     // instead of a circle
                 } else {
                     matchingVariant = variant;
                 }
-
-
             }
         });
 
@@ -128,12 +126,12 @@ export default function variantD3() {
             .duration(500)
             .style("opacity", 0);
         if (pinned) {
-            svgContainers.select(pinnedArrowClazz).selectAll(".arrow").transition()
+            svgContainers.selectAll(pinnedArrowClazz).selectAll(".arrow").transition()
                 .duration(500)
                 .style("opacity", 0);
         }
         if (!pinned) {
-            svgContainers.select(hoverArrowClazz).selectAll(".arrow").transition()
+            svgContainers.selectAll(hoverArrowClazz).selectAll(".arrow").transition()
                 .duration(500)
                 .style("opacity", 0);
         }
