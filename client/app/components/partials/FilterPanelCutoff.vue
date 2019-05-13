@@ -24,7 +24,7 @@
                                 label="Select"
                                 v-model="filterLogic"
                                 single-line
-                                color="colorNavy"
+                                color="appColor"
                                 @change="checkApplyButtonState"
                         ></v-select>
                         <v-text-field
@@ -33,27 +33,27 @@
                                 single-line
                                 label="Value"
                                 suffix="%"
-                                color="cohortNavy"
+                                color="appColor"
                                 :rules="[(v) => (v > 0 && v < 100) || 'Integer between 1-99']"
                                 :style="'padding-left: 5px'"
                                 @change="checkApplyButtonState">
                         </v-text-field>
-                        <v-text-field
-                                v-else-if="isRawPVal"
-                                v-model="cutoffValue"
-                                single-line
-                                label="Value"
-                                color="cohortNavy"
-                                :rules="[(v) => (v > 0 && v < 1) || 'Value between 0-1']"
-                                :style="'padding-left: 5px'"
-                                @change="checkApplyButtonState">
-                        </v-text-field>
+                        <!--<v-text-field-->
+                                <!--v-else-if="isRawPVal"-->
+                                <!--v-model="cutoffValue"-->
+                                <!--single-line-->
+                                <!--label="Value"-->
+                                <!--color="appColor"-->
+                                <!--:rules="[(v) => (v > 0 && v < 1) || 'Value between 0-1']"-->
+                                <!--:style="'padding-left: 5px'"-->
+                                <!--@change="checkApplyButtonState">-->
+                        <!--</v-text-field>-->
                         <v-text-field
                                 v-else
                                 v-model="cutoffValue"
                                 single-line
                                 label="Value"
-                                color="cohortNavy"
+                                color="appColor"
                                 :style="'padding-left: 5px'"
                                 @change="checkApplyButtonState">
                         </v-text-field>
@@ -62,8 +62,9 @@
                         <v-tooltip color="appGray" top>
                             <v-btn fab
                                    icon
+                                   small
                                    outline
-                                   v-bind:style="{maxWidth: '30px', color: filterButtonColor}"
+                                   v-bind:style="{maxWidth: '30px', maxHeight: '30px', color: filterButtonColor}"
                                    slot="activator"
                                    @click="onApplyFilter"
                                    :disabled="!readyToApply || (!annotationComplete && isFrequencyField)">
@@ -75,9 +76,10 @@
                     <v-flex d-flex xs2 justify-start align-center>
                         <v-tooltip color="appGray" top>
                             <v-btn fab
+                                   small
                                    icon
                                    outline
-                                   v-bind:style="{maxWidth: '30px', color: '#95b0c6'}"
+                                   v-bind:style="{maxWidth: '30px', maxHeight: '30px', color: '#888888'}"
                                    slot="activator"
                                    @click="clearFilters">
                                 <v-icon>clear</v-icon>

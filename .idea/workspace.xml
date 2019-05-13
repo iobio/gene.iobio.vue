@@ -50,63 +50,15 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Vcf.iobio.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/app/models/Vcf.iobio.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="321">
-              <caret line="1119" column="19" selection-start-line="1119" selection-start-column="19" selection-end-line="1119" selection-end-column="19" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SampleModel.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/app/models/SampleModel.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="786">
-              <caret line="2780" column="9" selection-start-line="2780" selection-start-column="9" selection-end-line="2780" selection-end-column="9" />
-              <folding>
-                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Variant.d3.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/client/app/d3/Variant.d3.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="353">
-              <caret line="98" column="115" lean-forward="true" selection-start-line="98" selection-start-column="115" selection-end-line="98" selection-end-column="115" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="Navigation.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/viz/Navigation.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="331">
-              <caret line="887" column="69" selection-start-line="887" selection-start-column="69" selection-end-line="887" selection-end-column="69" />
+            <state relative-caret-position="115">
+              <caret line="331" column="67" selection-start-line="331" selection-start-column="67" selection-end-line="331" selection-end-column="67" />
               <folding>
                 <element signature="n#style#0;n#v-toolbar-title#0;n#v-toolbar#0;n#div#0;n#template#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#v-toolbar-items#0;n#v-toolbar#0;n#div#0;n#template#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#span#0;n#v-toolbar-items#0;n#v-toolbar#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-                <element signature="e#28494#28523#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CohortModel.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="469">
-              <caret line="1852" column="59" selection-start-line="1852" selection-start-column="59" selection-end-line="1852" selection-end-column="59" />
-              <folding>
-                <element signature="e#0#42#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -115,11 +67,10 @@
       <file leaf-file-name="FilterPanelMenu.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilterPanelMenu.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="244">
-              <caret line="71" column="12" selection-start-line="71" selection-start-column="12" selection-end-line="71" selection-end-column="12" />
+            <state relative-caret-position="1072">
+              <caret line="70" column="38" lean-forward="true" selection-start-line="70" selection-start-column="38" selection-end-line="70" selection-end-column="38" />
               <folding>
                 <element signature="n#style#0;n#v-flex#0;n#template#0;n#!!top" expanded="true" />
-                <element signature="e#1775#1826#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -128,8 +79,8 @@
       <file leaf-file-name="FilterPanel.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilterPanel.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-317">
-              <caret line="22" column="44" selection-start-line="22" selection-start-column="44" selection-end-line="22" selection-end-column="44" />
+            <state relative-caret-position="1012">
+              <caret line="82" column="39" lean-forward="true" selection-start-line="82" selection-start-column="39" selection-end-line="82" selection-end-column="39" />
               <folding>
                 <element signature="n#style#0;n#v-avatar#1;n#div#0;n#v-expansion-panel-content#0;n#v-expansion-panel#0;n#v-flex#0;n#v-layout#0;n#template#0;n#!!top" expanded="true" />
                 <element signature="e#2856#2931#0" expanded="true" />
@@ -138,18 +89,26 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GeneHome.vue" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/app/components/pages/GeneHome.vue">
+      <file leaf-file-name="FilterPanelCutoff.vue" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilterPanelCutoff.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="435">
-              <caret line="2194" column="32" selection-start-line="2194" selection-start-column="32" selection-end-line="2194" selection-end-column="32" />
+            <state relative-caret-position="126">
+              <caret line="20" column="43" selection-start-line="20" selection-start-column="43" selection-end-line="20" selection-end-column="43" />
               <folding>
-                <element signature="n#style#0;n#v-card#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#v-tab-item#0;n#v-tabs#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#feature-matrix-card#0;n#v-tab-item#0;n#v-tabs#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#v-tab-item#1;n#v-tabs#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#v-layout#0;n#template#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="routes.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/app/routes.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="384">
+              <caret line="24" lean-forward="true" selection-start-line="24" selection-end-line="24" />
+              <folding>
+                <element signature="e#72#127#0" expanded="true" />
+                <element signature="e#739#795#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -167,14 +126,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>variantChart</find>
-      <find>checkForSelectedVar</find>
-      <find>onfilt</find>
-      <find>variantCardRef</find>
-      <find>filtervariants</find>
-      <find>&lt;variant-</find>
-      <find>verticallayers</find>
-      <find>getname</find>
       <find>id</find>
       <find>.name</find>
       <find>filtervari</find>
@@ -197,6 +148,14 @@
       <find>showCircle</find>
       <find>fbcalle</find>
       <find>fbcalled</find>
+      <find>filter-ta</find>
+      <find>&lt;tab</find>
+      <find>filter-r</find>
+      <find>flagged-vars-tab</find>
+      <find>filters-tab</find>
+      <find>filter-tab</find>
+      <find>cohor</find>
+      <find>cohortonly</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -254,15 +213,15 @@
         <option value="$PROJECT_DIR$/server/views/index.html" />
         <option value="$PROJECT_DIR$/client/app/components/partials/FilterPanelMenu.vue" />
         <option value="$PROJECT_DIR$/client/app/models/CohortModel.js" />
-        <option value="$PROJECT_DIR$/client/app/components/partials/FilterPanel.vue" />
-        <option value="$PROJECT_DIR$/client/app/components/partials/FilterPanelCutoff.vue" />
         <option value="$PROJECT_DIR$/client/app/components/partials/FilterPanelCheckbox.vue" />
-        <option value="$PROJECT_DIR$/client/app/components/viz/Navigation.vue" />
         <option value="$PROJECT_DIR$/client/app/components/pages/GeneHome.vue" />
         <option value="$PROJECT_DIR$/client/app/models/SampleModel.js" />
         <option value="$PROJECT_DIR$/client/app/components/viz/VariantCard.vue" />
         <option value="$PROJECT_DIR$/client/app/d3/Variant.d3.js" />
         <option value="$PROJECT_DIR$/client/app/components/viz/VariantViz.vue" />
+        <option value="$PROJECT_DIR$/client/app/components/partials/FilterPanel.vue" />
+        <option value="$PROJECT_DIR$/client/app/components/viz/Navigation.vue" />
+        <option value="$PROJECT_DIR$/client/app/components/partials/FilterPanelCutoff.vue" />
       </list>
     </option>
   </component>
@@ -461,12 +420,12 @@
       <workItem from="1553794995145" duration="21575000" />
       <workItem from="1555450436226" duration="19063000" />
       <workItem from="1556305652286" duration="2103000" />
-      <workItem from="1556576911209" duration="84530000" />
+      <workItem from="1556576911209" duration="86279000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="636145000" />
+    <option name="totallyTimeSpent" value="637894000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1920" height="1057" extended-state="0" />
@@ -819,46 +778,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilterPanelMenu.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="244">
-          <caret line="71" column="12" selection-start-line="71" selection-start-column="12" selection-end-line="71" selection-end-column="12" />
-          <folding>
-            <element signature="n#style#0;n#v-flex#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="e#1775#1826#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilterPanel.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-317">
-          <caret line="22" column="44" selection-start-line="22" selection-start-column="44" selection-end-line="22" selection-end-column="44" />
-          <folding>
-            <element signature="n#style#0;n#v-avatar#1;n#div#0;n#v-expansion-panel-content#0;n#v-expansion-panel#0;n#v-flex#0;n#v-layout#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="e#2856#2931#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilterPanelCutoff.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="261">
-          <caret line="115" column="16" selection-start-line="115" selection-start-column="16" selection-end-line="115" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/routes.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2880">
-          <caret line="184" column="38" lean-forward="true" selection-start-line="184" selection-start-column="38" selection-end-line="184" selection-end-column="38" />
-          <folding>
-            <element signature="e#72#127#0" expanded="true" />
-            <element signature="e#739#795#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/assets/sass/_variables.sass">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
@@ -870,44 +789,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="432">
           <caret line="27" column="29" lean-forward="true" selection-start-line="27" selection-start-column="29" selection-end-line="27" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/viz/Navigation.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="331">
-          <caret line="887" column="69" selection-start-line="887" selection-start-column="69" selection-end-line="887" selection-end-column="69" />
-          <folding>
-            <element signature="n#style#0;n#v-toolbar-title#0;n#v-toolbar#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#v-toolbar-items#0;n#v-toolbar#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#v-toolbar-items#0;n#v-toolbar#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="e#28494#28523#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/pages/GeneHome.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="2194" column="32" selection-start-line="2194" selection-start-column="32" selection-end-line="2194" selection-end-column="32" />
-          <folding>
-            <element signature="n#style#0;n#v-card#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#v-tab-item#0;n#v-tabs#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#feature-matrix-card#0;n#v-tab-item#0;n#v-tabs#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#v-tab-item#1;n#v-tabs#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="469">
-          <caret line="1852" column="59" selection-start-line="1852" selection-start-column="59" selection-end-line="1852" selection-end-column="59" />
-          <folding>
-            <element signature="e#0#42#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -962,8 +843,87 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/app/d3/Variant.d3.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="353">
-          <caret line="98" column="115" lean-forward="true" selection-start-line="98" selection-start-column="115" selection-end-line="98" selection-end-column="115" />
+        <state relative-caret-position="228">
+          <caret line="111" column="136" lean-forward="true" selection-start-line="111" selection-start-column="136" selection-end-line="111" selection-end-column="136" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/pages/GeneHome.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="352">
+          <caret line="77" column="16" selection-start-line="77" selection-start-column="16" selection-end-line="77" selection-end-column="16" />
+          <folding>
+            <element signature="n#style#0;n#v-card#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#v-tab-item#0;n#v-tabs#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#feature-matrix-card#0;n#v-tab-item#0;n#v-tabs#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#v-tab-item#1;n#v-tabs#0;n#v-card#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="469">
+          <caret line="1852" column="59" selection-start-line="1852" selection-start-column="59" selection-end-line="1852" selection-end-column="59" />
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilterPanel.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1012">
+          <caret line="82" column="39" lean-forward="true" selection-start-line="82" selection-start-column="39" selection-end-line="82" selection-end-column="39" />
+          <folding>
+            <element signature="n#style#0;n#v-avatar#1;n#div#0;n#v-expansion-panel-content#0;n#v-expansion-panel#0;n#v-flex#0;n#v-layout#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="e#2856#2931#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilterPanelMenu.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1072">
+          <caret line="70" column="38" lean-forward="true" selection-start-line="70" selection-start-column="38" selection-end-line="70" selection-end-column="38" />
+          <folding>
+            <element signature="n#style#0;n#v-flex#0;n#template#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/viz/Navigation.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="331" column="67" selection-start-line="331" selection-start-column="67" selection-end-line="331" selection-end-column="67" />
+          <folding>
+            <element signature="n#style#0;n#v-toolbar-title#0;n#v-toolbar#0;n#div#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#v-toolbar-items#0;n#v-toolbar#0;n#div#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#v-toolbar-items#0;n#v-toolbar#0;n#div#0;n#template#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/routes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="384">
+          <caret line="24" lean-forward="true" selection-start-line="24" selection-end-line="24" />
+          <folding>
+            <element signature="e#72#127#0" expanded="true" />
+            <element signature="e#739#795#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilterPanelCutoff.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="20" column="43" selection-start-line="20" selection-start-column="43" selection-end-line="20" selection-end-column="43" />
+          <folding>
+            <element signature="n#style#0;n#v-layout#0;n#template#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

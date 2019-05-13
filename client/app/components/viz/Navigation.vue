@@ -372,18 +372,34 @@
                 :hide-overlay="true"
                 v-model="leftDrawer"
                 :stateless="true"
-                width=330>
+                width=380>
             <div id="side-panel-container">
                 <v-tabs
                         v-model="activeLeftDrawerTab"
                         light
                         :class="{'basic': isBasicMode}">
-                    <v-tab href="#flagged-vars-tab">
-                        Flagged Variants
-                    </v-tab>
                     <v-tab href="#filter-tab">
                         Filters
                     </v-tab>
+                    <v-tab href="#flagged-vars-tab">
+                        Flagged Variants
+                    </v-tab>
+                    <v-tab-item
+                            :key="'filterTab'"
+                            :id="'filter-tab'">
+                        <v-container>
+                            <filter-panel-menu
+                                    v-if="filterModel"
+                                    ref="filterSettingsMenuRef"
+                                    :filterModel="filterModel"
+                                    :showCoverageCutoffs="showCoverageCutoffs"
+                                    :annotationComplete="annotationComplete"
+                                    @filter-box-toggled="filterBoxToggled"
+                                    @filter-cutoff-applied="filterCutoffApplied"
+                                    @filter-cutoff-cleared="filterCutoffCleared">
+                            </filter-panel-menu>
+                        </v-container>
+                    </v-tab-item>
                     <v-tab-item
                             :key="'flaggedVarsTab'"
                             :id="'flagged-vars-tab'">
@@ -400,22 +416,6 @@
                                 @send-flagged-variants-to-clin="onSendFlaggedVariantsToClin"
                         >
                         </flagged-variants-card>
-                    </v-tab-item>
-                    <v-tab-item
-                            :key="'filterTab'"
-                            :id="'filter-tab'">
-                        <v-container>
-                            <filter-panel-menu
-                                    v-if="filterModel"
-                                    ref="filterSettingsMenuRef"
-                                    :filterModel="filterModel"
-                                    :showCoverageCutoffs="showCoverageCutoffs"
-                                    :annotationComplete="annotationComplete"
-                                    @filter-box-toggled="filterBoxToggled"
-                                    @filter-cutoff-applied="filterCutoffApplied"
-                                    @filter-cutoff-cleared="filterCutoffCleared">
-                            </filter-panel-menu>
-                        </v-container>
                     </v-tab-item>
                 </v-tabs>
                 <v-card id="legend-card" v-if="isBasicMode">
@@ -718,7 +718,7 @@
                 typeaheadLimit: parseInt(100),
                 activeLeftDrawerTab: 0,
                 showCoverageCutoffs: false,
-                selectedTab: 'flagged-vars-tab'
+                selectedTab: 'filter-tab'
             }
         },
         watch: {

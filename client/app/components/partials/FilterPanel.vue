@@ -86,19 +86,15 @@
                 minGenotypeDepth: null,
                 categories: {
                     'annotation': [
-                        {name: 'impact', display: 'Impact', active: false, open: false, type: 'checkbox', cohortOnly: false},
-                        {name: 'type', display: 'Type', active: false, open: false, type: 'checkbox', cohortOnly: false},
-                        {name: 'zygosities', display: 'Zygosities', active: false, open: false, type: 'checkbox', cohortOnly: false},],
-                    'enrichment': [
-                        {name: 'pValue', display: 'p-val', active: false, open: false, type: 'cutoff', cohortOnly: true},
-                        {name: 'adjPVal', display: '-log(p-val)', active: false, open: false, type: 'cutoff', cohortOnly: true}],
+                        {name: 'impact', display: 'Impact', active: false, open: false, type: 'checkbox', tumorOnly: false},
+                        {name: 'type', display: 'Type', active: false, open: false, type: 'checkbox', tumorOnly: false}],
+                        // {name: 'zygosities', display: 'Zygosities', active: false, open: false, type: 'checkbox', tumorOnly: false},],
+                    'somatic': [
+                        {name: 'allelefreq', display: 'Allele Frequency', active: false, open: false, type: 'cutoff', tumorOnly: true}],
                     'frequencies': [
-                        {name: 'g1000', display: '1000G', active: false, open: false, type: 'cutoff', cohortOnly: false},
-                        {name: 'exac', display: 'ExAC', active: false, open: false, type: 'cutoff', cohortOnly: false},
-                        {name: 'gnomad', display: 'gnomAD', active: false, open: false, type: 'cutoff', cohortOnly: false}],
-                    'rawCounts': [ // Currently unused - may incorporate later
-                        {name: 'rawCounts', display: 'Raw Counts', active: false, open: false, type: 'cutoff'}],
-                    'samplePresence': [{name: 'samplePresence', display: 'Sample Presence', active: false, open: false, type: 'checkbox'}]
+                        {name: 'g1000', display: '1000G', active: false, open: false, type: 'cutoff', tumorOnly: false},
+                        {name: 'exac', display: 'ExAC', active: false, open: false, type: 'cutoff', tumorOnly: false},
+                        {name: 'gnomad', display: 'gnomAD', active: false, open: false, type: 'cutoff', tumorOnly: false}]
                 }
             }
         },
@@ -110,10 +106,10 @@
                 let filterObj = self.categories[grandparentFilterName].filter((cat) => {
                     return cat.name === parentFilterName;
                 });
-                let cohortOnly = false;
+                let tumorOnly = false;
                 if (filterObj.length > 0) {
                     filterObj[0].active = parentFilterState;
-                    cohortOnly = filterObj[0].cohortOnly;
+                    tumorOnly = filterObj[0].tumorOnly;
                 }
                 let grandparentFilterState = false;
                 let parentFilters = self.categories[grandparentFilterName];
@@ -138,7 +134,7 @@
                         filterDisplayName = 'Heterozygotes';
                     }
                 }
-                self.$emit('filter-toggled', filterName, filterState, grandparentFilterName, grandparentFilterState, cohortOnly, filterDisplayName);
+                self.$emit('filter-toggled', filterName, filterState, grandparentFilterName, grandparentFilterState, tumorOnly, filterDisplayName);
             },
             onFilterApplied: function(filterName, filterLogic, cutoffValue, grandparentFilterName) {
                 let self = this;
@@ -146,11 +142,11 @@
                 let filterObj = self.categories[grandparentFilterName].filter((cat) => {
                     return cat.name === filterName;
                 });
-                let cohortOnly = false;
+                let tumorOnly = false;
                 let displayName = '';
                 if (filterObj.length > 0) {
                     filterObj[0].active = true;
-                    cohortOnly = filterObj[0].cohortOnly;
+                    tumorOnly = filterObj[0].tumorOnly;
                     displayName = filterObj[0].display;
                     if (grandparentFilterName === 'frequencies') {
                         displayName += ' Freq';
@@ -161,7 +157,7 @@
                 parentFilters.forEach((filt) => {
                     grandparentFilterState |= filt.active;
                 });
-                self.$emit('filter-applied', filterName, filterLogic, cutoffValue, grandparentFilterName, grandparentFilterState, cohortOnly, displayName);
+                self.$emit('filter-applied', filterName, filterLogic, cutoffValue, grandparentFilterName, grandparentFilterState, tumorOnly, displayName);
             },
             onFilterCleared: function(filterName, grandparentFilterName) {
                 let self = this;
@@ -169,11 +165,11 @@
                 let filterObj = self.categories[grandparentFilterName].filter((cat) => {
                     return cat.name === filterName;
                 });
-                let cohortOnly = false;
+                let tumorOnly = false;
                 let displayName = '';
                 if (filterObj.length > 0) {
                     filterObj[0].active = false;
-                    cohortOnly = filterObj[0].cohortOnly;
+                    tumorOnly = filterObj[0].tumorOnly;
                     displayName = filterObj[0].display;
                 }
                 let grandparentFilterState = false;
@@ -181,7 +177,7 @@
                 parentFilters.forEach((filt) => {
                     grandparentFilterState |= filt.active;
                 });
-                self.$emit('cutoff-filter-cleared', filterName, grandparentFilterName, grandparentFilterState, cohortOnly, displayName);
+                self.$emit('cutoff-filter-cleared', filterName, grandparentFilterName, grandparentFilterState, tumorOnly, displayName);
             },
             clearFilters: function() {
                 let self = this;
