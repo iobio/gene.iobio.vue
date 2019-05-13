@@ -120,20 +120,20 @@ export default function variantD3() {
     };
 
 
-    var hideCircle = function (svgContainer, pinned) {
+    var hideCircle = function (svgContainers, pinned) {
         var circleClazz = pinned ? '.pinned.circle' : '.hover.circle';
         var pinnedArrowClazz = 'g.pinned.arrow';
         var hoverArrowClazz = 'g.hover.arrow';
-        svgContainer.select(circleClazz).transition()
+        svgContainers.selectAll(circleClazz).transition()
             .duration(500)
             .style("opacity", 0);
         if (pinned) {
-            svgContainer.select(pinnedArrowClazz).selectAll(".arrow").transition()
+            svgContainers.select(pinnedArrowClazz).selectAll(".arrow").transition()
                 .duration(500)
                 .style("opacity", 0);
         }
         if (!pinned) {
-            svgContainer.select(hoverArrowClazz).selectAll(".arrow").transition()
+            svgContainers.select(hoverArrowClazz).selectAll(".arrow").transition()
                 .duration(500)
                 .style("opacity", 0);
         }

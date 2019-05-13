@@ -175,7 +175,7 @@
                 </v-switch>
                 <span v-if="showZoom" class=" label label-warning text-xs-center">{{ zoomMessage }}</span>
             </div>
-            <v-card :style="{padding: '5px 10px'}">
+            <v-card :style="{padding: '5px 10px'}" id="card-viz">
                 <known-variants-toolbar
                         v-if="sampleModel.id === 'known-variants'"
                         @knownVariantsVizChange="onKnownVariantsVizChange"
@@ -216,7 +216,7 @@
                     </div>
                 </div>
 
-                <div style="width:100%">
+                <div style="width:100%" id="viz-div">
                     <gene-viz id="gene-viz-zoom"
                               v-if="showZoom"
                               :data="[selectedTranscript]"
@@ -567,12 +567,15 @@
                 }
             },
             hideVariantCircle: function (lock) {
-                if (this.showVariantViz) {
+                let self = this;
+                if (self.showVariantViz) {
                     // TODO: this needs to be updated to work with the expansion component body
-                    let container = d3.select(this.$el).select('#loaded-variant-viz > svg');
-                    this.$refs.variantVizRef.hideVariantCircle(container, lock);
-                    container = d3.select(this.$el).select('#called-variant-viz > svg');
-                    this.$refs.variantVizRef.hideVariantCircle(container, lock);
+                    let containers = d3.select(this.$el).select('.expansion-panel__container').select('.expansion-panel__body').select('#card-viz').selectAll('.variant-viz > svg');
+                    self.$refs.variantVizRef.hideVariantCircle(containers, lock);
+                    //let container = d3.select(this.$el).select('#loaded-variant-viz > svg');
+                    // this.$refs.variantVizRef.hideVariantCircle(container, lock);
+                    // container = d3.select(this.$el).select('#called-variant-viz > svg');
+                    // this.$refs.variantVizRef.hideVariantCircle(container, lock);
                 }
             },
             getVariantViz: function (variant) {
