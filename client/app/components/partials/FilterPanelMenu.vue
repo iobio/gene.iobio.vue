@@ -88,8 +88,8 @@
                         display: 'SOMATIC FILTERS',
                         active: false,
                         custom: false,
-                        description: 'Customize somatic variant identification based on frequencies',
-                        icon: 'poll'
+                        description: 'Select a threshold for allele frequency by which to identify somatic variants',
+                        icon: 'flash_on'
                     },
                     {
                         name: 'frequencies',

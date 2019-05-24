@@ -1505,7 +1505,7 @@ class SampleModel {
     }
 
 
-    promiseAnnotateVariants(theGene, theTranscript, variantModels, isMultiSample, isBackground, onVcfData) {
+    promiseAnnotateVariants(theGene, theTranscript, variantModels, isMultiSample, isBackground) {
         let me = this;
 
         return new Promise(function (resolve, reject) {
@@ -1540,19 +1540,19 @@ class SampleModel {
                         if (Object.keys(resultMap).length === variantModels.length) {
                             resolve(resultMap);
                         } else {
-
                             // We don't have the variants for the gene in cache,
                             // so call the iobio services to retreive the variants for the gene region
                             // and annotate them.
                             me._promiseVcfRefName(theGene.chr)
                                 .then(function () {
+                                    let samplesInFile = me._getSamplesToRetrieve();
                                     return me.vcf.promiseGetVariants(
                                         me.getVcfRefName(theGene.chr),
                                         theGene,
                                         theTranscript,
                                         null,   // regions
                                         isMultiSample, // is multi-sample
-                                        me._getSamplesToRetrieve(),
+                                        samplesInFile,
                                         me.getId() === 'known-variants' ? 'none' : me.getAnnotationScheme().toLowerCase(),
                                         me.getTranslator().clinvarMap,
                                         me.getGeneModel().geneSource === 'refseq',
@@ -1573,9 +1573,18 @@ class SampleModel {
                                         }
 
                                         if (results && results.length > 0) {
-                                            let data = results[0];
+                                            // Base this off of ID
+                                            let filtData = results.filter((item) => {
+                                                return item.name === me.getSelectedSample();
+                                            });
 
-                                            let theGeneObject = me.getGeneModel().geneObjects[data.gene];
+                                            if (filtData.length > 0) {
+                                                filtData = filtData[0]
+                                            } else {
+                                                filtData = results[0];
+                                            }
+
+                                            let theGeneObject = me.getGeneModel().geneObjects[filtData.gene];
                                             if (theGeneObject) {
 
                                                 var resultMap = {};
@@ -1922,7 +1931,7 @@ class SampleModel {
             });
 
             // Include all of the sample names for the proband
-            me.getAffectedInfo().forEach(function (info) {
+            me.getAffectedInfo().forEach(function(info, index) {
                 if (info.model == me) {
                     // ignore the affected info for this sample.  We already added it
                     // to the list of samples to retrieve
@@ -1946,6 +1955,20 @@ class SampleModel {
             });
         }
         return samplesToRetrieve;
+    }
+
+    /* Returns the index of this sample within the _getSamplesToRetrieve list. */
+    _getSampleIndex(list) {
+        let self = this;
+        let idxCount = 0;
+        let idx =  list.filter((item) => {
+            if (item.sampleName === self.getSelectedSample()) {
+                return idxCount;
+            } else {
+                idxCount++;
+            }
+        });
+        return idx[0];
     }
 
     _otherSampleInThisVcf(otherModel) {

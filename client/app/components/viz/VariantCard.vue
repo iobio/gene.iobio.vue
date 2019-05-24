@@ -569,13 +569,8 @@
             hideVariantCircle: function (lock) {
                 let self = this;
                 if (self.showVariantViz) {
-                    // TODO: this needs to be updated to work with the expansion component body
                     let containers = d3.select(this.$el).select('.expansion-panel__container').select('.expansion-panel__body').select('#card-viz').selectAll('.variant-viz > svg');
                     self.$refs.variantVizRef.hideVariantCircle(containers, lock);
-                    //let container = d3.select(this.$el).select('#loaded-variant-viz > svg');
-                    // this.$refs.variantVizRef.hideVariantCircle(container, lock);
-                    // container = d3.select(this.$el).select('#called-variant-viz > svg');
-                    // this.$refs.variantVizRef.hideVariantCircle(container, lock);
                 }
             },
             getVariantViz: function (variant) {

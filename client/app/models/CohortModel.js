@@ -919,7 +919,7 @@ class CohortModel {
         let self = this;
         return new Promise(function(resolve, reject) {
             self.getModel('cosmic-variants').inProgress.loadingVariants = true;
-            self.sampleMap['cosmic-variants'].model.promiseAnnotateVariants(theGene, theTranscript, [self.sampleMap['cosmic-variants'].model], {'isMultiSample': false, 'isBackground': false})
+            self.sampleMap['cosmic-variants'].model.promiseAnnotateVariants(theGene, theTranscript, [self.sampleMap['cosmic-variants'].model], false, false)
                 .then(function(resultMap) {
                     self.getModel('cosmic-variants').inProgress.loadingVariants = false;
                     self.setLoadedVariants(theGene, 'cosmic-variants');
@@ -952,7 +952,9 @@ class CohortModel {
         let self = this;
 
         return new Promise(function (resolve, reject) {
-            self.promiseAnnotateVariants(theGene, theTranscript, self.samplesInSingleVcf(), false, options)
+            //let isMultiSample = self.samplesInSingleVcf();
+            let isMultiSample = false;  // TODO: hardcoding to test for now
+            self.promiseAnnotateVariants(theGene, theTranscript, isMultiSample, false, options)
                 .then(function (resultMap) {
                     // Flag bookmarked variants
                     self.setVariantFlags(resultMap['s0']);

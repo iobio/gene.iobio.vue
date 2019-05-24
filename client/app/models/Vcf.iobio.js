@@ -631,7 +631,7 @@ var effectCategories = [
 
     return new Promise( function(resolve, reject) {
       // This comma separated string of samples to perform vcf subset on
-      var vcfSampleNames = samplesToRetrieve.filter(function(sample) {
+      let vcfSampleNames = samplesToRetrieve.filter(function(sample) {
         return (sample.vcfSampleName !== "" && sample.vcfSampleName != null);
       })
       .map(function(sample) {
@@ -640,10 +640,11 @@ var effectCategories = [
       .join(",");
 
       // This comma separated string of samples to be contained in the maps of genotypes
-      var sampleNamesToGenotype = samplesToRetrieve.map(function(sample) {
+      let sampleNamesToGenotype = samplesToRetrieve.map(function(sample) {
         return sample.sampleName;
       })
       .join(",");
+
 
 
       if (sourceType === SOURCE_TYPE_URL) {
@@ -665,7 +666,7 @@ var effectCategories = [
             } else {
               reject();
             }
-          }, sampleModelId);
+          }, null, sampleModelId);
 
       }
 
@@ -703,7 +704,7 @@ var effectCategories = [
           callback(theRecords);
         }
       }
-    }
+    };
 
 
     var theRegions = null;
@@ -720,7 +721,7 @@ var effectCategories = [
         var allRecs = headerRecords.concat(recordsForRegions);
 
         me._promiseAnnotateVcfRecords(allRecs, refName, geneObject, selectedTranscript, clinvarMap, isRefSeq && hgvsNotation, isMultiSample, vcfSampleNames, sampleNamesToGenotype, annotationEngine, isRefSeq, hgvsNotation, getRsId, vepAF, cache, sampleModelId)
-        .then( function(data) {
+        .then(function(data) {
             callback(data[0], data[1]);
         }, function(error) {
           console.log("_getLocalVariantsImpl() error - " + error);
@@ -808,7 +809,7 @@ var effectCategories = [
 
     cmd.run();
 
-  }
+  };
 
 
 
@@ -1070,6 +1071,7 @@ var effectCategories = [
       // For each vcf records, call snpEff to get the annotations.
       // Each vcf record returned will have an EFF field in the
       // info field.
+        debugger;
       me._annotateVcfRegion(records, refName, vcfSampleNames, annotationEngine, isRefSeq, hgvsNotation, getRsId, vepAF, useServerCache, function(annotatedData) {
 
         var annotatedRecs = annotatedData.split("\n");
@@ -1103,6 +1105,7 @@ var effectCategories = [
         });
 
         // Parse the vcf object into a variant object that is visualized by the client.
+        debugger;
         var results = me._parseVcfRecords(vcfObjects, refName, geneObject, selectedTranscript, clinvarMap, hasExtraAnnot, isMultiSample, sampleNamesToGenotype, null, vepAF, sampleModelId);
         resolve([annotatedRecs, results]);
       });
@@ -1385,7 +1388,6 @@ var effectCategories = [
     //  Figure out the reference sequence file path
     var refFastaFile = me.getGenomeBuildHelper().getFastaPath(refName);
 
-
     var writeStream = function(stream) {
       records.forEach( function(record) {
         if (record.trim() === "") {
@@ -1397,7 +1399,7 @@ var effectCategories = [
       stream.end();
     }
 
-    var cmd = me.getEndpoint().annotateVariants({'writeStream': writeStream}, refName, regions, null, annotationEngine, isRefSeq, hgvsNotation, getRsId, vepAF, useServerCache);
+    var cmd = me.getEndpoint().annotateVariants({'writeStream': writeStream}, refName, regions, sampleName, annotationEngine, isRefSeq, hgvsNotation, getRsId, vepAF, useServerCache);
 
 
     var buffer = "";
@@ -1655,7 +1657,7 @@ var effectCategories = [
       var results = [];
       for (var i = 0; i < allVariants.length; i++) {
         var data = {
-          'name':              'vcf track',
+          'name':               gtSampleNames ? gtSampleNames[i] : 'vcf track',
           'ref':                refName,
           'gene':               geneObject.gene_name,
           'start':              +geneObject.start,
@@ -1670,7 +1672,7 @@ var effectCategories = [
         results.push(data);
       }
 
-
+      // TODO: when coming back from local annotation, have first two entries here???
       return  parseMultiSample ? results :  results[0];
   };
 
@@ -2427,7 +2429,7 @@ exports.parseClinvarInfo = function(info, clinvarMap) {
       if (gt.keep) {
         result.keep = true;
       }
-    })
+    });
 
     // The 'target' genotype will be the first genotype in the array
     // For example, if the sampleIndex of '1' was sent in (sampleIndices = [1]),
