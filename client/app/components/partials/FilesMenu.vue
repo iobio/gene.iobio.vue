@@ -286,8 +286,8 @@
 
                             resolve();
                         })
-                        .catch(() => {
-                            reject('There was a problem adding sample.');
+                        .catch((error) => {
+                            reject('There was a problem adding sample: ' + error);
                         });
                 });
             },
