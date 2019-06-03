@@ -953,7 +953,7 @@ class CohortModel {
 
         return new Promise(function (resolve, reject) {
             //let isMultiSample = self.samplesInSingleVcf();
-            let isMultiSample = true;  // TODO: hardcoding to test for now
+            let isMultiSample = true;  // TODO: hardcoding to test for now - test with single sample vcf
             self.promiseAnnotateVariants(theGene, theTranscript, isMultiSample, false, options)
                 .then(function (resultMap) {
                     // Flag bookmarked variants
@@ -972,7 +972,6 @@ class CohortModel {
                     reject(error);
                 })
         })
-
     }
 
     promiseLoadCoverage(theGene, theTranscript) {

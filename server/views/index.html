@@ -119,10 +119,14 @@
     <script src="app/third-party/js-local-bam.js"></script>
 
 
-
-
-
-
+    <!--Temporarily using both d3v3 and d3v5-->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script>
+        d3v5 = d3;
+        // test it worked
+        debugger;
+        console.log('v5: ', d3v5.version);
+    </script>
 
     <script src="dist/build.js"></script>
 
