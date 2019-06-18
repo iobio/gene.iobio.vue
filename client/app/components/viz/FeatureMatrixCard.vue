@@ -163,7 +163,6 @@
         {{ featureMatrixModel.warning }}
       </div>
 
-    </div>
   </v-card>
 
 

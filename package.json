@@ -11,6 +11,7 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "d3": "^3.5.17",
+    "d3-sankey": "^0.12.1",
     "debug": "^2.6.8",
     "express": "^4.15.3",
     "jquery": "^3.3.1",

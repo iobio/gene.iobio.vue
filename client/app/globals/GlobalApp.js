@@ -84,11 +84,7 @@ class GlobalApp {
     // Fields
     this.impactFieldToFilter         = 'highestImpactVep';
     this.impactFieldToColor          = 'vepImpact';
-
   }
-
-
-
 }
 
 export default GlobalApp

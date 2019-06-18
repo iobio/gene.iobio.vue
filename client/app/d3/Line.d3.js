@@ -16,7 +16,6 @@ export default function lineD3() {
 
   var formatter = d3.format(',');
 
-
   var theData = null;
 
   var pos    = function(d) { return d.pos };
