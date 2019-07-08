@@ -1,115 +1,118 @@
-/* Adapted by SJG on Jun2019 from https://observablehq.com/@d3/sankey-diagram */
+/* Adapted by SJG on Jun2019 from https://observablehq.com/@d3var/sankey-diagram */
 
-export default function sankeyD3() {
+export default function sankeyd3() {
     /* Props */
     let width = 975;
-    let height = 600;
+    let height = 720;
     let d3var = null;
     let container = null;
     // let data = {};
 
     // TODO: add hooks for enter, transition, exit - make available for outer facing component
 
-    /* HELPERS */
-    function color() {
-        const color = d3var.scaleOrdinal(d3var.schemeCategory10);
-        return name => color(name.replace(/ .*/, ""));
-    }
-
-    function format() {
-        const f = d3var.format(",.0f");
-        return d => `${f(d)} TWh`;
-    }
-
     /* Draws actual chart */
-    function chart(selection, data) {
-        // Change global version of d3 to variable passed in
-        // let d3v3 = d3;
-        // d3 = d3v5;
+    function chart() {
+        d3var.csv("https://gist.githubusercontent.com/mbostock/2e7f869d3d198e8012125b6e85e6df94/raw/0a0cd5da868a8ecd91673aef90f577fee36b438c/titanic.csv", d3var.autoType)
+            .then((data) => {
+                var exKeys = data.columns.slice(0, -1);
 
-        // Get formatted data
-        const sankey = d3.sankey()
-            .nodeAlign(d3.sankeyLeft)
-            .nodeWidth(15)
-            .nodePadding(10)
-            .extent([[1, 5], [width - 1, height - 5]]);
+                var color = d3var.scaleOrdinal(["Perished"], ["#da4f81"]).unknown("#ccc");
 
-        let graph = sankey(data);
-        let nodes = graph.nodes;
-        let links = graph.links;
+                var graph = function(keys) {
+                    let i = -1;
+                    const nodes = [];
+                    const nodeByKey = new Map;
+                    const indexByKey = new Map;
+                    const links = [];
 
-        // Start drawing
-        container = selection;
-        container.selectAll("svg").remove();
+                    for (const k of keys) {
+                        for (const d of data) {
+                            const key = JSON.stringify([k, d[k]]);
+                            if (nodeByKey.has(key)) continue;
+                            const node = {name: d[k]};
+                            nodes.push(node);
+                            nodeByKey.set(key, node);
+                            indexByKey.set(key, ++i);
+                        }
+                    }
 
-        container.append("svg")
-            .attr("viewBox", [0, 0, width, height])
-            .append("g")
-            .attr("stroke", "#000")
-            .selectAll("rect")
-            .data(nodes)
-            .join("rect")
-            .attr("x", function (d, i) {return d.x0})
-            .attr("y", d => d.y0)
-            .attr("height", d => d.y1 - d.y0)
-            .attr("width", d => d.x1 - d.x0)
-            .attr("fill", d => color(d.name));
-            // .append("title")
-            // .text(d => `${d.name}\n${format(d.value)}`);
+                    for (let i = 1; i < keys.length; ++i) {
+                        const a = keys[i - 1];
+                        const b = keys[i];
+                        const prefix = keys.slice(0, i + 1);
+                        const linkByKey = new Map;
+                        for (const d of data) {
+                            const names = prefix.map(k => d[k]);
+                            const key = JSON.stringify(names);
+                            const value = d.value || 1;
+                            let link = linkByKey.get(key);
+                            if (link) { link.value += value; continue; }
+                            link = {
+                                source: indexByKey.get(JSON.stringify([a, d[a]])),
+                                target: indexByKey.get(JSON.stringify([b, d[b]])),
+                                names,
+                                value
+                            };
+                            links.push(link);
+                            linkByKey.set(key, link);
+                        }
+                    }
 
-        const link = svg.append("g")
-            .attr("fill", "none")
-            .attr("stroke-opacity", 0.5)
-            .selectAll("g")
-            .data(links)
-            .join("g")
-            .style("mix-blend-mode", "multiply");
+                    return {nodes, links};
+                };
 
-        // Stupid observable variable TODO: get rid of this
-        let edgeColor = 'path';
-        if (edgeColor === "path") {
-            const gradient = link.append("linearGradient")
-            //.attr("id", d => (d.uid = DOM.uid("link")).id)
-                .attr("gradientUnits", "userSpaceOnUse")
-                .attr("x1", d => d.source.x1)
-                .attr("x2", d => d.target.x0);
+                const svg = d3var.select("#var-freq-viz")
+                    .append('svg')
+                    .attr("viewBox", [0, 0, width, height]);
 
-            gradient.append("stop")
-                .attr("offset", "0%")
-                .attr("stop-color", d => color(d.source.name));
+                var currGraph = graph(exKeys);
 
-            gradient.append("stop")
-                .attr("offset", "100%")
-                .attr("stop-color", d => color(d.target.name));
-        }
+                var currSankey = globalSankey;
 
-        link.append("path")
-            .attr("d", d3var.sankeyLinkHorizontal())
-            .attr("stroke", d => edgeColor === "none" ? "#aaa"
-                : edgeColor === "path" ? d.uid
-                    : edgeColor === "input" ? color(d.source.name)
-                        : color(d.target.name))
-            .attr("stroke-width", d => Math.max(1, d.width));
+                const {nodes, links} = currSankey({
+                    nodes: currGraph.nodes.map(d => Object.assign({}, d)),
+                    links: currGraph.links.map(d => Object.assign({}, d))
+                });
 
-        link.append("title")
-            .text(d => `${d.source.name} → ${d.target.name}\n${format(d.value)}`);
+                svg.append("g")
+                    .selectAll("rect")
+                    .data(nodes)
+                    .join("rect")
+                    .attr("x", d => d.x0)
+                    .attr("y", d => d.y0)
+                    .attr("height", d => d.y1 - d.y0)
+                    .attr("width", d => d.x1 - d.x0)
+                    .append("title")
+                    .text(d => `${d.name}\n${d.value.toLocaleString()}`);
 
-        svg.append("g")
-            .style("font", "10px sans-serif")
-            .selectAll("text")
-            .data(nodes)
-            .join("text")
-            .attr("x", d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
-            .attr("y", d => (d.y1 + d.y0) / 2)
-            .attr("dy", "0.35em")
-            .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
-            .text(d => d.name);
+                svg.append("g")
+                    .attr("fill", "none")
+                    .selectAll("g")
+                    .data(links)
+                    .join("path")
+                    .attr("d", d3var.sankeyLinkHorizontal())
+                    .attr("stroke", d => color(d.names[0]))
+                    .attr("stroke-width", d => d.width)
+                    .style("mix-blend-mode", "multiply")
+                    .append("title")
+                    .text(d => `${d.names.join(" → ")}\n${d.value.toLocaleString()}`);
 
-        // Switch back to v3
-        d3 = d3v3;
+                svg.append("g")
+                    .style("font", "10px sans-serif")
+                    .selectAll("text")
+                    .data(nodes)
+                    .join("text")
+                    .attr("x", d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
+                    .attr("y", d => (d.y1 + d.y0) / 2)
+                    .attr("dy", "0.35em")
+                    .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
+                    .text(d => d.name)
+                    .append("tspan")
+                    .attr("fill-opacity", 0.7)
+                    .text(d => ` ${d.value.toLocaleString()}`);
 
-        //return svg.node();
-        //});
+                return svg.node();
+            });
     }
 
     /* SETTERS */
@@ -132,6 +135,6 @@ export default function sankeyD3() {
     };
 
     // This adds the "on" methods to our custom exports
-    //d3.rebind(exports, dispatch, "on");
+    //d3var.rebind(exports, dispatch, "on");
     return chart;
 }

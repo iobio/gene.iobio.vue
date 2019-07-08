@@ -65,9 +65,7 @@
 
 
 <template>
-    <div class="variant-viz">
-
-    </div>
+    <div class="variant-viz"></div>
 </template>
 
 <script>

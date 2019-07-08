@@ -1,9 +1,30 @@
-<style lang="sass">
-    @import ../../../assets/sass/variables
+<style>
+    /*@import ../../../assets/sass/variables*/
+
+    .node rect {
+    cursor: move;
+    fill-opacity: .9;
+    shape-rendering: crispEdges;
+    }
+
+    .node text {
+        pointer-events: none;
+        text-shadow: 0 1px 0 #fff;
+    }
+
+    .link {
+        fill: none;
+        stroke: #000;
+        stroke-opacity: .2;
+    }
+
+    .link:hover {
+        stroke-opacity: .5;
+    }
 </style>
 
 <template>
-    <div class="var-freq-viz"></div>
+    <div id="var-freq-viz"></div>
 </template>
 
 <script>
@@ -34,22 +55,14 @@
             draw: function () {
                 let self = this;
 
-                // Import data first
-                d3.json("https://gist.githubusercontent.com/mbostock/ca9a0bb7ba204d12974bca90acc507c0/raw/398136b7db83d7d7fd89181b080924eb76041692/energy.json", (error, data) => {
-                    if (error) {
-                        console.log("Problem reading in data file for sankey chart: " + error);
-                    } else {
-                        // Set object
-                        self.varFreqChart = sankeyD3()
-                            .width(600)
-                            .height(975)
-                            .d3var(d3v5);
+                self.varFreqChart = sankeyD3()
+                    .width(600)
+                    .height(975)
+                    .d3var(d3v5);
 
-                        // Draw chart
-                        var selection = d3.select(self.$el);
-                        self.varFreqChart(selection, data);
-                    }
-                });
+                // Draw chart
+                var selection = d3.select(self.$el);
+                self.varFreqChart();
             },
         }
     }

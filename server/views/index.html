@@ -119,12 +119,16 @@
     <script src="app/third-party/js-local-bam.js"></script>
 
     <!--Temporarily using both d3v3 and d3v5-->
-    <!--<script src="https://d3js.org/d3.v5.min.js"></script>-->
-    <!--<script>-->
-        <!--d3v5 = d3;-->
-        <!--//console.log('v5: ', d3v5.version);-->
-    <!--</script>-->
-    <!--<script src="https://unpkg.com/d3-sankey@0"></script>-->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/d3-sankey@0"></script>
+    <script>
+        d3v5 = d3;
+        globalSankey = d3v5.sankey()
+            .nodeWidth(4)
+            .nodePadding(20)
+            .extent([[0, 5], [975, 720 - 5]]);
+    </script>
+    <!--<script src="https://d3js.org/d3-scale.v3.min.js"></script>-->
     <!--<script src="https://d3js.org/d3-selection.v1.js"></script>-->
 
 
