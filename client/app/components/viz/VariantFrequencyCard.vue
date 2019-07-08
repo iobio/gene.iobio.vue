@@ -9,7 +9,9 @@
                  class="fullview" aria-expanded="true">
                 <div id="var-freq-chart" style="overflow-x: auto;">
                     <variant-frequency-viz id="var-freq-viz"
-                                        ref="varFreqVizRef">
+                        ref="varFreqVizRef"
+                        :width="width"
+                        :height="height">
                     </variant-frequency-viz>
                 </div>
             </div>
@@ -39,6 +41,14 @@
         name: "VariantFrequencyCard",
         components: {
             VariantFrequencyViz
+        },
+        props: {
+            width: 0
+        },
+        data() {
+            return {
+                height: 200,
+            }
         }
     }
 </script>

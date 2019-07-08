@@ -56,8 +56,8 @@
                 let self = this;
 
                 self.varFreqChart = sankeyD3()
-                    .width(600)
-                    .height(975)
+                    .width(self.width)
+                    .height(self.height)
                     .d3var(d3v5);
 
                 // Draw chart

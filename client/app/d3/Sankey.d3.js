@@ -3,7 +3,7 @@
 export default function sankeyd3() {
     /* Props */
     let width = 975;
-    let height = 720;
+    let height = 200;
     let d3var = null;
     let container = null;
     // let data = {};
@@ -67,7 +67,10 @@ export default function sankeyd3() {
 
                 var currGraph = graph(exKeys);
 
-                var currSankey = globalSankey;
+                var currSankey = globalSankey
+                    .nodeWidth(4)
+                    .nodePadding(20)
+                    .extent([[0, 5], [width, height - 5]]);
 
                 const {nodes, links} = currSankey({
                     nodes: currGraph.nodes.map(d => Object.assign({}, d)),

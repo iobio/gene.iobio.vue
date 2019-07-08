@@ -223,7 +223,8 @@
                             </v-tab-item>
                             <v-tab-item v-if="!isBasicMode" style="margin-top:5px;margin-bottom:0px;overflow-y:auto">
                                 <variant-frequency-card style="min-width:300px"
-                                ref="varFreqCardRef">
+                                ref="varFreqCardRef"
+                                :width="cardWidth">
                                 </variant-frequency-card>
                             </v-tab-item>
                             <v-tab-item style="margin-top:0px;margin-bottom:0px;overflow-y:auto">
