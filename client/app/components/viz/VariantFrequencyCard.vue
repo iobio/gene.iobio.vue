@@ -11,7 +11,9 @@
                     <variant-frequency-viz id="var-freq-viz"
                         ref="varFreqVizRef"
                         :width="width"
-                        :height="height">
+                        :height="height"
+                        :afNodes="afNodes"
+                        :afLinks="afLinks">
                     </variant-frequency-viz>
                 </div>
             </div>
@@ -43,7 +45,9 @@
             VariantFrequencyViz
         },
         props: {
-            width: 0
+            width: 0,
+            afLinks: null,
+            afNodes: null,
         },
         data() {
             return {

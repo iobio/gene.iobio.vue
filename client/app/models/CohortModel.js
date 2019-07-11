@@ -29,7 +29,7 @@ class CohortModel {
         this.isLoaded = false;
 
         this.sampleModels = [];                 // List of sample models correlated with this cohort
-        this.sampleMap = {};                    // Relateds IDs to model objects
+        this.sampleMap = {};                    // Relates IDs to model objects
         this.allUniqueFeaturesObj = null;       // A vcf object with all unique features from all sample models in this cohort (used for feature matrix)
 
         this.mode = 'time';                     // Indicates time-series mode
@@ -364,7 +364,7 @@ class CohortModel {
             Promise.all(promises)
                 .then(function () {
                     // Enforce cosmic & clinvar tracks being on top
-                    self.sortSampleModels();
+                    self.sampleModels = self.sortSampleModels(self.getCanonicalModels(), self.sampleMap);
 
                     // Flip status flags
                     self.setTumorInfo(true);
@@ -640,23 +640,21 @@ class CohortModel {
         }
     }
 
-    /* Ensure sample models sorted by correct order */
-    sortSampleModels() {
-        var currMap = this.sampleMap;
-
+    /* Returns a list of sample models sorted by order property.
+       When addNonCanonical = true, cosmic & clinvar sample models are prepended to the returned list. */
+    sortSampleModels(canonicalModels, map, addNonCanonical = true) {
         // Sort models according to order variable
-        let sortedModels = this.getCanonicalModels().sort(function(a,b) {
-            return currMap[a.id].order - currMap[b.id].order;
+        let sortedModels = canonicalModels.sort(function(a,b) {
+            return map[a.id].order - map[b.id].order;
         });
 
         // Always add clinvar & cosmic first
         let refModels = [];
-        refModels.push(this.sampleMap['known-variants'].model);
-        refModels.push(this.sampleMap['cosmic-variants'].model);
-        let combinedModels = refModels.concat(sortedModels);
-
-        this.sampleModels = [];
-        this.sampleModels = combinedModels;
+        if (addNonCanonical) {
+            refModels.push(map['known-variants'].model);
+            refModels.push(map['cosmic-variants'].model);
+        }
+        return refModels.concat(sortedModels);
     }
 
     setTumorInfo(forceRefresh) {
@@ -804,7 +802,7 @@ class CohortModel {
                 self.clearLoadedData(theGene.gene_name);
 
                 // Enforce Cosmic sample top track
-                self.sortSampleModels();
+                self.sampleModels = self.sortSampleModels(self.getCanonicalModels(), self.sampleMap);
 
                 self.assignCategoryOrders();
 
@@ -2694,6 +2692,100 @@ class CohortModel {
                 }
             }
         }
+    }
+
+    /* Creates nodes for Sankey AF visualization. intervalSize must be between 0-1 and divide evenly into 1.
+     * Otherwise, intervalSize will default to 0.10 */
+    getVariantAFNodes(intervalSize) {
+        const self = this;
+
+        if (intervalSize == null || intervalSize >= 1 || intervalSize <= 0) {
+            intervalSize = 0.10;
+        }
+
+        let nodeList = [];
+        let intervals = 1 / intervalSize;
+
+        self.getCanonicalModels().forEach((model) => {
+            for (let i = 0; i < intervals; i++) {
+                let bottomRange = i * intervalSize;
+                let topRange = bottomRange + intervalSize;
+                let node = {sampleId: model.id, bottomRange: (bottomRange + ''), topRange: (topRange + '')};
+                nodeList.push(node);
+            }
+        });
+        return nodeList;
+    }
+
+    /* Takes in list of nodes and creates list of links for sankey AF visualization. */
+    getVariantAFLinks(nodes) {
+        const self = this;
+
+        // Make sure we're in the correct order
+        let orderedModels = self.sortSampleModels(self.getCanonicalModels(), self.sampleMap, false);
+
+        let linkHash = {};
+        let linkList = [];
+
+        for (let i = 0; i < orderedModels.length - 1; i++) {
+            let currModel = orderedModels[i];
+            let currModelVars = currModel.loadedVariants != null ? currModel.loadedVariants.features : [];
+            let nextModel = orderedModels[i+1];
+            let nextModelVarHash = nextModel.variantIdHash;
+
+            // TODO: need to ensure that links go to 0 if missing from single timepoint to next... how to do this efficiently
+            // Pre-populate hash with each level to same level to get alignment correct (e.g. s0_0 -> s1_0)
+            nodes.forEach((node) => {
+                let flatLink = { source: (currModel.id + '_' + node.bottomRange), target: (nextModel.id + '_' + node.bottomRange), variantIds: [], value: 1, color: 'transparent' };
+                linkList.push(flatLink);
+                let linkId = currModel.id + "_" + node.bottomRange + '_' + nextModel.id + '_' + node.bottomRange;
+                linkHash[linkId] = flatLink;
+            });
+
+            currModelVars.forEach((variant) => {
+                // Get variant AF for this sample time point
+                let currRawAf = variant.af;
+
+                // Get variant AF for next sample time point - or set to zero if DNE
+                let nextRawAf = 0;
+                let nextVar = nextModelVarHash[variant.id];
+                if (nextVar) {
+                    nextRawAf = nextVar.af;
+                }
+
+                // Find where both AFs fall in the given nodes
+                let currRoundedAf = 0;
+                let nextRoundedAf = 0;
+                nodes.forEach((node) =>{
+                    if (currRawAf >= node.bottomRange && currRawAf < node.topRange) {
+                        currRoundedAf = node.bottomRange;
+                    }
+                    if (nextRawAf >= node.bottomRange && currRawAf < node.topRange) {
+                        nextRoundedAf = node.bottomRange;
+                    }
+                });
+
+                // Check to see if an object exists within linkHash that already has this range (currModelId_currAF_nextModelId_nextAF)
+                let linkId = currModel.id + "_" + currRoundedAf + '_' + nextModel.id + '_' + nextRoundedAf;
+                let currLink = linkHash[linkId];
+
+                // If it does, increment value and add varId to the list
+                if (currLink) {
+                    currLink.value += 1;
+                    currLink.variantIds.push(variant.id);
+                    currLink.color = '#7f1010';
+                // If not, create new link object
+                } else {
+                    let newLink = { source: (currModel.id + '_' + currRoundedAf), target: (nextModel.id + '_' + nextRoundedAf), variantIds: [variant.id], value: 1 };
+                    linkHash[linkId] = newLink;
+                    linkList.push(newLink);
+                }
+
+                // Scale values of links to encompass entire screen
+                // TODO
+            });
+        }
+        return linkList;
     }
 }
 

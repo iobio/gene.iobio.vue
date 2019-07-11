@@ -501,7 +501,7 @@ class FeatureMatrixModel {
                     // Get matching variants from cohort model
                     let matchingModel = self.cohort.getModel(matrixRow.id);
                     let varIdHash = matchingModel.variantIdHash;
-                    if (varIdHash[variant.id] === true) {
+                    if (varIdHash[variant.id] != null) {
                         if (matchingModel.isTumor) {
                             rawValue = 'tumorSample';
                         } else {

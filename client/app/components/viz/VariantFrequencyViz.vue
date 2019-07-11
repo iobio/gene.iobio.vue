@@ -1,30 +1,32 @@
-<style>
+<style scoped lang="sass">
     /*@import ../../../assets/sass/variables*/
+    .freq-viz
+        padding-top: 10px
 
-    .node rect {
-    cursor: move;
-    fill-opacity: .9;
-    shape-rendering: crispEdges;
-    }
+    .node rect
+        cursor: move
+        fill-opacity: .9
+        shape-rendering: crispEdges
 
-    .node text {
-        pointer-events: none;
-        text-shadow: 0 1px 0 #fff;
-    }
 
-    .link {
-        fill: none;
-        stroke: #000;
-        stroke-opacity: .2;
-    }
+    .node text
+        pointer-events: none
+        text-shadow: 0 1px 0 #fff
 
-    .link:hover {
-        stroke-opacity: .5;
-    }
+
+    .link
+        fill: none
+        stroke: #000
+        stroke-opacity: .2
+
+
+    .link:hover
+        stroke-opacity: .5
+
 </style>
 
 <template>
-    <div id="var-freq-viz"></div>
+    <div :id="vizId" :class="'freq-viz'"></div>
 </template>
 
 <script>
@@ -39,10 +41,19 @@
             height: {
                 type: Number,
                 default: 0
+            },
+            afNodes: {
+                type: Array,
+                default: null
+            },
+            afLinks: {
+                type: Array,
+                default: null
             }
         },
         data() {
             return {
+                vizId: 'var-freq-viz',
                 varFreqChart: {}
             }
         },
@@ -55,15 +66,33 @@
             draw: function () {
                 let self = this;
 
+                // Construct object
                 self.varFreqChart = sankeyD3()
                     .width(self.width)
                     .height(self.height)
+                    .linkList(self.afLinks)
+                    .nodeList(self.afNodes)
+                    .sortFunc(self.sortFunc)
+                    .nodeIdFunc(self.nodeIdFunc)
                     .d3var(d3v5);
 
                 // Draw chart
-                var selection = d3.select(self.$el);
                 self.varFreqChart();
             },
+            /* Used to vertically align nodes in Sankey chart */
+            sortFunc: function(nodeA, nodeB) {
+                if (nodeA.bottomRange < nodeB.bottomRange) {
+                    return -1;
+                } else if (nodeA.bottomRange > nodeB.bottomRange) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            },
+            /* Used to match links to nodes */
+            nodeIdFunc: function(node) {
+                return node.bottomRange;
+            }
         }
     }
 </script>

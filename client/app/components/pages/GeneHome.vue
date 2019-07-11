@@ -222,9 +222,13 @@
                                 </feature-matrix-card>
                             </v-tab-item>
                             <v-tab-item v-if="!isBasicMode" style="margin-top:5px;margin-bottom:0px;overflow-y:auto">
-                                <variant-frequency-card style="min-width:300px"
-                                ref="varFreqCardRef"
-                                :width="cardWidth">
+                                <variant-frequency-card
+                                    v-if="varAfLinks"
+                                    style="min-width:300px"
+                                    ref="varFreqCardRef"
+                                    :width="cardWidth"
+                                    :afLinks="varAfLinks"
+                                    :afNodes="varAfNodes">
                                 </variant-frequency-card>
                             </v-tab-item>
                             <v-tab-item style="margin-top:0px;margin-bottom:0px;overflow-y:auto">
@@ -506,7 +510,9 @@
                 forceLocalStorage: null,
                 showVarViz: true,
                 workingOffline: false,        // If working offline and want to style things
-                annotationComplete: false
+                annotationComplete: false,
+                varAfLinks: null,
+                varAfNodes: null
             }
         },
 
@@ -900,7 +906,7 @@
                         self.cohortModel.promiseLoadData(self.selectedGene,
                             self.selectedTranscript,
                             options)
-                            .then(function (resultMap) {
+                            .then(function(resultMap) {
                                 self.onUpdateSamples();
 
                                 self.calcFeatureMatrixWidthPercent();
@@ -908,13 +914,17 @@
                                 self.filterModel.populateEffectFilters(resultMap);
                                 self.filterModel.populateRecFilters(resultMap);
 
+                                const nodeRange = 0.10;
+                                self.varAfNodes = self.cohortModel.getVariantAFNodes(nodeRange);
+                                self.varAfLinks = self.cohortModel.getVariantAFLinks(self.varAfNodes);
+
                                 self.cohortModel.promiseMarkCodingRegions(self.selectedGene, self.selectedTranscript)
                                     .then(function (data) {
                                         self.analyzedTranscript = data.transcript;
                                         self.coverageDangerRegions = data.dangerRegions;
                                         self.$refs.genesCardRef.determineFlaggedGenes();
                                         resolve();
-                                    })
+                                    });
                             })
                             .catch(function (error) {
                                 reject(error);
