@@ -10,10 +10,29 @@ export default function sankeyd3() {
     let sortFunc = null;
     let nodeIdFunc = null;
 
+    // TODO: add hook for on hover, add highlight
+    // TODO: add hook for on click, display small tooltip w/ filtering options
+
+    let formatIds = function(idList) {
+        if (idList.length === 0) {
+            return '';
+        }
+        let formattedIds = [];
+        idList.forEach((id) => {
+          let idPieces = id.split('.');
+          let currId = idPieces[0] + ' ' + idPieces[3] + '->' + idPieces[4];
+          formattedIds.push(currId);
+        });
+        return idList.length + ' variants: ' + formattedIds.join(', ');
+    };
+
     // TODO: add hooks for enter, transition, exit - make available for outer facing component
     /* Draws actual chart */
     function chart() {
-        var color = d3var.scaleOrdinal(["Perished"], ["#da4f81"]).unknown("#ccc");
+        //var color = d3var.scaleOrdinal(["Perished"], ["#da4f81"]).unknown("#ccc");
+
+        // Get rid of any previous graph
+        d3var.select("#var-freq-viz").selectAll('svg').remove();
 
         const svg = d3var.select("#var-freq-viz")
             .append('svg')
@@ -21,8 +40,7 @@ export default function sankeyd3() {
 
         var currSankey = globalSankey
             .nodeWidth(10)
-            // .nodeAlign(d3var.sankeyJustify)
-            // .nodePadding(20)
+            .nodePadding(10)
             .nodeId(function (d) { return d.sampleId + '_' + d.bottomRange; })
             .nodeSort(sortFunc)
             .extent([[0, 5], [width, height - 5]]);
@@ -40,8 +58,9 @@ export default function sankeyd3() {
             .attr("y", d => d.y0)
             .attr("height", d => d.y1 - d.y0)
             .attr("width", d => d.x1 - d.x0)
+            .style('fill', d => d.color)
             .append("title")
-            .text(d => ` ${(d.sampleId + '_' + d.bottomRange.toLocaleString())}`)
+            .text(d => `${(d.sampleId.toUpperCase())}`)
             .style('stroke', 'black');
 
         svg.append("g")
@@ -54,9 +73,10 @@ export default function sankeyd3() {
             .attr("stroke-width", d => d.width)
             .style("mix-blend-mode", "multiply")
             .append("title")
-            .text(d => `${d.value.toLocaleString()}`)
+            .text(d => `${formatIds(d.variantIds)}`)
             .style('stroke', 'black');
 
+        // TODO: add y-axis from 0-1 instead of labeling nodes
         svg.append("g")
             .style("font", "10px sans-serif")
             .selectAll("text")
@@ -69,7 +89,7 @@ export default function sankeyd3() {
             .text(d => d.id)
             .append("tspan")
             .attr("fill-opacity", 0.7)
-            .text(d => ` ${(d.sampleId + '_' + d.bottomRange.toLocaleString())}`)
+            .text(d => `${((d.topRange * 100).toLocaleString())}`)
             .style('stroke', 'black');
 
         return svg.node();

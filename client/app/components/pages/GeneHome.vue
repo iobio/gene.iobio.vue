@@ -914,9 +914,10 @@
                                 self.filterModel.populateEffectFilters(resultMap);
                                 self.filterModel.populateRecFilters(resultMap);
 
-                                const nodeRange = 0.10;
+                                // TODO: doesn't work w/ intervals not even in 1
+                                const nodeRange = 0.33;
                                 self.varAfNodes = self.cohortModel.getVariantAFNodes(nodeRange);
-                                self.varAfLinks = self.cohortModel.getVariantAFLinks(self.varAfNodes);
+                                self.varAfLinks = self.cohortModel.getVariantAFLinks(self.varAfNodes, nodeRange);
 
                                 self.cohortModel.promiseMarkCodingRegions(self.selectedGene, self.selectedTranscript)
                                     .then(function (data) {
@@ -1083,6 +1084,14 @@
 
             onGeneSelected: function (geneName) {
                 var self = this;
+
+                // Remove Sankey viz
+                self.varAfLinks = [];
+                self.varAfLinks.push('fake');
+                self.varAfLinks.pop();
+                self.varAfNodes = [];
+                self.varAfNodes.push('fake');
+                self.varAfNodes.pop();
 
                 self.deselectVariant();
                 self.promiseLoadGene(geneName);

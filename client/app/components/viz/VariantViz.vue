@@ -205,7 +205,7 @@
                     }
                     self.variantChart.verticalLayers(self.data.maxLevel);
                     self.variantChart.lowestWidth(self.data.featureWidth);
-                    if (self.data.features == null || self.data.features.length == 0) {
+                    if (self.data.features == null || self.data.features.length === 0) {
                         self.variantChart.showXAxis(false);
                     } else {
                         self.variantChart.showXAxis(self.showXAxis);

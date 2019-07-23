@@ -2658,7 +2658,7 @@ class CohortModel {
             sortedGenes.forEach(function(flaggedGene) {
                 // Sort the variants according to the Ranked Variants table features
                 self.featureMatrixModel.setFeaturesForVariants(flaggedGene.variants);
-                let sortedVariants = self.featureMatrixModel.sortVariantsByFeatures(flaggedGene.variants)
+                let sortedVariants = self.featureMatrixModel.sortVariantsByFeatures(flaggedGene.variants);
 
                 sortedVariants.forEach(function(variant) {
                     variant.index = i;
@@ -2702,23 +2702,31 @@ class CohortModel {
         if (intervalSize == null || intervalSize >= 1 || intervalSize <= 0) {
             intervalSize = 0.10;
         }
-
         let nodeList = [];
         let intervals = 1 / intervalSize;
 
+        let normalIdx = 0;
+        let tumorIdx = 0;
         self.getCanonicalModels().forEach((model) => {
+            let modelIdx = model.isTumor ? tumorIdx : normalIdx;
+            let currModelColor = self.globalApp.utility.getTrackColor(modelIdx, model.isTumor);
             for (let i = 0; i < intervals; i++) {
-                let bottomRange = i * intervalSize;
-                let topRange = bottomRange + intervalSize;
-                let node = {sampleId: model.id, bottomRange: (bottomRange + ''), topRange: (topRange + '')};
+                let bottomRange = Math.round(i * intervalSize * 100) / 100;
+                let topRange = Math.round((bottomRange + intervalSize) * 100) / 100;
+                let node = {sampleId: model.id, bottomRange: (bottomRange + ''), topRange: (topRange + ''), color: currModelColor};
                 nodeList.push(node);
+            }
+            if (model.isTumor) {
+                tumorIdx += 1;
+            } else {
+                normalIdx += 1;
             }
         });
         return nodeList;
     }
 
     /* Takes in list of nodes and creates list of links for sankey AF visualization. */
-    getVariantAFLinks(nodes) {
+    getVariantAFLinks(nodes, intervalSize) {
         const self = this;
 
         // Make sure we're in the correct order
@@ -2726,66 +2734,180 @@ class CohortModel {
 
         let linkHash = {};
         let linkList = [];
+        let maxLinkValue = 1;
+        let emptyColor = 'transparent';
+        let nonEmptyColor = '#888888';
+        let somaticColor = '#7f107f';
+        let scaleIntervals = false;
 
         for (let i = 0; i < orderedModels.length - 1; i++) {
             let currModel = orderedModels[i];
             let currModelVars = currModel.loadedVariants != null ? currModel.loadedVariants.features : [];
+            let currModelVarHash = currModel.variantIdHash;
             let nextModel = orderedModels[i+1];
+            let nextModelVars = nextModel.loadedVariants != null ? nextModel.loadedVariants.features : [];
             let nextModelVarHash = nextModel.variantIdHash;
 
-            // TODO: need to ensure that links go to 0 if missing from single timepoint to next... how to do this efficiently
+            // Force links from currModel's 0 -> nextModel's N by adding fake variants to list
+            nextModelVars.forEach((variant) => {
+                let prevVar = currModelVarHash[variant.id];
+                if (!prevVar) {
+                    let fakeVar = { id: variant.id, af: 0 };
+                    currModelVars.push(fakeVar);
+                }
+            });
+
             // Pre-populate hash with each level to same level to get alignment correct (e.g. s0_0 -> s1_0)
-            nodes.forEach((node) => {
-                let flatLink = { source: (currModel.id + '_' + node.bottomRange), target: (nextModel.id + '_' + node.bottomRange), variantIds: [], value: 1, color: 'transparent' };
+            let currModelNodes = nodes.filter((node) => {
+                return node.sampleId === currModel.id;
+            });
+            currModelNodes.forEach((node) => {
+                let flatLink = { source: (currModel.id + '_' + node.bottomRange), target: (nextModel.id + '_' + node.bottomRange), variantIds: [], value: 1, color: emptyColor };
                 linkList.push(flatLink);
-                let linkId = currModel.id + "_" + node.bottomRange + '_' + nextModel.id + '_' + node.bottomRange;
+                let linkId = self.getLinkId(currModel.id, nextModel.id, node);
                 linkHash[linkId] = flatLink;
             });
 
+            // Add actual data
             currModelVars.forEach((variant) => {
                 // Get variant AF for this sample time point
-                let currRawAf = variant.af;
+                let currRawAf = 0;
+                if (variant.genotypeDepth > 0) {
+                    currRawAf = parseInt(variant.genotypeAltCount) / parseInt(variant.genotypeDepth);
+                }
 
                 // Get variant AF for next sample time point - or set to zero if DNE
                 let nextRawAf = 0;
                 let nextVar = nextModelVarHash[variant.id];
-                if (nextVar) {
-                    nextRawAf = nextVar.af;
+                if (nextVar && nextVar.genotypeDepth > 0) {
+                    nextRawAf = parseInt(nextVar.genotypeAltCount) / parseInt(nextVar.genotypeDepth);
                 }
 
                 // Find where both AFs fall in the given nodes
                 let currRoundedAf = 0;
                 let nextRoundedAf = 0;
+                let topBottomRange = 1.0 - intervalSize;
                 nodes.forEach((node) =>{
-                    if (currRawAf >= node.bottomRange && currRawAf < node.topRange) {
-                        currRoundedAf = node.bottomRange;
+                    let bottomRange = parseFloat(node.bottomRange);
+                    let topRange = parseFloat(node.topRange);
+
+                    if (currRawAf >= bottomRange && currRawAf < topRange) {
+                        currRoundedAf = bottomRange;
+                    } else if (currRawAf > topBottomRange && currRawAf <= 1.0) {
+                        currRoundedAf = topBottomRange;
                     }
-                    if (nextRawAf >= node.bottomRange && currRawAf < node.topRange) {
-                        nextRoundedAf = node.bottomRange;
+                    if (nextRawAf >= bottomRange && nextRawAf < topRange) {
+                        nextRoundedAf = bottomRange;
+                    } else if (nextRawAf > topBottomRange && nextRawAf <= 1.0) {
+                        nextRoundedAf = topBottomRange;
                     }
                 });
 
-                // Check to see if an object exists within linkHash that already has this range (currModelId_currAF_nextModelId_nextAF)
+                // Check to see if an object exists within linkHash that already has this range
                 let linkId = currModel.id + "_" + currRoundedAf + '_' + nextModel.id + '_' + nextRoundedAf;
                 let currLink = linkHash[linkId];
 
                 // If it does, increment value and add varId to the list
                 if (currLink) {
-                    currLink.value += 1;
+                    // If this is the first time we're switching from fake to real link, don't increment
+                    if (currLink.color !== emptyColor) {
+                        currLink.value += 1;
+                    }
                     currLink.variantIds.push(variant.id);
-                    currLink.color = '#7f1010';
+                    currLink.color = nonEmptyColor;
+
                 // If not, create new link object
                 } else {
-                    let newLink = { source: (currModel.id + '_' + currRoundedAf), target: (nextModel.id + '_' + nextRoundedAf), variantIds: [variant.id], value: 1 };
+                    let newLink = { source: (currModel.id + '_' + currRoundedAf), target: (nextModel.id + '_' + nextRoundedAf), variantIds: [variant.id], value: 1, color: variant.isInherited ? nonEmptyColor : somaticColor };
                     linkHash[linkId] = newLink;
                     linkList.push(newLink);
                 }
-
-                // Scale values of links to encompass entire screen
-                // TODO
             });
         }
+
+        // Find max node height
+        if (scaleIntervals) {
+            let numIntervals = 1 / intervalSize;
+            for (let i = 0; i < orderedModels.length; i++) {
+                for (let j = 0; j < numIntervals; j++) {
+                    let bottomRange = Math.round(j * intervalSize * 100) / 100;
+
+                    // Get links with this as source
+                    let fromLinks = linkList.filter((link) => {
+                        return link.source === (orderedModels[i].id + '_' + bottomRange);
+                    });
+
+                    // Get links with this as target
+                    let toLinks = linkList.filter((link) => {
+                        return link.target === (orderedModels[i].id + '_' + bottomRange);
+                    });
+
+                    // Tally all values from outgoing links and set max
+                    let fromMax = 0;
+                    fromLinks.forEach((link) => {
+                        fromMax += link.value;
+                    });
+
+                    // Tally all values from incoming links and set max
+                    let toMax = 0;
+                    toLinks.forEach((link) => {
+                        toMax += link.value;
+                    });
+
+                    let currMax = Math.max(toMax, fromMax);
+                    if (currMax > maxLinkValue) {
+                        maxLinkValue = currMax;
+                    }
+                }
+            }
+
+            // Adjust each node so scaled to the same approximate height
+            // NOTE: this helps to make nodes a bit better, but impossible to make completely synonymous
+            for (let i = 0; i < orderedModels.length -1; i++) {
+                for (let j = 0; j < numIntervals; j++) {
+                    let bottomRange = Math.round(j * intervalSize * 100) / 100;
+
+                    // Get links with this as source
+                    let currLinks = linkList.filter((link) => {
+                        return link.source === (orderedModels[i].id + '_' + bottomRange);
+                    });
+
+                    // Tally all values from links and set max
+                    let currMax = 0;
+                    currLinks.forEach((link) => {
+                        currMax += link.value;
+                    });
+
+                    if (currMax < maxLinkValue) {
+                        let valDiff = maxLinkValue - currMax;
+
+                        let currFakeLink = currLinks.filter((link) => {
+                            return link.color === emptyColor;
+                        });
+                        // If we still have a fake link, adjust that value
+                        if (currFakeLink.length > 0) {
+                            currFakeLink[0].value += valDiff;
+                        } else {
+                            // Otherwise, add another fake link to pad value
+                            if (i === (orderedModels.length - 1)) {
+                                // Slightly diff approach for last column
+                                let fakeLink = { source: (orderedModels[i-1].id + '_' + bottomRange), target: (orderedModels[i].id + '_' + bottomRange), variantIds: [], value: valDiff, color: emptyColor };
+                                linkList.push(fakeLink);
+                            } else {
+                                let fakeLink = { source: (orderedModels[i].id + '_' + bottomRange), target: (orderedModels[i+1].id + '_' + bottomRange), variantIds: [], value: valDiff, color: emptyColor };
+                                linkList.push(fakeLink);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         return linkList;
+    }
+
+    getLinkId(currModelId, nextModelId, node) {
+        return currModelId + "_" + node.bottomRange + '_' + nextModelId + '_' + node.bottomRange;
     }
 }
 

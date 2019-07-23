@@ -51,7 +51,7 @@
         },
         data() {
             return {
-                height: 200,
+                height: 500,
             }
         }
     }

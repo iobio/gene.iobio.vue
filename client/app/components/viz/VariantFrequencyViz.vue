@@ -62,6 +62,11 @@
         mounted: function () {
             this.draw();
         },
+        watch: {
+            afLinks: function() {
+                this.draw();
+            }
+        },
         methods: {
             draw: function () {
                 let self = this;
