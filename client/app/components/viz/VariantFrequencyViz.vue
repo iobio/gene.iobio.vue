@@ -64,7 +64,12 @@
         },
         watch: {
             afLinks: function() {
-                this.draw();
+                const self = this;
+                if (self.afLinks == null) {
+                    self.clear();
+                } else {
+                    self.draw();
+                }
             }
         },
         methods: {
@@ -72,17 +77,41 @@
                 let self = this;
 
                 // Construct object
-                self.varFreqChart = sankeyD3()
+                self.varFreqChart = sankeyD3(d3v5)
                     .width(self.width)
                     .height(self.height)
                     .linkList(self.afLinks)
                     .nodeList(self.afNodes)
                     .sortFunc(self.sortFunc)
                     .nodeIdFunc(self.nodeIdFunc)
-                    .d3var(d3v5);
+                    .on('d3outsideclick', function () {
+                        self.onVariantClick(null);
+                    })
+                    .on('d3click', function (varObj) {
+                        self.onVariantClick(varObj);
+                    })
+                    .on('d3mouseover', function (varObj) {
+                        self.onVariantHover(varObj);
+                    })
+                    .on('d3mouseout', function () {
+                        self.onVariantHoverEnd();
+                    });
 
                 // Draw chart
                 self.varFreqChart();
+            },
+            clear: function() {
+                d3v5.select("#var-freq-viz").selectAll('svg').remove();
+            },
+            onVariantClick: function (varObj) {
+                let self = this;
+                // TODO: can we repurpose tooltip code for this
+                self.$emit("variantClick", varObj);
+            },
+            // TODO: may not need these catchers out here
+            onVariantHover: function (variantId) {
+            },
+            onVariantHoverEnd: function (variant) {
             },
             /* Used to vertically align nodes in Sankey chart */
             sortFunc: function(nodeA, nodeB) {

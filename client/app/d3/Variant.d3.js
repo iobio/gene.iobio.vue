@@ -778,15 +778,9 @@ export default function variantD3() {
                             .attr("y2", variantHeight + 2)
                             .style("opacity", 0);
                     }
-                })
-
-
+                });
                 dispatch.d3rendered();
-
-
             }
-
-
         });
 
     }

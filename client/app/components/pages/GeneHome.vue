@@ -223,12 +223,12 @@
                             </v-tab-item>
                             <v-tab-item v-if="!isBasicMode" style="margin-top:5px;margin-bottom:0px;overflow-y:auto">
                                 <variant-frequency-card
-                                    v-if="varAfLinks"
+                                    v-if="cohortModel && cohortModel.varAfLinks"
                                     style="min-width:300px"
                                     ref="varFreqCardRef"
                                     :width="cardWidth"
-                                    :afLinks="varAfLinks"
-                                    :afNodes="varAfNodes">
+                                    :afLinks="cohortModel.varAfLinks"
+                                    :afNodes="cohortModel.varAfNodes">
                                 </variant-frequency-card>
                             </v-tab-item>
                             <v-tab-item style="margin-top:0px;margin-bottom:0px;overflow-y:auto">
@@ -510,9 +510,7 @@
                 forceLocalStorage: null,
                 showVarViz: true,
                 workingOffline: false,        // If working offline and want to style things
-                annotationComplete: false,
-                varAfLinks: null,
-                varAfNodes: null
+                annotationComplete: false
             }
         },
 
@@ -915,9 +913,9 @@
                                 self.filterModel.populateRecFilters(resultMap);
 
                                 // TODO: doesn't work w/ intervals not even in 1
-                                const nodeRange = 0.33;
-                                self.varAfNodes = self.cohortModel.getVariantAFNodes(nodeRange);
-                                self.varAfLinks = self.cohortModel.getVariantAFLinks(self.varAfNodes, nodeRange);
+                                const nodeRange = 0.10;
+                                self.cohortModel.varAfNodes = self.cohortModel.getVariantAFNodes(nodeRange);
+                                self.cohortModel.varAfLinks = self.cohortModel.getVariantAFLinks(self.cohortModel.varAfNodes, nodeRange);
 
                                 self.cohortModel.promiseMarkCodingRegions(self.selectedGene, self.selectedTranscript)
                                     .then(function (data) {
@@ -1084,14 +1082,6 @@
 
             onGeneSelected: function (geneName) {
                 var self = this;
-
-                // Remove Sankey viz
-                self.varAfLinks = [];
-                self.varAfLinks.push('fake');
-                self.varAfLinks.pop();
-                self.varAfNodes = [];
-                self.varAfNodes.push('fake');
-                self.varAfNodes.pop();
 
                 self.deselectVariant();
                 self.promiseLoadGene(geneName);

@@ -23,6 +23,8 @@ class CohortModel {
         this.freebayesSettings = freebayesSettings;
         this.filterModel = null;
         this.featureMatrixModel = null;
+        this.varAfNodes = null;
+        this.varAfLinks = null;
 
         this.annotationScheme = 'vep';
 
@@ -1004,6 +1006,8 @@ class CohortModel {
                 model.noMatchingSamples = false;
             }
         });
+        self.afLinks = null;
+        self.afNodes = null;
     }
 
     clearLoadedVariants() {
@@ -2736,7 +2740,7 @@ class CohortModel {
         let linkList = [];
         let maxLinkValue = 1;
         let emptyColor = 'transparent';
-        let nonEmptyColor = '#888888';
+        let nonEmptyColor = '#bababa';
         let somaticColor = '#7f107f';
         let scaleIntervals = false;
 
@@ -2902,7 +2906,6 @@ class CohortModel {
                 }
             }
         }
-
         return linkList;
     }
 

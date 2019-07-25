@@ -1,18 +1,18 @@
 /* Adapted by SJG on Jun2019 from https://observablehq.com/@d3var/sankey-diagram */
-
-export default function sankeyd3() {
+export default function sankeyd3(d3var) {
     /* Props */
     let width = 975;
     let height = 200;
-    let d3var = null;
     let linkList = [];
     let nodeList = [];
     let sortFunc = null;
     let nodeIdFunc = null;
+    const nodeClass = 'sankey_node';
+    const linkClass = 'sankey_link';
+    const emptyColor = '#e3e1e1'; // NOTE: must be synonymous w/ cohort model TODO: PASS THIS IN
+    var dispatch = d3var.dispatch("d3click", "d3outsideclick", "d3mouseover", "d3mouseout");
 
-    // TODO: add hook for on hover, add highlight
-    // TODO: add hook for on click, display small tooltip w/ filtering options
-
+    /* Formats provided ids to be displayed in a tooltip */
     let formatIds = function(idList) {
         if (idList.length === 0) {
             return '';
@@ -23,10 +23,43 @@ export default function sankeyd3() {
           let currId = idPieces[0] + ' ' + idPieces[3] + '->' + idPieces[4];
           formattedIds.push(currId);
         });
-        return idList.length + ' variants: ' + formattedIds.join(', ');
+
+        return idList.length + (idList.length === 1 ? ' variant: ' : ' variants: ') + formattedIds.join(', ');
     };
 
-    // TODO: add hooks for enter, transition, exit - make available for outer facing component
+    let cssFormat = function(term) {
+      if (term === null || '') {
+          return '';
+      } else {
+          let terms = term.split('.');
+          let formattedTerms = '';
+          terms.forEach((currTerm) => {
+              formattedTerms += currTerm;
+              formattedTerms += '_';
+          });
+          // Clip off last '_'
+          formattedTerms = formattedTerms.slice(0, formattedTerms.length - 1);
+          return formattedTerms;
+      }
+    };
+
+    /* Highlights the link corresponding to the given id.
+     * If id is null, removes any previous highlighting. */
+    let highlightLink = function(linkId) {
+        if (linkId === null) {
+            // Remove fade from all links
+            let allLinks = d3var.select('#var-freq-viz > svg').selectAll('.' + linkClass);
+            allLinks.classed('link_FADE', false);
+        } else {
+            let outerSvg = d3var.select('#var-freq-viz > svg');
+            // Fade all other links
+            let filteredLinks = outerSvg.selectAll('.' + linkClass).filter(function (d) {
+                return (d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange)) !== linkId;
+            });
+            filteredLinks.classed('link_FADE', true);
+        }
+    };
+
     /* Draws actual chart */
     function chart() {
         //var color = d3var.scaleOrdinal(["Perished"], ["#da4f81"]).unknown("#ccc");
@@ -36,7 +69,10 @@ export default function sankeyd3() {
 
         const svg = d3var.select("#var-freq-viz")
             .append('svg')
-            .attr("viewBox", [0, 0, width, height]);
+            .attr("viewBox", [0, 0, width, height])
+            .on("click", () => {
+                dispatch.call('d3outsideclick', this, null);
+            });
 
         var currSankey = globalSankey
             .nodeWidth(10)
@@ -50,24 +86,30 @@ export default function sankeyd3() {
             links: linkList.map(d => Object.assign({}, d))
         });
 
+        // Draw nodes
         svg.append("g")
             .selectAll("rect")
             .data(nodes)
             .join("rect")
+            .attr("class", nodeClass)
             .attr("x", d => d.x0)
             .attr("y", d => d.y0)
             .attr("height", d => d.y1 - d.y0)
             .attr("width", d => d.x1 - d.x0)
             .style('fill', d => d.color)
             .append("title")
-            .text(d => `${(d.sampleId.toUpperCase())}`)
+            .text(d => `${(d.sampleId.toUpperCase() + ': ' + d.bottomRange + '-' + d.topRange)}`)
             .style('stroke', 'black');
 
+        // Draw links
         svg.append("g")
             .attr("fill", "none")
             .selectAll("g")
             .data(links)
             .join("path")
+            .attr("class", d => `${(d.color === emptyColor ? '' : linkClass )}`)
+            .attr("id", d => `${(d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange))}`)
+            .style('pointer-events', d => d.color === emptyColor ? 'none' : 'auto')
             .attr("d", d3var.sankeyLinkHorizontal())
             .attr("stroke", d => d.color)
             .attr("stroke-width", d => d.width)
@@ -76,7 +118,33 @@ export default function sankeyd3() {
             .text(d => `${formatIds(d.variantIds)}`)
             .style('stroke', 'black');
 
+        // Add listeners to links
+        d3var.selectAll('.' + linkClass)
+            .on('mouseover', (d) => {
+                let linkId = null;
+                if (d && d.source && d.target) {
+                    linkId = d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange);
+                }
+                highlightLink(linkId);
+            })
+            .on('mouseout', (d) => {
+                let linkId = null;
+                if (d && d.source && d.target) {
+                    linkId = d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange);
+                }
+                highlightLink(null);
+            })
+            .on('click', (d) => {
+                let linkId = null;
+                if (d && d.source && d.target) {
+                    linkId = d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange);
+                }
+                highlightLink(linkId);
+                dispatch.call('d3click', this, {id: linkId, pageX: event.pageX, pageY: event.pageY});
+            });
+
         // TODO: add y-axis from 0-1 instead of labeling nodes
+        // Draw labels on nodes
         svg.append("g")
             .style("font", "10px sans-serif")
             .selectAll("text")
@@ -108,12 +176,6 @@ export default function sankeyd3() {
         return chart;
     };
 
-    chart.d3var = function (_) {
-        if (!arguments.length) return d3var;
-        d3var = _;
-        return chart;
-    };
-
     chart.linkList = function (_) {
         if (!arguments.length) return linkList;
         linkList = _;
@@ -139,6 +201,7 @@ export default function sankeyd3() {
     };
 
     // This adds the "on" methods to our custom exports
-    //d3var.rebind(exports, dispatch, "on");
+    d3var.rebind(chart, dispatch, "on");
+
     return chart;
 }
