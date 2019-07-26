@@ -11,6 +11,8 @@ export default function sankeyd3(d3var) {
     const linkClass = 'sankey_link';
     const emptyColor = '#e3e1e1'; // NOTE: must be synonymous w/ cohort model TODO: PASS THIS IN
     var dispatch = d3var.dispatch("d3click", "d3outsideclick", "d3mouseover", "d3mouseout");
+    const color = d3var.scaleOrdinal(d3var.schemeCategory10);
+    // background: linear-gradient(0.5turn, #0000ff, #ababab, #ffff00);
 
     /* Formats provided ids to be displayed in a tooltip */
     let formatIds = function(idList) {
@@ -43,6 +45,18 @@ export default function sankeyd3(d3var) {
       }
     };
 
+    /* Provides color based on name */
+    let getLinkColor = function (nodeId, nodes) {
+        let matchingNode = nodes.filter((currNode) => {
+            return currNode.sampleId === nodeId;
+        });
+        if (matchingNode.length > 0) {
+            return matchingNode[0].color;
+        } else {
+            return '#bababa';
+        }
+    };
+
     /* Highlights the link corresponding to the given id.
      * If id is null, removes any previous highlighting. */
     let highlightLink = function(linkId) {
@@ -62,8 +76,6 @@ export default function sankeyd3(d3var) {
 
     /* Draws actual chart */
     function chart() {
-        //var color = d3var.scaleOrdinal(["Perished"], ["#da4f81"]).unknown("#ccc");
-
         // Get rid of any previous graph
         d3var.select("#var-freq-viz").selectAll('svg').remove();
 
@@ -102,41 +114,56 @@ export default function sankeyd3(d3var) {
             .style('stroke', 'black');
 
         // Draw links
-        svg.append("g")
+        const link = svg.append("g")
             .attr("fill", "none")
+            .attr("stroke-opacity", 0.8)
             .selectAll("g")
             .data(links)
-            .join("path")
-            .attr("class", d => `${(d.color === emptyColor ? '' : linkClass )}`)
-            .attr("id", d => `${(d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange))}`)
-            .style('pointer-events', d => d.color === emptyColor ? 'none' : 'auto')
-            .attr("d", d3var.sankeyLinkHorizontal())
-            .attr("stroke", d => d.color)
-            .attr("stroke-width", d => d.width)
-            .style("mix-blend-mode", "multiply")
-            .append("title")
-            .text(d => `${formatIds(d.variantIds)}`)
-            .style('stroke', 'black');
+            .join("g")
+            .style("mix-blend-mode", "multiply");
+
+        const gradient = link.append("linearGradient")
+            .attr("id", d => (d.source.sampleId + '_' + d.target.sampleId + '_gradient'))
+            .attr("gradientUnits", "userSpaceOnUse")
+            .attr("x1", d => d.source.x1)
+            .attr("x2", d => d.target.x0);
+
+        gradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", d => getLinkColor(d.source.sampleId, nodes));
+
+        gradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", d => getLinkColor(d.target.sampleId, nodes));
+
+         link.append("path")
+             .attr("d", d3var.sankeyLinkHorizontal())
+             .style("stroke", d => ('url(#' + d.source.sampleId + '_' + d.target.sampleId + '_gradient)'))
+             // .style("fill", d => ('url(#' + d.source.sampleId + '_' + d.target.sampleId + '_gradient)'))
+             .attr("stroke-width", d => d.width)
+             .attr("class", d => `${(d.leftColor === emptyColor ? '' : linkClass )}`)
+             .attr("id", d => `${(d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange))}`);
+
+         link.append("title")
+             .text(d => `${formatIds(d.variantIds)}`)
+             .style('stroke', 'black');
 
         // Add listeners to links
         d3var.selectAll('.' + linkClass)
             .on('mouseover', (d) => {
                 let linkId = null;
-                if (d && d.source && d.target) {
+                // Only perform hover action if we're on a non-transparent link
+                if (d && d.source && d.target && d.leftColor !== emptyColor) {
                     linkId = d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange);
                 }
                 highlightLink(linkId);
             })
-            .on('mouseout', (d) => {
-                let linkId = null;
-                if (d && d.source && d.target) {
-                    linkId = d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange);
-                }
+            .on('mouseout', () => {
                 highlightLink(null);
             })
             .on('click', (d) => {
                 let linkId = null;
-                if (d && d.source && d.target) {
+                if (d && d.source && d.target && d.leftColor !== emptyColor) {
                     linkId = d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange);
                 }
                 highlightLink(linkId);
