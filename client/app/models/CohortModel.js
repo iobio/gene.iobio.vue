@@ -2732,6 +2732,7 @@ class CohortModel {
     /* Takes in list of nodes and creates list of links for sankey AF visualization. */
     getVariantAFLinks(nodes, intervalSize) {
         const self = this;
+        const yellowBlueGradient = ['#000efc', '#0016f9', '#5662d6', '#6c74cc', '#9ea0b2', '#b1b1a1', '#c9c878', '#d8d85b', '#efef2a', '#fcfc0a'];
 
         // Make sure we're in the correct order
         let orderedModels = self.sortSampleModels(self.getCanonicalModels(), self.sampleMap, false);

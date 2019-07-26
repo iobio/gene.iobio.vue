@@ -12,37 +12,37 @@ export default function sankeyd3(d3var) {
     const emptyColor = '#e3e1e1'; // NOTE: must be synonymous w/ cohort model TODO: PASS THIS IN
     var dispatch = d3var.dispatch("d3click", "d3outsideclick", "d3mouseover", "d3mouseout");
     const color = d3var.scaleOrdinal(d3var.schemeCategory10);
-    // background: linear-gradient(0.5turn, #0000ff, #ababab, #ffff00);
+    const gradientStyle = 'heatmap';
 
     /* Formats provided ids to be displayed in a tooltip */
-    let formatIds = function(idList) {
+    let formatIds = function (idList) {
         if (idList.length === 0) {
             return '';
         }
         let formattedIds = [];
         idList.forEach((id) => {
-          let idPieces = id.split('.');
-          let currId = idPieces[0] + ' ' + idPieces[3] + '->' + idPieces[4];
-          formattedIds.push(currId);
+            let idPieces = id.split('.');
+            let currId = idPieces[0] + ' ' + idPieces[3] + '->' + idPieces[4];
+            formattedIds.push(currId);
         });
 
         return idList.length + (idList.length === 1 ? ' variant: ' : ' variants: ') + formattedIds.join(', ');
     };
 
-    let cssFormat = function(term) {
-      if (term === null || '') {
-          return '';
-      } else {
-          let terms = term.split('.');
-          let formattedTerms = '';
-          terms.forEach((currTerm) => {
-              formattedTerms += currTerm;
-              formattedTerms += '_';
-          });
-          // Clip off last '_'
-          formattedTerms = formattedTerms.slice(0, formattedTerms.length - 1);
-          return formattedTerms;
-      }
+    let cssFormat = function (term) {
+        if (term === null || '') {
+            return '';
+        } else {
+            let terms = term.split('.');
+            let formattedTerms = '';
+            terms.forEach((currTerm) => {
+                formattedTerms += currTerm;
+                formattedTerms += '_';
+            });
+            // Clip off last '_'
+            formattedTerms = formattedTerms.slice(0, formattedTerms.length - 1);
+            return formattedTerms;
+        }
     };
 
     /* Provides color based on name */
@@ -59,7 +59,7 @@ export default function sankeyd3(d3var) {
 
     /* Highlights the link corresponding to the given id.
      * If id is null, removes any previous highlighting. */
-    let highlightLink = function(linkId) {
+    let highlightLink = function (linkId) {
         if (linkId === null) {
             // Remove fade from all links
             let allLinks = d3var.select('#var-freq-viz > svg').selectAll('.' + linkClass);
@@ -89,7 +89,9 @@ export default function sankeyd3(d3var) {
         var currSankey = globalSankey
             .nodeWidth(10)
             .nodePadding(10)
-            .nodeId(function (d) { return d.sampleId + '_' + d.bottomRange; })
+            .nodeId(function (d) {
+                return d.sampleId + '_' + d.bottomRange;
+            })
             .nodeSort(sortFunc)
             .extent([[0, 5], [width, height - 5]]);
 
@@ -100,6 +102,7 @@ export default function sankeyd3(d3var) {
 
         // Draw nodes
         svg.append("g")
+            .attr("id", "nodeG")
             .selectAll("rect")
             .data(nodes)
             .join("rect")
@@ -113,6 +116,8 @@ export default function sankeyd3(d3var) {
             .text(d => `${(d.sampleId.toUpperCase() + ': ' + d.bottomRange + '-' + d.topRange)}`)
             .style('stroke', 'black');
 
+        // TODO: add hovering events for nodes
+
         // Draw links
         const link = svg.append("g")
             .attr("fill", "none")
@@ -122,31 +127,69 @@ export default function sankeyd3(d3var) {
             .join("g")
             .style("mix-blend-mode", "multiply");
 
-        const gradient = link.append("linearGradient")
-            .attr("id", d => (d.source.sampleId + '_' + d.target.sampleId + '_gradient'))
-            .attr("gradientUnits", "userSpaceOnUse")
-            .attr("x1", d => d.source.x1)
-            .attr("x2", d => d.target.x0);
+        // Draw gradient
+        let gradient = null;
 
-        gradient.append("stop")
-            .attr("offset", "0%")
-            .attr("stop-color", d => getLinkColor(d.source.sampleId, nodes));
+        // Horizontal sample colored gradient
+        if (gradientStyle === 'sample') {
+            gradient = link.append("linearGradient")
+                .attr("id", d => (d.source.sampleId + '_' + d.target.sampleId + '_gradient'))
+                .attr("gradientUnits", "userSpaceOnUse")
+                .attr("x1", d => d.source.x1)
+                .attr("x2", d => d.target.x0);
 
-        gradient.append("stop")
-            .attr("offset", "100%")
-            .attr("stop-color", d => getLinkColor(d.target.sampleId, nodes));
+            gradient.append("stop")
+                .attr("offset", "0%")
+                .attr("stop-color", d => getLinkColor(d.source.sampleId, nodes));
 
-         link.append("path")
-             .attr("d", d3var.sankeyLinkHorizontal())
-             .style("stroke", d => ('url(#' + d.source.sampleId + '_' + d.target.sampleId + '_gradient)'))
-             // .style("fill", d => ('url(#' + d.source.sampleId + '_' + d.target.sampleId + '_gradient)'))
-             .attr("stroke-width", d => d.width)
-             .attr("class", d => `${(d.leftColor === emptyColor ? '' : linkClass )}`)
-             .attr("id", d => `${(d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange))}`);
+            gradient.append("stop")
+                .attr("offset", "100%")
+                .attr("stop-color", d => getLinkColor(d.target.sampleId, nodes));
 
-         link.append("title")
-             .text(d => `${formatIds(d.variantIds)}`)
-             .style('stroke', 'black');
+            // Draw links and map to gradient
+            link.append("path")
+                .attr("d", d3var.sankeyLinkHorizontal())
+                .style("stroke", d => ('url(#' + d.source.sampleId + '_' + d.target.sampleId + '_gradient)'))
+                .attr("stroke-width", d => d.width)
+                .attr("class", d => `${(d.leftColor === emptyColor ? '' : linkClass)}`)
+                .attr("id", d => `${(d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange))}`);
+
+        } else if (gradientStyle === 'heatmap') {
+            // Vertical gradient with heat map colors
+            let outerG = d3var.select("#nodeG");
+            gradient = outerG.append("defs")
+                .append("linearGradient")
+                .attr("id", "heatMapGradient")
+                .attr("gradientUnits", "userSpaceOnUse")
+                .attr("gradientTransform", "rotate(90)");
+
+            gradient.append("stop")
+                .attr("offset", "0%")
+                .attr("stop-color", '#000efc');
+
+            gradient.append("stop")
+                .attr("offset", () => {
+                    // Note: have to account for 90 degree flip
+                    if (width > height) {
+                        return height / width * 100 + '%';
+                    } else {
+                        return '100%';
+                    }
+                })  // Note: have to account for 90 degree flip
+                .attr("stop-color", '#fcfc0a');
+
+            // Draw links and map to gradient
+            link.append("path")
+                .attr("d", d3var.sankeyLinkHorizontal())
+                .style("stroke", 'url(#heatMapGradient)')
+                .attr("stroke-width", d => d.width)
+                .attr("class", d => `${(d.leftColor === emptyColor ? '' : linkClass)}`)
+                .attr("id", d => `${(d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange))}`);
+        }
+
+        link.append("title")
+            .text(d => `${formatIds(d.variantIds)}`)
+            .style('stroke', 'black');
 
         // Add listeners to links
         d3var.selectAll('.' + linkClass)
@@ -170,7 +213,6 @@ export default function sankeyd3(d3var) {
                 dispatch.call('d3click', this, {id: linkId, pageX: event.pageX, pageY: event.pageY});
             });
 
-        // TODO: add y-axis from 0-1 instead of labeling nodes
         // Draw labels on nodes
         svg.append("g")
             .style("font", "10px sans-serif")
