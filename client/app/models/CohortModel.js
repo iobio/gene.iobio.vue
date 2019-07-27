@@ -2764,9 +2764,10 @@ class CohortModel {
                 return node.sampleId === currModel.id;
             });
             currModelNodes.forEach((node) => {
-                let flatLink = { source: (currModel.id + '_' + node.bottomRange), target: (nextModel.id + '_' + node.bottomRange), variantIds: [], value: 1, isSpacer: true };
-                linkList.push(flatLink);
                 let linkId = self.getLinkId(currModel.id, nextModel.id, node);
+                let flatLink = { id: linkId, source: (currModel.id + '_' + node.bottomRange), sourceModelId: currModel.id,
+                    target: (nextModel.id + '_' + node.bottomRange), targetModelId: nextModel.id, variantIds: [], value: 1, isSpacer: true };
+                linkList.push(flatLink);
                 linkHash[linkId] = flatLink;
             });
 
@@ -2820,7 +2821,8 @@ class CohortModel {
 
                 // If not, create new link object
                 } else {
-                    let newLink = { source: (currModel.id + '_' + currRoundedAf), target: (nextModel.id + '_' + nextRoundedAf), variantIds: [variant.id], value: 1, isSpacer: false };
+                    let newLink = { id: linkId, source: (currModel.id + '_' + currRoundedAf), sourceModelId: currModel.id,
+                        target: (nextModel.id + '_' + nextRoundedAf), targetModelId: nextModel.id, variantIds: [variant.id], value: 1, isSpacer: false };
                     linkHash[linkId] = newLink;
                     linkList.push(newLink);
                 }

@@ -85,10 +85,13 @@
                     .sortFunc(self.sortFunc)
                     .nodeIdFunc(self.nodeIdFunc)
                     .on('d3outsideclick', function () {
-                        self.onVariantClick(null);
+                        self.onLinkClick(null);
                     })
-                    .on('d3click', function (varObj) {
-                        self.onVariantClick(varObj);
+                    .on('d3linkclick', function (varObj) {
+                        self.onLinkClick(varObj);
+                    })
+                    .on('d3nodeclick', function (varObj) {
+                        self.onNodeClick(varObj);
                     })
                     .on('d3mouseover', function (varObj) {
                         self.onVariantHover(varObj);
@@ -103,10 +106,15 @@
             clear: function() {
                 d3v5.select("#var-freq-viz").selectAll('svg').remove();
             },
-            onVariantClick: function (varObj) {
+            onLinkClick: function (varObj) {
                 let self = this;
                 // TODO: can we repurpose tooltip code for this
-                self.$emit("variantClick", varObj);
+                self.$emit("linkClick", varObj);
+            },
+            onNodeClick: function (varObj) {
+                let self = this;
+                // TODO: can we repurpose tooltip code for this
+                self.$emit("linkClick", varObj);
             },
             // TODO: may not need these catchers out here
             onVariantHover: function (variantId) {
