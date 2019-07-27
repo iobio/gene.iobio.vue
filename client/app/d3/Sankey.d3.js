@@ -1,5 +1,5 @@
 /* Adapted by SJG on Jun2019 from https://observablehq.com/@d3var/sankey-diagram */
-export default function sankeyd3(d3var) {
+export default function sankeyd3(d3var, outerElementId) {
     /* Props */
     let width = 975;
     let height = 200;
@@ -9,9 +9,10 @@ export default function sankeyd3(d3var) {
     let nodeIdFunc = null;
     const nodeClass = 'sankey_node';
     const linkClass = 'sankey_link';
-    var dispatch = d3var.dispatch("d3click", "d3outsideclick", "d3mouseover", "d3mouseout");
+    let dispatch = d3var.dispatch("d3click", "d3outsideclick", "d3mouseover", "d3mouseout");
     const gradientStyle = 'heatmap';
-    // TODO: pass in outside element id and use that for selections in highlights
+    let nodeColor = "#888888";
+    let linkColor = "#bababa";
 
     /* Formats provided ids to be displayed in a tooltip */
     let formatIds = function (idList) {
@@ -52,7 +53,7 @@ export default function sankeyd3(d3var) {
         if (matchingNode.length > 0) {
             return matchingNode[0].color;
         } else {
-            return '#bababa';
+            return linkColor;
         }
     };
 
@@ -61,10 +62,10 @@ export default function sankeyd3(d3var) {
     let highlightLink = function (linkId) {
         if (linkId === null) {
             // Remove fade from all links
-            let allLinks = d3var.select('#var-freq-viz > svg').selectAll('.' + linkClass);
+            let allLinks = d3var.select('#' + outerElementId + ' > svg').selectAll('.' + linkClass);
             allLinks.classed('link_FADE', false);
         } else {
-            let outerSvg = d3var.select('#var-freq-viz > svg');
+            let outerSvg = d3var.select('#' + outerElementId + ' > svg');
             // Fade all other links
             let filteredLinks = outerSvg.selectAll('.' + linkClass).filter(function (d) {
                 return (d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange)) !== linkId;
@@ -77,7 +78,7 @@ export default function sankeyd3(d3var) {
     let highlightLinksFromNode = function (nodeId) {
         if (nodeId == null) {
             // Remove fade form all links
-            let allLinks = d3var.select('#var-freq-viz > svg').selectAll('.' + linkClass);
+            let allLinks = d3var.select('#' + outerElementId + ' > svg').selectAll('.' + linkClass);
             allLinks.classed('link_FADE', false);
         }
     };
@@ -85,9 +86,9 @@ export default function sankeyd3(d3var) {
     /* Draws actual chart */
     function chart() {
         // Get rid of any previous graph
-        d3var.select("#var-freq-viz").selectAll('svg').remove();
+        d3var.select('#' + outerElementId).selectAll('svg').remove();
 
-        const svg = d3var.select("#var-freq-viz")
+        const svg = d3var.select('#' + outerElementId)
             .append('svg')
             .attr("viewBox", [0, 0, width, height])
             .on("click", () => {
@@ -119,7 +120,7 @@ export default function sankeyd3(d3var) {
             .attr("y", d => d.y0)
             .attr("height", d => d.y1 - d.y0)
             .attr("width", d => d.x1 - d.x0)
-            //.style('fill', d => d.color)
+            .style('fill', d => gradientStyle === 'sample' ? d.color : nodeColor)
             .style('fill', "#888888")
             .append("title")
             .text(d => `${(d.sampleId.toUpperCase() + ': ' + d.bottomRange + '-' + d.topRange)}`)

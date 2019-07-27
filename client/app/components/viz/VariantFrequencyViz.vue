@@ -77,7 +77,7 @@
                 let self = this;
 
                 // Construct object
-                self.varFreqChart = sankeyD3(d3v5)
+                self.varFreqChart = sankeyD3(d3v5, self.vizId)
                     .width(self.width)
                     .height(self.height)
                     .linkList(self.afLinks)

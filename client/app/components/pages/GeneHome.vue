@@ -192,16 +192,18 @@
                                 v-model="activeGeneVariantTab"
                                 light
                                 :class="{'basic': isBasicMode}">
-                            <v-tab v-if="!isBasicMode">
+                            <v-tab v-if="!isBasicMode" href="#feature-matrix-tab">
                                 Ranked Variants in Gene
                             </v-tab>
-                            <v-tab v-if="!isBasicMode">
+                            <v-tab v-if="!isBasicMode" href="#var-freq-tab">
                                 Variant Allele Frequencies
                             </v-tab>
-                            <v-tab v-if="!isEduMode">
-                                Variant
+                            <v-tab v-if="!isEduMode" href="#var-detail-tab">
+                                Variant Details
                             </v-tab>
-                            <v-tab-item v-if="!isBasicMode" style="margin-top:5px;margin-bottom:0px;overflow-y:auto">
+                            <v-tab-item v-if="!isBasicMode" style="margin-top:5px;margin-bottom:0px;overflow-y:auto"
+                                        :key="'featureMatrixTab'"
+                                        :id="'feature-matrix-tab'">
                                 <feature-matrix-card style="min-width:300px"
                                                      ref="featureMatrixCardRef"
                                                      v-if="featureMatrixModel.filteredMatrixRows.length > 0"
@@ -221,7 +223,9 @@
                                                      @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj)">
                                 </feature-matrix-card>
                             </v-tab-item>
-                            <v-tab-item v-if="!isBasicMode" style="margin-top:5px;margin-bottom:0px;overflow-y:auto">
+                            <v-tab-item v-if="!isBasicMode" style="margin-top:5px;margin-bottom:0px;overflow-y:auto"
+                                        :key="'varFreqTab'"
+                                        :id="'var-freq-tab'">
                                 <variant-frequency-card
                                     v-if="cohortModel && cohortModel.varAfLinks"
                                     style="min-width:300px"
@@ -231,7 +235,9 @@
                                     :afNodes="cohortModel.varAfNodes">
                                 </variant-frequency-card>
                             </v-tab-item>
-                            <v-tab-item style="margin-top:0px;margin-bottom:0px;overflow-y:auto">
+                            <v-tab-item style="margin-top:0px;margin-bottom:0px;overflow-y:auto"
+                                        :key="'varDetailTab'"
+                                        :id="'var-detail-tab'">
                                 <variant-detail-card
                                         ref="variantDetailCardRef"
                                         :isEduMode="isEduMode"
@@ -467,7 +473,7 @@
                 firstLaunchFromFileMenu: true,
 
                 PROBAND: 'proband',
-                activeGeneVariantTab: null,
+                activeGeneVariantTab: 'feature-matrix-tab',
                 isLeftDrawerOpen: null,
                 showWelcome: false,
 
@@ -1060,7 +1066,7 @@
                 self.promiseLoadGene(geneName)
                     .then(function () {
                         self.onSendGenesToClin();
-                        self.activeGeneVariantTab = "0";
+                        self.activeGeneVariantTab = "feature-matrix-tab";
                         //self.setUrlGeneParameters();
                         self.showLeftPanelWhenFlaggedVariants();
                     })
@@ -1076,7 +1082,7 @@
                         //self.setUrlGeneParameters();
                         self.showLeftPanelWhenFlaggedVariants();
                     })
-                self.activeGeneVariantTab = "0";
+                self.activeGeneVariantTab = "feature-matrix-tab";
 
             },
 
@@ -1085,7 +1091,7 @@
 
                 self.deselectVariant();
                 self.promiseLoadGene(geneName);
-                self.activeGeneVariantTab = "0";
+                self.activeGeneVariantTab = "feature-matrix-tab";
 
             },
 
@@ -1239,7 +1245,7 @@
                     self.selectedVariantParentSampleId = sampleModelId;
                     self.selectedVariantNotes = variant.notes;
                     self.selectedVariantInterpretation = variant.interpretation;
-                    self.activeGeneVariantTab = self.isBasicMode ? "0" : "1";
+                    self.activeGeneVariantTab = self.isBasicMode ? "feature-matrix-tab" : "var-detail-tab";
                     self.showVariantExtraAnnots(sampleModelId, variant);
 
                     self.$refs.variantCardRef.forEach(function (variantCard) {
@@ -1292,7 +1298,7 @@
                 let self = this;
                 self.selectedVariant = null;
                 self.selectedVariantRelationship = null;
-                self.activeGeneVariantTab = "0";
+                self.activeGeneVariantTab = "feature-matrix-tab";
                 if (self.$refs.variantCardRef) {
                     self.$refs.variantCardRef.forEach(function (variantCard) {
                         variantCard.hideVariantTooltip();
@@ -1438,7 +1444,7 @@
                     self.deselectVariant();
                     self.promiseLoadGene(newGeneToSelect)
                         .then(function () {
-                            self.activeGeneVariantTab = "0";
+                            self.activeGeneVariantTab = "feature-matrix-tab";
                             self.setUrlGeneParameters();
                         })
                 } else {
@@ -1493,7 +1499,7 @@
                         self.selectedGene = {};
                         self.selectedTranscript = null;
                         self.selectedVariant = null;
-                        self.activeGeneVariantTab = "0";
+                        self.activeGeneVariantTab = "feature-matrix-tab";
 
                         let genesToReapply = $.extend([], self.geneModel.sortedGeneNames);
 
@@ -1733,7 +1739,7 @@
                 // reflects the flagged variants
                 self.promiseLoadGene(self.selectedGene.gene_name, null, true)
                     .then(function () {
-                        self.onCohortVariantClick(variant, null, variant.sampleModelId);
+                        self.onCohortƒ(variant, null, variant.sampleModelId);
                     });
             },
             onRemoveUserFlaggedVariant: function (variant) {
@@ -1848,7 +1854,7 @@
                                 })
 
 
-                                self.activeGeneVariantTab = "1";
+                                self.activeGeneVariantTab = "var-detail-tab";
                                 self.$refs.variantDetailCardRef.refreshGlyphs();
                             },
                             500);
