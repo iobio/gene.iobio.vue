@@ -9,10 +9,9 @@ export default function sankeyd3(d3var) {
     let nodeIdFunc = null;
     const nodeClass = 'sankey_node';
     const linkClass = 'sankey_link';
-    const emptyColor = '#e3e1e1'; // NOTE: must be synonymous w/ cohort model TODO: PASS THIS IN
     var dispatch = d3var.dispatch("d3click", "d3outsideclick", "d3mouseover", "d3mouseout");
-    const color = d3var.scaleOrdinal(d3var.schemeCategory10);
     const gradientStyle = 'heatmap';
+    // TODO: pass in outside element id and use that for selections in highlights
 
     /* Formats provided ids to be displayed in a tooltip */
     let formatIds = function (idList) {
@@ -45,7 +44,7 @@ export default function sankeyd3(d3var) {
         }
     };
 
-    /* Provides color based on name */
+    /* Provides color based on name. Used only for sample coloring scheme. */
     let getLinkColor = function (nodeId, nodes) {
         let matchingNode = nodes.filter((currNode) => {
             return currNode.sampleId === nodeId;
@@ -71,6 +70,15 @@ export default function sankeyd3(d3var) {
                 return (d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange)) !== linkId;
             });
             filteredLinks.classed('link_FADE', true);
+        }
+    };
+
+    /* Highlights any links which use the node corresponding to the provided nodeId as their source. */
+    let highlightLinksFromNode = function (nodeId) {
+        if (nodeId == null) {
+            // Remove fade form all links
+            let allLinks = d3var.select('#var-freq-viz > svg').selectAll('.' + linkClass);
+            allLinks.classed('link_FADE', false);
         }
     };
 
@@ -111,12 +119,33 @@ export default function sankeyd3(d3var) {
             .attr("y", d => d.y0)
             .attr("height", d => d.y1 - d.y0)
             .attr("width", d => d.x1 - d.x0)
-            .style('fill', d => d.color)
+            //.style('fill', d => d.color)
+            .style('fill', "#888888")
             .append("title")
             .text(d => `${(d.sampleId.toUpperCase() + ': ' + d.bottomRange + '-' + d.topRange)}`)
             .style('stroke', 'black');
 
-        // TODO: add hovering events for nodes
+        // Add listeners to nodes
+        d3var.selectAll('.' + nodeClass)
+            .on('mouseover', (d) => {
+                let nodeId = null;
+                // Only perform hover action if we're on a non-transparent link
+                if (d && d.source && d.target && d.isSpacer === false) {
+                    nodeId = d.source.sampleId + '_' + cssFormat(d.source.bottomRange);
+                }
+                highlightLinksFromNode(nodeId);
+            })
+            .on('mouseout', () => {
+                highlightLink(null);
+            })
+            .on('click', (d) => {
+                let linkId = null;
+                if (d && d.source && d.target && d.isSpacer === false) {
+                    linkId = d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange);
+                }
+                highlightLink(linkId);
+                dispatch.call('d3click', this, {id: linkId, pageX: event.pageX, pageY: event.pageY});
+            });
 
         // Draw links
         const link = svg.append("g")
@@ -149,9 +178,9 @@ export default function sankeyd3(d3var) {
             // Draw links and map to gradient
             link.append("path")
                 .attr("d", d3var.sankeyLinkHorizontal())
-                .style("stroke", d => ('url(#' + d.source.sampleId + '_' + d.target.sampleId + '_gradient)'))
+                .style("stroke", d => d.isSpacer === true ? 'transparent' : ('url(#' + d.source.sampleId + '_' + d.target.sampleId + '_gradient)'))
                 .attr("stroke-width", d => d.width)
-                .attr("class", d => `${(d.leftColor === emptyColor ? '' : linkClass)}`)
+                .attr("class", d => `${(d.isSpacer === true ? '' : linkClass)}`)
                 .attr("id", d => `${(d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange))}`);
 
         } else if (gradientStyle === 'heatmap') {
@@ -165,7 +194,7 @@ export default function sankeyd3(d3var) {
 
             gradient.append("stop")
                 .attr("offset", "0%")
-                .attr("stop-color", '#000efc');
+                .attr("stop-color", '#fcfc0a');
 
             gradient.append("stop")
                 .attr("offset", () => {
@@ -176,14 +205,14 @@ export default function sankeyd3(d3var) {
                         return '100%';
                     }
                 })  // Note: have to account for 90 degree flip
-                .attr("stop-color", '#fcfc0a');
+                .attr("stop-color", '#000efc');
 
             // Draw links and map to gradient
             link.append("path")
                 .attr("d", d3var.sankeyLinkHorizontal())
-                .style("stroke", 'url(#heatMapGradient)')
+                .style("stroke", d => d.isSpacer === true ? 'transparent' : 'url(#heatMapGradient)')
                 .attr("stroke-width", d => d.width)
-                .attr("class", d => `${(d.leftColor === emptyColor ? '' : linkClass)}`)
+                .attr("class", d => `${(d.isSpacer === true ? '' : linkClass)}`)
                 .attr("id", d => `${(d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange))}`);
         }
 
@@ -196,7 +225,7 @@ export default function sankeyd3(d3var) {
             .on('mouseover', (d) => {
                 let linkId = null;
                 // Only perform hover action if we're on a non-transparent link
-                if (d && d.source && d.target && d.leftColor !== emptyColor) {
+                if (d && d.source && d.target && d.isSpacer === false) {
                     linkId = d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange);
                 }
                 highlightLink(linkId);
@@ -206,7 +235,7 @@ export default function sankeyd3(d3var) {
             })
             .on('click', (d) => {
                 let linkId = null;
-                if (d && d.source && d.target && d.leftColor !== emptyColor) {
+                if (d && d.source && d.target && d.isSpacer === false) {
                     linkId = d.source.sampleId + '_' + cssFormat(d.source.bottomRange) + '_' + d.target.sampleId + '_' + cssFormat(d.target.bottomRange);
                 }
                 highlightLink(linkId);

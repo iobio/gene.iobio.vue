@@ -2715,8 +2715,9 @@ class CohortModel {
             let modelIdx = model.isTumor ? tumorIdx : normalIdx;
             let currModelColor = self.globalApp.utility.getTrackColor(modelIdx, model.isTumor);
             for (let i = 0; i < intervals; i++) {
-                let bottomRange = Math.round(i * intervalSize * 100) / 100;
-                let topRange = Math.round((bottomRange + intervalSize) * 100) / 100;
+                // Add in descending order
+                let topRange = Math.round((1 - (i * intervalSize)) * 100) / 100;
+                let bottomRange = Math.round((topRange - intervalSize) * 100) / 100;
                 let node = {sampleId: model.id, bottomRange: (bottomRange + ''), topRange: (topRange + ''), color: currModelColor};
                 nodeList.push(node);
             }
@@ -2732,7 +2733,6 @@ class CohortModel {
     /* Takes in list of nodes and creates list of links for sankey AF visualization. */
     getVariantAFLinks(nodes, intervalSize) {
         const self = this;
-        const yellowBlueGradient = ['#000efc', '#0016f9', '#5662d6', '#6c74cc', '#9ea0b2', '#b1b1a1', '#c9c878', '#d8d85b', '#efef2a', '#fcfc0a'];
 
         // Make sure we're in the correct order
         let orderedModels = self.sortSampleModels(self.getCanonicalModels(), self.sampleMap, false);
@@ -2740,9 +2740,6 @@ class CohortModel {
         let linkHash = {};
         let linkList = [];
         let maxLinkValue = 1;
-        let emptyColor = 'transparent';
-        let nonEmptyColor = '#bababa';
-        let somaticColor = '#7f107f';
         let scaleIntervals = false;
 
         for (let i = 0; i < orderedModels.length - 1; i++) {
@@ -2767,7 +2764,7 @@ class CohortModel {
                 return node.sampleId === currModel.id;
             });
             currModelNodes.forEach((node) => {
-                let flatLink = { source: (currModel.id + '_' + node.bottomRange), target: (nextModel.id + '_' + node.bottomRange), variantIds: [], value: 1, leftColor: emptyColor, rightColor: emptyColor };
+                let flatLink = { source: (currModel.id + '_' + node.bottomRange), target: (nextModel.id + '_' + node.bottomRange), variantIds: [], value: 1, isSpacer: true };
                 linkList.push(flatLink);
                 let linkId = self.getLinkId(currModel.id, nextModel.id, node);
                 linkHash[linkId] = flatLink;
@@ -2815,15 +2812,15 @@ class CohortModel {
                 // If it does, increment value and add varId to the list
                 if (currLink) {
                     // If this is the first time we're switching from fake to real link, don't increment
-                    if (currLink.color !== emptyColor) {
+                    if (currLink.isSpacer === false) {
                         currLink.value += 1;
                     }
                     currLink.variantIds.push(variant.id);
-                    currLink.color = nonEmptyColor;
+                    currLink.isSpacer = false;
 
                 // If not, create new link object
                 } else {
-                    let newLink = { source: (currModel.id + '_' + currRoundedAf), target: (nextModel.id + '_' + nextRoundedAf), variantIds: [variant.id], value: 1, leftColor: yellowBlueGradient[currRoundedAf * 10], rightColor: yellowBlueGradient[nextRoundedAf * 10] };
+                    let newLink = { source: (currModel.id + '_' + currRoundedAf), target: (nextModel.id + '_' + nextRoundedAf), variantIds: [variant.id], value: 1, isSpacer: false };
                     linkHash[linkId] = newLink;
                     linkList.push(newLink);
                 }
@@ -2887,7 +2884,7 @@ class CohortModel {
                         let valDiff = maxLinkValue - currMax;
 
                         let currFakeLink = currLinks.filter((link) => {
-                            return link.color === emptyColor;
+                            return link.isSpacer === true;
                         });
                         // If we still have a fake link, adjust that value
                         if (currFakeLink.length > 0) {
@@ -2896,10 +2893,10 @@ class CohortModel {
                             // Otherwise, add another fake link to pad value
                             if (i === (orderedModels.length - 1)) {
                                 // Slightly diff approach for last column
-                                let fakeLink = { source: (orderedModels[i-1].id + '_' + bottomRange), target: (orderedModels[i].id + '_' + bottomRange), variantIds: [], value: valDiff, color: emptyColor };
+                                let fakeLink = { source: (orderedModels[i-1].id + '_' + bottomRange), target: (orderedModels[i].id + '_' + bottomRange), variantIds: [], value: valDiff, isSpacer: true };
                                 linkList.push(fakeLink);
                             } else {
-                                let fakeLink = { source: (orderedModels[i].id + '_' + bottomRange), target: (orderedModels[i+1].id + '_' + bottomRange), variantIds: [], value: valDiff, color: emptyColor };
+                                let fakeLink = { source: (orderedModels[i].id + '_' + bottomRange), target: (orderedModels[i+1].id + '_' + bottomRange), variantIds: [], value: valDiff, isSpacer: true };
                                 linkList.push(fakeLink);
                             }
                         }

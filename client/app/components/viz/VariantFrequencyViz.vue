@@ -113,11 +113,12 @@
             },
             onVariantHoverEnd: function (variant) {
             },
-            /* Used to vertically align nodes in Sankey chart */
+            /* Used to vertically align nodes in Sankey chart.
+             * Sorts nodes from highest AF to lowest AF. */
             sortFunc: function(nodeA, nodeB) {
-                if (nodeA.bottomRange < nodeB.bottomRange) {
+                if (nodeA.bottomRange > nodeB.bottomRange) {
                     return -1;
-                } else if (nodeA.bottomRange > nodeB.bottomRange) {
+                } else if (nodeA.bottomRange < nodeB.bottomRange) {
                     return 1;
                 } else {
                     return 0;
