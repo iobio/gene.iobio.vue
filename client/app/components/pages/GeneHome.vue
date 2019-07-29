@@ -231,6 +231,7 @@
                                     style="min-width:300px"
                                     ref="varFreqCardRef"
                                     :width="cardWidth"
+                                    :numVars="Object.keys(cohortModel.allUniqueFeaturesObj.features).length"
                                     :afLinks="cohortModel.varAfLinks"
                                     :afNodes="cohortModel.varAfNodes">
                                 </variant-frequency-card>

@@ -3,7 +3,6 @@
 export default function sankeyd3(d3var, outerElementId) {
     /* Props */
     let width = 975;
-    let height = 200;
     let linkList = [];
     let nodeList = [];
     let sortFunc = null;
@@ -12,7 +11,8 @@ export default function sankeyd3(d3var, outerElementId) {
     const linkClass = 'sankey_link';
     let dispatch = d3var.dispatch("d3nodeclick", "d3linkclick", "d3outsideclick", "d3mouseover", "d3mouseout");
     const gradientStyle = 'heatmap';
-    let nodeColor = "#888888";
+    let nodeOutline = "#5c5c5c";
+    let nodeColor = "#a2ada4";
     let linkColor = "#bababa";
     let lockHighlight = false;
 
@@ -112,7 +112,6 @@ export default function sankeyd3(d3var, outerElementId) {
                             linkIdsToHighlight[currLink.id] = true;
                             nodeIdsToHighlight[currLink.source] = true;
                             nodeIdsToHighlight[currLink.target] = true;
-                            break;
                         }
                     }
                 }
@@ -150,7 +149,7 @@ export default function sankeyd3(d3var, outerElementId) {
         } else {
             // Get all links with this node as source
             const sourcedLinks = linkList.filter((currLink) => {
-                return currLink.source === nodeId;
+                return currLink.source === nodeId && currLink.isSpacer === false;
             });
 
             // Highlight links
@@ -163,7 +162,7 @@ export default function sankeyd3(d3var, outerElementId) {
     };
 
     /* Draws actual chart */
-    function chart() {
+    function chart(height) {
         // Get rid of any previous graph
         d3var.select('#' + outerElementId).selectAll('svg').remove();
 
@@ -177,7 +176,7 @@ export default function sankeyd3(d3var, outerElementId) {
             });
 
         var currSankey = globalSankey
-            .nodeWidth(10)
+            .nodeWidth(30)
             .nodePadding(10)
             .nodeId(function (d) {
                 return d.sampleId + '_' + d.bottomRange;
@@ -203,7 +202,7 @@ export default function sankeyd3(d3var, outerElementId) {
             .attr("height", d => d.y1 - d.y0)
             .attr("width", d => d.x1 - d.x0)
             .style('fill', d => gradientStyle === 'sample' ? d.color : nodeColor)
-            .style('fill', "#888888")
+            .style('stroke', gradientStyle === 'sample' ? '#888888' : nodeOutline)
             .append("title")
             .text(d => `${(d.sampleId.toUpperCase() + ': ' + d.bottomRange + '-' + d.topRange)}`)
             .style('stroke', '#888888');
@@ -332,15 +331,15 @@ export default function sankeyd3(d3var, outerElementId) {
             .selectAll("text")
             .data(nodes)
             .join("text")
-            .attr("x", d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
-            .attr("y", d => (d.y1 + d.y0) / 2)
-            .attr("dy", "0.35em")
-            .attr("text-anchor", d => d.x0 < width / 2 ? "start" : "end")
+            .attr("class", nodeClass)
+            .style("pointer-events", 'none')
+            .attr("x", d => ((d.x0 + d.x1) / 2) - (d.bottomRange === '0.9' ? 12 : 9))
+            .attr("y", d => ((d.y1 + d.y0) / 2) + 3)
             .text(d => d.id)
             .append("tspan")
-            .attr("fill-opacity", 0.7)
-            .text(d => `${((d.topRange * 100).toLocaleString())}`)
-            .style('stroke', 'black');
+            .text(d => `${(d.isEmpty === false ? (d.topRange * 100).toLocaleString() + '%' : '')}`)
+            .style("pointer-events", 'none')
+            .style('stroke', gradientStyle === 'sample' ? '#888888' : nodeOutline);
 
         return svg.node();
     }
@@ -349,12 +348,6 @@ export default function sankeyd3(d3var, outerElementId) {
     chart.width = function (_) {
         if (!arguments.length) return width;
         width = _;
-        return chart;
-    };
-
-    chart.height = function (_) {
-        if (!arguments.length) return height;
-        height = _;
         return chart;
     };
 

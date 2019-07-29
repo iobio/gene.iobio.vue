@@ -2718,7 +2718,7 @@ class CohortModel {
                 // Add in descending order
                 let topRange = Math.round((1 - (i * intervalSize)) * 100) / 100;
                 let bottomRange = Math.round((topRange - intervalSize) * 100) / 100;
-                let node = {sampleId: model.id, bottomRange: (bottomRange + ''), topRange: (topRange + ''), color: currModelColor};
+                let node = {sampleId: model.id, bottomRange: (bottomRange + ''), topRange: (topRange + ''), color: currModelColor, isEmpty: true};
                 nodeList.push(node);
             }
             if (model.isTumor) {
@@ -2759,6 +2759,15 @@ class CohortModel {
                 }
             });
 
+            // Force links from currModel's N -> nextModel's 0 by adding fake variants to list
+            currModelVars.forEach((variant) => {
+                let nextVar = nextModelVarHash[variant.id];
+                if (!nextVar) {
+                    let fakeVar = { id: variant.id, af: 0 };
+                    nextModelVars.push(fakeVar);
+                }
+            });
+
             // Pre-populate hash with each level to same level to get alignment correct (e.g. s0_0 -> s1_0)
             let currModelNodes = nodes.filter((node) => {
                 return node.sampleId === currModel.id;
@@ -2769,6 +2778,11 @@ class CohortModel {
                     target: (nextModel.id + '_' + node.bottomRange), targetModelId: nextModel.id, variantIds: [], value: 1, isSpacer: true };
                 linkList.push(flatLink);
                 linkHash[linkId] = flatLink;
+            });
+
+            // Get next model nodes for sorting later
+            let nextModelNodes = nodes.filter((node) => {
+                return node.sampleId === nextModel.id;
             });
 
             // Add actual data
@@ -2787,18 +2801,21 @@ class CohortModel {
                 }
 
                 // Find where both AFs fall in the given nodes
-                let currRoundedAf = 0;
-                let nextRoundedAf = 0;
                 let topBottomRange = 1.0 - intervalSize;
-                nodes.forEach((node) =>{
+                let currRoundedAf = 0;
+                currModelNodes.forEach((node) => {
                     let bottomRange = parseFloat(node.bottomRange);
                     let topRange = parseFloat(node.topRange);
-
                     if (currRawAf >= bottomRange && currRawAf < topRange) {
                         currRoundedAf = bottomRange;
                     } else if (currRawAf > topBottomRange && currRawAf <= 1.0) {
                         currRoundedAf = topBottomRange;
                     }
+                });
+                let nextRoundedAf = 0;
+                nextModelNodes.forEach((node) => {
+                    let bottomRange = parseFloat(node.bottomRange);
+                    let topRange = parseFloat(node.topRange);
                     if (nextRawAf >= bottomRange && nextRawAf < topRange) {
                         nextRoundedAf = bottomRange;
                     } else if (nextRawAf > topBottomRange && nextRawAf <= 1.0) {
@@ -2819,12 +2836,29 @@ class CohortModel {
                     currLink.variantIds.push(variant.id);
                     currLink.isSpacer = false;
 
+                    // Mark source and targets as not empty
+                    let sourceAndTarget = nodes.filter((currNode) => {
+                        return (currLink.source === currNode.sampleId + '_' + currNode.bottomRange) ||
+                            (currLink.target === currNode.sampleId + '_' + currNode.bottomRange);
+                    });
+                    sourceAndTarget.forEach((node) => {
+                        node.isEmpty = false;
+                    });
                 // If not, create new link object
                 } else {
                     let newLink = { id: linkId, source: (currModel.id + '_' + currRoundedAf), sourceModelId: currModel.id,
                         target: (nextModel.id + '_' + nextRoundedAf), targetModelId: nextModel.id, variantIds: [variant.id], value: 1, isSpacer: false };
                     linkHash[linkId] = newLink;
                     linkList.push(newLink);
+
+                    // Mark source and targets as not empty
+                    let sourceAndTarget = nodes.filter((currNode) => {
+                        return (newLink.source === currNode.sampleId + '_' + currNode.bottomRange) ||
+                            (newLink.target === currNode.sampleId + '_' + currNode.bottomRange);
+                    });
+                    sourceAndTarget.forEach((node) => {
+                        node.isEmpty = false;
+                    });
                 }
             });
         }

@@ -125,7 +125,7 @@
         d3v5 = d3;
         globalSankey = d3v5.sankey();
 
-        // Have to define rebind for v5
+        // Have to define rebind for v5 of d3
         // Copies a variable number of methods from source to target.
         d3v5.rebind = function(target, source) {
             var i = 1, n = arguments.length, method;
@@ -143,9 +143,6 @@
             };
         }
     </script>
-    <!--<script src="https://d3js.org/d3-scale.v3.min.js"></script>-->
-    <!--<script src="https://d3js.org/d3-selection.v1.js"></script>-->
-
 
 
     <script src="dist/build.js"></script>

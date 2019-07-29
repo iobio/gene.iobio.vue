@@ -38,7 +38,7 @@
                 type: Number,
                 default: 0
             },
-            height: {
+            numVars: {
                 type: Number,
                 default: 0
             },
@@ -79,7 +79,6 @@
                 // Construct object
                 self.varFreqChart = sankeyD3(d3v5, self.vizId)
                     .width(self.width)
-                    .height(self.height)
                     .linkList(self.afLinks)
                     .nodeList(self.afNodes)
                     .sortFunc(self.sortFunc)
@@ -101,7 +100,8 @@
                     });
 
                 // Draw chart
-                self.varFreqChart();
+                let height = self.numVars < 10 ? 300 : 425;
+                self.varFreqChart(height);
             },
             clear: function() {
                 d3v5.select("#var-freq-viz").selectAll('svg').remove();

@@ -11,7 +11,7 @@
                     <variant-frequency-viz id="var-freq-viz"
                         ref="varFreqVizRef"
                         :width="width"
-                        :height="height"
+                        :numVars="numVars"
                         :afNodes="afNodes"
                         :afLinks="afLinks">
                     </variant-frequency-viz>
@@ -46,13 +46,11 @@
         },
         props: {
             width: 0,
+            numVars: 0,
             afLinks: null,
             afNodes: null,
         },
-        data() {
-            return {
-                height: 500,
-            }
+        computed: {
         }
     }
 </script>
