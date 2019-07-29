@@ -2829,6 +2829,8 @@ class CohortModel {
             });
         }
 
+        // TODO: add 0 -> 0 links for those that go >0 -> 0 or 0 -> >0 in outside intervals
+
         // Find max node height
         if (scaleIntervals) {
             let numIntervals = 1 / intervalSize;
