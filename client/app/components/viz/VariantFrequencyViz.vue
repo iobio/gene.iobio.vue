@@ -100,6 +100,7 @@
                     });
 
                 // Draw chart
+                // TODO: provide some more intervals here for heights
                 let height = self.numVars < 10 ? 300 : 425;
                 self.varFreqChart(height);
             },

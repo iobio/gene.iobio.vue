@@ -59,6 +59,22 @@ export default function sankeyd3(d3var, outerElementId) {
         }
     };
 
+    /* Removes fade classes from all links and nodes.
+     * If removeHides == true also removes hide classes from links.
+     */
+    let removeSankeyVizClasses = function(removeHides) {
+        // Remove fade and hide from all links
+        let allLinks = d3var.select('#' + outerElementId + ' > svg').selectAll('.' + linkClass);
+        allLinks.classed('sankey_FADE', false);
+        if (removeHides === true) {
+            allLinks.classed('sankey_HIDE', false);
+        }
+
+        // Remove fade from all nodes
+        let allNodes = d3var.select('#' + outerElementId + ' > svg').selectAll('.' + nodeClass);
+        allNodes.classed('sankey_FADE', false);
+    };
+
     /* Highlights the links within the provided linkId list. If linkIds is null,
      * removes any previously applied highlighting.
      * If expandHighlighting is true, highlights other links containing the
@@ -66,33 +82,166 @@ export default function sankeyd3(d3var, outerElementId) {
      *
      * NOTE: all ids in linkIds MUST come from the same source!
      */
-    let highlightLinks = function (linkIds, expandHighlighting) {
-        if (linkIds == null && !lockHighlight) {
-            // Remove fade from all links
-            let allLinks = d3var.select('#' + outerElementId + ' > svg').selectAll('.' + linkClass);
-            allLinks.classed('sankey_FADE', false);
+    let highlightLinks = function (linkIds, expandHighlighting, isClick) {
+        let linkIdsToHighlight = {};
+        let nodeIdsToHighlight = {};
+        let varsInLink = {};
+        let linkObjs = null;
+        let otherIntervalLinks = null;
+        let sideLink = null;
+        let filteredLinks = null;
+        let filteredNodes = null;
+        let vizLink = null;
+        let i = 0;
+        let outerSvg = d3var.select('#' + outerElementId + ' > svg');
 
-            // Remove fade from all nodes
-            let allNodes = d3var.select('#' + outerElementId + ' > svg').selectAll('.' + nodeClass);
-            allNodes.classed('sankey_FADE', false);
+        // Hover out
+        if (linkIds == null && !isClick) {
+            // Regardless of lock status, want to just remove fading
+            removeSankeyVizClasses(false);
+        // Click out
+        } else if (linkIds == null && isClick) {
+            // Regardless of lock status, if we click out, remove all classes
+            removeSankeyVizClasses(true);
+            // Toggle lock OFF
+            lockHighlight = false;
+        // Hover in
+        } else if (!isClick) {
+            linkIds.forEach((id) => {
+                linkIdsToHighlight[id] = true;
+            });
+            linkObjs = linkList.filter(currLink => linkIdsToHighlight[currLink.id] != null);
+
+            if (!lockHighlight) {
+                // Always want to at least highlight source and target nodes of provided link ids
+                nodeIdsToHighlight[linkObjs[0].source] = true;
+                nodeIdsToHighlight[linkObjs[0].target] = true;
+
+                if (expandHighlighting === true) {
+                    // Get variant ids associated with provided link ids
+                    linkObjs.forEach((linkObj) => [
+                        linkObj.variantIds.forEach((varId) => {
+                            varsInLink[varId] = true;
+                        })
+                    ]);
+
+                    // Get links outside of this interval to search variant id lists
+                    otherIntervalLinks = linkList.filter((currLink) => {
+                        return currLink.isSpacer === false && !(linkObjs[0].sourceModelId === currLink.sourceModelId && linkObjs[0].targetModelId === currLink.targetModelId);
+                    });
+
+                    // If the links contain one or more variants in our selected link, also highlight them
+                    for (i = 0; i < otherIntervalLinks.length; i++) {
+                        sideLink = otherIntervalLinks[i];
+                        for (var currVar in varsInLink) {
+                            if (sideLink.variantIds.includes(currVar)) {
+                                linkIdsToHighlight[sideLink.id] = true;
+                                nodeIdsToHighlight[sideLink.source] = true;
+                                nodeIdsToHighlight[sideLink.target] = true;
+                            }
+                        }
+                    }
+                }
+
+                // Apply highlighting to links
+                // Fade all other links
+                filteredLinks = outerSvg.selectAll('*:not(.sankey_HIDE)' + '.' + linkClass)
+                    .filter(function (d) {
+                    return linkIdsToHighlight[d.id] == null;
+                });
+                filteredLinks.classed('sankey_FADE', true);
+
+                // Apply highlighting to nodes
+                filteredNodes = outerSvg.selectAll('*:not(.sankey_HIDE)' + '.' + nodeClass)
+                    .filter(function (d) {
+                    return nodeIdsToHighlight[d.sampleId + '_' + d.bottomRange] == null;
+                });
+                filteredNodes.classed('sankey_FADE', true);
+            } else {
+                // HOVERING ON AND HIGHLIGHT IS LOCKED
+                // WANT TO FADE ALL NON SANKEY_HIDE LINKS AND NON THIS LINK
+
+                // Check if we're hovering over hidden link
+                if (linkIds.length === 1) {
+                    vizLink = outerSvg.selectAll('*:not(.sankey_HIDE)' + '.' + linkClass)
+                        .filter((link) => {
+                            return link.id === linkIds[0];
+                        });
+                    if (vizLink._groups[0].length === 0) {
+                        return;
+                    }
+                }
+
+                // Always want to at least highlight source and target nodes of provided link ids
+                nodeIdsToHighlight[linkObjs[0].source] = true;
+                nodeIdsToHighlight[linkObjs[0].target] = true;
+
+                if (expandHighlighting === true) {
+                    // Get variant ids associated with provided link ids
+                    linkObjs.forEach((linkObj) => [
+                        linkObj.variantIds.forEach((varId) => {
+                            varsInLink[varId] = true;
+                        })
+                    ]);
+
+                    // Get links outside of this interval to search variant id lists
+                    otherIntervalLinks = linkList.filter((currLink) => {
+                        return currLink.isSpacer === false && !(linkObjs[0].sourceModelId === currLink.sourceModelId && linkObjs[0].targetModelId === currLink.targetModelId);
+                    });
+
+                    // If the links contain one or more variants in our selected link, also highlight them
+                    for (i = 0; i < otherIntervalLinks.length; i++) {
+                        sideLink = otherIntervalLinks[i];
+                        for (var currVar in varsInLink) {
+                            if (sideLink.variantIds.includes(currVar)) {
+                                linkIdsToHighlight[sideLink.id] = true;
+                                nodeIdsToHighlight[sideLink.source] = true;
+                                nodeIdsToHighlight[sideLink.target] = true;
+                            }
+                        }
+                    }
+                }
+
+                // Apply highlighting to non-hidden links
+                // Fade all other links
+                filteredLinks = outerSvg.selectAll('*:not(.sankey_HIDE)' + '.' + linkClass)
+                    .filter(function (d) {
+                    return linkIdsToHighlight[d.id] == null;
+                });
+                filteredLinks.classed('sankey_FADE', true);
+
+                // Apply highlighting to nodes
+                filteredNodes = outerSvg.selectAll('.' + nodeClass).filter(function (d) {
+                    return nodeIdsToHighlight[d.sampleId + '_' + d.bottomRange] == null;
+                });
+                filteredNodes.classed('sankey_FADE', true);
+            }
         } else {
-            // Always want to at least highlight provided link ids
-            let linkIdsToHighlight = {};
+            let linkIdsToStayViz = {};
             linkIds.forEach((linkId) => {
-                linkIdsToHighlight[linkId] = true;
+                linkIdsToStayViz[linkId] = true;
             });
 
-            // Always want to at least highlight source and target nodes of provided link ids
-            let linkObjs = linkList.filter((currLink) => {
-                return linkIdsToHighlight[currLink.id] === true;
-            });
-            let nodeIdsToHighlight = {};
-            nodeIdsToHighlight[linkObjs[0].source] = true;
-            nodeIdsToHighlight[linkObjs[0].target] = true;
+            // Check if we've clicked on a hidden link
+            if (linkIds.length === 1) {
+                vizLink = outerSvg.selectAll('*:not(.sankey_HIDE)' + '.' + linkClass)
+                    .filter((link) => {
+                        return link.id === linkIds[0];
+                    });
+                if (vizLink._groups[0].length === 0) {
+                    removeSankeyVizClasses(true);
+                    return;
+                }
+            } else {
+                // Otherwise we've clicked on a node
+                removeSankeyVizClasses(true);
+            }
 
             if (expandHighlighting === true) {
                 // Get variant ids associated with provided link ids
-                let varsInLink = {};
+                linkObjs = linkList.filter((currLink) => {
+                    return linkIdsToStayViz[currLink.id] === true;
+                });
                 linkObjs.forEach((linkObj) => [
                     linkObj.variantIds.forEach((varId) => {
                         varsInLink[varId] = true;
@@ -100,36 +249,30 @@ export default function sankeyd3(d3var, outerElementId) {
                 ]);
 
                 // Get links outside of this interval to search variant id lists
-                let otherIntervalLinks = linkList.filter((currLink) => {
+                otherIntervalLinks = linkList.filter((currLink) => {
                     return currLink.isSpacer === false && !(linkObjs[0].sourceModelId === currLink.sourceModelId && linkObjs[0].targetModelId === currLink.targetModelId);
                 });
 
-                // If the links contain one or more variants in our selected link, also highlight them
-                for (let i = 0; i < otherIntervalLinks.length; i++) {
-                    let currLink = otherIntervalLinks[i];
+                // If the links contain one or more variants in our selected link, also keep those visible
+                for (i = 0; i < otherIntervalLinks.length; i++) {
+                    sideLink = otherIntervalLinks[i];
                     for (var currVar in varsInLink) {
-                        if (currLink.variantIds.includes(currVar)) {
-                            linkIdsToHighlight[currLink.id] = true;
-                            nodeIdsToHighlight[currLink.source] = true;
-                            nodeIdsToHighlight[currLink.target] = true;
+                        if (sideLink.variantIds.includes(currVar)) {
+                            linkIdsToStayViz[sideLink.id] = true;
+                            break;
                         }
                     }
                 }
             }
-
-            // Apply highlighting to links
-            let outerSvg = d3var.select('#' + outerElementId + ' > svg');
+            // Apply hiding to links
             // Fade all other links
-            let filteredLinks = outerSvg.selectAll('.' + linkClass).filter(function (d) {
-                return linkIdsToHighlight[d.id] == null;
+            filteredLinks = outerSvg.selectAll('.' + linkClass).filter(function (d) {
+                return linkIdsToStayViz[d.id] == null;
             });
-            filteredLinks.classed('sankey_FADE', true);
+            filteredLinks.classed('sankey_HIDE', true);
 
-            // Apply highlighting to nodes
-            let filteredNodes = outerSvg.selectAll('.' + nodeClass).filter(function (d) {
-                return nodeIdsToHighlight[d.sampleId + '_' + d.bottomRange] == null;
-            });
-            filteredNodes.classed('sankey_FADE', true);
+            // Toggle lock ON
+            lockHighlight = true;
         }
     };
 
@@ -137,15 +280,9 @@ export default function sankeyd3(d3var, outerElementId) {
      * along with the node itself. If expandHighlighting is true, highlights other links
      * containing the same variants as in the links with the given nodeId as their source or target,
      * along with any nodes they travel through. */
-    let highlightLinksFromNode = function (nodeId, expandHighlighting) {
+    let highlightLinksFromNode = function (nodeId, expandHighlighting, isClick) {
         if (nodeId == null) {
-            // Remove fade form all links
-            let allLinks = d3var.select('#' + outerElementId + ' > svg').selectAll('.' + linkClass);
-            allLinks.classed('sankey_FADE', false);
-
-            // Remove fade from all nodes
-            let allNodes = d3var.select('#' + outerElementId + ' > svg').selectAll('.' + nodeClass);
-            allNodes.classed('sankey_FADE', false);
+            removeSankeyVizClasses(isClick);
         } else {
             // Get all links with this node as source
             const sourcedLinks = linkList.filter((currLink) => {
@@ -157,7 +294,7 @@ export default function sankeyd3(d3var, outerElementId) {
             sourcedLinks.forEach((currLink) => {
                 sourcedLinkIds.push(currLink.id);
             });
-            highlightLinks(sourcedLinkIds, expandHighlighting);
+            highlightLinks(sourcedLinkIds, expandHighlighting, isClick);
         }
     };
 
@@ -213,19 +350,21 @@ export default function sankeyd3(d3var, outerElementId) {
                 let nodeId = null;
                 if (d) {
                     nodeId = d.sampleId + '_' + d.bottomRange;
-                    highlightLinksFromNode(nodeId, true);
                 }
+                highlightLinksFromNode(nodeId, true, false);
             })
             .on('mouseout', () => {
-                highlightLinksFromNode(null);
+                highlightLinksFromNode(null, false, false);
             })
             .on('click', (d) => {
+                event.stopPropagation();
+                event.preventDefault();
                 let nodeId = null;
                 if (d) {
                     nodeId = d.sampleId + '_' + d.bottomRange;
-                    highlightLinksFromNode(nodeId, true);
-                    dispatch.call('d3nodeclick', this, {id: nodeId, pageX: event.pageX, pageY: event.pageY});
                 }
+                highlightLinksFromNode(nodeId, true, true);
+                dispatch.call('d3nodeclick', this, {id: nodeId, pageX: event.pageX, pageY: event.pageY});
             });
 
         // Draw links
@@ -305,23 +444,23 @@ export default function sankeyd3(d3var, outerElementId) {
         d3var.selectAll('.' + linkClass)
             .on('mouseover', (d) => {
                 let linkId = null;
-                // Only perform hover action if we're on a non-transparent link
+                // Only perform hover action if we're on a non-spacer link
                 if (d && d.isSpacer === false) {
                     linkId = d.id;
                 }
-                lockHighlight = false;
-                highlightLinks([linkId], true);
+                highlightLinks([linkId], true, false);
             })
             .on('mouseout', () => {
-                highlightLinks(null, false);
+                highlightLinks(null, false, false);
             })
             .on('click', (d) => {
+                event.stopPropagation();
+                event.preventDefault();
                 let linkId = null;
                 if (d && d.isSpacer === false) {
                     linkId = d.id;
                 }
-                lockHighlight = true;
-                highlightLinks([linkId], true);
+                highlightLinks([linkId], true, true);
                 dispatch.call('d3linkclick', this, {id: linkId, pageX: event.pageX, pageY: event.pageY});
             });
 
@@ -340,6 +479,11 @@ export default function sankeyd3(d3var, outerElementId) {
             .text(d => `${(d.isEmpty === false ? (d.topRange * 100).toLocaleString() + '%' : '')}`)
             .style("pointer-events", 'none')
             .style('stroke', gradientStyle === 'sample' ? '#888888' : nodeOutline);
+
+        // Apply outside click listener on svg
+        svg.on('click', () => {
+            removeSankeyVizClasses(true);
+        });
 
         return svg.node();
     }
