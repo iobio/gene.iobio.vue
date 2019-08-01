@@ -97,6 +97,11 @@ export default function sankeyd3(d3var, outerElementId) {
         let i = 0;
         let outerSvg = d3var.select('#' + outerElementId + ' > svg');
 
+        if (linkIds != null && linkIds.length === 0) {
+            lockHighlight = false;
+            return;
+        }
+
         /* Hover out */
         if (linkIds == null && !isClick) {
             // Regardless of lock status, want to just remove fading
@@ -138,7 +143,7 @@ export default function sankeyd3(d3var, outerElementId) {
                         }
                     }
                 }
-                // Apply highlighting
+                // Apply highlighting to links
                 filteredLinks = outerSvg.selectAll('*:not(.' + hideClass + ')' + '.' + linkClass)
                     .filter(function (d) {
                     return linkIdsToHighlight[d.id] == null;
@@ -163,13 +168,14 @@ export default function sankeyd3(d3var, outerElementId) {
                     if (vizLink._groups[0].length === 0) {
                         return;
                     }
+                } else {
+                    // If we're hovering over a node and we're locked, don't want to do anything
+                    return;
                 }
 
                 // Always want to at least highlight source and target nodes of provided link ids
-                if (linkObjs.length > 0) {
-                    nodeIdsToHighlight[linkObjs[0].source] = true;
-                    nodeIdsToHighlight[linkObjs[0].target] = true;
-                }
+                nodeIdsToHighlight[linkObjs[0].source] = true;
+                nodeIdsToHighlight[linkObjs[0].target] = true;
 
                 if (expandHighlighting === true) {
                     // Get variant ids associated with provided link ids
@@ -197,15 +203,16 @@ export default function sankeyd3(d3var, outerElementId) {
                     }
                 }
 
-                // Apply highlighting
+                // Apply highlighting to visible links
                 filteredLinks = outerSvg.selectAll('*:not(.' + hideClass + ')' + '.' + linkClass)
                     .filter(function (d) {
                     return linkIdsToHighlight[d.id] == null;
                 });
                 filteredLinks.classed(fadeClass, true);
 
-                // Apply highlighting to nodes
-                filteredNodes = outerSvg.selectAll('.' + nodeClass).filter(function (d) {
+                // Apply highlighting to visible nodes
+                filteredNodes = outerSvg.selectAll('*:not(.' + hideClass + ')' + '.' + nodeClass)
+                    .filter(function (d) {
                     return nodeIdsToHighlight[d.sampleId + '_' + d.bottomRange] == null;
                 });
                 filteredNodes.classed(fadeClass, true);
@@ -261,7 +268,7 @@ export default function sankeyd3(d3var, outerElementId) {
                     }
                 }
             }
-            // Apply highlighting
+            // Apply hiding to links
             filteredLinks = outerSvg.selectAll('.' + linkClass).filter(function (d) {
                 return linkIdsToStayViz[d.id] == null;
             });
