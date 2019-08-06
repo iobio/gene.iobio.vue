@@ -50,7 +50,7 @@ class FeatureMatrixModel {
             },
 
             {
-                name: 'Pathogenicity - ClinVar',
+                name: 'Pathogenicity',
                 id: 'clinvar',
                 order: 3,
                 index: 3,
@@ -59,7 +59,7 @@ class FeatureMatrixModel {
                 map: this.getTranslator().clinvarMap
             },
             {
-                name: 'Impact (VEP)',
+                name: 'Impact',
                 id: 'impact',
                 order: 4,
                 index: 4,
@@ -68,7 +68,7 @@ class FeatureMatrixModel {
                 map: this.getTranslator().impactMap
             },
             {
-                name: 'Most severe impact (VEP)',
+                name: 'Max impact',
                 id: 'highest-impact',
                 order: 5,
                 index: 5,

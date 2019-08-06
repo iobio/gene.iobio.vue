@@ -151,12 +151,12 @@
 
     </div>
 
-    <gene-links-menu
-            v-if="showGene && !isBasicMode && !isEduMode && !workingOffline"
-            :expanded="true"
-            :geneModel="geneModel"
-            :selectedGene="selectedGene">
-    </gene-links-menu>
+    <!--<gene-links-menu-->
+            <!--v-if="showGene && !isBasicMode && !isEduMode && !workingOffline"-->
+            <!--:expanded="true"-->
+            <!--:geneModel="geneModel"-->
+            <!--:selectedGene="selectedGene">-->
+    <!--</gene-links-menu>-->
 
     <!-- Non protein-coding gene badges -->
     <div id="non-protein-coding" class="level-edu level-basic">
@@ -183,45 +183,38 @@
     </div>
 
     <div id="transcript-panel"  v-if="showGeneViz" class="level-edu fullview" >
-
-
-      <gene-viz v-if="!workingOffline"
-                id="gene-viz"
+      <gene-viz id="gene-viz"
                 :data="[selectedTranscript]"
+                :height="40"
                 :margin="margin"
                 :trackHeight="trackHeight"
                 :cdsHeight="cdsHeight"
                 :regionStart="parseInt(selectedGene.start)"
                 :regionEnd="parseInt(selectedGene.end)"
-                :showBrush=false
+                :showBrush="true"
                 @region-zoom="onRegionZoom"
                 @region-zoom-reset="onRegionZoomReset"
       >
       </gene-viz>
-
-
-
     </div>
 
-    <div id="gene-summary-box" v-if="!isEduMode" >
+    <!--<div id="gene-summary-box" v-if="!isEduMode" >-->
+      <!--<div  v-if="showGene && ncbiSummary" id="ncbi-summary">-->
+        <!--<div id="ncbi-heading">NCBI summary</div>-->
+        <!--<div id="ncbi-text">-->
+          <!--{{ ncbiSummary.summary }}-->
+        <!--</div>-->
+      <!--</div>-->
 
-
-      <div  v-if="showGene && ncbiSummary" id="ncbi-summary">
-        <div id="ncbi-heading">NCBI summary</div>
-        <div id="ncbi-text">
-          {{ ncbiSummary.summary }}
-        </div>
-      </div>
-
-      <div id="phenotypes" v-if="showGene && phenotypes && !isBasicMode && !isEduMode">
-        <span id="phenotypes-heading" style="text-align:left">
-          Phenotypes (HPO)
-        </span>
-        <div id="phenotype-terms">
-          {{ phenotypeTerms }}
-        </div>
-      </div>
-    </div>
+      <!--<div id="phenotypes" v-if="showGene && phenotypes && !isBasicMode && !isEduMode">-->
+        <!--<span id="phenotypes-heading" style="text-align:left">-->
+          <!--Phenotypes (HPO)-->
+        <!--</span>-->
+        <!--<div id="phenotype-terms">-->
+          <!--{{ phenotypeTerms }}-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
 
   </div>
 
@@ -264,8 +257,8 @@
                     bottom: 18,
                     left: self.isBasicMode || self.isEduMode ? 9 : 4
                 },
-                trackHeight: (self.isEduMode || self.isBasicMode ? 32 : 22),
-                cdsHeight: (self.isEduMode  || self.isBasicMode  ? 24 : 18),
+                trackHeight: (self.isEduMode || self.isBasicMode ? 32 : 18),
+                cdsHeight: (self.isEduMode  || self.isBasicMode  ? 24 : 12),
                 geneSource: null,
                 geneSources: ['gencode', 'refseq'],
                 noTranscriptsWarning: null,

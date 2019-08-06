@@ -1,5 +1,4 @@
 <style lang="sass">
-
     @import ../../../assets/sass/variables
 
     aside.navigation-drawer
@@ -7,281 +6,98 @@
         z-index: 0
         padding-bottom: 0px
 
-        #side-panel-container
-            display: flex
-            flex-flow: column
-            flex: 1 1 auto
-            justify-content: space-between
-            margin-bottom: 0px
-            padding: 10px 5px
-            height: calc(100% - 10px)
-            overflow-y: scroll
+    #side-panel-container
+        display: flex
+        flex-flow: column
+        flex: 1 1 auto
+        justify-content: space-between
+        margin-bottom: 0px
+        padding: 10px 5px
+        height: calc(100% - 10px)
+        overflow-y: scroll
 
-            #flagged-variants-card
-                flex-grow: 1
+    #flagged-variants-card
+        flex-grow: 1
 
-            #legend-card
-                margin-top: 5px
-                margin-bottom: 38px
-                padding: 0px
+    #legend-card
+        margin-top: 5px
+        margin-bottom: 38px
+        padding: 0px
 
     nav.toolbar
-        -webkit-box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.13), 0px 4px 5px 0px rgba(0, 0, 0, 0.06), 0px 1px 10px 0px rgba(0, 0, 0, 0.12)
-        box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.13), 0px 4px 5px 0px rgba(0, 0, 0, 0.06), 0px 1px 10px 0px rgba(0, 0, 0, 0.12)
-
-        background-color: $nav-color !important
+        background-color: #7f1010 !important
         font-weight: 300 !important
-
-        .toolbar__title
-            color: $nav-title-color
-            font-weight: 600
-        .btn
-            color: $nav-text-color
-
-        #gene-name-input
-            .input-group--text-field.input-group--prepend-icon
-                .input-group__prepend-icon
-                    padding-right: 13px
-
-        #search-or
-            display: inline-block
-            padding-top: 16px
-            margin-left: 10px
-            margin-right: 16px
-
-        #phenotype-input, #gene-name-input, #phenolyzer-top-input
-            .input-group input
-                color: $nav-text-color
-            .input-group
-                padding: 10px 0 0
-            .input-group
-                label
-                    font-size: 13px
-                    line-height: 25px
-                    height: 25px
-                    top: 14px
-            .input-group__input
-                min-height: 0px
-                margin-top: 13px
-            .input-group--text-field input
-                font-size: 13px
-                height: 24px
-            .input-group
-                padding-top: 0px
-            .input-group__selections__comma
-                font-size: 13px
-            .input-group__details:before
-                background-color: $nav-text-color
-            .input-group__details:after
-                background-color: $nav-text-color
-
-        #phenolyzer-top-input
-            .input-group__input
-                height: 20px
-        .primary--text input, .primary--text textarea
-            caret-color: $nav-text-color !important
-
-            i.material-icons
-                color: $nav-text-color-clin !important
-
-            .toolbar__title
-                color: $nav-text-color-clin
-
-        .toolbar__side-icon.btn.btn--icon
-            max-width: 40px
-            min-width: 40px
-
-        .toolbar__items
-            width: 60%
-
-        .btn
-            margin: 0px
-            min-width: 78px
-
-            .btn__content
-                padding: 0 0px
 
         i.material-icons
             margin-right: 2px
-            color: $nav-text-color !important
 
         .toolbar__title
             font-family: Quicksand
-            font-size: 24px
+            font-size: 28px
             margin-right: 0px
-            margin-left: 5px
+            margin-left: 0px
             padding-bottom: 5px
-            min-width: 120px
-
-        #phenotype-input, #gene-name-input, #phenolyzer-top-input
-            label
-                color: $nav-text-color !important
-            .material-icons
-                color: $nav-text-color !important
-            .input-group__selections__comma
-                color: $nav-text-color !important
-
-        #gene-name-input
-            width: 130px
-            margin-left: 20px
-
-        #search-phenotype-button
-            background-color: #ffffff1f
-            min-width: 70px
-
-            .btn__content
-                padding: 0px
-
-        &.clin
-            background-color: $nav-color-clin !important
-
-            .btn
-                color: $nav-text-color-clin
-
-            #phenotype-input, #gene-name-input, #phenolyzer-top-input
-                label
-                    color: $nav-text-color-clin !important
-                .material-icons
-                    color: $nav-text-color-clin !important
-                .input-group__selections__comma
-                    color: $nav-text-color-clin !important
-
-            #phenotype-input, #gene-name-input, #phenolyzer-top-input
-                .input-group input
-                    color: $nav-text-color-clin !important
-                .input-group__details:before
-                    background-color: $nav-text-color-clin !important
-                .input-group__details:after
-                    background-color: $nav-text-color-clin !important
-
-            .toolbar__title
-                color: $nav-text-color-clin !important
-
-            i.material-icons
-                color: $nav-text-color-clin !important
-
-    #versions
-        font-size: 14px
-        color: rgb(132, 132, 132)
-        padding-top: 5px
-        margin-bottom: 20px !important
-
-        div
-            margin-bottom: 0px !important
-            clear: both
-
-            .version-label
-                width: 230px
-                float: left
-                padding-right: 5px
-                clear: none
-                padding-bottom: 7px
-                color: #717171
-                font-weight: 600
-                font-size: 13px !important
-
-            .number
-                width: 220px
-                float: left
-                padding-bottom: 7px
-                clear: none
-                font-size: 13px !important
-
-    #credits
-        font-size: 12px
-
-    .citation-title
-        margin-bottom: 0px !important
-        margin-top: 5px !important
-        font-size: 12px
-        color: #717171
-        font-weight: 600
-        clear: both
-
-    .mode-switch
-
-        label
-            padding-left: 7px
-            line-height: 18px
-            font-size: 12px
-            font-weight: bold
-            padding-top: 2px
-            color: $nav-text-color
-
     #beta-title
         .toolbar__title
         font-family: Quicksand
         font-style: italic
         font-size: 16px
-        margin-right: 5px
+        margin-right: 0px
         margin-left: 0px
         padding-bottom: 15px
-        min-width: 130px
+        min-width: 60px
         color: yellow
-
+    #nav-chips
+        .chip
+            background: #965757
+            color: white
+    .nav-menu
+        .btn
+            border: 1px solid #965757
+</style>
+<style>
+    ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+        color: white !important;
+        opacity: 1; /* Firefox */
+        font-family: Quicksand;
+        font-size: 14px;
+    }
 </style>
 
 <template>
     <div>
-        <v-toolbar fixed height="50" dark :class="launchedFromClin ? 'clin' : '' ">
-
-            <v-toolbar-side-icon @click.stop="leftDrawer = !leftDrawer">
-            </v-toolbar-side-icon>
-
+        <v-toolbar fixed height="50" dark>
+            <v-toolbar-side-icon @click.stop="leftDrawer = !leftDrawer"></v-toolbar-side-icon>
 
             <img src="../../../assets/animations/images/oncoIcon.svg" height="33">
-            <v-toolbar-title v-text="title" style="margin-left: 1px">
-            </v-toolbar-title>
+            <v-toolbar-title v-text="title" style="margin-right: 0px"></v-toolbar-title>
             <v-toolbar-title v-text="betaTitle" id="beta-title"></v-toolbar-title>
 
+            <v-toolbar-items style="margin-left:20px" class="hidden-sm-and-down">
+                <v-icon>search</v-icon>
+                <v-form>
+                    <div style="padding-top: 7px">
+                        <input id="search-gene-name" :class="clazzAttention" class="form-control" type="text" placeholder="Enter gene..."
+                               style="color: white; background-color: #7f1010;">
+                        <br/>
+                        <typeahead v-model="lookupGene" force-select match-start target="#search-gene-name"
+                                   :data="geneModel.allKnownGenes" item-key="gene_name"/>
+                    </div>
+                </v-form>
 
-            <v-spacer></v-spacer>
-
-
-            <v-toolbar-items class="hidden-sm-and-down" style="padding-top:3px">
-
-
-        <span id="gene-name-input" style="display:inline-block">
-          <v-text-field id="search-gene-name"
-                        :class="clazzAttention"
-                        :hide-details="true"
-                        v-model="geneEntered" label="Gene" prepend-icon="search">
-          </v-text-field>
-          <typeahead v-model="lookupGene"
-                     force-select v-bind:limit="typeaheadLimit" match-start
-                     target="#search-gene-name" :data="geneModel.allKnownGenes"
-                     item-key="gene_name"/>
-        </span>
-                <genes-menu
-                        ref="genesMenuRef"
-                        v-if="!isEduMode && !isBasicMode"
-                        :buttonIcon="`edit`"
-                        :geneModel="geneModel"
-                        :isBasicMode="isBasicMode"
-                        :isEduMode="isEduMode"
-                        @apply-genes="onApplyGenes"
-                        @clear-all-genes="onClearAllGenes">
-                </genes-menu>
-
-                <div v-if="!isEduMode && !isBasicMode && !launchedFromClin" id="search-or" style="display:inline-block">
-                    or
+                <div id="nav-chips" v-bind:class="{ hide: !selectedGeneName }"
+                     style="text-align: center; padding-top: 3px; padding-left: 8px">
+                    <v-chip style="font-size: 14px; font-family: Quicksand; font-weight: bold;">
+                        {{ selectedGeneDisplay }}
+                    </v-chip>
+                    <v-chip style="font-size: 14px; font-family: Quicksand; font-weight: bold;">
+                        {{ selectedBuild }}
+                    </v-chip>
                 </div>
 
-
-                <phenotype-search
-                        v-if="!isEduMode && !launchedFromClin"
-                        style="margin-left:5px;margin-right:60px"
-                        :classAttention="clazzAttention"
-                        :isNav="true"
-                        :phenotypeLabel="isBasicMode ? 'Disorder' : 'Phenotype'"
-                        :defaultTopGenes="10"
-                        :geneModel="geneModel"
-                        @on-search-genes="onSearchPhenolyzerGenes"
-                        @on-start-search-genes="onStartSearchPhenolyzerGenes"
-                        @show-snackbar="onShowSnackbar"
-                        @hide-snackbar="onHideSnackbar">
-                </phenotype-search>
             </v-toolbar-items>
+
+            <v-spacer></v-spacer>
 
             <files-menu
                     ref="fileMenuRef"
@@ -295,7 +111,7 @@
             >
             </files-menu>
 
-            <v-menu
+            <v-menu class="nav-menu"
                     offset-y
                     :close-on-content-click="false"
                     :nudge-width="isBasicMode ? 300 : 350"
@@ -312,8 +128,8 @@
             </v-menu>
 
 
-            <v-menu offset-y>
-                <v-btn id="help-menu-button" flat slot="activator">Help</v-btn>
+            <v-menu class="nav-menu" offset-y>
+                <v-btn id="help-menu-button" outline flat slot="activator">Help</v-btn>
                 <v-list>
 
                     <v-list-tile @click="onShowDisclaimer">
@@ -695,7 +511,10 @@
             geneNames: null,
             genesInProgress: null,
             workingOffline: false,
-            annotationComplete: false
+            annotationComplete: false,
+            selectedGeneName: "",
+            selectedChr: "",
+            selectedBuild: '',
             // interpretationMap: null
         },
         data() {
@@ -893,6 +712,14 @@
         mounted: function () {
             $("#search-gene-name").attr('autocomplete', 'off');
 
+            // Prevent enter from submitting form
+            document.querySelector('#search-gene-name')
+                .addEventListener('keypress', function (e) {
+                    var key = e.which || e.keyCode;
+                    if (key === 13) { // Return key
+                        e.preventDefault();
+                    }
+                });
         },
         computed: {
             clazzAttention: function () {
@@ -901,7 +728,10 @@
                 } else {
                     return '';
                 }
-            }
+            },
+            selectedGeneDisplay: function () {
+                return this.selectedGeneName + " " + this.selectedChr;
+            },
         }
     }
 

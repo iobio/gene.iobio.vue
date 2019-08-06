@@ -1,5 +1,8 @@
 <style lang="sass">
     @import ../../../assets/sass/variables
+    #files-menu
+        .btn
+            border: 1px solid #965757
 
     .menuable__content__active
         > form
@@ -76,7 +79,7 @@
             :close-on-content-click="false"
             :nudge-width="500"
             v-model="showFilesMenu">
-        <v-btn id="files-menu-button" flat slot="activator">
+        <v-btn flat outline slot="activator">
             Files
         </v-btn>
         <v-form id="files-form">

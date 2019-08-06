@@ -28,7 +28,7 @@ import '../assets/css/siteVuetify.css'
 Vue.use(Vuetify, {
     theme: {
         appColor: "#7f1010",
-        appHighlight: '#10487f',
+        appHighlight: '#965757',
         appGray: "#888888",
         appDarkGray: '#686868',
         altRowColor: "#c6c6c8"

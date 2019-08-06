@@ -2740,7 +2740,7 @@ class CohortModel {
         let linkHash = {};
         let linkList = [];
         let maxLinkValue = 1;
-        let scaleIntervals = false;
+        let scaleIntervals = true;
 
         for (let i = 0; i < orderedModels.length - 1; i++) {
             let currModel = orderedModels[i];

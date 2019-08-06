@@ -10,7 +10,7 @@
         margin-top: 50px
 
     .app-card
-        margin-bottom: 10px
+        margin-bottom: 5px
 
     #data-sources-loader
         margin-top: 20px
@@ -91,6 +91,9 @@
                 :workingOffline="workingOffline"
                 :filterModel="filterModel"
                 :annotationComplete="annotationComplete"
+                :selectedGeneName="selectedGene.gene_name"
+                :selectedChr="selectedGene.chr"
+                :selectedBuild="genomeBuildHelper.getCurrentSpeciesName() + ' ' + genomeBuildHelper.getCurrentBuildName()"
                 @update-samples="onUpdateSamples"
                 @input="onGeneNameEntered"
                 @load-demo-data="onLoadDemoData"
@@ -122,43 +125,7 @@
                             @on-basic-mode="onBasicMode">
                 </intro-card>
 
-                <genes-card
-                        v-if="geneModel && !workingOffline"
-                        v-show="filterModel"
-                        v-bind:class="{hide : showWelcome && !isEduMode, 'full-width': true}"
-                        ref="genesCardRef"
-                        :isEduMode="isEduMode"
-                        :isBasicMode="isBasicMode"
-                        :launchedFromClin="launchedFromClin"
-                        :launchedFromHub="launchedFromHub"
-                        :tourNumber="tourNumber"
-                        :geneModel="geneModel"
-                        :selectedGene="selectedGene"
-                        :geneNames="geneModel.sortedGeneNames"
-                        :loadedDangerSummaries="Object.keys(geneModel.geneDangerSummaries)"
-                        :genesInProgress="cohortModel.genesInProgress"
-                        :isLoaded="cohortModel && cohortModel.isLoaded"
-                        :hasAlignments="cohortModel && cohortModel.isLoaded && cohortModel.hasAlignments()"
-                        :filterModel="cohortModel.filterModel"
-                        :isLeftDrawerOpen="isLeftDrawerOpen"
-                        :analyzeAllInProgress="cacheHelper.analyzeAllInProgress"
-                        :callAllInProgress="cacheHelper.callAllInProgress"
-                        :showCoverageCutoffs="showCoverageCutoffs"
-                        @gene-selected="onGeneClicked"
-                        @remove-gene="onRemoveGene"
-                        @analyze-all="onAnalyzeAll"
-                        @call-variants="callVariants"
-                        @sort-genes="onSortGenes"
-                        @filter-selected="onFilterSelected"
-                        @filter-settings-applied="onFilterSettingsApplied"
-                        @filter-settings-closed="showCoverageCutoffs = false"
-                        @apply-genes="onApplyGenes"
-                        @stop-analysis="onStopAnalysis"
-                        @show-known-variants="onShowKnownVariantsCard"
-                        @show-cosmic-variants="onShowCosmicVariantsCard">
-                </genes-card>
-
-                <v-card class="full-width" style="margin-top:10px;margin-bottom:10px;padding-bottom:10px;"
+                <v-card class="full-width" style="margin-bottom:5px;padding-bottom:2px;padding-top:10px"
                         v-if="geneModel && Object.keys(selectedGene).length > 0"
                         v-bind:class="{hide : showWelcome }">
                     <gene-card
@@ -170,7 +137,7 @@
                             :selectedTranscript="selectedTranscript"
                             :geneRegionStart="geneRegionStart"
                             :geneRegionEnd="geneRegionEnd"
-                            :showGeneViz="!isEduMode && !isBasicMode && (cohortModel == null || !cohortModel.isLoaded)"
+                            :showGeneViz="true"
                             :workingOffline="workingOffline"
                             @transcript-selected="onTranscriptSelected"
                             @gene-source-selected="onGeneSourceSelected"
@@ -182,12 +149,12 @@
                 </v-card>
 
                 <div v-if="geneModel && Object.keys(selectedGene).length > 0 && (!isBasicMode || selectedVariant != null)"
-                        style="height:auto;margin-bottom:10px;"
+                        style="height:auto;margin-bottom:5px;"
                         v-bind:class="{hide : showWelcome, 'full-width': true }">
                     <v-card v-if="geneModel && cohortModel.isLoaded && Object.keys(selectedGene).length > 0"
                             id="gene-and-variant-tabs" slot="right"
                             class="full-width"
-                            style="margin-bottom:0px;padding-top:0px;margin-top:0px;">
+                            style="margin-bottom:0;padding-top:0;margin-top:10px;">
                         <v-tabs
                                 v-model="activeGeneVariantTab"
                                 light
@@ -201,7 +168,7 @@
                             <v-tab v-if="!isEduMode" href="#var-detail-tab">
                                 Variant Details
                             </v-tab>
-                            <v-tab-item v-if="!isBasicMode" style="margin-top:5px;margin-bottom:0px;overflow-y:auto"
+                            <v-tab-item v-if="!isBasicMode" style="margin-bottom:0;overflow-y:auto"
                                         :key="'featureMatrixTab'"
                                         :id="'feature-matrix-tab'">
                                 <feature-matrix-card style="min-width:300px"
@@ -223,7 +190,7 @@
                                                      @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj)">
                                 </feature-matrix-card>
                             </v-tab-item>
-                            <v-tab-item v-if="!isBasicMode" style="margin-top:5px;margin-bottom:0px;overflow-y:auto"
+                            <v-tab-item v-if="!isBasicMode" style="margin-bottom:0;overflow-y:auto"
                                         :key="'varFreqTab'"
                                         :id="'var-freq-tab'">
                                 <variant-frequency-card
@@ -236,7 +203,7 @@
                                     :afNodes="cohortModel.varAfNodes">
                                 </variant-frequency-card>
                             </v-tab-item>
-                            <v-tab-item style="margin-top:0px;margin-bottom:0px;overflow-y:auto"
+                            <v-tab-item style="margin-bottom:0;overflow-y:auto"
                                         :key="'varDetailTab'"
                                         :id="'var-detail-tab'">
                                 <variant-detail-card
@@ -280,6 +247,42 @@
                     <span class="loader-label">Loading files</span>
                     <img src="../../../assets/images/wheel.gif">
                 </v-card>
+
+                <genes-card
+                        v-if="geneModel && !workingOffline"
+                        v-show="filterModel"
+                        v-bind:class="{hide : showWelcome && !isEduMode, 'full-width': true}"
+                        ref="genesCardRef"
+                        :isEduMode="isEduMode"
+                        :isBasicMode="isBasicMode"
+                        :launchedFromClin="launchedFromClin"
+                        :launchedFromHub="launchedFromHub"
+                        :tourNumber="tourNumber"
+                        :geneModel="geneModel"
+                        :selectedGene="selectedGene"
+                        :geneNames="geneModel.sortedGeneNames"
+                        :loadedDangerSummaries="Object.keys(geneModel.geneDangerSummaries)"
+                        :genesInProgress="cohortModel.genesInProgress"
+                        :isLoaded="cohortModel && cohortModel.isLoaded"
+                        :hasAlignments="cohortModel && cohortModel.isLoaded && cohortModel.hasAlignments()"
+                        :filterModel="cohortModel.filterModel"
+                        :isLeftDrawerOpen="isLeftDrawerOpen"
+                        :analyzeAllInProgress="cacheHelper.analyzeAllInProgress"
+                        :callAllInProgress="cacheHelper.callAllInProgress"
+                        :showCoverageCutoffs="showCoverageCutoffs"
+                        @gene-selected="onGeneClicked"
+                        @remove-gene="onRemoveGene"
+                        @analyze-all="onAnalyzeAll"
+                        @call-variants="callVariants"
+                        @sort-genes="onSortGenes"
+                        @filter-selected="onFilterSelected"
+                        @filter-settings-applied="onFilterSettingsApplied"
+                        @filter-settings-closed="showCoverageCutoffs = false"
+                        @apply-genes="onApplyGenes"
+                        @stop-analysis="onStopAnalysis"
+                        @show-known-variants="onShowKnownVariantsCard"
+                        @show-cosmic-variants="onShowCosmicVariantsCard">
+                </genes-card>
 
 
                 <variant-card

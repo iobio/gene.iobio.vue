@@ -78,13 +78,9 @@
 
     </div>
 
-    <div style="clear:both;width:100%;margin-top:-10px">
-
-
+    <div style="clear:both;width:100%">
       <div id="matrix-panel"  style="clear:both;min-height:30px"
         class="fullview" aria-expanded="true">
-
-
         <div id="feature-matrix" style="overflow-x: auto;">
 
           <feature-matrix-viz id="feature-matrix-viz"
@@ -194,7 +190,7 @@ export default {
       CELL_WIDTH_BASIC: 160,
       COLUMN_LABEL_HEIGHT: 28,
       COLUMN_LABEL_HEIGHT_BASIC: 28,
-      ROW_LABEL_WIDTH: 165,
+      ROW_LABEL_WIDTH: 95,  // Note: prev 165
       ROW_LABEL_WIDTH_BASIC: 165,
       ROW_LABEL_WIDTH_EDU: 130,
       CELL_SIZE: null,

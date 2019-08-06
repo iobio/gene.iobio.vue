@@ -108,38 +108,37 @@
       </v-btn>
 
 
-<!--TODO: took out for AACR, reincorporate-->
-      <!--<v-card id="select-transcripts-box">-->
-        <!--<div id="gene-source-box" >-->
-          <!--<v-select-->
-            <!--v-bind:items="geneSources"-->
-            <!--v-model="geneSource"-->
-            <!--label="Gene source"-->
-            <!--item-value="text"-->
-            <!--@input="onGeneSourceSelected">-->
-          <!--</v-select>-->
-        <!--</div>-->
+      <v-card id="select-transcripts-box">
+        <div id="gene-source-box" >
+          <v-select
+            v-bind:items="geneSources"
+            v-model="geneSource"
+            label="Gene source"
+            item-value="text"
+            @input="onGeneSourceSelected">
+          </v-select>
+        </div>
 
-        <!--<div style="min-height:100px;max-height: 300px;overflow-y:scroll">-->
-            <!--<gene-viz id="select-transcript-viz"-->
-              <!--:data="selectedGene.transcripts"-->
-              <!--:margin=margin-->
-              <!--:trackHeight=trackHeight-->
-              <!--:cdsHeight=cdsHeight-->
-              <!--:showLabel=true-->
-              <!--:fixedWidth=600-->
-              <!--:regionStart="selectedGene.start"-->
-              <!--:regionEnd="selectedGene.end"-->
-              <!--:showBrush=false-->
-              <!--:showXAxis=false-->
-              <!--@transcript-selected="onTranscriptSelected">-->
-            <!--</gene-viz>-->
+        <div style="min-height:100px;max-height: 300px;overflow-y:scroll">
+            <gene-viz id="select-transcript-viz"
+              :data="selectedGene.transcripts"
+              :margin=margin
+              :trackHeight=trackHeight
+              :cdsHeight=cdsHeight
+              :showLabel=true
+              :fixedWidth=600
+              :regionStart="selectedGene.start"
+              :regionEnd="selectedGene.end"
+              :showBrush=false
+              :showXAxis=false
+              @transcript-selected="onTranscriptSelected">
+            </gene-viz>
 
-        <!--</div>-->
-        <!--<div class="text-xs-right">-->
-            <!--<v-btn small class="mb-0" raised @click.native="onTranscriptVizClose">Close</v-btn>-->
-        <!--</div>-->
-      <!--</v-card>-->
+        </div>
+        <div class="text-xs-right">
+            <v-btn small class="mb-0" raised @click.native="onTranscriptVizClose">Close</v-btn>
+        </div>
+      </v-card>
 
 
 

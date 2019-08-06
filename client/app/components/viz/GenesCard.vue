@@ -2,7 +2,6 @@
     @import ../../../assets/sass/variables
 
     #genes-card
-        margin-bottom: 0px
         padding-bottom: 0px
 
         #gene-count-badges
@@ -76,7 +75,7 @@
             padding: 0 4px
 
         #genes-toolbar
-            margin-top: 6px
+            margin-top: 0px
             margin-bottom: 0px
             display: inline-block
             width: 100%
@@ -245,14 +244,12 @@
 </style>
 
 <template>
-    <v-card tile id="genes-card" :class="{'app-card': true, 'edu' : isEduMode, 'basic' : isBasicMode}" style="margin-left:0px;margin-right:0px;padding-left:0px;padding-right:0px;padding-top:0px;margin-bottom:0px">
+    <v-card tile id="genes-card" class="app-card">
 
 
-        <div :style="isEduMode ? 'padding-top:5px;margin-bottom:-5px;margin-left:10px;margin-right:10px' : 'margin-left:10px;margin-right:10px'">
-
+        <div>
             <v-card-title v-if="!isEduMode" primary-title>
-
-                <div id="genes-toolbar" v-bind:class="isEduMode || isBasicMode ? 'hide' : ''">
+                <div id="genes-toolbar" style="margin-top: -10px" v-bind:class="isEduMode || isBasicMode ? 'hide' : ''">
 
                     <!--TODO: took out for AACR, reincorporate-->
                     <!--<v-btn  id="analyze-all-button"-->
