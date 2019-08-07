@@ -1,6 +1,7 @@
 export default class CivicEndpoint {
     constructor() {
         this.api = 'https://civicdb.org/api';
+        this.linkUrl = 'https://civicdb.org/links'
     }
 
     /* Wraps getGeneInfo in a promise */
@@ -57,5 +58,12 @@ export default class CivicEndpoint {
             contentType: 'application/json',
             headers: {}
         });
+    }
+
+    /* Returns a CIVIC link to a variant page.
+     * The variantId must be a CIVIC ID for reliable queries. */
+    getVariantLink(varId) {
+        let self = this;
+        return self.linkUrl + '?idtype=variant&id=' + varId;
     }
 }
