@@ -171,7 +171,7 @@
                             <v-tab-item v-if="!isBasicMode" style="margin-bottom:0;overflow-y:auto"
                                         :key="'featureMatrixTab'"
                                         :id="'feature-matrix-tab'">
-                                <feature-matrix-card style="min-width:300px"
+                                <feature-matrix-card :style="{'min-width':'300px', 'max-width': cardWidth/2 + 'px'}"
                                                      ref="featureMatrixCardRef"
                                                      v-if="featureMatrixModel.filteredMatrixRows.length > 0"
                                                      v-bind:class="{ hide: !cohortModel || !cohortModel.isLoaded || !featureMatrixModel || !featureMatrixModel.rankedVariants }"

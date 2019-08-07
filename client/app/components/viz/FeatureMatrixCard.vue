@@ -81,6 +81,10 @@
     <div style="clear:both;width:100%">
       <div id="matrix-panel"  style="clear:both;min-height:30px"
         class="fullview" aria-expanded="true">
+        <div id="feature-matrix-row-labels">
+          <!--TODO: LEFT OFF HERE - MOVE ROW LABELS OUT OF CHART-->
+          <!--TODO: no overflow on row labels -->
+        </div>
         <div id="feature-matrix" style="overflow-x: auto;">
 
           <feature-matrix-viz id="feature-matrix-viz"
@@ -243,8 +247,6 @@ export default {
       }
 
     },
-
-
 
     getVariantLabelClass: function(variant, i) {
       var clazz = "";
