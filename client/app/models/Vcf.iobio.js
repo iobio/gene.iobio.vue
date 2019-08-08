@@ -2269,7 +2269,6 @@ var effectCategories = [
                       var gtRefCountIndex = gtTokens["RO"];
                       if (gtRefCountIndex) {
                           gt.refCount = tokens[gtRefCountIndex];
-                          ;
                           totalAllelicDepth += +gt.refCount;
                       } else {
                           gt.refCount = null;

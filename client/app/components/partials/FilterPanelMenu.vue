@@ -44,6 +44,7 @@
                     :filter="filter"
                     :annotationComplete="annotationComplete"
                     @filter-toggled="filterBoxToggled"
+                    @filter-slider-moved="filterSliderMoved"
                     @filter-applied="filterCutoffApplied"
                     @cutoff-filter-cleared="filterCutoffCleared">
             </filter-panel>
@@ -92,19 +93,27 @@
                         icon: 'flash_on'
                     },
                     {
+                        name: 'quality',
+                        display: 'QUALITY FILTERS',
+                        active: false,
+                        custom: false,
+                        description: 'Filter variants by observation counts',
+                        icon: 'star'
+                    },
+                    {
                         name: 'frequencies',
                         display: 'FREQUENCY FILTERS',
                         active: false,
                         custom: false,
-                        description: 'Filter by variant frequency within population databases or within the cohort',
+                        description: 'Filter by variant frequency within population databases',
                         icon: 'people_outline'
-                    },
+                    }
                 ]
             }
         },
         watch: {},
         methods: {
-            filterBoxToggled: function (filterName, filterState, parentFilterName, parentFilterState, cohortOnlyFilter, filterDisplayName) {
+            filterBoxToggled: function (filterName, filterState, parentFilterName, parentFilterState, tumorOnlyFilter, filterDisplayName) {
                 let self = this;
                 let filterObj = self.filters.filter((filt) => {
                     return filt.name === parentFilterName;
@@ -112,9 +121,19 @@
                 if (filterObj.length > 0) {
                     filterObj[0].active = parentFilterState;
                 }
-                self.$emit('filter-box-toggled', filterName, filterState, cohortOnlyFilter, parentFilterName, parentFilterState, filterDisplayName);
+                self.$emit('filter-box-toggled', filterName, filterState, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName);
             },
-            filterCutoffApplied: function (filterName, filterLogic, cutoffValue, currParentFiltName, currParFilterState, cohortOnlyFilter, filterDisplayName) {
+            filterSliderMoved: function(filterName, sliderLogic, sliderValue, parentFilterName, parentFilterState, tumorOnlyFilter, filterDisplayName) {
+                let self = this;
+                let filterObj = self.filters.filter((filt) => {
+                    return filt.name === parentFilterName;
+                });
+                if (filterObj.length > 0) {
+                    filterObj[0].active = parentFilterName;
+                }
+                self.$emit('filter-slider-moved', filterName, filterLogic, cutoffValue, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName);
+            },
+            filterCutoffApplied: function (filterName, filterLogic, cutoffValue, currParentFiltName, currParFilterState, tumorOnlyFilter, filterDisplayName) {
                 let self = this;
                 let filterObj = self.filters.filter((filt) => {
                     return filt.name === currParentFiltName;
@@ -122,9 +141,9 @@
                 if (filterObj.length > 0) {
                     filterObj[0].active = currParentFiltName;
                 }
-                self.$emit('filter-cutoff-applied', filterName, filterLogic, cutoffValue, cohortOnlyFilter, currParentFiltName, currParFilterState, filterDisplayName);
+                self.$emit('filter-cutoff-applied', filterName, filterLogic, cutoffValue, tumorOnlyFilter, currParentFiltName, currParFilterState, filterDisplayName);
             },
-            filterCutoffCleared: function (filterName, currParentFiltName, currParFilterState, cohortOnlyFilter, filterDisplayName) {
+            filterCutoffCleared: function (filterName, currParentFiltName, currParFilterState, tumorOnlyFilter, filterDisplayName) {
                 let self = this;
                 let filterObj = self.filters.filter((filt) => {
                     return filt.name === currParentFiltName;
@@ -132,7 +151,7 @@
                 if (filterObj.length > 0) {
                     filterObj[0].active = currParFilterState;
                 }
-                self.$emit('filter-cutoff-cleared', filterName, cohortOnlyFilter, currParentFiltName, currParFilterState, filterDisplayName);
+                self.$emit('filter-cutoff-cleared', filterName, tumorOnlyFilter, currParentFiltName, currParFilterState, filterDisplayName);
             },
             clearFilters: function () {
                 let self = this;

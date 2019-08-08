@@ -23,9 +23,9 @@
                         :key="category.name"
                         :value="category.open">
                     <div slot="header">
-                        <v-avatar v-if="category.active" size="12px" color="cohortGold" style="margin-right: 10px"></v-avatar>
-                        <v-avatar v-else-if="!category.active && (!isAnnotationCategory(category.name) || (isAnnotationCategory(category.name) && annotationComplete))" size="10px" color="white" style="margin-right: 12px"></v-avatar>
-                        <span v-bind:hidden="!isAnnotationCategory(category.name) || annotationComplete" class="filter-loader">
+                        <v-avatar v-if="category.active" size="12px" color="appHighlight" style="margin-right: 10px"></v-avatar>
+                        <v-avatar v-else-if="!category.active || !annotationComplete" size="10px" color="white" style="margin-right: 12px"></v-avatar>
+                        <span v-bind:hidden="annotationComplete" class="filter-loader">
                             <img src="../../../assets/images/wheel.gif">
                         </span>
                         <span class="filter-title">
@@ -41,6 +41,14 @@
                                 :annotationComplete="annotationComplete"
                                 @filter-toggled="onFilterToggled">
                         </filter-panel-checkbox>
+                        <filter-panel-slider
+                                v-if="category.type==='slider'"
+                                ref="filtSliderRef"
+                                :filterName="category.name"
+                                :parentFilterName="filterName"
+                                :annotationComplete="annotationComplete"
+                                @filter-toggled="onFilterSliderMoved">
+                        </filter-panel-slider>
                         <filter-panel-cutoff
                                 v-else-if="category.type==='cutoff'"
                                 ref="filterCutoffRef"
@@ -60,11 +68,13 @@
 <script>
     import FilterPanelCheckbox from '../partials/FilterPanelCheckbox.vue'
     import FilterPanelCutoff from '../partials/FilterPanelCutoff.vue'
+    import FilterPanelSlider from '../partials/FilterPanelSlider.vue'
     export default {
         name: 'filter-panel',
         components: {
             FilterPanelCheckbox,
-            FilterPanelCutoff
+            FilterPanelCutoff,
+            FilterPanelSlider
         },
         props: {
             filter: null,
@@ -90,11 +100,17 @@
                         {name: 'type', display: 'Type', active: false, open: false, type: 'checkbox', tumorOnly: false}],
                         // {name: 'zygosities', display: 'Zygosities', active: false, open: false, type: 'checkbox', tumorOnly: false},],
                     'somatic': [
-                        {name: 'allelefreq', display: 'Allele Frequency', active: false, open: false, type: 'cutoff', tumorOnly: true}],
+                        {name: 'tumorAltFreq', display: 'Tumor Allele Frequency', active: true, open: false, type: 'slider', tumorOnly: true, minValue: 0, maxValue: 100, labelSuffix: '%'},
+                        {name: 'tumorAltCount', display: 'Tumor Alt. Observations', active: true, open: false, type: 'slider', tumorOnly: true, minValue: 0, maxValue: 100, labelSuffix: ''},
+                        {name: 'normalAltFreq', display: 'Normal Allele Frequency', active: true, open: false, type: 'slider', tumorOnly: false, minValue: 0, maxValue: 100, labelSuffix: '%'},
+                        {name: 'normalAltCount', display: 'Normal Alt. Observations', active: true, open: false, type: 'slider', tumorOnly: false, minValue: 0, maxValue: 100, labelSuffix: ''}],
                     'frequencies': [
                         {name: 'g1000', display: '1000G', active: false, open: false, type: 'cutoff', tumorOnly: false},
                         {name: 'exac', display: 'ExAC', active: false, open: false, type: 'cutoff', tumorOnly: false},
-                        {name: 'gnomad', display: 'gnomAD', active: false, open: false, type: 'cutoff', tumorOnly: false}]
+                        {name: 'gnomad', display: 'gnomAD', active: false, open: false, type: 'cutoff', tumorOnly: false}],
+                    'quality': [
+                        {name: 'totalObserves', display: 'Total Observations', active: true, open: false, type: 'slider', tumorOnly: false, minValue: 0, maxValue: 100, labelSuffix: ''},
+                        {name: 'qualScore', display: 'Quality Score', active: true, open: false, type: 'slider', tumorOnly: false, minValue: 0, maxValue: 1000, labelSuffix: ''}]
                 }
             }
         },
@@ -135,6 +151,29 @@
                     }
                 }
                 self.$emit('filter-toggled', filterName, filterState, grandparentFilterName, grandparentFilterState, tumorOnly, filterDisplayName);
+            },
+            onFilterSliderMoved: function(filterName, filterLogic, cutoffValue, grandparentFilterName) {
+                let self = this;
+                // Turn on indicator
+                let filterObj = self.categories[grandparentFilterName].filter((cat) => {
+                    return cat.name === filterName;
+                });
+                let tumorOnly = false;
+                let displayName = '';
+                if (filterObj.length > 0) {
+                    filterObj[0].active = true;
+                    tumorOnly = filterObj[0].tumorOnly;
+                    displayName = filterObj[0].display;
+                    if (grandparentFilterName === 'frequencies') {
+                        displayName += ' Freq';
+                    }
+                }
+                let grandparentFilterState = false;
+                let parentFilters = self.categories[grandparentFilterName];
+                parentFilters.forEach((filt) => {
+                    grandparentFilterState |= filt.active;
+                });
+                self.$emit('filter-slider-moved', filterName, filterLogic, cutoffValue, grandparentFilterName, grandparentFilterState, tumorOnly, displayName);
             },
             onFilterApplied: function(filterName, filterLogic, cutoffValue, grandparentFilterName) {
                 let self = this;
@@ -191,16 +230,6 @@
                         checkRef.clearFilters();
                     });
                 }
-            },
-            isAnnotationCategory: function (currentCat) {
-                // TODO: making all filters wait until annotation complete for now
-                return true;
-                // if (currentCat === 'impact' || currentCat === 'g1000' ||
-                //     currentCat === 'exac' || currentCat === 'gnomad') {
-                //     return true;
-                // } else {
-                //     return false;
-                // }
             }
         },
         computed: {

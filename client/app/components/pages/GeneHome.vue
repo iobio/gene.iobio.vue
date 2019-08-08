@@ -2221,7 +2221,9 @@
                 }
                 self.$refs.variantCardRef.forEach((varCard) => {
                     varCard.filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
-                    // if (self.$refs.variantCardRef && !filterInfo.cohortOnly) {
+
+                    // TODO: rework this so use tumorOnly
+                    // if (self.$refs.variantCardRef && !filterInfo.tumorOnly) {
                     //     self.$refs.variantCardRef.forEach((cardRef) => {
                     //         cardRef.filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
                     //     });

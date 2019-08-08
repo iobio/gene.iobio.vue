@@ -27,7 +27,6 @@ class CohortModel {
         this.varAfLinks = null;
 
         this.annotationScheme = 'vep';
-
         this.isLoaded = false;
 
         this.sampleModels = [];                 // List of sample models correlated with this cohort
@@ -39,6 +38,14 @@ class CohortModel {
         this.tumorInfo = null;                  // Used in variant detail cards & tooltips
         this.maxDepth = 0;
         this.annotationComplete = false;        // True when all tracks have finished annotation
+
+        // Somatic filtering criteria
+        this.normalAfCutoff = 0.01;
+        this.normalAltCountCutoff = 2;
+        this.tumorAfCutoff = 0.10;
+        this.tumorAltCountCutoff = 8;
+        this.totalCountCutoff = 15;
+        this.qualScoreCutoff = 20;
 
         this.inProgress = {
             'loadingDataSources': false
@@ -1267,9 +1274,17 @@ class CohortModel {
         normalSamples.forEach((currNorm) => {
             if (currNorm && currNorm.features.length > 0) {
                 let normFeatures = currNorm.features;
-                for (let i = 0; i < normFeatures.length; i++) {
-                    let currFeat = normFeatures[i];
-                    if (currFeat.id != null && idLookup[currFeat.id] == null) {
+                let filteredNormFeatures = normFeatures.filter((feature) => {
+                    // TODO: take out qual and total counts from here
+                    if (feature.qual)
+                    return feature.qual >= self.qualScoreCutoff && feature.genotypeDepth >= self.totalCountCutoff;
+                });
+                for (let i = 0; i < filteredNormFeatures.length; i++) {
+                    let currFeat = filteredNormFeatures[i];
+                    let currAltFreq = Math.round(currFeat.genotypeAltCount / currFeat.genotypeDepth * 100) / 100;
+                    if (currFeat.id != null && idLookup[currFeat.id] == null
+                            && currFeat.genotypeAltCount >= self.normalAltCountCutoff
+                            && currAltFreq >= self.normalAfCutoff) {
                         idLookup[currFeat.id] = true;
                     }
                 }
@@ -1281,8 +1296,14 @@ class CohortModel {
             let currTumor = tumorSamples[i];
             if (currTumor.features && currTumor.features.length > 0) {
                 let tumorFeatures = currTumor.features;
-                tumorFeatures.forEach((feature) => {
-                    if (idLookup[feature.id] == null) {
+                let filteredTumorFeatures = tumorFeatures.filter((feature) => {
+                    return feature.qual >= self.qualScoreCutoff && feature.genotypeDepth >= self.totalCountCutoff;
+                });
+
+                filteredTumorFeatures.forEach((feature) => {
+                    let currAltFreq = Math.round(feature.genotypeAltCount / feature.genotypeDepth * 100) / 100;
+                    if (idLookup[feature.id] == null && currAltFreq >= self.tumorAfCutoff
+                            && feature.genotypeAltCount >= self.tumorAltCountCutoff) {
                         feature.isInherited = false;
                     }
                 })

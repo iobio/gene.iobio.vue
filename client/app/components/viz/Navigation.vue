@@ -211,6 +211,7 @@
                                     :showCoverageCutoffs="showCoverageCutoffs"
                                     :annotationComplete="annotationComplete"
                                     @filter-box-toggled="filterBoxToggled"
+                                    @filter-slider-moved="filterSliderMoved"
                                     @filter-cutoff-applied="filterCutoffApplied"
                                     @filter-cutoff-cleared="filterCutoffCleared">
                             </filter-panel-menu>
@@ -656,12 +657,12 @@
             onUpdateSamples: function () {
                 this.$emit('update-samples');
             },
-            filterBoxToggled: function(filterName, filterState, cohortOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
+            filterBoxToggled: function(filterName, filterState, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
                 let self = this;
                 let filterInfo = {
                     name: filterName,
                     displayName: filterDisplayName,
-                    cohortOnly: cohortOnlyFilter,
+                    tumorOnly: tumorOnlyFilter,
                     type: 'checkbox',
                     state: filterState,
                     cutoffValue: null,
@@ -670,13 +671,26 @@
                 };
                 self.onFilterSettingsApplied(filterInfo);
             },
-            filterCutoffApplied: function(filterName, filterLogic, cutoffValue, cohortOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
+            filterSliderMoved: function(filterName, sliderLogic, sliderValue, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
+                let self = this;
+                let filterInfo = {
+                    name: filterName,
+                    displayName: filterDisplayName,
+                    tumorOnly: tumorOnlyFilter,
+                    type: 'slider',
+                    state: sliderLogic,
+                    cutoffValue: sliderValue,
+                    parentFilterName: parentFilterName,
+                    parentFilterState: parentFilterState
+                }
+            },
+            filterCutoffApplied: function(filterName, filterLogic, cutoffValue, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
                 let self = this;
                 let translatedFilterName = self.variantModel.translator.getTranslatedFilterName(filterName);
                 let filterInfo = {
                     name: translatedFilterName,
                     displayName: filterDisplayName,
-                    cohortOnly: cohortOnlyFilter,
+                    tumorOnly: tumorOnlyFilter,
                     type: 'cutoff',
                     state: filterLogic,
                     cutoffValue: cutoffValue,
