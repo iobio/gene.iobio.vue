@@ -44,7 +44,7 @@
                     :filter="filter"
                     :annotationComplete="annotationComplete"
                     @filter-toggled="filterBoxToggled"
-                    @filter-slider-moved="filterSliderMoved"
+                    @filter-slider-changed="filterSliderChanged"
                     @filter-applied="filterCutoffApplied"
                     @cutoff-filter-cleared="filterCutoffCleared">
             </filter-panel>
@@ -123,7 +123,7 @@
                 }
                 self.$emit('filter-box-toggled', filterName, filterState, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName);
             },
-            filterSliderMoved: function(filterName, sliderLogic, sliderValue, parentFilterName, parentFilterState, tumorOnlyFilter, filterDisplayName) {
+            filterSliderChanged: function(filterName, sliderLogic, sliderValue, parentFilterName, parentFilterState, tumorOnlyFilter, filterDisplayName) {
                 let self = this;
                 let filterObj = self.filters.filter((filt) => {
                     return filt.name === parentFilterName;
@@ -131,7 +131,7 @@
                 if (filterObj.length > 0) {
                     filterObj[0].active = parentFilterName;
                 }
-                self.$emit('filter-slider-moved', filterName, filterLogic, cutoffValue, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName);
+                self.$emit('filter-slider-moved', filterName, sliderLogic, sliderValue, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName);
             },
             filterCutoffApplied: function (filterName, filterLogic, cutoffValue, currParentFiltName, currParFilterState, tumorOnlyFilter, filterDisplayName) {
                 let self = this;

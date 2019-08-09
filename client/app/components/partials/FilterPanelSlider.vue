@@ -13,7 +13,7 @@
                     margin-left: 8px
 
     .slider-top-row
-        padding-top: 14px
+        padding-top: 15px
 
         .slider-bar
             padding-left: 15px
@@ -43,6 +43,23 @@
             margin-top: -5px
             color: $app-gray
 
+        .slider-bar-input
+            padding-top: 0
+            padding-left: 15px
+
+            .input-group__input
+                margin-top: -5px
+
+                input
+                    font-size: 12px
+                    text-align: center
+                    color: $app-gray
+                    padding-top: 8px
+                span
+                    font-size: 12px
+                    color: $app-gray
+                    padding-top: 8px
+
 </style>
 
 <template>
@@ -53,21 +70,23 @@
                         <v-flex d-flex xs2>
                             <v-select class="slider-select"
                                       :items="dropDownOptions"
-                                      label=""
                                       v-model="filterLogic"
                                       single-line
                                       color="appColor"
-                                      @change="checkApplyButtonState">
+                                      @input="onSliderLogicChanged">
                             </v-select>
                         </v-flex>
                         <v-flex d-flex xs10 class="slider-top-row">
-                            <v-slider :min="0" :max="100" v-model="cutoffValue" color="appColor" class="slider-bar">
+                            <v-slider :min="sliderMinValue" :max="sliderMaxValue" v-model="cutoffValue" color="appColor" class="slider-bar">
                             </v-slider>
                         </v-flex>
                 </v-layout>
-                <v-layout :style="{'height': '15px'}">
-                    <v-flex xs12 class="slider-bottom-row">
-                        <p class="slider-bar-value">{{cutoffValue}}</p>
+                <v-layout :style="{'height': '20px', 'margin-top': '-5px'}">
+                    <v-flex xs10>
+                        <!--Spacing-->
+                    </v-flex>
+                    <v-flex xs2 class="slider-bottom-row">
+                        <v-text-field v-model="cutoffValue" class="slider-bar-input" color="appColor" :suffix="sliderDisplaySuffix"></v-text-field>
                     </v-flex>
                 </v-layout>
             </v-container>
@@ -80,9 +99,30 @@
         name: 'filter-panel-slider',
         components: {},
         props: {
-            filterName: null,
-            parentFilterName: null,
-            annotationComplete: false
+            filterName: {
+                default: null,
+                type: String
+            },
+            parentFilterName: {
+                default: null,
+                type: String
+            },
+            annotationComplete: {
+                default: false,
+                type: Boolean
+            },
+            sliderMinValue: {
+                default: 0,
+                type: Number
+            },
+            sliderMaxValue: {
+                default: 100,
+                type: Number
+            },
+            sliderDisplaySuffix: {
+                default: '',
+                type: String
+            }
         },
         data() {
             return {
@@ -100,7 +140,14 @@
                 filterButtonColor: '#d18e00'
             }
         },
-        watch: {},
+        watch: {
+            cutoffValue: function(newVal, oldVal) {
+                const self = this;
+                if (newVal !== oldVal && oldVal != null) {
+                    self.onSliderMoved();
+                }
+            }
+        },
         methods: {
             clearFilters: function() {
                 let self = this;
@@ -109,41 +156,16 @@
                 self.readyToApply = false;
                 self.$emit('cutoff-filter-cleared', self.filterName, self.parentFilterName);
             },
-            onApplyFilter: function() {
+            onSliderMoved: function() {
                 let self = this;
-                self.filterButtonColor = '#d18e00';     // Flip button color
-                self.$emit('filter-applied', self.filterName, self.filterLogic.text, self.cutoffValue, self.parentFilterName);
+                self.$emit('filter-slider-changed', self.filterName, self.filterLogic.text, self.cutoffValue, self.parentFilterName);
             },
-            checkApplyButtonState: function() {
+            onSliderLogicChanged: function() {
                 let self = this;
-
-                let inputValid = false;
-                if (self.isFrequencyField) {
-                    inputValid = self.cutoffValue > 0 && self.cutoffValue < 100;
-                } else if (self.isRawPVal) {
-                    inputValid = self.cutoffValue > 0 && self.cutoffValue < 1;
-                } else {
-                    inputValid = self.cutoffValue != null;
-                }
-                self.readyToApply = self.filterLogic && inputValid;
-                if (self.readyToApply) {
-                    self.filterButtonColor = '#8BC34A';
-                }
+                self.$emit('filter-slider-changed', self.filterName, self.filterLogic.text, self.cutoffValue, self.parentFilterName)
             }
         },
-        computed: {
-            isFrequencyField: function() {
-                return true;
-            },
-            buttonTipText: function() {
-                let self = this;
-                if (self.readyToApply) {
-                    return 'Click to apply';
-                } else {
-                    return 'Enter criteria';
-                }
-            }
-        },
+        computed: {},
         created: function () {},
         mounted: function () {}
     }

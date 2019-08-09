@@ -47,7 +47,10 @@
                                 :filterName="category.name"
                                 :parentFilterName="filterName"
                                 :annotationComplete="annotationComplete"
-                                @filter-toggled="onFilterSliderMoved">
+                                :sliderMinValue="category.minValue"
+                                :sliderMaxValue="category.maxValue"
+                                :sliderDisplaySuffix="category.labelSuffix"
+                                @filter-slider-changed="onSliderFilterChanged">
                         </filter-panel-slider>
                         <filter-panel-cutoff
                                 v-else-if="category.type==='cutoff'"
@@ -152,7 +155,7 @@
                 }
                 self.$emit('filter-toggled', filterName, filterState, grandparentFilterName, grandparentFilterState, tumorOnly, filterDisplayName);
             },
-            onFilterSliderMoved: function(filterName, filterLogic, cutoffValue, grandparentFilterName) {
+            onSliderFilterChanged: function(filterName, filterLogic, cutoffValue, grandparentFilterName) {
                 let self = this;
                 // Turn on indicator
                 let filterObj = self.categories[grandparentFilterName].filter((cat) => {
@@ -173,7 +176,7 @@
                 parentFilters.forEach((filt) => {
                     grandparentFilterState |= filt.active;
                 });
-                self.$emit('filter-slider-moved', filterName, filterLogic, cutoffValue, grandparentFilterName, grandparentFilterState, tumorOnly, displayName);
+                self.$emit('filter-slider-changed', filterName, filterLogic, cutoffValue, grandparentFilterName, grandparentFilterState, tumorOnly, displayName);
             },
             onFilterApplied: function(filterName, filterLogic, cutoffValue, grandparentFilterName) {
                 let self = this;
