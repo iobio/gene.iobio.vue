@@ -2211,7 +2211,6 @@
                 self.models = self.cohortModel.sampleModels;
                 self.models.push('foo');
                 self.models.pop();
-
             },
             onVariantFilterSettingsApplied: function (filterInfo) {
                 let self = this;
@@ -2219,16 +2218,24 @@
                 if (self.selectedVariant) {
                     selectedVarId = self.selectedVariant.id;
                 }
-                self.$refs.variantCardRef.forEach((varCard) => {
-                    varCard.filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
 
-                    // TODO: rework this so use tumorOnly
-                    // if (self.$refs.variantCardRef && !filterInfo.tumorOnly) {
-                    //     self.$refs.variantCardRef.forEach((cardRef) => {
-                    //         cardRef.filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
-                    //     });
-                    // }
-                });
+                // TODO: if this is a somatic or quality filter, we need to re-annotate those characteristics and re-render the track to update the classes
+                // TODO: or we can put the metrics by which the filtering happens on the track but will this bloat up the DOM too much?
+                // TODO: we also need to update the feature matrix somehow - gray out instead of removing?
+
+                // Apply tumor only filters to tumor tracks only
+                if (self.$refs.variantCardRef && filterInfo.tumorOnly) {
+                    self.$refs.variantCardRef.forEach((cardRef) => {
+                        if (cardRef.sampleModel.isTumor === true) {
+                            cardRef.filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
+                        }
+                    });
+                // Otherwise apply to all tracks
+                } else if (self.$refs.variantCardRef) {
+                    self.$refs.variantCardRef.forEach((cardRef) => {
+                        cardRef.filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
+                    });
+                }
             },
         }
     }

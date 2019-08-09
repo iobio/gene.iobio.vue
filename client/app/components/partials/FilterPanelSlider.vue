@@ -73,6 +73,7 @@
                                       v-model="filterLogic"
                                       single-line
                                       color="appColor"
+                                      :disabled="disableLogicDropdown"
                                       @input="onSliderLogicChanged">
                             </v-select>
                         </v-flex>
@@ -122,6 +123,14 @@
             sliderDisplaySuffix: {
                 default: '',
                 type: String
+            },
+            initLogic: {
+                default: null,
+                type: String
+            },
+            initValue: {
+                default: 0,
+                type: Number
             }
         },
         data() {
@@ -137,7 +146,14 @@
                 cutoffValue: null,
                 readyToApply: false,
                 isRawPVal: false,
-                filterButtonColor: '#d18e00'
+                filterButtonColor: '#d18e00',
+                disableLogicDropdown: false,
+
+                // List of filter names that require conversion b/w frequency and percentage
+                filtersNeedAdjusting: {
+                    'tumorAltFreq': true,
+                    'normalAltFreq': true
+                }
             }
         },
         watch: {
@@ -150,23 +166,41 @@
         },
         methods: {
             clearFilters: function() {
-                let self = this;
+                const self = this;
                 self.filterLogic = null;
                 self.cutoffValue = null;
                 self.readyToApply = false;
                 self.$emit('cutoff-filter-cleared', self.filterName, self.parentFilterName);
             },
             onSliderMoved: function() {
-                let self = this;
-                self.$emit('filter-slider-changed', self.filterName, self.filterLogic.text, self.cutoffValue, self.parentFilterName);
+                const self = this;
+                self.$emit('filter-slider-changed', self.filterName, self.filterLogic.text, self.getAdjustedCutoff(self.cutoffValue, self.filterName), self.parentFilterName);
             },
             onSliderLogicChanged: function() {
-                let self = this;
-                self.$emit('filter-slider-changed', self.filterName, self.filterLogic.text, self.cutoffValue, self.parentFilterName)
+                const self = this;
+                self.$emit('filter-slider-changed', self.filterName, self.filterLogic.text, self.getAdjustedCutoff(self.cutoffValue, self.filterName), self.parentFilterName)
+            },
+            getAdjustedCutoff: function(cutoffValue, filterName) {
+                const self = this;
+                if (self.filtersNeedAdjusting[filterName]) {
+                    return cutoffValue / 100;
+                } else {
+                    return cutoffValue;
+                }
             }
         },
-        computed: {},
-        created: function () {},
-        mounted: function () {}
+        mounted: function() {
+            const self = this;
+            if (self.initLogic != null) {
+                const matchingLogic = self.dropDownOptions.filter((option) => {
+                    return option.text === self.initLogic;
+                });
+                self.filterLogic = matchingLogic[0];
+            }
+
+            if (self.initValue != null) {
+                self.cutoffValue = self.initValue;
+            }
+        }
     }
 </script>

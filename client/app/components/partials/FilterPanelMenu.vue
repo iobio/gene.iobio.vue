@@ -43,6 +43,8 @@
                     :filterModel="filterModel"
                     :filter="filter"
                     :annotationComplete="annotationComplete"
+                    :somaticFilterSettings="somaticFilterSettings"
+                    :qualityFilterSettings="qualityFilterSettings"
                     @filter-toggled="filterBoxToggled"
                     @filter-slider-changed="filterSliderChanged"
                     @filter-applied="filterCutoffApplied"
@@ -70,7 +72,9 @@
         props: {
             filterModel: null,
             showCoverageCutoffs: null,
-            annotationComplete: false
+            annotationComplete: false,
+            somaticFilterSettings: null,
+            qualityFilterSettings: null
         },
         data() {
             return {
@@ -89,7 +93,7 @@
                         display: 'SOMATIC FILTERS',
                         active: false,
                         custom: false,
-                        description: 'Select a threshold for allele frequency by which to identify somatic variants',
+                        description: 'Select a threshold for allele frequencies and observation counts by which to identify somatic variants',
                         icon: 'flash_on'
                     },
                     {
@@ -113,6 +117,9 @@
         },
         watch: {},
         methods: {
+            // TODO: incorporate reset to default params from cohort
+            // TODO: incorporate gold or other highlight color for filtering
+
             filterBoxToggled: function (filterName, filterState, parentFilterName, parentFilterState, tumorOnlyFilter, filterDisplayName) {
                 let self = this;
                 let filterObj = self.filters.filter((filt) => {

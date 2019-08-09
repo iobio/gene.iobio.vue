@@ -50,6 +50,8 @@
                                 :sliderMinValue="category.minValue"
                                 :sliderMaxValue="category.maxValue"
                                 :sliderDisplaySuffix="category.labelSuffix"
+                                :initLogic="category.initLogic"
+                                :initValue="category.initVal"
                                 @filter-slider-changed="onSliderFilterChanged">
                         </filter-panel-slider>
                         <filter-panel-cutoff
@@ -84,7 +86,9 @@
             filterName: '',
             filterModel: null,
             idx: null,
-            annotationComplete: false
+            annotationComplete: false,
+            somaticFilterSettings: null,
+            qualityFilterSettings: null
         },
         data() {
             return {
@@ -103,17 +107,23 @@
                         {name: 'type', display: 'Type', active: false, open: false, type: 'checkbox', tumorOnly: false}],
                         // {name: 'zygosities', display: 'Zygosities', active: false, open: false, type: 'checkbox', tumorOnly: false},],
                     'somatic': [
-                        {name: 'tumorAltFreq', display: 'Tumor Allele Frequency', active: true, open: false, type: 'slider', tumorOnly: true, minValue: 0, maxValue: 100, labelSuffix: '%'},
-                        {name: 'tumorAltCount', display: 'Tumor Alt. Observations', active: true, open: false, type: 'slider', tumorOnly: true, minValue: 0, maxValue: 100, labelSuffix: ''},
-                        {name: 'normalAltFreq', display: 'Normal Allele Frequency', active: true, open: false, type: 'slider', tumorOnly: false, minValue: 0, maxValue: 100, labelSuffix: '%'},
-                        {name: 'normalAltCount', display: 'Normal Alt. Observations', active: true, open: false, type: 'slider', tumorOnly: false, minValue: 0, maxValue: 100, labelSuffix: ''}],
+                        {name: 'tumorAltFreq', display: 'Tumor Allele Frequency', active: true, open: false, type: 'slider', tumorOnly: true,
+                            minValue: 0, maxValue: 100, labelSuffix: '%', initLogic: '>=', initVal: this.somaticFilterSettings['tumorAltFreq']},
+                        {name: 'tumorAltCount', display: 'Tumor Alt. Observations', active: true, open: false, type: 'slider', tumorOnly: true,
+                            labelSuffix: '', initLogic: '>=', initVal: this.somaticFilterSettings['tumorAltCount']},
+                        {name: 'normalAltFreq', display: 'Normal Allele Frequency', active: true, open: false, type: 'slider', tumorOnly: false,
+                            minValue: 0, maxValue: 100, labelSuffix: '%', initLogic: '<=', initVal: this.somaticFilterSettings['normalAltFreq']},
+                        {name: 'normalAltCount', display: 'Normal Alt. Observations', active: true, open: false, type: 'slider', tumorOnly: false,
+                            labelSuffix: '', initLogic: '<=', initVal: this.somaticFilterSettings['normalAltCount']}],
                     'frequencies': [
                         {name: 'g1000', display: '1000G', active: false, open: false, type: 'cutoff', tumorOnly: false},
                         {name: 'exac', display: 'ExAC', active: false, open: false, type: 'cutoff', tumorOnly: false},
                         {name: 'gnomad', display: 'gnomAD', active: false, open: false, type: 'cutoff', tumorOnly: false}],
                     'quality': [
-                        {name: 'totalObserves', display: 'Total Observations', active: true, open: false, type: 'slider', tumorOnly: false, minValue: 0, maxValue: 100, labelSuffix: ''},
-                        {name: 'qualScore', display: 'Quality Score', active: true, open: false, type: 'slider', tumorOnly: false, minValue: 0, maxValue: 1000, labelSuffix: ''}]
+                        {name: 'totalObserves', display: 'Total Observations', active: true, open: false, type: 'slider', tumorOnly: false, 
+                            minValue: 0, maxValue: 100, labelSuffix: '', initLogic: '>=', initVal: this.qualityFilterSettings['totalObserves']},
+                        {name: 'qualScore', display: 'Quality Score', active: true, open: false, type: 'slider', tumorOnly: false, 
+                            minValue: 0, maxValue: 500, labelSuffix: '', initLogic: '>=', initVal: this.qualityFilterSettings['qualScore']}]
                 }
             }
         },

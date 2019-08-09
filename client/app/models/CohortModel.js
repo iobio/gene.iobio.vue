@@ -40,9 +40,9 @@ class CohortModel {
         this.annotationComplete = false;        // True when all tracks have finished annotation
 
         // Somatic filtering criteria
-        this.normalAfCutoff = 0.01;
+        this.normalAfCutoff = 0.01;              // Must be between 0-1
         this.normalAltCountCutoff = 2;
-        this.tumorAfCutoff = 0.10;
+        this.tumorAfCutoff = 0.10;               // Must be between 0-1
         this.tumorAltCountCutoff = 8;
         this.totalCountCutoff = 15;
         this.qualScoreCutoff = 20;

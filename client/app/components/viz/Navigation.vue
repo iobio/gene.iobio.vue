@@ -210,6 +210,8 @@
                                     :filterModel="filterModel"
                                     :showCoverageCutoffs="showCoverageCutoffs"
                                     :annotationComplete="annotationComplete"
+                                    :somaticFilterSettings="somaticFilterSettings"
+                                    :qualityFilterSettings="qualityFilterSettings"
                                     @filter-box-toggled="filterBoxToggled"
                                     @filter-slider-moved="filterSliderMoved"
                                     @filter-cutoff-applied="filterCutoffApplied"
@@ -682,7 +684,8 @@
                     cutoffValue: sliderValue,
                     parentFilterName: parentFilterName,
                     parentFilterState: parentFilterState
-                }
+                };
+                self.onFilterSettingsApplied(filterInfo);
             },
             filterCutoffApplied: function(filterName, filterLogic, cutoffValue, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
                 let self = this;
@@ -746,6 +749,24 @@
             selectedGeneDisplay: function () {
                 return this.selectedGeneName + " " + this.selectedChr;
             },
+            somaticFilterSettings: function() {
+                const self = this;
+                return {
+                    // Note: have to translate frequencies to percentages here to accommodate
+                    // slider component ambivalence for non-percentage values
+                    'tumorAltFreq': self.cohortModel.tumorAfCutoff * 100,
+                    'tumorAltCount': self.cohortModel.tumorAltCountCutoff,
+                    'normalAltFreq': self.cohortModel.normalAfCutoff * 100,
+                    'normalAltCount': self.cohortModel.normalAltCountCutoff
+                };
+            },
+            qualityFilterSettings: function() {
+                const self = this;
+                return {
+                    'totalObserves': self.cohortModel.totalCountCutoff,
+                    'qualScore': self.cohortModel.qualScoreCutoff
+                };
+            }
         }
     }
 
