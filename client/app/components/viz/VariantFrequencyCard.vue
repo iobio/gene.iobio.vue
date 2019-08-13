@@ -3,7 +3,7 @@
 
 </style>
 <template>
-    <v-card tile id="matrix-card" class="app-card">
+    <v-card tile id="var-freq-card" class="app-card">
         <div style="clear:both;width:100%;margin-top:-10px">
             <div id="var-freq-panel"  style="clear:both;min-height:30px"
                  class="fullview" aria-expanded="true">

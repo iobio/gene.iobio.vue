@@ -44,16 +44,16 @@ class CohortModel {
         };
 
         // Somatic calling criteria
-        this.initSomaticCriteria = {
-            'normalAfCutoff': 0.01,      // Must be between 0-1
-            'normalAltCountCutoff': 2,
-            'tumorAfCutoff': 0.10,       // Must be between 0-1
-            'tumorAltCountCutoff': 8
-        };
-        this.initQualityCriteria = {
-            'totalCountCutoff': 15,
-            'qualScoreCutoff': 20
-        };
+        // this.initSomaticCriteria = {
+        //     'normalAfCutoff': 0.01,      // Must be between 0-1
+        //     'normalAltCountCutoff': 2,
+        //     'tumorAfCutoff': 0.10,       // Must be between 0-1
+        //     'tumorAltCountCutoff': 8
+        // };
+        // this.initQualityCriteria = {
+        //     'totalCountCutoff': 15,
+        //     'qualScoreCutoff': 20
+        // };
 
         this.genesInProgress = [];
         this.flaggedVariants = [];
@@ -841,7 +841,7 @@ class CohortModel {
                         });
 
                         // Call somatic variants
-                        self.filterModel.annotateVariantInheritance(self.sampleMap, self.initSomaticCriteria, self.initQualityCriteria);
+                        self.filterModel.annotateVariantInheritance(self.sampleMap, true);
 
                         // Now summarize the danger for the selected gene
                         self.promiseSummarizeDanger(theGene, theTranscript, resultMap.s0, null)
@@ -1046,7 +1046,6 @@ class CohortModel {
         })
     }
 
-    /* GeneChanged = true if the last time this method was called we were looking at a diff gene */
     setLoadedVariants(gene, id = null, loadFromFlag = false) {
         let self = this;
 
@@ -1061,6 +1060,9 @@ class CohortModel {
                     isTarget = true;
                 }
 
+                // Coordinate with DOM filtering
+                let passesDomFilters = feature.passesFilters;
+
                 let isHomRef = feature.zygosity == null
                     || feature.zygosity.toUpperCase() === "HOMREF"
                     || feature.zygosity.toUpperCase() === "NONE"
@@ -1073,7 +1075,7 @@ class CohortModel {
 
                 let passesModelFilter = self.filterModel.passesModelFilter(model.id, feature);
 
-                return isTarget && !isHomRef && inRegion && passesModelFilter;
+                return isTarget && !isHomRef && inRegion && passesModelFilter && passesDomFilters;
             });
 
             let pileupObject = model._pileupVariants(filteredVariants.features, start, end);

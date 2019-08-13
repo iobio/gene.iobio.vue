@@ -2772,6 +2772,7 @@ class SampleModel {
         // var sift = "";
         // var polyphen = "";
         // var regulatory = "";
+        // TODO: cleanup unused
 
         var effectList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.effect : d.vepConsequence);
         for (var key in effectList) {
@@ -2790,17 +2791,16 @@ class SampleModel {
             impacts += " " + key;
         }
 
-        // TODO: cleanup
-        // if (d.isInherited && inTumorTrack && !inKnownTrack) {
-        //     colorimpacts += " " + 'impact_INHERITED';
-        // } else if (inTumorTrack && !inKnownTrack) {
-        //     colorimpacts += " " + "impact_SOMATIC";
-        // } else {
+        if (d.isInherited && inTumorTrack && !inKnownTrack) {
+            colorimpacts += " " + 'impact_INHERITED';
+        } else if (inTumorTrack && !inKnownTrack) {
+            colorimpacts += " " + "impact_SOMATIC";
+        } else {
         var colorImpactList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.impact : d[self.globalApp.impactFieldToColor]);
         for (var key in colorImpactList) {
             colorimpacts += " " + 'impact_' + key;
             }
-        //}
+        }
 
         if (colorimpacts === "") {
             colorimpacts = "impact_none";

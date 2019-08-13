@@ -142,8 +142,11 @@ export default function variantD3() {
     var filterVariants = function (filterClasses, filterCutoffs, svgContainer) {
         let allVariants = svgContainer.selectAll(".variant");
 
-        // Add filtered class to all variants
+        // Add filtered class to all variants on DOM and model object
         allVariants.classed({'filtered': true});
+        allVariants.each(function(d,i) {
+           d.passesFilters = true;
+        });
 
         // If we're out of active filters, display all variants
         if (filterClasses.length === 0 && filterCutoffs.length === 0) {

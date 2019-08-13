@@ -756,17 +756,17 @@
                 return {
                     // Note: have to translate frequencies to percentages here to accommodate
                     // slider component ambivalence for non-percentage values
-                    'tumorAltFreq': self.cohortModel.initSomaticCriteria.tumorAfCutoff * 100,
-                    'tumorAltCount': self.cohortModel.initSomaticCriteria.tumorAltCountCutoff,
-                    'normalAltFreq': self.cohortModel.initSomaticCriteria.normalAfCutoff * 100,
-                    'normalAltCount': self.cohortModel.initSomaticCriteria.normalAltCountCutoff
+                    'tumorAltFreq': self.cohortModel.filterModel.DEFAULT_SOMATIC_CUTOFFS.tumorAfCutoff * 100,
+                    'tumorAltCount': self.cohortModel.filterModel.DEFAULT_SOMATIC_CUTOFFS.tumorAltCountCutoff,
+                    'normalAltFreq': self.cohortModel.filterModel.DEFAULT_SOMATIC_CUTOFFS.normalAfCutoff * 100,
+                    'normalAltCount': self.cohortModel.filterModel.DEFAULT_SOMATIC_CUTOFFS.normalAltCountCutoff
                 };
             },
             qualityFilterSettings: function() {
                 const self = this;
                 return {
-                    'genotypeDepth': self.cohortModel.initQualityCriteria.totalCountCutoff,
-                    'qual': self.cohortModel.initQualityCriteria.qualScoreCutoff
+                    'genotypeDepth': self.cohortModel.filterModel.DEFAULT_QUALITY_FILTERING_CRITERIA.totalCountCutoff,
+                    'qual': self.cohortModel.filterModel.DEFAULT_QUALITY_FILTERING_CRITERIA.qualScoreCutoff
                 };
             }
         }

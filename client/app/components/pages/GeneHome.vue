@@ -172,7 +172,7 @@
                             <v-tab-item v-if="!isBasicMode" style="margin-bottom:0;overflow-y:auto"
                                         :key="'featureMatrixTab'"
                                         :id="'feature-matrix-tab'">
-                                <feature-matrix-card :style="{'min-width':'300px', 'max-width': cardWidth/2 + 'px'}"
+                                <feature-matrix-card :style="{'min-width': '300px', 'max-width': cardWidth/2 + 'px'}"
                                                      ref="featureMatrixCardRef"
                                                      v-if="featureMatrixModel.filteredMatrixRows.length > 0"
                                                      v-bind:class="{ hide: !cohortModel || !cohortModel.isLoaded || !featureMatrixModel || !featureMatrixModel.rankedVariants }"
@@ -190,6 +190,15 @@
                                                      @cohort-variant-hover-end="onCohortVariantHoverEnd"
                                                      @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj)">
                                 </feature-matrix-card>
+                                <!--<variant-frequency-card :style="{'width': cardWidth/2 + 'px'}"-->
+                                        <!--v-if="cohortModel && cohortModel.varAfLinks"-->
+                                        <!--style="min-width:300px"-->
+                                        <!--ref="varFreqCardRef"-->
+                                        <!--:width="cardWidth"-->
+                                        <!--:numVars="Object.keys(cohortModel.allUniqueFeaturesObj.features).length"-->
+                                        <!--:afLinks="cohortModel.varAfLinks"-->
+                                        <!--:afNodes="cohortModel.varAfNodes">-->
+                                <!--</variant-frequency-card>-->
                             </v-tab-item>
                             <v-tab-item v-if="!isBasicMode" style="margin-bottom:0;overflow-y:auto"
                                         :key="'varFreqTab'"
@@ -223,8 +232,7 @@
                                         :info="selectedVariantInfo"
                                         @transcript-id-selected="onTranscriptIdSelected"
                                         @flag-variant="onFlagVariant"
-                                        @remove-flagged-variant="onRemoveUserFlaggedVariant"
-                                >
+                                        @remove-flagged-variant="onRemoveUserFlaggedVariant">
                                 </variant-detail-card>
 
                                 <scroll-button ref="scrollButtonRefVariant" :parentId="`variant-detail`">
@@ -2224,13 +2232,15 @@
                     'normalAltCount': true
                 };
 
-                if (!somaticFilterList[filterInfo.name]) {
+                if (somaticFilterList[filterInfo.name]) {
+                    // Update somatic filter criteria in model
+                    self.filterModel.currentSomaticCutoffs[filterInfo.name] = filterInfo.cutoffValue;
+                    self.filterModel.currentSomaticLogic[filterInfo.name] = filterInfo.state;
+                } else {
                     let selectedVarId = null;
                     if (self.selectedVariant) {
                         selectedVarId = self.selectedVariant.id;
                     }
-                    // TODO: we also need to update the feature matrix somehow - gray out instead of removing?
-
                     // Apply tumor only filters to tumor tracks only
                     if (self.$refs.variantCardRef && filterInfo.tumorOnly) {
                         self.$refs.variantCardRef.forEach((cardRef) => {
@@ -2244,18 +2254,13 @@
                             cardRef.filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
                         });
                     }
-                } else {
-                    const somaticCriteria = {
-                        'normalAfCutoff': filterInfo['normalAltFreq'],      // Must be between 0-1
-                        'normalAltCountCutoff': filterInfo['normalAltCount'],
-                        'tumorAfCutoff': filterInfo['tumorAltFreq'],       // Must be between 0-1
-                        'tumorAltCountCutoff': filterInfo['tumorAltCount']
-                    };
-                    self.filterModel.annotateVariantInheritance(self.cohortModel.sampleMap, somaticCriteria);
-                    // self.$refs.variantCardRef.forEach((cardRef) => {
-                    //     cardRef.updateTrack();
-                    // });
                 }
+
+                // Regardless of what filter applied, we need to re-annotate somatic variants (b/c respective normal may be hidden!)
+                self.filterModel.annotateVariantInheritance(self.cohortModel.sampleMap, false);
+                self.cohortModel.setLoadedVariants(self.selectedGene);
+                // TODO: we also need to update the feature matrix somehow - gray out instead of removing?
+
             },
         }
     }

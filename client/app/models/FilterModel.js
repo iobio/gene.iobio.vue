@@ -157,10 +157,38 @@ class FilterModel {
         'clinvar': []
       }
     };
+
+    /* The current settings to highlight somatic variants */
+    this.DEFAULT_SOMATIC_CUTOFFS = {
+        'normalAfCutoff': 0.01,      // Must be between 0-1
+        'normalAltCountCutoff': 2,
+        'tumorAfCutoff': 0.10,       // Must be between 0-1
+        'tumorAltCountCutoff': 8
+    };
+
+    this.DEFAULT_SOMATIC_LOGIC = {
+        'normalAfCutoff': '<=',
+        'normalAltCountCutoff': '<=',
+        'tumorAfCutoff': '>=',
+        'tumorAltCountCutoff': '>='
+    };
+
+    // TODO: on filter reset, reset these
+    this.currentSomaticCutoffs = this.DEFAULT_SOMATIC_CUTOFFS;
+    this.currentSomaticLogic = this.DEFAULT_SOMATIC_LOGIC;
+
+    /* Default quality filtering criteria */
+    this.DEFAULT_QUALITY_FILTERING_CRITERIA = {
+        'totalCountCutoff': 15,
+        'qualScoreCutoff': 20
+    };
   }
 
-    /* Marks variants that are 'inherited' from all samples for which isTumor = false. */
-    annotateVariantInheritance(resultMap, somaticCriteria, initQualCriteria) {
+    /* Marks variants that are 'inherited' from all samples for which isTumor = false.
+     * If initFiltering = true, we're loading up the app for the first time or clearing filters and
+     * want to use the default quality settings. */
+    annotateVariantInheritance(resultMap, initFiltering) {
+        const self = this;
         let normalSamples = [];
         let tumorSamples = [];
         let tumorSampleModelIds = [];
@@ -184,12 +212,14 @@ class FilterModel {
                 let normFeatures = currNorm.features;
 
                 let filteredNormFeatures = null;
-                if (initQualCriteria) {
+                if (initFiltering) {
                     // We only want to call something somatic if its normal counterpart passes init quality/somatic cutoffs
                     filteredNormFeatures = normFeatures.filter((feature) => {
-                      let passQual = feature.qual >= initQualCriteria.qualScoreCutoff || feature.qual === '.';
-                      return passQual && feature.genotypeDepth >= initQualCriteria.totalCountCutoff;
+                      let passQual = feature.qual >= self.DEFAULT_QUALITY_FILTERING_CRITERIA.qualScoreCutoff || feature.qual === '.';
+                      return passQual && feature.genotypeDepth >= self.DEFAULT_QUALITY_FILTERING_CRITERIA.totalCountCutoff;
                     });
+                    // TODO: the problem here is that if quality score isn't passed we don't put it in the lookup so a variant is called somatic
+                    // TODO: Instead, we need to add bad quality normal vars into lookup so that they aren't annotated as
                 } else {
                     // We only want to call something somatic if its normal counterpart is visible
                     filteredNormFeatures = normFeatures.filter((feature) => {
@@ -200,10 +230,10 @@ class FilterModel {
                 // Populate lookup
                 for (let i = 0; i < filteredNormFeatures.length; i++) {
                     let currFeat = filteredNormFeatures[i];
-                    let currNormAf = Math.round(currFeat.genotypeAltCount / currFeat.genotypeDepth * 100) / 100;
-                    if (currFeat.id != null && idLookup[currFeat.id] == null
-                        && currFeat.genotypeAltCount >= somaticCriteria.normalAltCountCutoff
-                        && currNormAf >= somaticCriteria.normalAfCutoff) {
+                    const currNormAf = Math.round(currFeat.genotypeAltCount / currFeat.genotypeDepth * 100) / 100;
+                    const passesNormalCount = self.matchAndPassFilter(self.currentSomaticLogic['normalAltCountCutoff'], currFeat.genotypeAltCount, self.currentSomaticCutoffs['normalAltCountCutoff']);
+                    const passesNormalAf = self.matchAndPassFilter(self.currentSomaticLogic['normalAfCutoff'], currNormAf, self.currentSomaticCutoffs['normalAfCutoff']);
+                    if (currFeat.id != null && idLookup[currFeat.id] == null && passesNormalCount && passesNormalAf) {
                         idLookup[currFeat.id] = true;
                     }
                 }
@@ -217,11 +247,11 @@ class FilterModel {
                 let tumorFeatures = currTumor.features;
 
                 let filteredTumorFeatures = null;
-                if (initQualCriteria) {
+                if (initFiltering) {
                   filteredTumorFeatures = tumorFeatures.filter((feature) => {
                       // If calling for the first time, use initial criteria
-                      let passQual = feature.qual >= initQualCriteria.qualScoreCutoff || feature.qual === '.';
-                      return passQual && feature.genotypeDepth >= initQualCriteria.totalCountCutoff;
+                      let passQual = feature.qual >= self.DEFAULT_QUALITY_FILTERING_CRITERIA.qualScoreCutoff || feature.qual === '.';
+                      return passQual && feature.genotypeDepth >= self.DEFAULT_QUALITY_FILTERING_CRITERIA.totalCountCutoff;
                   });
                 } else {
                     // Don't need to look at tumor features that don't pass other filters
@@ -232,13 +262,44 @@ class FilterModel {
 
                 filteredTumorFeatures.forEach((feature) => {
                     let currAltFreq = Math.round(feature.genotypeAltCount / feature.genotypeDepth * 100) / 100;
-                    if (idLookup[feature.id] == null && currAltFreq >= somaticCriteria.tumorAfCutoff
-                        && feature.genotypeAltCount >= somaticCriteria.tumorAltCountCutoff) {
+                    const passesTumorCount = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltCountCutoff'], feature.genotypeAltCount, self.currentSomaticCutoffs['tumorAltCountCutoff']);
+                    const passesTumorAf = self.matchAndPassFilter(self.currentSomaticLogic['tumorAfCutoff'], currAltFreq, self.currentSomaticCutoffs['tumorAfCutoff']);
+                    if (idLookup[feature.id] == null && passesTumorAf && passesTumorCount) {
                         feature.isInherited = false;
                     }
                 })
             }
         }
+    }
+
+    matchAndPassFilter(logic, varVal, cutoffVal) {
+      let passesFilter = false;
+      switch(logic) {
+          case '<': {
+            passesFilter = varVal < cutoffVal;
+            break;
+          }
+          case '<=': {
+              passesFilter = varVal <= cutoffVal;
+              break;
+          }
+          case '=': {
+              passesFilter = varVal === cutoffVal;
+              break;
+          }
+          case '>=': {
+              passesFilter = varVal >= cutoffVal;
+              break;
+          }
+          case '>': {
+              passesFilter = varVal > cutoffVal;
+              break;
+          }
+          default: {
+            break;
+          }
+      }
+      return passesFilter;
     }
 
   getFilterObject() {
