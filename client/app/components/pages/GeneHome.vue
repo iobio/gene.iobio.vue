@@ -94,6 +94,7 @@
                 :selectedGeneName="selectedGene.gene_name"
                 :selectedChr="selectedGene.chr"
                 :selectedBuild="genomeBuildHelper.getCurrentSpeciesName() + ' ' + genomeBuildHelper.getCurrentBuildName()"
+                :initializeFilters="initializeFilters"
                 @update-samples="onUpdateSamples"
                 @input="onGeneNameEntered"
                 @load-demo-data="onLoadDemoData"
@@ -519,8 +520,9 @@
 
                 forceLocalStorage: null,
                 showVarViz: true,
-                workingOffline: false,        // If working offline and want to style things
-                annotationComplete: false
+                workingOffline: false,        // If working offline and want to style things TODO: get rid of this SJG
+                annotationComplete: false,
+                initializeFilters: false
             }
         },
 
@@ -1159,6 +1161,7 @@
                                             .then(function () {
                                                 self.clearZoom = false;
                                                 self.showVarViz = true;
+                                                self.initializeFilters = true;
                                                 resolve();
                                             })
                                             .catch(function (err) {
@@ -2213,28 +2216,45 @@
                 self.models.pop();
             },
             onVariantFilterSettingsApplied: function (filterInfo) {
-                let self = this;
-                let selectedVarId = null;
-                if (self.selectedVariant) {
-                    selectedVarId = self.selectedVariant.id;
-                }
+                const self = this;
+                const somaticFilterList = {
+                    'tumorAltFreq': true,
+                    'tumorAltCount': true,
+                    'normalAltFreq': true,
+                    'normalAltCount': true
+                };
 
-                // TODO: if this is a somatic or quality filter, we need to re-annotate those characteristics and re-render the track to update the classes
-                // TODO: or we can put the metrics by which the filtering happens on the track but will this bloat up the DOM too much?
-                // TODO: we also need to update the feature matrix somehow - gray out instead of removing?
+                if (!somaticFilterList[filterInfo.name]) {
+                    let selectedVarId = null;
+                    if (self.selectedVariant) {
+                        selectedVarId = self.selectedVariant.id;
+                    }
+                    // TODO: we also need to update the feature matrix somehow - gray out instead of removing?
 
-                // Apply tumor only filters to tumor tracks only
-                if (self.$refs.variantCardRef && filterInfo.tumorOnly) {
-                    self.$refs.variantCardRef.forEach((cardRef) => {
-                        if (cardRef.sampleModel.isTumor === true) {
+                    // Apply tumor only filters to tumor tracks only
+                    if (self.$refs.variantCardRef && filterInfo.tumorOnly) {
+                        self.$refs.variantCardRef.forEach((cardRef) => {
+                            if (cardRef.sampleModel.isTumor === true) {
+                                cardRef.filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
+                            }
+                        });
+                        // Otherwise apply to all tracks
+                    } else if (self.$refs.variantCardRef) {
+                        self.$refs.variantCardRef.forEach((cardRef) => {
                             cardRef.filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
-                        }
-                    });
-                // Otherwise apply to all tracks
-                } else if (self.$refs.variantCardRef) {
-                    self.$refs.variantCardRef.forEach((cardRef) => {
-                        cardRef.filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
-                    });
+                        });
+                    }
+                } else {
+                    const somaticCriteria = {
+                        'normalAfCutoff': filterInfo['normalAltFreq'],      // Must be between 0-1
+                        'normalAltCountCutoff': filterInfo['normalAltCount'],
+                        'tumorAfCutoff': filterInfo['tumorAltFreq'],       // Must be between 0-1
+                        'tumorAltCountCutoff': filterInfo['tumorAltCount']
+                    };
+                    self.filterModel.annotateVariantInheritance(self.cohortModel.sampleMap, somaticCriteria);
+                    // self.$refs.variantCardRef.forEach((cardRef) => {
+                    //     cardRef.updateTrack();
+                    // });
                 }
             },
         }

@@ -131,6 +131,10 @@
             initValue: {
                 default: 0,
                 type: Number
+            },
+            initializeFilters: {
+                default: false,
+                type: Boolean
             }
         },
         data() {
@@ -144,9 +148,6 @@
                 ],
                 filterLogic: null,
                 cutoffValue: null,
-                readyToApply: false,
-                isRawPVal: false,
-                filterButtonColor: '#d18e00',
                 disableLogicDropdown: false,
 
                 // List of filter names that require conversion b/w frequency and percentage
@@ -160,6 +161,13 @@
             cutoffValue: function(newVal, oldVal) {
                 const self = this;
                 if (newVal !== oldVal && oldVal != null) {
+                    self.onSliderMoved();
+                }
+            },
+            initializeFilters: function() {
+                // Used to initialize filters on app load after variants annotated
+                const self = this;
+                if (self.initializeFilters === true) {
                     self.onSliderMoved();
                 }
             }
@@ -178,8 +186,9 @@
             },
             onSliderLogicChanged: function() {
                 const self = this;
-                self.$emit('filter-slider-changed', self.filterName, self.filterLogic.text, self.getAdjustedCutoff(self.cutoffValue, self.filterName), self.parentFilterName)
+                self.$emit('filter-slider-changed', self.filterName, self.filterLogic.text, self.getAdjustedCutoff(self.cutoffValue, self.filterName), self.parentFilterName);
             },
+            /* If we're dealing with a percentage, turn it back to a frequency. */
             getAdjustedCutoff: function(cutoffValue, filterName) {
                 const self = this;
                 if (self.filtersNeedAdjusting[filterName]) {

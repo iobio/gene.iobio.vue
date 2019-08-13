@@ -172,122 +172,49 @@ export default function variantD3() {
                     let filterName = cutoff[0];
                     let filterLogic = cutoff[1];
                     let filterCutoffVal = parseFloat(cutoff[2]);
-                    let varVal = 0;
+                    let varVal = getVarValue(filterName, d);
+                    let passesFilter = true;
 
-                    // TODO: remove or replace proband, subset, p-value freq filtering as necessary
+                    // Special exception for when we have '.' in a field we're trying to filter on
+
+
                     switch (filterLogic) {
                         case '<':
-                            if (filterName === 'probandFreq') {
-                                let numMutantAlleles = d.probandZygCounts[1] + (2 * d.probandZygCounts[2]);
-                                let totalAlleleCount = d.totalProbandCount * 2;
-                                varVal = numMutantAlleles / totalAlleleCount * 100;
-                            } else if (filterName === 'subsetFreq') {
-                                let numMutantAlleles = d.subsetZygCounts[1] + (2 * d.subsetZygCounts[2]);
-                                let totalAlleleCount = d.totalSubsetCount * 2;
-                                varVal = numMutantAlleles / totalAlleleCount * 100;
-                            } else if (!(filterName === 'pVal' || filterName === 'adjustedLevel')) {
-                                varVal = Math.round(d[filterName] * 100);
-                            } else {
-                                varVal = d[filterName] * 100 / 100;
-                            }
-
                             if (!(varVal < filterCutoffVal)) {
-                                let selectionId = '#' + d.id;
-                                let domD = svgContainer.selectAll(selectionId);
-                                domD.classed({'filtered': false});
-                                domD.style('pointer-events', 'none');
+                                passesFilter = false;
                             }
                             break;
                         case '<=':
-                            if (filterName === 'probandFreq') {
-                                let numMutantAlleles = d.probandZygCounts[1] + (2 * d.probandZygCounts[2]);
-                                let totalAlleleCount = d.totalProbandCount * 2;
-                                varVal = numMutantAlleles / totalAlleleCount * 100;
-                            } else if (filterName === 'subsetFreq') {
-                                let numMutantAlleles = d.subsetZygCounts[1] + (2 * d.subsetZygCounts[2]);
-                                let totalAlleleCount = d.totalSubsetCount * 2;
-                                varVal = numMutantAlleles / totalAlleleCount * 100;
-                            } else if (!(filterName === 'pVal' || filterName === 'adjustedLevel')) {
-                                varVal = Math.round(d[filterName] * 100);
-                            } else {
-                                varVal = d[filterName] * 100 / 100;
-                            }
-
                             if (!(varVal <= filterCutoffVal)) {
-                                let selectionId = '#' + d.id;
-                                let domD = svgContainer.selectAll(selectionId);
-                                domD.classed({'filtered': false});
-                                domD.style('pointer-events', 'none');
+                                passesFilter = false;
                             }
                             break;
                         case '=':
-                            if (filterName === 'probandFreq') {
-                                let numMutantAlleles = d.probandZygCounts[1] + (2 * d.probandZygCounts[2]);
-                                let totalAlleleCount = d.totalProbandCount * 2;
-                                varVal = numMutantAlleles / totalAlleleCount * 100;
-                            } else if (filterName === 'subsetFreq') {
-                                let numMutantAlleles = d.subsetZygCounts[1] + (2 * d.subsetZygCounts[2]);
-                                let totalAlleleCount = d.totalSubsetCount * 2;
-                                varVal = numMutantAlleles / totalAlleleCount * 100;
-                            } else if (!(filterName === 'pVal' || filterName === 'adjustedLevel')) {
-                                varVal = Math.round(d[filterName] * 100);
-                            } else {
-                                varVal = d[filterName] * 100 / 100;
-                            }
-
                             if (!(varVal === filterCutoffVal)) {
-                                let selectionId = '#' + d.id;
-                                let domD = svgContainer.selectAll(selectionId);
-                                domD.classed({'filtered': false});
-                                domD.style('pointer-events', 'none');
+                                passesFilter = false;
                             }
                             break;
                         case '>=':
-                            if (filterName === 'probandFreq') {
-                                let numMutantAlleles = d.probandZygCounts[1] + (2 * d.probandZygCounts[2]);
-                                let totalAlleleCount = d.totalProbandCount * 2;
-                                varVal = numMutantAlleles / totalAlleleCount * 100;
-                            } else if (filterName === 'subsetFreq') {
-                                let numMutantAlleles = d.subsetZygCounts[1] + (2 * d.subsetZygCounts[2]);
-                                let totalAlleleCount = d.totalSubsetCount * 2;
-                                varVal = numMutantAlleles / totalAlleleCount * 100;
-                            } else if (!(filterName === 'pVal' || filterName === 'adjustedLevel')) {
-                                varVal = Math.round(d[filterName] * 100);
-                            } else {
-                                varVal = d[filterName] * 100 / 100;
-                            }
-
                             if (!(varVal >= filterCutoffVal)) {
-                                let selectionId = '#' + d.id;
-                                let domD = svgContainer.selectAll(selectionId);
-                                domD.classed({'filtered': false});
-                                domD.style('pointer-events', 'none');
+                                passesFilter = false;
                             }
                             break;
                         case '>':
-                            if (filterName === 'probandFreq') {
-                                let numMutantAlleles = d.probandZygCounts[1] + (2 * d.probandZygCounts[2]);
-                                let totalAlleleCount = d.totalProbandCount * 2;
-                                varVal = numMutantAlleles / totalAlleleCount * 100;
-                            } else if (filterName === 'subsetFreq') {
-                                let numMutantAlleles = d.subsetZygCounts[1] + (2 * d.subsetZygCounts[2]);
-                                let totalAlleleCount = d.totalSubsetCount * 2;
-                                varVal = numMutantAlleles / totalAlleleCount * 100;
-                            } else if (!(filterName === 'pVal' || filterName === 'adjustedLevel')) {
-                                varVal = d[filterName] * 100;
-                            } else {
-                                varVal = d[filterName] * 100 / 100;
-                            }
-
                             if (!(varVal > filterCutoffVal)) {
-                                let selectionId = '#' + d.id;
-                                let domD = svgContainer.selectAll(selectionId);
-                                domD.classed({'filtered': false});
-                                domD.style('pointer-events', 'none');
+                                passesFilter = false;
                             }
                             break;
                         default:
                         // Do nothing
+                    }
+                    // Do actual hiding
+                    if (!passesFilter) {
+                        d.passesFilters = false;
+
+                        let selectionId = '#' + d.id;
+                        let domD = svgContainer.selectAll(selectionId);
+                        domD.classed({'filtered': false});
+                        domD.style('pointer-events', 'none');
                     }
                 })
             });
@@ -306,11 +233,21 @@ export default function variantD3() {
         filteredVars.style("opacity", 1)
             .style("pointer-events", "auto");
 
+
         if (filteredVars && filteredVars[0]) {
             return filteredVars[0].length === 0;
         } else {
             return false;
         }
+    };
+
+    /* Returns the value of the variant.
+     * As more filters are added, they can be listed here.  */
+    var getVarValue = function(filterName, d) {
+        let varVal = 0;
+        // Note: if we need custom filterName logic, can add here
+        varVal = d[filterName];
+        return varVal;
     };
 
     /* Returns true if selected variant passes filter and is visible. */
@@ -575,6 +512,9 @@ export default function variantD3() {
                     .attr('class', function (d) {
                         return chart.clazz()(d);
                     })
+                    .attr('id', function (d) {
+                        return d.id;
+                    })
                     .attr('rx', borderRadius)
                     .attr('ry', borderRadius)
                     .attr('x', function (d) {
@@ -607,6 +547,9 @@ export default function variantD3() {
                     })
                     .attr('class', function (d) {
                         return chart.clazz()(d);
+                    })
+                    .attr('id', function (d) {
+                        return d.id;
                     })
                     .attr("transform", function (d) {
                         var xCoord = x(d.start) + 2;
@@ -984,11 +927,6 @@ export default function variantD3() {
     chart.hideCircle = function (_) {
         if (!arguments.length) return hideCircle;
         hideCircle = _;
-        return chart;
-    };
-    chart.highlightVariant = function (_) {
-        if (!arguments.length) return highlightVariant;
-        highlightVariant = _;
         return chart;
     };
     chart.filterVariants = function (_) {

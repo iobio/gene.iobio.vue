@@ -261,15 +261,15 @@
 
                 // Set chip indicators
                 let filterLabel = '';
-                // Turning checkbox ON
+
                 if (filterInfo.type === 'checkbox' && filterInfo.state === false) {
+                    // Turning checkbox ON
                     filterLabel = 'No ' + filterInfo.displayName;
                     // if (filterInfo.state === false) {
                     let filterObj = {name: filterInfo.name, filterLabel: filterLabel};
                     self.filterChips.push(filterObj);
-
+                } else if ((filterInfo.type === 'cutoff' && filterInfo.turnOff === false) || filterInfo.type === 'slider') {
                     // Turning cutoff ON
-                } else if (filterInfo.type === 'cutoff' && filterInfo.turnOff === false) {
                     filterLabel = filterInfo.displayName + ' ' + filterInfo.state + ' ' + filterInfo.cutoffValue;
 
                     // Replace label if this filter already active at different value
@@ -279,13 +279,13 @@
                     if (matchingFilters && matchingFilters[0]) {
                         matchingFilters[0].filterLabel = filterLabel;
 
-                        // Otherwise add fresh
+                    // Otherwise add fresh
                     } else {
                         let filterObj = {name: filterInfo.name, filterLabel: filterLabel};
                         self.filterChips.push(filterObj);
                     }
-                    // Turning either type OFF
                 } else {
+                    // Turning any type OFF
                     self.filterChips = self.filterChips.filter((obj) => {
                         return obj.name !== filterInfo.name;
                     })
@@ -319,8 +319,8 @@
                             self.$emit("variantClick", null, null);
                         }
                     }
-                // Apply cutoff filter
-                } else if (filterInfo.state != null && filterInfo.type === 'cutoff') {
+                // Apply cutoff or slider filter
+                } else if (filterInfo.state != null && (filterInfo.type === 'cutoff' || filterInfo.type === 'slider')) {
 
                     // Remove any previous logic for this filter
                     if (self.cutoffFilters[filterInfo.name]) {
@@ -333,8 +333,9 @@
                     // Hide variants that do not meet given condition
                     noPassingVars = self.variantChart.filterVariants()(self.excludeFilters, self.cutoffFilters, svg);
 
-                    // Remove cutoff filter
                 } else {
+                    // Remove cutoff or slider filter
+
                     // Remove from list
                     delete self.cutoffFilters[filterInfo.name];
 

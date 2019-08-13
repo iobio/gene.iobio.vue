@@ -212,6 +212,7 @@
                                     :annotationComplete="annotationComplete"
                                     :somaticFilterSettings="somaticFilterSettings"
                                     :qualityFilterSettings="qualityFilterSettings"
+                                    :initializeFilters="initializeFilters"
                                     @filter-box-toggled="filterBoxToggled"
                                     @filter-slider-moved="filterSliderMoved"
                                     @filter-cutoff-applied="filterCutoffApplied"
@@ -518,6 +519,7 @@
             selectedGeneName: "",
             selectedChr: "",
             selectedBuild: '',
+            initializeFilters: false
             // interpretationMap: null
         },
         data() {
@@ -689,7 +691,7 @@
             },
             filterCutoffApplied: function(filterName, filterLogic, cutoffValue, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
                 let self = this;
-                let translatedFilterName = self.variantModel.translator.getTranslatedFilterName(filterName);
+                let translatedFilterName = self.cohortModel.translator.getTranslatedFilterName(filterName);
                 let filterInfo = {
                     name: translatedFilterName,
                     displayName: filterDisplayName,
@@ -705,7 +707,7 @@
             },
             filterCutoffCleared: function(filterName, cohortOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
                 let self = this;
-                let translatedFilterName = self.variantModel.translator.getTranslatedFilterName(filterName);
+                let translatedFilterName = self.cohortModel.translator.getTranslatedFilterName(filterName);
                 let filterInfo = {
                     name: translatedFilterName,
                     displayName: filterDisplayName,
@@ -754,17 +756,17 @@
                 return {
                     // Note: have to translate frequencies to percentages here to accommodate
                     // slider component ambivalence for non-percentage values
-                    'tumorAltFreq': self.cohortModel.tumorAfCutoff * 100,
-                    'tumorAltCount': self.cohortModel.tumorAltCountCutoff,
-                    'normalAltFreq': self.cohortModel.normalAfCutoff * 100,
-                    'normalAltCount': self.cohortModel.normalAltCountCutoff
+                    'tumorAltFreq': self.cohortModel.initSomaticCriteria.tumorAfCutoff * 100,
+                    'tumorAltCount': self.cohortModel.initSomaticCriteria.tumorAltCountCutoff,
+                    'normalAltFreq': self.cohortModel.initSomaticCriteria.normalAfCutoff * 100,
+                    'normalAltCount': self.cohortModel.initSomaticCriteria.normalAltCountCutoff
                 };
             },
             qualityFilterSettings: function() {
                 const self = this;
                 return {
-                    'totalObserves': self.cohortModel.totalCountCutoff,
-                    'qualScore': self.cohortModel.qualScoreCutoff
+                    'genotypeDepth': self.cohortModel.initQualityCriteria.totalCountCutoff,
+                    'qual': self.cohortModel.initQualityCriteria.qualScoreCutoff
                 };
             }
         }

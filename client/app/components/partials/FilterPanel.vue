@@ -52,6 +52,7 @@
                                 :sliderDisplaySuffix="category.labelSuffix"
                                 :initLogic="category.initLogic"
                                 :initValue="category.initVal"
+                                :initializeFilters="initializeFilters"
                                 @filter-slider-changed="onSliderFilterChanged">
                         </filter-panel-slider>
                         <filter-panel-cutoff
@@ -88,7 +89,8 @@
             idx: null,
             annotationComplete: false,
             somaticFilterSettings: null,
-            qualityFilterSettings: null
+            qualityFilterSettings: null,
+            initializeFilters: false
         },
         data() {
             return {
@@ -102,6 +104,7 @@
                 selectedConsequences: null,
                 minGenotypeDepth: null,
                 categories: {
+                    // Note: if filter names match variant object field names, don't have to manually add filter to getVarValue in Variant.d3 class
                     'annotation': [
                         {name: 'impact', display: 'Impact', active: false, open: false, type: 'checkbox', tumorOnly: false},
                         {name: 'type', display: 'Type', active: false, open: false, type: 'checkbox', tumorOnly: false}],
@@ -120,10 +123,10 @@
                         {name: 'exac', display: 'ExAC', active: false, open: false, type: 'cutoff', tumorOnly: false},
                         {name: 'gnomad', display: 'gnomAD', active: false, open: false, type: 'cutoff', tumorOnly: false}],
                     'quality': [
-                        {name: 'totalObserves', display: 'Total Observations', active: true, open: false, type: 'slider', tumorOnly: false, 
-                            minValue: 0, maxValue: 100, labelSuffix: '', initLogic: '>=', initVal: this.qualityFilterSettings['totalObserves']},
-                        {name: 'qualScore', display: 'Quality Score', active: true, open: false, type: 'slider', tumorOnly: false, 
-                            minValue: 0, maxValue: 500, labelSuffix: '', initLogic: '>=', initVal: this.qualityFilterSettings['qualScore']}]
+                        {name: 'genotypeDepth', display: 'Total Observations', active: true, open: false, type: 'slider', tumorOnly: false,
+                            minValue: 0, maxValue: 100, labelSuffix: '', initLogic: '>=', initVal: this.qualityFilterSettings['genotypeDepth']},
+                        {name: 'qual', display: 'Quality Score', active: true, open: false, type: 'slider', tumorOnly: false,
+                            minValue: 0, maxValue: 500, labelSuffix: '', initLogic: '>=', initVal: this.qualityFilterSettings['qual']}]
                 }
             }
         },

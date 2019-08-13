@@ -39,16 +39,20 @@ class CohortModel {
         this.maxDepth = 0;
         this.annotationComplete = false;        // True when all tracks have finished annotation
 
-        // Somatic filtering criteria
-        this.normalAfCutoff = 0.01;              // Must be between 0-1
-        this.normalAltCountCutoff = 2;
-        this.tumorAfCutoff = 0.10;               // Must be between 0-1
-        this.tumorAltCountCutoff = 8;
-        this.totalCountCutoff = 15;
-        this.qualScoreCutoff = 20;
-
         this.inProgress = {
             'loadingDataSources': false
+        };
+
+        // Somatic calling criteria
+        this.initSomaticCriteria = {
+            'normalAfCutoff': 0.01,      // Must be between 0-1
+            'normalAltCountCutoff': 2,
+            'tumorAfCutoff': 0.10,       // Must be between 0-1
+            'tumorAltCountCutoff': 8
+        };
+        this.initQualityCriteria = {
+            'totalCountCutoff': 15,
+            'qualScoreCutoff': 20
         };
 
         this.genesInProgress = [];
@@ -836,8 +840,8 @@ class CohortModel {
                            currModel.markEntryDataChanged(false);
                         });
 
-                        // Need to do this before we populate feature matrix
-                        self._annotateVariantInheritance(self.sampleMap);
+                        // Call somatic variants
+                        self.filterModel.annotateVariantInheritance(self.sampleMap, self.initSomaticCriteria, self.initQualityCriteria);
 
                         // Now summarize the danger for the selected gene
                         self.promiseSummarizeDanger(theGene, theTranscript, resultMap.s0, null)
@@ -1248,67 +1252,6 @@ class CohortModel {
                         });
                 });
         })
-    }
-
-    /* Marks variants that are 'inherited' from all samples for which isTumor = false. */
-    _annotateVariantInheritance(resultMap) {
-        let self = this;
-        let normalSamples = [];
-        let tumorSamples = [];
-        let tumorSampleModelIds = [];
-
-        // Classify samples
-        for (let i = 0; i < Object.keys(resultMap).length; i++) {
-            let sampleId = Object.keys(resultMap)[i];
-            let currData = $.extend({}, Object.values(resultMap)[i].model.vcfData);
-            if (!self.sampleMap[sampleId].isTumor && sampleId !== 'known-variants' && sampleId !== 'cosmic-variants') {
-                normalSamples.push(currData);
-            } else if (sampleId !== 'known-variants' && sampleId !== 'cosmic-variants') {
-                tumorSamples.push(currData);
-                tumorSampleModelIds.push(sampleId);
-            }
-        }
-
-        // Make normal variant hash table
-        let idLookup = {};
-        normalSamples.forEach((currNorm) => {
-            if (currNorm && currNorm.features.length > 0) {
-                let normFeatures = currNorm.features;
-                let filteredNormFeatures = normFeatures.filter((feature) => {
-                    // TODO: take out qual and total counts from here
-                    if (feature.qual)
-                    return feature.qual >= self.qualScoreCutoff && feature.genotypeDepth >= self.totalCountCutoff;
-                });
-                for (let i = 0; i < filteredNormFeatures.length; i++) {
-                    let currFeat = filteredNormFeatures[i];
-                    let currAltFreq = Math.round(currFeat.genotypeAltCount / currFeat.genotypeDepth * 100) / 100;
-                    if (currFeat.id != null && idLookup[currFeat.id] == null
-                            && currFeat.genotypeAltCount >= self.normalAltCountCutoff
-                            && currAltFreq >= self.normalAfCutoff) {
-                        idLookup[currFeat.id] = true;
-                    }
-                }
-            }
-        });
-
-        // Mark somatic variants
-        for (let i = 0; i < tumorSamples.length; i++) {
-            let currTumor = tumorSamples[i];
-            if (currTumor.features && currTumor.features.length > 0) {
-                let tumorFeatures = currTumor.features;
-                let filteredTumorFeatures = tumorFeatures.filter((feature) => {
-                    return feature.qual >= self.qualScoreCutoff && feature.genotypeDepth >= self.totalCountCutoff;
-                });
-
-                filteredTumorFeatures.forEach((feature) => {
-                    let currAltFreq = Math.round(feature.genotypeAltCount / feature.genotypeDepth * 100) / 100;
-                    if (idLookup[feature.id] == null && currAltFreq >= self.tumorAfCutoff
-                            && feature.genotypeAltCount >= self.tumorAltCountCutoff) {
-                        feature.isInherited = false;
-                    }
-                })
-            }
-        }
     }
 
     /* Assigns bool to each variant telling if in COSMIC or not.

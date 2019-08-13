@@ -149,15 +149,97 @@ class FilterModel {
         minGenotypeDepth: null,
         exclusiveOf:  null
       }
-    }
+    };
 
 
     this.modelFilters = {
       'known-variants': {
         'clinvar': []
       }
-    }
+    };
   }
+
+    /* Marks variants that are 'inherited' from all samples for which isTumor = false. */
+    annotateVariantInheritance(resultMap, somaticCriteria, initQualCriteria) {
+        let normalSamples = [];
+        let tumorSamples = [];
+        let tumorSampleModelIds = [];
+
+        // Classify samples
+        for (let i = 0; i < Object.keys(resultMap).length; i++) {
+            let sampleId = Object.keys(resultMap)[i];
+            let currData = $.extend({}, Object.values(resultMap)[i].model.vcfData);
+            if (!(resultMap[sampleId].isTumor) && sampleId !== 'known-variants' && sampleId !== 'cosmic-variants') {
+                normalSamples.push(currData);
+            } else if (sampleId !== 'known-variants' && sampleId !== 'cosmic-variants') {
+                tumorSamples.push(currData);
+                tumorSampleModelIds.push(sampleId);
+            }
+        }
+
+        // Make normal variant hash table
+        let idLookup = {};
+        normalSamples.forEach((currNorm) => {
+            if (currNorm && currNorm.features.length > 0) {
+                let normFeatures = currNorm.features;
+
+                let filteredNormFeatures = null;
+                if (initQualCriteria) {
+                    // We only want to call something somatic if its normal counterpart passes init quality/somatic cutoffs
+                    filteredNormFeatures = normFeatures.filter((feature) => {
+                      let passQual = feature.qual >= initQualCriteria.qualScoreCutoff || feature.qual === '.';
+                      return passQual && feature.genotypeDepth >= initQualCriteria.totalCountCutoff;
+                    });
+                } else {
+                    // We only want to call something somatic if its normal counterpart is visible
+                    filteredNormFeatures = normFeatures.filter((feature) => {
+                        return feature.passesFilters === true;
+                    });
+                }
+
+                // Populate lookup
+                for (let i = 0; i < filteredNormFeatures.length; i++) {
+                    let currFeat = filteredNormFeatures[i];
+                    let currNormAf = Math.round(currFeat.genotypeAltCount / currFeat.genotypeDepth * 100) / 100;
+                    if (currFeat.id != null && idLookup[currFeat.id] == null
+                        && currFeat.genotypeAltCount >= somaticCriteria.normalAltCountCutoff
+                        && currNormAf >= somaticCriteria.normalAfCutoff) {
+                        idLookup[currFeat.id] = true;
+                    }
+                }
+            }
+        });
+
+        // Mark somatic variants
+        for (let i = 0; i < tumorSamples.length; i++) {
+            let currTumor = tumorSamples[i];
+            if (currTumor.features && currTumor.features.length > 0) {
+                let tumorFeatures = currTumor.features;
+
+                let filteredTumorFeatures = null;
+                if (initQualCriteria) {
+                  filteredTumorFeatures = tumorFeatures.filter((feature) => {
+                      // If calling for the first time, use initial criteria
+                      let passQual = feature.qual >= initQualCriteria.qualScoreCutoff || feature.qual === '.';
+                      return passQual && feature.genotypeDepth >= initQualCriteria.totalCountCutoff;
+                  });
+                } else {
+                    // Don't need to look at tumor features that don't pass other filters
+                    filteredTumorFeatures = tumorFeatures.filter((feature) => {
+                        return feature.passesFilters === true;
+                    });
+                }
+
+                filteredTumorFeatures.forEach((feature) => {
+                    let currAltFreq = Math.round(feature.genotypeAltCount / feature.genotypeDepth * 100) / 100;
+                    if (idLookup[feature.id] == null && currAltFreq >= somaticCriteria.tumorAfCutoff
+                        && feature.genotypeAltCount >= somaticCriteria.tumorAltCountCutoff) {
+                        feature.isInherited = false;
+                    }
+                })
+            }
+        }
+    }
 
   getFilterObject() {
     let self = this;

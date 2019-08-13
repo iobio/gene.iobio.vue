@@ -2768,11 +2768,10 @@ class SampleModel {
 
         var impacts = "";
         var colorimpacts = "";
-        var borderColor = "";    // TODO: Attempted to use for somatic track coloring, can be used for something else or remove
         var effects = "";
-        var sift = "";
-        var polyphen = "";
-        var regulatory = "";
+        // var sift = "";
+        // var polyphen = "";
+        // var regulatory = "";
 
         var effectList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.effect : d.vepConsequence);
         for (var key in effectList) {
@@ -2791,32 +2790,34 @@ class SampleModel {
             impacts += " " + key;
         }
 
-
-        if (d.isInherited && inTumorTrack && !inKnownTrack) {
-            colorimpacts += " " + 'impact_INHERITED';
-        } else if (inTumorTrack && !inKnownTrack) {
-            colorimpacts += " " + "impact_SOMATIC";
-        } else {
-            var colorImpactList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.impact : d[self.globalApp.impactFieldToColor]);
-            for (var key in colorImpactList) {
-                colorimpacts += " " + 'impact_' + key;
+        // TODO: cleanup
+        // if (d.isInherited && inTumorTrack && !inKnownTrack) {
+        //     colorimpacts += " " + 'impact_INHERITED';
+        // } else if (inTumorTrack && !inKnownTrack) {
+        //     colorimpacts += " " + "impact_SOMATIC";
+        // } else {
+        var colorImpactList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.impact : d[self.globalApp.impactFieldToColor]);
+        for (var key in colorImpactList) {
+            colorimpacts += " " + 'impact_' + key;
             }
-        }
+        //}
 
         if (colorimpacts === "") {
             colorimpacts = "impact_none";
         }
-        for (var key in d.sift) {
-            sift += " " + key;
-        }
-        for (var key in d.polyphen) {
-            polyphen += " " + key;
-        }
-        for (var key in d.regulatory) {
-            regulatory += " " + key;
-        }
 
-        return 'variant ' + d.type.toLowerCase() + ' ' + d.zygosity.toLowerCase() + ' ' + (d.inheritance ? d.inheritance.toLowerCase() : "") + ' ua_' + d.ua + ' ' + sift + ' ' + polyphen + ' ' + regulatory + ' ' + +' ' + d.clinvar + ' ' + impacts + ' ' + effects + ' ' + d.consensus + ' ' + colorimpacts + ' ' + borderColor;
+        // Taking out as of 08/19
+        // for (var key in d.sift) {
+        //     sift += " " + key;
+        // }
+        // for (var key in d.polyphen) {
+        //     polyphen += " " + key;
+        // }
+        // for (var key in d.regulatory) {
+        //     regulatory += " " + key;
+        // }
+
+        return 'variant ' + d.type.toLowerCase() + ' ' + d.zygosity.toLowerCase() + ' ' + (d.inheritance ? d.inheritance.toLowerCase() : "") + ' ' + d.clinvar + ' ' + impacts + ' ' + effects + ' ' + d.consensus + ' ' + colorimpacts;
     }
     promiseCompareVariants(theVcfData, compareAttribute, matchAttribute, matchFunction, noMatchFunction) {
         var me = this;

@@ -1545,7 +1545,7 @@ var effectCategories = [
                                     'strand': geneObject.strand,
                                     'chrom': refName,
                                     'type': annot.typeAnnotated && annot.typeAnnotated !== '' ? annot.typeAnnotated : type,
-                                    'id': (rec.pos + '.' + trimmedChromName + '.' + cssFormattedStrand + '.' + rec.ref + '.' + cssFormattedAlt),  // key = start.chromosome.strand.ref.alt NOTE: have to use alt instead of rec.alt b/c rec.alt is comma-delim combined of all alts
+                                    'id': ('var_' + rec.pos + '_' + trimmedChromName + '_' + cssFormattedStrand + '_' + rec.ref + '_' + cssFormattedAlt),  // key = start.chromosome.strand.ref.alt NOTE: have to use alt instead of rec.alt b/c rec.alt is comma-delim combined of all alts
                                     'ref': rec.ref,
                                     'alt': alt,
                                     'qual': rec.qual,
@@ -1619,6 +1619,7 @@ var effectCategories = [
                                     'highestPolyphen': highestPolyphen,
                                     'highestREVEL': highestREVEL,
                                     'isInherited': true,
+                                    'passesFilters': true,            // Used for somatic calling when other filters applied
                                     'inCosmic': false,
                                     'sampleModelId': sampleModelId   // Used for feature matrix tracking
                                 };

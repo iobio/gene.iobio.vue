@@ -123,6 +123,15 @@ export default class Translator {
                          {min: +.05,   max: +1,        value: +7,  badge: false,clazz: '',    symbolFunction: ''},
                         ];
 
+      this.filterNameMap = {
+          'pValue': 'pVal',
+          'adjPVal': 'adjustedLevel',
+          'g1000': 'af1000G',
+          'exac': 'afExAC',
+          'gnomad': 'afgnomAD',
+          'probandFreq': 'probandFreq',
+          'subsetFreq': 'subsetFreq'
+      }
   }
 
   getInheritanceLabel(inheritance) {
@@ -145,7 +154,11 @@ export default class Translator {
       options.self.glyph.showImpactSymbol(selection, options);
     }
   }
-
+    getTranslatedFilterName(filterName) {
+        let map = this.filterNameMap;
+        let translatedName = map[filterName];
+        return translatedName == null ? filterName : translatedName;
+    }
 
 }
 

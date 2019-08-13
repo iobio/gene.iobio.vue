@@ -731,8 +731,8 @@
                 this.$emit('gene-region-zoom-reset');
             },
             // NOTE: this only refreshes loaded variant tracks for now
-            redrawTrack: function () {
-                this.$refs.variantVizRef.draw();
+            updateTrack: function () {
+                this.$refs.variantVizRef.update();
             },
             toggleZoom: function() {
                 let self = this;
