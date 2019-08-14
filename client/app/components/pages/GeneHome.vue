@@ -204,7 +204,7 @@
                                         :key="'varFreqTab'"
                                         :id="'var-freq-tab'">
                                 <variant-frequency-card
-                                    v-if="cohortModel && cohortModel.varAfLinks"
+                                    v-if="cohortModel && cohortModel.varAfLinks && cohortModel.allUniqueFeaturesObj"
                                     style="min-width:300px"
                                     ref="varFreqCardRef"
                                     :width="cardWidth"
@@ -2257,10 +2257,19 @@
                 }
 
                 // Regardless of what filter applied, we need to re-annotate somatic variants (b/c respective normal may be hidden!)
-                self.filterModel.annotateVariantInheritance(self.cohortModel.sampleMap, false);
-                self.cohortModel.setLoadedVariants(self.selectedGene);
-                // TODO: we also need to update the feature matrix somehow - gray out instead of removing?
+                self.filterModel.annotateVariantInheritance(self.cohortModel.sampleMap);
 
+                // Draw feature matrix after somatic field filled
+                self.featureMatrixModel.promiseRankVariants(self.cohortModel.allUniqueFeaturesObj);
+
+                // Then we need to update coloring for tumor tracks only
+                if (self.$refs.variantCardRef) {
+                    self.$refs.variantCardRef.forEach((cardRef) => {
+                        if (cardRef.sampleModel.isTumor === true) {
+                            cardRef.updateVariantClasses();
+                        }
+                    });
+                }
             },
         }
     }

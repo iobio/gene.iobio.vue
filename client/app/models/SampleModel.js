@@ -1567,7 +1567,6 @@ class SampleModel {
                                         let annotatedRecs = data[0];
                                         let results = data[1];
 
-
                                         if (!isMultiSample) {
                                             results = [results];
                                         }
@@ -2769,6 +2768,7 @@ class SampleModel {
         var impacts = "";
         var colorimpacts = "";
         var effects = "";
+        var filterStatus = "";
         // var sift = "";
         // var polyphen = "";
         // var regulatory = "";
@@ -2806,6 +2806,10 @@ class SampleModel {
             colorimpacts = "impact_none";
         }
 
+        if (d.passesFilters) {
+            filterStatus = "filtered";
+        }
+
         // Taking out as of 08/19
         // for (var key in d.sift) {
         //     sift += " " + key;
@@ -2817,7 +2821,7 @@ class SampleModel {
         //     regulatory += " " + key;
         // }
 
-        return 'variant ' + d.type.toLowerCase() + ' ' + d.zygosity.toLowerCase() + ' ' + (d.inheritance ? d.inheritance.toLowerCase() : "") + ' ' + d.clinvar + ' ' + impacts + ' ' + effects + ' ' + d.consensus + ' ' + colorimpacts;
+        return 'variant ' + d.type.toLowerCase() + ' ' + d.zygosity.toLowerCase() + ' ' + (d.inheritance ? d.inheritance.toLowerCase() : "") + ' ' + d.clinvar + ' ' + impacts + ' ' + effects + ' ' + d.consensus + ' ' + colorimpacts + ' ' + filterStatus;
     }
     promiseCompareVariants(theVcfData, compareAttribute, matchAttribute, matchFunction, noMatchFunction) {
         var me = this;

@@ -753,6 +753,13 @@
                     self.$refs.variantVizRef.filterVariants(filterInfo, self.getTrackSVG(self.$refs.variantVizRef.id), checkForSelectedVariant, selectedVariantId,
                         parentFilterName, parentFilterState);
                 }
+            },
+            updateVariantClasses: function() {
+                const self = this;
+                let container = self.getTrackSVG(self.sampleModel.id);
+                if (self.$refs.variantVizRef) {
+                    self.$refs.variantVizRef.updateVariantClasses(container);
+                }
             }
         },
 

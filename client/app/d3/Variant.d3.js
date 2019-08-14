@@ -43,19 +43,38 @@ export default function variantD3() {
 
 
     function getSymbol(d, i) {
-        if (d.type.toUpperCase() == 'DEL') {
+        if (d.type.toUpperCase() === 'DEL') {
             return 'triangle-up';
-        } else if (d.type.toUpperCase() == 'INS') {
+        } else if (d.type.toUpperCase() === 'INS') {
             return 'circle';
-        } else if (d.type.toUpperCase() == 'COMPLEX') {
+        } else if (d.type.toUpperCase() === 'COMPLEX') {
             return 'diamond';
         }
+    }
+
+    /* Returns the value of the variant.
+     * As more filters are added, they can be listed here.  */
+    function getVarValue(filterName, d) {
+        // Note: if filterName does not match variant prop, can add translation here
+        return d[filterName];
+    }
+
+    /* Returns true if selected variant passes filter and is visible. */
+    function checkForSelectedVar(selectedVarId, svgContainer) {
+        let stillVisible = false;
+        svgContainer.selectAll('.filtered').each(function (d, i) {
+            if (d.id === selectedVarId) {
+                stillVisible = true;
+            }
+        });
+        return stillVisible;
     }
 
     var showCircle = function (d, svgContainer, indicateMissingVariant, pinned) {
         // Find the matching variant
         var matchingVariant = null;
-        svgContainer.selectAll(".variant").each(function (variant, i) {
+        // Only matching if visible
+        svgContainer.selectAll(".variant.filtered").each(function (variant, i) {
             if (d.start === variant.start
                 && d.end === variant.end
                 && d.ref === variant.ref
@@ -178,9 +197,6 @@ export default function variantD3() {
                     let varVal = getVarValue(filterName, d);
                     let passesFilter = true;
 
-                    // Special exception for when we have '.' in a field we're trying to filter on
-
-
                     switch (filterLogic) {
                         case '<':
                             if (!(varVal < filterCutoffVal)) {
@@ -237,6 +253,7 @@ export default function variantD3() {
             .style("pointer-events", "auto");
 
 
+        // Return whether any variants are still visible
         if (filteredVars && filteredVars[0]) {
             return filteredVars[0].length === 0;
         } else {
@@ -244,26 +261,15 @@ export default function variantD3() {
         }
     };
 
-    /* Returns the value of the variant.
-     * As more filters are added, they can be listed here.  */
-    var getVarValue = function(filterName, d) {
-        let varVal = 0;
-        // Note: if we need custom filterName logic, can add here
-        varVal = d[filterName];
-        return varVal;
-    };
+    /* Updates styling classes applied to variants. Utilized in somatic filter application. */
+    var updateVariantClasses = function(svgContainer) {
+        let allVariants = svgContainer.selectAll(".variant");
 
-    /* Returns true if selected variant passes filter and is visible. */
-    var checkForSelectedVar = function (selectedVarId, svgContainer) {
-        let stillVisible = false;
-        svgContainer.selectAll('.filtered').each(function (d, i) {
-            if (d.id === selectedVarId) {
-                stillVisible = true;
-            }
-        });
-        return stillVisible;
+        // REPLACE classes here (except filter status - this is guaranteed by classifyByImpact)
+        allVariants.attr('class', function (d) {
+                return chart.clazz()(d);
+            });
     };
-
 
     function chart(selection, options) {
         // merge options and defaults
@@ -787,18 +793,18 @@ export default function variantD3() {
         // Find the matching variant
         var matchingVariant = null;
         svg.selectAll(".variant").each(function (d, i) {
-            if (d.start == variant.start
-                && d.end == variant.end
-                && d.ref == variant.ref
-                && d.alt == variant.alt
-                && d.type.toLowerCase() == variant.type.toLowerCase()) {
+            if (d.start === variant.start
+                && d.end === variant.end
+                && d.ref === variant.ref
+                && d.alt === variant.alt
+                && d.type.toLowerCase() === variant.type.toLowerCase()) {
                 matchingVariant = d;
             }
         });
         if (!matchingVariant) {
             return;
         }
-    }
+    };
 
     function tickFormatter(d) {
         if ((d / 1000000) >= 1)
@@ -937,9 +943,9 @@ export default function variantD3() {
         filterVariants = _;
         return chart;
     };
-    chart.checkForSelectedVar = function (_) {
-        if (!arguments.length) return checkForSelectedVar;
-        checkForSelectedVar = _;
+    chart.updateVariantClasses = function (_) {
+        if (!arguments.length) return updateVariantClasses;
+        updateVariantClasses = _;
         return chart;
     };
 

@@ -841,14 +841,15 @@ class CohortModel {
                         });
 
                         // Call somatic variants
-                        self.filterModel.annotateVariantInheritance(self.sampleMap, true);
+                        // TODO: get rid of this
+                        // self.filterModel.annotateVariantInheritance(self.sampleMap, true);
 
                         // Now summarize the danger for the selected gene
                         self.promiseSummarizeDanger(theGene, theTranscript, resultMap.s0, null)
                             .then(function () {
                                 let geneChanged = options.loadFromFlag;
 
-                                self.setLoadedVariants(theGene, null, geneChanged);
+                                self.setLoadedVariants(theGene, null, geneChanged, false);
                                 self.endGeneProgress(theGene.gene_name);
                                 resolve(resultMap);
                             })
@@ -1046,7 +1047,8 @@ class CohortModel {
         })
     }
 
-    setLoadedVariants(gene, id = null, loadFromFlag = false) {
+    /* Filters variants and performs pileup. Also draws feature matrix. */
+    setLoadedVariants(gene, id = null, loadFromFlag = false, drawFeatureMatrix = true) {
         let self = this;
 
         let filterAndPileupVariants = function (model, start, end, target = 'loaded') {
@@ -1061,7 +1063,8 @@ class CohortModel {
                 }
 
                 // Coordinate with DOM filtering
-                let passesDomFilters = feature.passesFilters;
+                //let passesDomFilters = feature.passesFilters;
+                let passesDomFilters = true; // TODO: why did we need to filter this in?
 
                 let isHomRef = feature.zygosity == null
                     || feature.zygosity.toUpperCase() === "HOMREF"
@@ -1130,7 +1133,7 @@ class CohortModel {
         });
 
         // Plug combined, unique features into feature matrix model
-        if (id !== 'known-variants' && id !== 'cosmic-variants') {
+        if (id !== 'known-variants' && id !== 'cosmic-variants' && drawFeatureMatrix) {
             if (self.allUniqueFeaturesObj != null && self.allUniqueFeaturesObj.features
                     && self.allUniqueFeaturesObj.features.length > 0
                     && loadFromFlag) {
@@ -1139,6 +1142,8 @@ class CohortModel {
                 self.featureMatrixModel.promiseRankVariants(allVariants);
                 self.allUniqueFeaturesObj = allVariants;
             }
+        } else if (!drawFeatureMatrix) {
+            self.allUniqueFeaturesObj = allVariants;
         }
     }
 

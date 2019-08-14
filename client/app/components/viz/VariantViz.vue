@@ -194,7 +194,7 @@
                 this.setVariantChart();
             },
             update: function () {
-                var self = this;
+                const self = this;
                 if (self.data) {
 
                     // Set the vertical layer count so that the height of the chart can be recalculated
@@ -217,9 +217,13 @@
                     self.variantChart.width(self.width);
 
 
-                    var selection = d3.select(self.$el).datum([self.data]);
+                    let selection = d3.select(self.$el).datum([self.data]);
                     self.variantChart(selection);
                 }
+            },
+            updateVariantClasses: function(container) {
+                const self = this;
+                self.variantChart.updateVariantClasses()(container);
             },
             onVariantClick: function (variant) {
                 let self = this;
