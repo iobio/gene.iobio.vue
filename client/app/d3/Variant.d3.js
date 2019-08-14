@@ -60,7 +60,7 @@ export default function variantD3() {
     }
 
     /* Returns true if selected variant passes filter and is visible. */
-    function checkForSelectedVar(selectedVarId, svgContainer) {
+    var checkForSelectedVar = function(selectedVarId, svgContainer) {
         let stillVisible = false;
         svgContainer.selectAll('.filtered').each(function (d, i) {
             if (d.id === selectedVarId) {
@@ -68,7 +68,7 @@ export default function variantD3() {
             }
         });
         return stillVisible;
-    }
+    };
 
     var showCircle = function (d, svgContainer, indicateMissingVariant, pinned) {
         // Find the matching variant
@@ -158,107 +158,110 @@ export default function variantD3() {
 
     /* Takes in a list of filter classes. If a variant contains any of them, it will be hidden.
     *  Takes in a filter cutoff object that a variant must meet or be lower than - if not, it will be hidden. */
-    var filterVariants = function (filterClasses, filterCutoffs, svgContainer) {
-        let allVariants = svgContainer.selectAll(".variant");
+    var promiseFilterVariants = function (filterClasses, filterCutoffs, svgContainer) {
+        return new Promise((resolve, reject) => {
+            let allVariants = svgContainer.selectAll(".variant");
 
-        // Add filtered class to all variants on DOM and model object
-        allVariants.classed({'filtered': true});
-        allVariants.each(function(d,i) {
-           d.passesFilters = true;
-        });
-
-        // If we're out of active filters, display all variants
-        if (filterClasses.length === 0 && filterCutoffs.length === 0) {
-            allVariants.style("opacity", 1);
-            allVariants.style("pointer-events", 'auto');
-            return false;
-        }
-
-        // Remove filtered class for any variants that contain the given class criteria
-        filterClasses.forEach((filterClass) => {
-            allVariants.filter(filterClass).classed({'filtered': false});
-            allVariants.style("pointer-events", 'none');
-        });
-
-        // Include previously filtered variants into the equation
-        let filteredVars = svgContainer.selectAll('.filtered');
-
-        // Remove filtered class for any variants that don't meet cutoffs
-        let cutoffs = Object.values(filterCutoffs);
-        if (cutoffs.length > 0) {
-            filteredVars.each(function (d, i) {
-                if (d === 0) {
-                    return;
-                }
-                cutoffs.forEach((cutoff) => {
-                    let filterName = cutoff[0];
-                    let filterLogic = cutoff[1];
-                    let filterCutoffVal = parseFloat(cutoff[2]);
-                    let varVal = getVarValue(filterName, d);
-                    let passesFilter = true;
-
-                    switch (filterLogic) {
-                        case '<':
-                            if (!(varVal < filterCutoffVal)) {
-                                passesFilter = false;
-                            }
-                            break;
-                        case '<=':
-                            if (!(varVal <= filterCutoffVal)) {
-                                passesFilter = false;
-                            }
-                            break;
-                        case '=':
-                            if (!(varVal === filterCutoffVal)) {
-                                passesFilter = false;
-                            }
-                            break;
-                        case '>=':
-                            if (!(varVal >= filterCutoffVal)) {
-                                passesFilter = false;
-                            }
-                            break;
-                        case '>':
-                            if (!(varVal > filterCutoffVal)) {
-                                passesFilter = false;
-                            }
-                            break;
-                        default:
-                        // Do nothing
-                    }
-                    // Do actual hiding
-                    if (!passesFilter) {
-                        d.passesFilters = false;
-
-                        let selectionId = '#' + d.id;
-                        let domD = svgContainer.selectAll(selectionId);
-                        domD.classed({'filtered': false});
-                        domD.style('pointer-events', 'none');
-                    }
-                })
+            // Add filtered class to all variants on DOM and model object
+            allVariants.classed({'filtered': true});
+            allVariants.each(function(d,i) {
+                d.passesFilters = true;
             });
-        }
 
-        // Re-check for all filtered variants
-        filteredVars = svgContainer.selectAll('.filtered');
+            // If we're out of active filters, display all variants
+            if (filterClasses.length === 0 && filterCutoffs.length === 0) {
+                allVariants.style("opacity", 1);
+                allVariants.style("pointer-events", 'auto');
+                return false;
+            }
 
-        // Hide all variants
-        allVariants.style("opacity", 0)
-            .style("pointer-events", "none")
-            .transition()
-            .duration(1000);
+            // Remove filtered class for any variants that contain the given class criteria
+            filterClasses.forEach((filterClass) => {
+                allVariants.filter(filterClass).classed({'filtered': false});
+                allVariants.style("pointer-events", 'none');
+            });
 
-        // Reveal variants that pass filter
-        filteredVars.style("opacity", 1)
-            .style("pointer-events", "auto");
+            // Include previously filtered variants into the equation
+            let filteredVars = svgContainer.selectAll('.filtered');
+
+            // Remove filtered class for any variants that don't meet cutoffs
+            let cutoffs = Object.values(filterCutoffs);
+            if (cutoffs.length > 0) {
+                filteredVars.each(function (d, i) {
+                    if (d === 0) {
+                        return;
+                    }
+                    cutoffs.forEach((cutoff) => {
+                        let filterName = cutoff[0];
+                        let filterLogic = cutoff[1];
+                        let filterCutoffVal = parseFloat(cutoff[2]);
+                        let varVal = getVarValue(filterName, d);
+                        let passesFilter = true;
+
+                        switch (filterLogic) {
+                            case '<':
+                                if (!(varVal < filterCutoffVal)) {
+                                    passesFilter = false;
+                                }
+                                break;
+                            case '<=':
+                                if (!(varVal <= filterCutoffVal)) {
+                                    passesFilter = false;
+                                }
+                                break;
+                            case '=':
+                                if (!(varVal === filterCutoffVal)) {
+                                    passesFilter = false;
+                                }
+                                break;
+                            case '>=':
+                                if (!(varVal >= filterCutoffVal)) {
+                                    passesFilter = false;
+                                }
+                                break;
+                            case '>':
+                                if (!(varVal > filterCutoffVal)) {
+                                    passesFilter = false;
+                                }
+                                break;
+                            default:
+                            // Do nothing
+                        }
+                        // Mark in model if doesn't pass
+                        if (!passesFilter) {
+                            d.passesFilters = false;
+
+                            // Do actual hiding
+                            let selectionId = '#' + d.id;
+                            let domD = svgContainer.selectAll(selectionId);
+                            domD.classed({'filtered': false});
+                            domD.style('pointer-events', 'none');
+                        }
+                    })
+                });
+            }
+
+            // Re-check for all filtered variants
+            filteredVars = svgContainer.selectAll('.filtered');
+
+            // Hide all variants
+            allVariants.style("opacity", 0)
+                .style("pointer-events", "none")
+                .transition()
+                .duration(1000);
+
+            // Reveal variants that pass filter
+            filteredVars.style("opacity", 1)
+                .style("pointer-events", "auto");
 
 
-        // Return whether any variants are still visible
-        if (filteredVars && filteredVars[0]) {
-            return filteredVars[0].length === 0;
-        } else {
-            return false;
-        }
+            // Return whether any variants are still visible
+            if (filteredVars && filteredVars[0]) {
+                resolve(filteredVars[0].length === 0);
+            } else {
+                resolve(false);
+            }
+        });
     };
 
     /* Updates styling classes applied to variants. Utilized in somatic filter application. */
@@ -938,9 +941,14 @@ export default function variantD3() {
         hideCircle = _;
         return chart;
     };
-    chart.filterVariants = function (_) {
-        if (!arguments.length) return filterVariants;
-        filterVariants = _;
+    chart.checkForSelectedVar = function (_) {
+        if (!arguments.length) return checkForSelectedVar;
+        checkForSelectedVar = _;
+        return chart;
+    };
+    chart.promiseFilterVariants = function (_) {
+        if (!arguments.length) return promiseFilterVariants;
+        promiseFilterVariants = _;
         return chart;
     };
     chart.updateVariantClasses = function (_) {

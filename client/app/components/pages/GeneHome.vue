@@ -1169,7 +1169,7 @@
                                             .then(function () {
                                                 self.clearZoom = false;
                                                 self.showVarViz = true;
-                                                self.initializeFilters = true;
+                                                self.initializeFilters = true;  //TODO: is this out of order?
                                                 resolve();
                                             })
                                             .catch(function (err) {
@@ -2232,6 +2232,7 @@
                     'normalAltCount': true
                 };
 
+                let promises = [];
                 if (somaticFilterList[filterInfo.name]) {
                     // Update somatic filter criteria in model
                     self.filterModel.currentSomaticCutoffs[filterInfo.name] = filterInfo.cutoffValue;
@@ -2245,31 +2246,38 @@
                     if (self.$refs.variantCardRef && filterInfo.tumorOnly) {
                         self.$refs.variantCardRef.forEach((cardRef) => {
                             if (cardRef.sampleModel.isTumor === true) {
-                                cardRef.filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
+                                let filtPromise = cardRef.promiseFilterVariants(filterInfo, self.selectedTrackId, selectedVarId);
+                                promises.push(filtPromise);
                             }
                         });
                         // Otherwise apply to all tracks
                     } else if (self.$refs.variantCardRef) {
                         self.$refs.variantCardRef.forEach((cardRef) => {
-                            cardRef.filterVariants(filterInfo, self.selectedTrackId, selectedVarId);
+                            let filtPromise = cardRef.promiseFilterVariants(filterInfo, self.selectedTrackId, selectedVarId);
+                            promises.push(filtPromise);
                         });
                     }
                 }
 
-                // Regardless of what filter applied, we need to re-annotate somatic variants (b/c respective normal may be hidden!)
-                self.filterModel.annotateVariantInheritance(self.cohortModel.sampleMap);
+                // Only annotate once we are guaranteed that our DOM update is done for all tracks
+                Promise.all(promises).then(() => {
+                    // Regardless of what filter applied, we need to re-annotate somatic variants (b/c respective normal may be hidden!)
+                    self.filterModel.annotateVariantInheritance(self.cohortModel.sampleMap);
 
-                // Draw feature matrix after somatic field filled
-                self.featureMatrixModel.promiseRankVariants(self.cohortModel.allUniqueFeaturesObj);
+                    // Draw feature matrix after somatic field filled
+                    self.featureMatrixModel.promiseRankVariants(self.cohortModel.allUniqueFeaturesObj);
 
-                // Then we need to update coloring for tumor tracks only
-                if (self.$refs.variantCardRef) {
-                    self.$refs.variantCardRef.forEach((cardRef) => {
-                        if (cardRef.sampleModel.isTumor === true) {
-                            cardRef.updateVariantClasses();
-                        }
-                    });
-                }
+                    // Then we need to update coloring for tumor tracks only
+                    if (self.$refs.variantCardRef) {
+                        self.$refs.variantCardRef.forEach((cardRef) => {
+                            if (cardRef.sampleModel.isTumor === true) {
+                                cardRef.updateVariantClasses();
+                            }
+                        });
+                    }
+                }).catch((err) => {
+                    console.log('There was a problem applying variant filter: ' + err);
+                });
             },
         }
     }

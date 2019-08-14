@@ -160,17 +160,17 @@ class FilterModel {
 
     /* The current settings to highlight somatic variants */
     this.DEFAULT_SOMATIC_CUTOFFS = {
-        'normalAfCutoff': 0.01,      // Must be between 0-1
-        'normalAltCountCutoff': 2,
-        'tumorAfCutoff': 0.10,       // Must be between 0-1
-        'tumorAltCountCutoff': 8
+        'normalAltFreq': 0.01,      // Must be between 0-1
+        'normalAltCount': 2,
+        'tumorAltFreq': 0.10,       // Must be between 0-1
+        'tumorAltCount': 8
     };
 
     this.DEFAULT_SOMATIC_LOGIC = {
-        'normalAfCutoff': '<=',
-        'normalAltCountCutoff': '<=',
-        'tumorAfCutoff': '>=',
-        'tumorAltCountCutoff': '>='
+        'normalAltFreq': '<=',
+        'normalAltCount': '<=',
+        'tumorAltFreq': '>=',
+        'tumorAltCount': '>='
     };
 
     // TODO: on filter reset, reset these
@@ -184,9 +184,22 @@ class FilterModel {
     };
   }
 
-    /* Marks variants that are 'inherited' from all samples for which isTumor = false.
-     * If initFiltering = true, we're loading up the app for the first time or clearing filters and
-     * want to use the default quality settings. */
+    /* Marks variants as somatic, or non-inherited, if they fulfill the following:
+     *
+     *  The normal track exhibits the following logic: A || (B && C)
+     *     where
+     *      A) does not contain the variant in question
+     *      B) does contain the variant but at a threshold meeting slider-set criteria
+     *      C) is visible/ not filtered out by other non-somatic filters
+     *
+     *  AND
+     *
+     *  the tumor track exhibits the following logic: A && B
+     *     where
+     *      A) contains the variant at a threshold meeting slider-set criteria
+     *      B) is visible/ not filtered out by other non-somatic filters
+     *
+     */
     annotateVariantInheritance(resultMap) {
         const self = this;
         let normalSamples = [];
@@ -206,38 +219,25 @@ class FilterModel {
         }
 
         // Make normal variant hash table
-        let idLookup = {};
+        let passesFiltersLookup = {};
+        let normalContainsLookup = {};
         normalSamples.forEach((currNorm) => {
             if (currNorm && currNorm.features.length > 0) {
                 let normFeatures = currNorm.features;
-
-                // let filteredNormFeatures = null;
-                // if (initFiltering) {
-                //     // We only want to call something somatic if its normal counterpart passes init quality/somatic cutoffs
-                //     filteredNormFeatures = normFeatures.filter((feature) => {
-                //       let passQual = feature.qual >= self.DEFAULT_QUALITY_FILTERING_CRITERIA.qualScoreCutoff || feature.qual === '.';
-                //       return passQual && feature.genotypeDepth >= self.DEFAULT_QUALITY_FILTERING_CRITERIA.totalCountCutoff;
-                //     });
-                // }
-                // else {
-                    // We only want to call something somatic if its normal counterpart is visible
-                    // Quality filtering is included in passesFilters logic now
-                    // let filteredNormFeatures = normFeatures.filter((feature) => {
-                    //     return feature.passesFilters === true;
-                    // });
-                //}
-
-              // Populate lookup with normal variants that pass our filters
-              let filteredNormFeatures = normFeatures.filter((feature) => {
-                  return feature.passesFilters === true;
-              });
+                let filteredNormFeatures = [];
+                normFeatures.forEach((feature) => {
+                    normalContainsLookup[feature.id] = true;
+                    if (feature.passesFilters === true) {
+                        filteredNormFeatures.push(feature);
+                    }
+                });
               for (let i = 0; i < filteredNormFeatures.length; i++) {
                   let currFeat = filteredNormFeatures[i];
-                  const currNormAf = Math.round(currFeat.genotypeAltCount / currFeat.genotypeDepth * 100) / 100;
-                  const passesNormalCount = self.matchAndPassFilter(self.currentSomaticLogic['normalAltCountCutoff'], currFeat.genotypeAltCount, self.currentSomaticCutoffs['normalAltCountCutoff']);
-                  const passesNormalAf = self.matchAndPassFilter(self.currentSomaticLogic['normalAfCutoff'], currNormAf, self.currentSomaticCutoffs['normalAfCutoff']);
-                  if (currFeat.id != null && idLookup[currFeat.id] == null && passesNormalCount && passesNormalAf) {
-                      idLookup[currFeat.id] = true;
+                  let currNormAf = Math.round(currFeat.genotypeAltCount / currFeat.genotypeDepth * 100) / 100;
+                  let passesNormalCount = self.matchAndPassFilter(self.currentSomaticLogic['normalAltCount'], currFeat.genotypeAltCount, self.currentSomaticCutoffs['normalAltCount']);
+                  let passesNormalAf = self.matchAndPassFilter(self.currentSomaticLogic['normalAltFreq'], currNormAf, self.currentSomaticCutoffs['normalAltFreq']);
+                  if (currFeat.id != null && passesNormalCount && passesNormalAf) {
+                      passesFiltersLookup[currFeat.id] = true;
                   }
               }
             }
@@ -249,33 +249,15 @@ class FilterModel {
             if (currTumor.features && currTumor.features.length > 0) {
                 let tumorFeatures = currTumor.features;
 
-                // let filteredTumorFeatures = null;
-                // if (initFiltering) {
-                //   filteredTumorFeatures = tumorFeatures.filter((feature) => {
-                //       // If calling for the first time, use initial criteria
-                //       let passQual = feature.qual >= self.DEFAULT_QUALITY_FILTERING_CRITERIA.qualScoreCutoff || feature.qual === '.';
-                //       return passQual && feature.genotypeDepth >= self.DEFAULT_QUALITY_FILTERING_CRITERIA.totalCountCutoff;
-                //   });
-                // } else {
-                //     // Don't need to look at tumor features that don't pass other filters
-                //     filteredTumorFeatures = tumorFeatures.filter((feature) => {
-                //         return feature.passesFilters === true;
-                //     });
-                // }
-
                 // Don't need to look at tumor features that don't pass other filters
                 let filteredTumorFeatures = tumorFeatures.filter((feature) => {
                     return feature.passesFilters === true;
                 });
                 filteredTumorFeatures.forEach((feature) => {
-                    // if (feature.id === 'var_31022658_20_plus_A_T') {
-                    //     debugger;
-                    //     console.log('got it');
-                    // }
                     let currAltFreq = Math.round(feature.genotypeAltCount / feature.genotypeDepth * 100) / 100;
-                    const passesTumorCount = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltCountCutoff'], feature.genotypeAltCount, self.currentSomaticCutoffs['tumorAltCountCutoff']);
-                    const passesTumorAf = self.matchAndPassFilter(self.currentSomaticLogic['tumorAfCutoff'], currAltFreq, self.currentSomaticCutoffs['tumorAfCutoff']);
-                    if (idLookup[feature.id] == null && passesTumorAf && passesTumorCount) {
+                    let passesTumorCount = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltCount'], feature.genotypeAltCount, self.currentSomaticCutoffs['tumorAltCount']);
+                    let passesTumorAf = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltFreq'], currAltFreq, self.currentSomaticCutoffs['tumorAltFreq']);
+                    if ((passesFiltersLookup[feature.id] || normalContainsLookup[feature.id] == null) && passesTumorAf && passesTumorCount) {
                         feature.isInherited = false;
                     }
                 })

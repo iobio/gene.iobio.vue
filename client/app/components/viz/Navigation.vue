@@ -756,10 +756,10 @@
                 return {
                     // Note: have to translate frequencies to percentages here to accommodate
                     // slider component ambivalence for non-percentage values
-                    'tumorAltFreq': self.cohortModel.filterModel.DEFAULT_SOMATIC_CUTOFFS.tumorAfCutoff * 100,
-                    'tumorAltCount': self.cohortModel.filterModel.DEFAULT_SOMATIC_CUTOFFS.tumorAltCountCutoff,
-                    'normalAltFreq': self.cohortModel.filterModel.DEFAULT_SOMATIC_CUTOFFS.normalAfCutoff * 100,
-                    'normalAltCount': self.cohortModel.filterModel.DEFAULT_SOMATIC_CUTOFFS.normalAltCountCutoff
+                    'tumorAltFreq': self.cohortModel.filterModel.DEFAULT_SOMATIC_CUTOFFS.tumorAltFreq * 100,
+                    'tumorAltCount': self.cohortModel.filterModel.DEFAULT_SOMATIC_CUTOFFS.tumorAltCount,
+                    'normalAltFreq': self.cohortModel.filterModel.DEFAULT_SOMATIC_CUTOFFS.normalAltFreq * 100,
+                    'normalAltCount': self.cohortModel.filterModel.DEFAULT_SOMATIC_CUTOFFS.normalAltCount
                 };
             },
             qualityFilterSettings: function() {

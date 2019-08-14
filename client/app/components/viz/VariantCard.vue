@@ -741,7 +741,7 @@
                     self.openState[0] = true;
                     self.openState = self.openState.slice();
             },
-            filterVariants: function(filterInfo, selectedTrackId, selectedVariantId, parentFilterName, parentFilterState) {
+            promiseFilterVariants: function(filterInfo, selectedTrackId, selectedVariantId, parentFilterName, parentFilterState) {
                 let self = this;
 
                 let checkForSelectedVariant = false;
@@ -750,8 +750,10 @@
                 }
                 // NOTE: this only filters loaded variants, not called
                 if (self.$refs.variantVizRef) {
-                    self.$refs.variantVizRef.filterVariants(filterInfo, self.getTrackSVG(self.$refs.variantVizRef.id), checkForSelectedVariant, selectedVariantId,
+                    return self.$refs.variantVizRef.promiseFilterVariants(filterInfo, self.getTrackSVG(self.$refs.variantVizRef.id), checkForSelectedVariant, selectedVariantId,
                         parentFilterName, parentFilterState);
+                } else {
+                    return Promise.resolve();
                 }
             },
             updateVariantClasses: function() {
