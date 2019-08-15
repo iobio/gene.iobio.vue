@@ -212,7 +212,7 @@
                                     :annotationComplete="annotationComplete"
                                     :somaticFilterSettings="somaticFilterSettings"
                                     :qualityFilterSettings="qualityFilterSettings"
-                                    :initializeFilters="initializeFilters"
+                                    :applyFilters="applyFilters"
                                     @filter-box-toggled="filterBoxToggled"
                                     @filter-slider-moved="filterSliderMoved"
                                     @filter-cutoff-applied="filterCutoffApplied"
@@ -519,7 +519,7 @@
             selectedGeneName: "",
             selectedChr: "",
             selectedBuild: '',
-            initializeFilters: false
+            applyFilters: false
             // interpretationMap: null
         },
         data() {

@@ -94,7 +94,7 @@
                 :selectedGeneName="selectedGene.gene_name"
                 :selectedChr="selectedGene.chr"
                 :selectedBuild="genomeBuildHelper.getCurrentSpeciesName() + ' ' + genomeBuildHelper.getCurrentBuildName()"
-                :initializeFilters="initializeFilters"
+                :applyFilters="applyFilters"
                 @update-samples="onUpdateSamples"
                 @input="onGeneNameEntered"
                 @load-demo-data="onLoadDemoData"
@@ -530,7 +530,7 @@
                 showVarViz: true,
                 workingOffline: false,        // If working offline and want to style things TODO: get rid of this SJG
                 annotationComplete: false,
-                initializeFilters: false
+                applyFilters: false
             }
         },
 
@@ -910,7 +910,7 @@
                     self.$refs.navRef.openFileSelection();
                 }
             },
-            promiseLoadData: function (loadingFromFlagEvent = false) {
+            promiseLoadData: function (loadingFromFlagEvent = false, loadFeatureMatrix = true) {
                 let self = this;
 
                 return new Promise(function (resolve, reject) {
@@ -920,6 +920,7 @@
                         var options = {'getKnownVariants': self.showKnownVariantsCard};
                         options['getCosmicVariants'] = self.showCosmicVariantsCard;
                         options['loadFromFlag'] = loadingFromFlagEvent;
+                        options['loadFeatureMatrix'] = loadFeatureMatrix;
 
                         self.cohortModel.promiseLoadData(self.selectedGene,
                             self.selectedTranscript,
@@ -993,10 +994,9 @@
                         // }
                     })
                     .then(function () {
+                        const loadFeatureMatrix = false;
                         if (self.selectedGene && self.selectedGene.gene_name) {
-                            self.promiseLoadGene(self.selectedGene.gene_name);
-                            // TODO: take out if above works
-                            //self.featureMatrixModel.addAllLoadedSamples(self.cohortModel.getCanonicalModels());
+                            self.promiseLoadGene(self.selectedGene.gene_name, null, false, loadFeatureMatrix);
 
                             // if (analyzeAll) {
                             //     if (self.cohortModel && self.cohortModel.isLoaded) {
@@ -1077,7 +1077,8 @@
                 let self = this;
                 self.clearFilter();
                 self.deselectVariant();
-                self.promiseLoadGene(geneName)
+                let loadFeatureMatrix = false;
+                self.promiseLoadGene(geneName, null, false, loadFeatureMatrix)
                     .then(function () {
                         self.onSendGenesToClin();
                         self.activeGeneVariantTab = "feature-matrix-tab";
@@ -1104,7 +1105,7 @@
                 var self = this;
 
                 self.deselectVariant();
-                self.promiseLoadGene(geneName);
+                self.promiseLoadGene(geneName, null, false);
                 self.activeGeneVariantTab = "feature-matrix-tab";
 
             },
@@ -1118,9 +1119,10 @@
                 }
             },
 
-            promiseLoadGene: function (geneName, theTranscript, loadingFromFlagEvent = false) {
+            promiseLoadGene: function (geneName, theTranscript, loadingFromFlagEvent = false, loadFeatureMatrix = true) {
                 let self = this;
                 this.showWelcome = false;
+                this.applyFilters = false;
                 return new Promise(function (resolve, reject) {
                     self.clearZoom = true;
 
@@ -1165,11 +1167,11 @@
                                         self.$refs.scrollButtonRefGene.showScrollButtons();
                                     }
                                     if (self.cohortModel.isLoaded) {
-                                        self.promiseLoadData(loadingFromFlagEvent)
+                                        self.promiseLoadData(loadingFromFlagEvent, loadFeatureMatrix)
                                             .then(function () {
                                                 self.clearZoom = false;
                                                 self.showVarViz = true;
-                                                self.initializeFilters = true;  //TODO: is this out of order?
+                                                self.applyFilters = true;
                                                 resolve();
                                             })
                                             .catch(function (err) {
@@ -1606,11 +1608,6 @@
                 self.selectedGene = {};
                 self.geneModel.promiseCopyPasteGenes(genesString, options)
                     .then(function () {
-
-                        // TODO: this gets called on second file launch
-                        // if (!self.launchedFromClin) {
-                        //     self.setUrlGeneParameters();
-                        // }
                         if (self.geneModel.sortedGeneNames && self.geneModel.sortedGeneNames.length > 0) {
                             let geneName = self.geneModel.sortedGeneNames[0];
                             return self.promiseLoadGene(geneName);
@@ -1754,7 +1751,7 @@
                 // reflects the flagged variants
                 self.promiseLoadGene(self.selectedGene.gene_name, null, true)
                     .then(function () {
-                        self.onCohortƒ(variant, null, variant.sampleModelId);
+                        self.onCohortVariantClick(variant, null, variant.sampleModelId);
                     });
             },
             onRemoveUserFlaggedVariant: function (variant) {

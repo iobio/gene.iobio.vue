@@ -45,7 +45,7 @@
                     :annotationComplete="annotationComplete"
                     :somaticFilterSettings="somaticFilterSettings"
                     :qualityFilterSettings="qualityFilterSettings"
-                    :initializeFilters="initializeFilters"
+                    :applyFilters="applyFilters"
                     @filter-toggled="filterBoxToggled"
                     @filter-slider-changed="filterSliderChanged"
                     @filter-applied="filterCutoffApplied"
@@ -76,7 +76,7 @@
             annotationComplete: false,
             somaticFilterSettings: null,
             qualityFilterSettings: null,
-            initializeFilters: false
+            applyFilters: false
         },
         data() {
             return {

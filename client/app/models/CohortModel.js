@@ -830,16 +830,12 @@ class CohortModel {
                            currModel.markEntryDataChanged(false);
                         });
 
-                        // Call somatic variants
-                        // TODO: get rid of this
-                        // self.filterModel.annotateVariantInheritance(self.sampleMap, true);
-
                         // Now summarize the danger for the selected gene
                         self.promiseSummarizeDanger(theGene, theTranscript, resultMap.s0, null)
                             .then(function () {
                                 let geneChanged = options.loadFromFlag;
-
-                                self.setLoadedVariants(theGene, null, geneChanged, false);
+                                
+                                self.setLoadedVariants(theGene, null, geneChanged, options.loadFeatureMatrix);
                                 self.endGeneProgress(theGene.gene_name);
                                 resolve(resultMap);
                             })

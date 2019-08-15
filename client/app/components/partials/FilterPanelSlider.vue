@@ -132,7 +132,7 @@
                 default: 0,
                 type: Number
             },
-            initializeFilters: {
+            applyFilters: {
                 default: false,
                 type: Boolean
             }
@@ -164,10 +164,10 @@
                     self.onSliderMoved();
                 }
             },
-            initializeFilters: function() {
+            applyFilters: function() {
                 // Used to initialize filters on app load after variants annotated
                 const self = this;
-                if (self.initializeFilters === true) {
+                if (self.applyFilters === true) {
                     self.onSliderMoved();
                 }
             }

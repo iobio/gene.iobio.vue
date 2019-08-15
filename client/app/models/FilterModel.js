@@ -207,9 +207,10 @@ class FilterModel {
         let tumorSamples = [];
         let tumorSampleModelIds = [];
         let somaticVarLookup = {};
+        let i = 0;
 
         // Classify samples
-        for (let i = 0; i < Object.keys(resultMap).length; i++) {
+        for (i = 0; i < Object.keys(resultMap).length; i++) {
             let sampleId = Object.keys(resultMap)[i];
             let currData = $.extend({}, Object.values(resultMap)[i].model.vcfData);
             if (!(resultMap[sampleId].isTumor) && sampleId !== 'known-variants' && sampleId !== 'cosmic-variants') {
@@ -233,7 +234,7 @@ class FilterModel {
                         filteredNormFeatures.push(feature);
                     }
                 });
-              for (let i = 0; i < filteredNormFeatures.length; i++) {
+              for (i = 0; i < filteredNormFeatures.length; i++) {
                   let currFeat = filteredNormFeatures[i];
                   let currNormAf = Math.round(currFeat.genotypeAltCount / currFeat.genotypeDepth * 100) / 100;
                   let passesNormalCount = self.matchAndPassFilter(self.currentSomaticLogic['normalAltCount'], currFeat.genotypeAltCount, self.currentSomaticCutoffs['normalAltCount']);
@@ -246,7 +247,7 @@ class FilterModel {
         });
 
         // Mark somatic variants
-        for (let i = 0; i < tumorSamples.length; i++) {
+        for (i = 0; i < tumorSamples.length; i++) {
             let currTumor = tumorSamples[i];
             if (currTumor.features && currTumor.features.length > 0) {
                 let tumorFeatures = currTumor.features;
@@ -259,7 +260,8 @@ class FilterModel {
                     let currAltFreq = Math.round(feature.genotypeAltCount / feature.genotypeDepth * 100) / 100;
                     let passesTumorCount = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltCount'], feature.genotypeAltCount, self.currentSomaticCutoffs['tumorAltCount']);
                     let passesTumorAf = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltFreq'], currAltFreq, self.currentSomaticCutoffs['tumorAltFreq']);
-                    if ((passesFiltersLookup[feature.id] || normalContainsLookup[feature.id] == null) && passesTumorAf && passesTumorCount) {
+                    let normalQualityMet = true; // TODO: determine if this area has enough coverage to make sure normal really doesn't have variant
+                    if ((passesFiltersLookup[feature.id] || (normalContainsLookup[feature.id] == null && normalQualityMet)) && passesTumorAf && passesTumorCount) {
                         feature.isInherited = false;
                         somaticVarLookup[feature.id] = true;
                     }

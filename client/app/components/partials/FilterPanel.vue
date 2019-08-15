@@ -52,7 +52,7 @@
                                 :sliderDisplaySuffix="category.labelSuffix"
                                 :initLogic="category.initLogic"
                                 :initValue="category.initVal"
-                                :initializeFilters="initializeFilters"
+                                :applyFilters="applyFilters"
                                 @filter-slider-changed="onSliderFilterChanged">
                         </filter-panel-slider>
                         <filter-panel-cutoff
@@ -90,7 +90,7 @@
             annotationComplete: false,
             somaticFilterSettings: null,
             qualityFilterSettings: null,
-            initializeFilters: false
+            applyFilters: false
         },
         data() {
             return {
