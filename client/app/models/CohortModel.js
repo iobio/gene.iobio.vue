@@ -43,17 +43,7 @@ class CohortModel {
             'loadingDataSources': false
         };
 
-        // Somatic calling criteria
-        // this.initSomaticCriteria = {
-        //     'normalAfCutoff': 0.01,      // Must be between 0-1
-        //     'normalAltCountCutoff': 2,
-        //     'tumorAfCutoff': 0.10,       // Must be between 0-1
-        //     'tumorAltCountCutoff': 8
-        // };
-        // this.initQualityCriteria = {
-        //     'totalCountCutoff': 15,
-        //     'qualScoreCutoff': 20
-        // };
+        this.allSomaticFeaturesLookup = {};     // Contains the IDs corresponding to variants from all tumor tracks classified as somatic
 
         this.genesInProgress = [];
         this.flaggedVariants = [];
@@ -1062,10 +1052,6 @@ class CohortModel {
                     isTarget = true;
                 }
 
-                // Coordinate with DOM filtering
-                //let passesDomFilters = feature.passesFilters;
-                let passesDomFilters = true; // TODO: why did we need to filter this in?
-
                 let isHomRef = feature.zygosity == null
                     || feature.zygosity.toUpperCase() === "HOMREF"
                     || feature.zygosity.toUpperCase() === "NONE"
@@ -1078,7 +1064,7 @@ class CohortModel {
 
                 let passesModelFilter = self.filterModel.passesModelFilter(model.id, feature);
 
-                return isTarget && !isHomRef && inRegion && passesModelFilter && passesDomFilters;
+                return isTarget && !isHomRef && inRegion && passesModelFilter;
             });
 
             let pileupObject = model._pileupVariants(filteredVariants.features, start, end);
@@ -1137,9 +1123,9 @@ class CohortModel {
             if (self.allUniqueFeaturesObj != null && self.allUniqueFeaturesObj.features
                     && self.allUniqueFeaturesObj.features.length > 0
                     && loadFromFlag) {
-                self.featureMatrixModel.promiseRankVariants(self.allUniqueFeaturesObj)
+                self.featureMatrixModel.promiseRankVariants(self.allUniqueFeaturesObj, self.allSomaticFeaturesLookup, self.getAllFilterPassingVariants())
             } else {
-                self.featureMatrixModel.promiseRankVariants(allVariants);
+                self.featureMatrixModel.promiseRankVariants(allVariants, self.allSomaticFeaturesLookup, self.getAllFilterPassingVariants());
                 self.allUniqueFeaturesObj = allVariants;
             }
         } else if (!drawFeatureMatrix) {
@@ -2918,6 +2904,22 @@ class CohortModel {
 
     getLinkId(currModelId, nextModelId, node) {
         return currModelId + "_" + node.bottomRange + '_' + nextModelId + '_' + node.bottomRange;
+    }
+
+    /* Returns IDs of all variants, in any track, that passes filters. Used to populate feature matrix. */
+    getAllFilterPassingVariants() {
+        const self = this;
+        let passingFeatureLookup = {};
+        self.getCanonicalModels().forEach((model) => {
+            if (model.vcfData && model.vcfData.features) {
+                model.vcfData.features.forEach((feature) => {
+                    if (feature.passesFilters === true) {
+                        passingFeatureLookup[feature.id] = true;
+                    }
+                })
+            }
+        });
+        return passingFeatureLookup;
     }
 }
 

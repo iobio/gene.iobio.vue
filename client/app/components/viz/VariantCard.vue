@@ -730,10 +730,6 @@
                 this.zoomMessage = "Drag to zoom";
                 this.$emit('gene-region-zoom-reset');
             },
-            // NOTE: this only refreshes loaded variant tracks for now
-            updateTrack: function () {
-                this.$refs.variantVizRef.update();
-            },
             toggleZoom: function() {
                 let self = this;
                 self.showZoom = !self.showZoom;

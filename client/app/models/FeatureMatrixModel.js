@@ -351,16 +351,13 @@ class FeatureMatrixModel {
     }
 
 
-    promiseRankVariants(theVcfData) {
+    promiseRankVariants(theVcfData, allSomaticFeaturesLookup, allFilteredFeaturesLookup) {
         let self = this;
         self.featureVcfData = theVcfData;
         self.inProgress.rankingVariants = true;
         self.clearRankedVariants();
 
         return new Promise(function (resolve, reject) {
-
-            var unfilteredVcfData = theVcfData;
-
             if (theVcfData == null) {
                 self.currentGene = null;
                 self.currentTranscript = null;
@@ -372,26 +369,6 @@ class FeatureMatrixModel {
 
                 // Figure out if we should show the unaffected sibs row
                 if (!self.matrixRowsEvaluated) {
-                    // TODO: no inheritance mode in onc
-                    // if (self.cohort.mode === 'single') {
-                    //   self.removeRow('Inheritance Mode', self.filteredMatrixRows);
-                    // }
-
-                    // TODO: no sibs in onc
-                    // var affectedInfo = self.getAffectedInfo();
-                    // var affected = affectedInfo.filter(function(info) {
-                    //   return info.status === 'affected' && info.relationship === 'sibling';
-                    // });
-                    // var unaffected = affectedInfo.filter(function(info) {
-                    //   return info.status === 'unaffected' && info.relationship === 'sibling';
-                    // });
-                    // if (affected.length === 0) {
-                    //   self.removeRow('Present in Affected Sibs', self.filteredMatrixRows);
-                    // }
-                    // if (unaffected.length === 0) {
-                    //   self.removeRow('Absent in Unaffected Sibs', self.filteredMatrixRows);
-                    // }
-
                     // Figure out if we should show any rows for generic annotations
                     var genericMatrixRows = self.getGenericAnnotation().getMatrixRows(theVcfData.genericAnnotators);
 
@@ -408,8 +385,10 @@ class FeatureMatrixModel {
                     self.featureVcfData = {};
                     self.featureVcfData.features = [];
                     theVcfData.features.forEach(function (variant) {
-                        self.featureVcfData.features.push(variant);
-//            self.featureVcfData.features.push($.extend({}, variant));
+                        // We only want to display variants that pass filters and are drawn in the track currently
+                        if (allFilteredFeaturesLookup && allFilteredFeaturesLookup[variant.id]) {
+                            self.featureVcfData.features.push(variant);
+                        }
                     });
                 }
 
@@ -425,7 +404,7 @@ class FeatureMatrixModel {
                 });
 
                 // Fill all features used in feature matrix for each variant
-                self.setFeaturesForVariants(self.featureVcfData.features);
+                self.setFeaturesForVariants(self.featureVcfData.features, allSomaticFeaturesLookup);
 
                 // Order the variants according to the features
                 self.rankedVariants = self.sortVariantsByFeatures(self.featureVcfData.features);
@@ -453,7 +432,7 @@ class FeatureMatrixModel {
     }
 
     /* Assigns feature objects to each variant which coordinates their sorting in the feature matrix model. */
-    setFeaturesForVariants(theVariants) {
+    setFeaturesForVariants(theVariants, allSomaticFeaturesLookup) {
         let self = this;
 
         theVariants.forEach(function (variant) {
@@ -482,10 +461,11 @@ class FeatureMatrixModel {
                     rawValue = 'N';
                 }
 
-                // Input modification for somatic
-                if (matrixRow.attribute === 'isInherited' && rawValue === false) {
+                // For feature matrix, we don't want to look at the individual track's status,
+                // but whether any of the track's instance of the variant qualifies as somatic
+                if (matrixRow.attribute === 'isInherited' && allSomaticFeaturesLookup[variant.id]) {
                     rawValue = 'isSomatic';
-                } else if (matrixRow.attribute === 'isInherited' && rawValue === true) {
+                } else if (matrixRow.attribute === 'isInherited' && !allSomaticFeaturesLookup[variant.id]) {
                     rawValue = 'isInherited';
                 }
 
@@ -501,7 +481,10 @@ class FeatureMatrixModel {
                     // Get matching variants from cohort model
                     let matchingModel = self.cohort.getModel(matrixRow.id);
                     let varIdHash = matchingModel.variantIdHash;
-                    if (varIdHash[variant.id] != null) {
+
+
+                    // Only show that we have the variant in the matrix if it passes filters and is visible in current track (MUST pull from hash for this)
+                    if (varIdHash[variant.id] != null && (varIdHash[variant.id]).passesFilters) {
                         if (matchingModel.isTumor) {
                             rawValue = 'tumorSample';
                         } else {

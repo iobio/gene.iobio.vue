@@ -199,12 +199,14 @@ class FilterModel {
      *      A) contains the variant at a threshold meeting slider-set criteria
      *      B) is visible/ not filtered out by other non-somatic filters
      *
+     *  Returns a dictionary of somatic variant IDs from all tumor tracks combined.
      */
     annotateVariantInheritance(resultMap) {
         const self = this;
         let normalSamples = [];
         let tumorSamples = [];
         let tumorSampleModelIds = [];
+        let somaticVarLookup = {};
 
         // Classify samples
         for (let i = 0; i < Object.keys(resultMap).length; i++) {
@@ -259,10 +261,12 @@ class FilterModel {
                     let passesTumorAf = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltFreq'], currAltFreq, self.currentSomaticCutoffs['tumorAltFreq']);
                     if ((passesFiltersLookup[feature.id] || normalContainsLookup[feature.id] == null) && passesTumorAf && passesTumorCount) {
                         feature.isInherited = false;
+                        somaticVarLookup[feature.id] = true;
                     }
                 })
             }
         }
+        return somaticVarLookup;
     }
 
     matchAndPassFilter(logic, varVal, cutoffVal) {

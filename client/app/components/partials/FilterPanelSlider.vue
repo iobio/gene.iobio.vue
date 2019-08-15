@@ -87,7 +87,7 @@
                         <!--Spacing-->
                     </v-flex>
                     <v-flex xs2 class="slider-bottom-row">
-                        <v-text-field v-model="cutoffValue" class="slider-bar-input" color="appColor" :suffix="sliderDisplaySuffix"></v-text-field>
+                        <v-text-field v-model="cutoffValue" class="slider-bar-input" color="appColor" :suffix="sliderDisplaySuffix" type="number"></v-text-field>
                     </v-flex>
                 </v-layout>
             </v-container>

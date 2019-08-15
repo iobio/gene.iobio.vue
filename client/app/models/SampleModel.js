@@ -2791,9 +2791,9 @@ class SampleModel {
             impacts += " " + key;
         }
 
-        if (d.isInherited && inTumorTrack && !inKnownTrack) {
-            colorimpacts += " " + 'impact_INHERITED';
-        } else if (inTumorTrack && !inKnownTrack) {
+        //if (d.isInherited && inTumorTrack && !inKnownTrack) {
+            // colorimpacts += " " + 'impact_INHERITED';
+        if (!d.isInherited && inTumorTrack && !inKnownTrack) {
             colorimpacts += " " + "impact_SOMATIC";
         } else {
         var colorImpactList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.impact : d[self.globalApp.impactFieldToColor]);

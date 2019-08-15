@@ -188,7 +188,7 @@
                                                      @cohort-variant-click="onCohortVariantClick"
                                                      @cohort-variant-hover="onCohortVariantHover"
                                                      @cohort-variant-hover-end="onCohortVariantHoverEnd"
-                                                     @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj)">
+                                                     @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj, cohortModel.allSomaticFeaturesLookup, cohortModel.getAllFilterPassingVariants())">
                                 </feature-matrix-card>
                                 <!--<variant-frequency-card :style="{'width': cardWidth/2 + 'px'}"-->
                                         <!--v-if="cohortModel && cohortModel.varAfLinks"-->
@@ -2262,10 +2262,11 @@
                 // Only annotate once we are guaranteed that our DOM update is done for all tracks
                 Promise.all(promises).then(() => {
                     // Regardless of what filter applied, we need to re-annotate somatic variants (b/c respective normal may be hidden!)
-                    self.filterModel.annotateVariantInheritance(self.cohortModel.sampleMap);
+                    let allVariantsPassingFilters = self.cohortModel.getAllFilterPassingVariants();
+                    self.cohortModel.allSomaticFeaturesLookup = self.filterModel.annotateVariantInheritance(self.cohortModel.sampleMap);
 
                     // Draw feature matrix after somatic field filled
-                    self.featureMatrixModel.promiseRankVariants(self.cohortModel.allUniqueFeaturesObj);
+                    self.featureMatrixModel.promiseRankVariants(self.cohortModel.allUniqueFeaturesObj, self.cohortModel.allSomaticFeaturesLookup, allVariantsPassingFilters);
 
                     // Then we need to update coloring for tumor tracks only
                     if (self.$refs.variantCardRef) {
