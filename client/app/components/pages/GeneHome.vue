@@ -331,8 +331,6 @@
                         @known-variants-filter-change="onKnownVariantsFilterChange"
                         @cosmic-variants-viz-change="onCosmicVariantsVizChange"
                         @cosmic-variants-filter-change="onCosmicVariantsFilterChange"
-                        @gene-region-zoom="onGeneRegionZoom"
-                        @gene-region-zoom-reset="onGeneRegionZoomReset"
                         @show-coverage-cutoffs="showCoverageCutoffs = true"
                 >
                 </variant-card>
@@ -1226,6 +1224,7 @@
                     })
             },
             onGeneRegionZoom: function (theStart, theEnd) {
+                // Gene-viz watches these for updates
                 this.geneRegionStart = theStart;
                 this.geneRegionEnd = theEnd;
 

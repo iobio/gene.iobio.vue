@@ -1213,6 +1213,7 @@ class CohortModel {
             }
 
             // Always annotate COSMIC so we can put status in feature matrix
+            // OPTIMIZATION TODO: load cosmic annotation upon app launch (non-blocking)
             let p = self.promiseLoadCosmicVariants(theGene, theTranscript)
                 .then(function (resultMap) {
                     if (self.cosmicVariantViz === 'variants') {

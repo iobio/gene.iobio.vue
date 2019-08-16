@@ -51,6 +51,7 @@
             .cds, .exon, .utr
                 fill: rgba(159, 159, 159, 0.63)
                 stroke: rgb(159, 159, 159)
+                /*TODO: get rid of zoom-switch*/
         .zoom-switch
             display: inline-block
             pointer-events: auto
@@ -165,15 +166,16 @@
                     <span slot="badge"> {{ coverageDangerRegions.length }} </span>
                     Exons with insufficient coverage
                 </v-badge>
-                <v-switch
-                        v-if="sampleModel.id === 's0' && sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode"
-                        v-on:click.self.stop.prevent="toggleZoom"
-                        class="zoom-switch ml-4" style="max-width:80px"
-                        label="Zoom"
-                        v-model="showZoom"
-                >
-                </v-switch>
-                <span v-if="showZoom" class=" label label-warning text-xs-center">{{ zoomMessage }}</span>
+                <!--TODO: Moved this to genesCard, get rid of? -->
+                <!--<v-switch-->
+                        <!--v-if="sampleModel.id === 's0' && sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode"-->
+                        <!--v-on:click.self.stop.prevent="toggleZoom"-->
+                        <!--class="zoom-switch ml-4" style="max-width:80px"-->
+                        <!--label="Zoom"-->
+                        <!--v-model="showZoom"-->
+                <!--&gt;-->
+                <!--</v-switch>-->
+                <!--<span v-if="showZoom" class=" label label-warning text-xs-center">{{ zoomMessage }}</span>-->
             </div>
             <v-card :style="{padding: '5px 10px'}" id="card-viz">
                 <known-variants-toolbar
@@ -217,21 +219,21 @@
                 </div>
 
                 <div style="width:100%" id="viz-div">
-                    <gene-viz id="gene-viz-zoom"
-                              v-if="showZoom"
-                              :data="[selectedTranscript]"
-                              :margin="geneZoomVizMargin"
-                              :width="width"
-                              :showXAxis="false"
-                              :trackHeight="geneVizTrackHeight + 20"
-                              :cdsHeight="geneVizCdsHeight + 20"
-                              :regionStart="parseInt(selectedGene.start)"
-                              :regionEnd="parseInt(selectedGene.end)"
-                              :showBrush="true"
-                              @region-zoom="onRegionZoom"
-                              @region-zoom-reset="onRegionZoomReset"
-                    >
-                    </gene-viz>
+                    <!--<gene-viz id="gene-viz-zoom"-->
+                              <!--v-if="showZoom"-->
+                              <!--:data="[selectedTranscript]"-->
+                              <!--:margin="geneZoomVizMargin"-->
+                              <!--:width="width"-->
+                              <!--:showXAxis="false"-->
+                              <!--:trackHeight="geneVizTrackHeight + 20"-->
+                              <!--:cdsHeight="geneVizCdsHeight + 20"-->
+                              <!--:regionStart="parseInt(selectedGene.start)"-->
+                              <!--:regionEnd="parseInt(selectedGene.end)"-->
+                              <!--:showBrush="true"-->
+                              <!--@region-zoom="onRegionZoom"-->
+                              <!--@region-zoom-reset="onRegionZoomReset"-->
+                    <!--&gt;-->
+                    <!--</gene-viz>-->
 
                     <div class="chart-label"
                          v-if="showVariantViz && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name] && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name].CALLED && sampleModel.calledVariants && sampleModel.calledVariants.features.length > 0"
@@ -434,8 +436,8 @@
 
                 knownVariantsViz: null,
 
-                showZoom: false,
-                zoomMessage: "Drag to zoom",
+                //showZoom: false,
+                // zoomMessage: "Drag to zoom",
                 openState: [true]      // Array which controls expansion panel open/close - want open on load
             }
         },
@@ -447,6 +449,7 @@
                     return val + "x";
                 }
             },
+            // TODO: this is where we hook in to displaying low coverage for somatic vars w/ 0 coverage in normal
             depthVizRegionGlyph: function (exon, regionGroup, regionX) {
                 let exonId = 'exon' + exon.exon_number.replace("/", "-");
                 if (regionGroup.select("g#" + exonId).empty()) {
@@ -722,21 +725,21 @@
                         .style("opacity", 0);
                 }
             },
-            onRegionZoom: function (regionStart, regionEnd) {
-                this.zoomMessage = "Click to zoom out";
-                this.$emit('gene-region-zoom', regionStart, regionEnd);
-            },
-            onRegionZoomReset: function () {
-                this.zoomMessage = "Drag to zoom";
-                this.$emit('gene-region-zoom-reset');
-            },
-            toggleZoom: function() {
-                let self = this;
-                self.showZoom = !self.showZoom;
-                if (self.showZoom === true)
-                    self.openState[0] = true;
-                    self.openState = self.openState.slice();
-            },
+            // onRegionZoom: function (regionStart, regionEnd) {
+            //     this.zoomMessage = "Click to zoom out";
+            //     this.$emit('gene-region-zoom', regionStart, regionEnd);
+            // },
+            // onRegionZoomReset: function () {
+            //     this.zoomMessage = "Drag to zoom";
+            //     this.$emit('gene-region-zoom-reset');
+            // },
+            // toggleZoom: function() {
+            //     let self = this;
+            //     self.showZoom = !self.showZoom;
+            //     if (self.showZoom === true)
+            //         self.openState[0] = true;
+            //         self.openState = self.openState.slice();
+            // },
             promiseFilterVariants: function(filterInfo, selectedTrackId, selectedVariantId, parentFilterName, parentFilterState) {
                 let self = this;
 
@@ -838,17 +841,17 @@
             }
         },
         watch: {
-            showZoom: function () {
-                if (!this.showZoom) {
-                    // make sure expansion panel is open
-                    this.zoomMessage = "Drag to zoom";
-                    this.$emit('gene-region-zoom-reset');
-                }
-            },
-            clearZoom: function () {
-                this.showZoom = false;
-                this.zoomMessage = "Drag to zoom";
-            }
+            // showZoom: function () {
+            //     if (!this.showZoom) {
+            //         // make sure expansion panel is open
+            //         this.zoomMessage = "Drag to zoom";
+            //         this.$emit('gene-region-zoom-reset');
+            //     }
+            // },
+            // clearZoom: function () {
+            //     this.showZoom = false;
+            //     this.zoomMessage = "Drag to zoom";
+            // }
         },
         mounted: function () {
             this.id = this.sampleModel.id;

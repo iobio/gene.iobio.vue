@@ -83,10 +83,10 @@
                         </v-flex>
                 </v-layout>
                 <v-layout :style="{'height': '20px', 'margin-top': '-5px'}">
-                    <v-flex xs10>
+                    <v-flex xs9>
                         <!--Spacing-->
                     </v-flex>
-                    <v-flex xs2 class="slider-bottom-row">
+                    <v-flex xs3 class="slider-bottom-row">
                         <v-text-field v-model="cutoffValue" class="slider-bar-input" color="appColor" :suffix="sliderDisplaySuffix" type="number"></v-text-field>
                     </v-flex>
                 </v-layout>
@@ -180,6 +180,7 @@
                 self.readyToApply = false;
                 self.$emit('cutoff-filter-cleared', self.filterName, self.parentFilterName);
             },
+            // TODO: add debounce here to get rid of lag
             onSliderMoved: function() {
                 const self = this;
                 self.$emit('filter-slider-changed', self.filterName, self.filterLogic.text, self.getAdjustedCutoff(self.cutoffValue, self.filterName), self.parentFilterName);
