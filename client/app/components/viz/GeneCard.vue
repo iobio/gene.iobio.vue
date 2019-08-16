@@ -221,8 +221,8 @@
                       :margin="margin"
                       :trackHeight="trackHeight"
                       :cdsHeight="cdsHeight"
-                      :regionStart="parseInt(selectedGene.start)"
-                      :regionEnd="parseInt(selectedGene.end)"
+                      :regionStart="geneRegionStart"
+                      :regionEnd="geneRegionEnd"
                       :showBrush="showZoom"
                       @region-zoom="onRegionZoom"
                       @region-zoom-reset="onRegionZoomReset">

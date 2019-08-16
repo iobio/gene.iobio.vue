@@ -22,8 +22,8 @@
       <file leaf-file-name="GeneHome.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/pages/GeneHome.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="436">
-              <caret line="1236" column="39" selection-start-line="1236" selection-start-column="39" selection-end-line="1236" selection-end-column="39" />
+            <state relative-caret-position="373">
+              <caret line="138" column="61" selection-start-line="138" selection-start-column="46" selection-end-line="138" selection-end-column="61" />
               <folding>
                 <element signature="n#style#0;n#v-card#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
@@ -41,8 +41,8 @@
       <file leaf-file-name="GeneCard.vue" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/app/components/viz/GeneCard.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="336">
-              <caret line="333" column="42" selection-start-line="333" selection-start-column="42" selection-end-line="333" selection-end-column="42" />
+            <state relative-caret-position="235">
+              <caret line="220" column="38" lean-forward="true" selection-start-line="220" selection-start-column="38" selection-end-line="220" selection-end-column="38" />
               <folding>
                 <element signature="n#style#0;n#v-flex#0;n#v-layout#0;n#div#0;n#template#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#span#2;n#div#0;n#div#0;n#div#0;n#template#0;n#!!top" expanded="true" />
@@ -60,8 +60,8 @@
       <file leaf-file-name="GeneViz.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/viz/GeneViz.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="388">
-              <caret line="284" column="33" lean-forward="true" selection-start-line="284" selection-start-column="33" selection-end-line="284" selection-end-column="33" />
+            <state relative-caret-position="125">
+              <caret line="284" column="50" lean-forward="true" selection-start-line="284" selection-start-column="50" selection-end-line="284" selection-end-column="50" />
             </state>
           </provider>
         </entry>
@@ -158,8 +158,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>promiseLoadCosmicVariants</find>
-      <find>variant-card</find>
       <find>onregion</find>
       <find>showzoom</find>
       <find>showbrush</find>
@@ -169,7 +167,6 @@
       <find>toggle</find>
       <find>showZoom</find>
       <find>brush</find>
-      <find>gene-card</find>
       <find>clearZoom</find>
       <find>clearzoom</find>
       <find>onRegionZoomReset</find>
@@ -188,6 +185,9 @@
       <find>updategenechart</find>
       <find>regionGlyph</find>
       <find>region-zoom</find>
+      <find>variant-card</find>
+      <find>geneRegionStart</find>
+      <find>gene-card</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -251,12 +251,12 @@
         <option value="$PROJECT_DIR$/client/app/models/CohortModel.js" />
         <option value="$PROJECT_DIR$/client/app/models/FilterModel.js" />
         <option value="$PROJECT_DIR$/client/app/components/partials/FilterPanelSlider.vue" />
-        <option value="$PROJECT_DIR$/client/app/components/viz/GeneCard.vue" />
         <option value="$PROJECT_DIR$/client/app/d3/Gene.d3.js" />
         <option value="$PROJECT_DIR$/client/app/components/pages/GeneHome.vue" />
         <option value="$PROJECT_DIR$/client/app/components/viz/GeneViz.vue" />
         <option value="$PROJECT_DIR$/client/app/d3/Line.d3.js" />
         <option value="$PROJECT_DIR$/client/app/components/viz/VariantCard.vue" />
+        <option value="$PROJECT_DIR$/client/app/components/viz/GeneCard.vue" />
       </list>
     </option>
   </component>
@@ -460,12 +460,12 @@
       <workItem from="1564191092267" duration="30250000" />
       <workItem from="1564500014829" duration="40764000" />
       <workItem from="1565121291426" duration="10998000" />
-      <workItem from="1565229535674" duration="115385000" />
+      <workItem from="1565229535674" duration="119650000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="998159000" />
+    <option name="totallyTimeSpent" value="1002424000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="6" />
@@ -957,15 +957,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/app/components/viz/GeneViz.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="388">
-          <caret line="284" column="33" lean-forward="true" selection-start-line="284" selection-start-column="33" selection-end-line="284" selection-end-column="33" />
+        <state relative-caret-position="125">
+          <caret line="284" column="50" lean-forward="true" selection-start-line="284" selection-start-column="50" selection-end-line="284" selection-end-column="50" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/app/components/pages/GeneHome.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="436">
-          <caret line="1236" column="39" selection-start-line="1236" selection-start-column="39" selection-end-line="1236" selection-end-column="39" />
+        <state relative-caret-position="373">
+          <caret line="138" column="61" selection-start-line="138" selection-start-column="46" selection-end-line="138" selection-end-column="61" />
           <folding>
             <element signature="n#style#0;n#v-card#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
@@ -981,8 +981,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/client/app/components/viz/GeneCard.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="333" column="42" selection-start-line="333" selection-start-column="42" selection-end-line="333" selection-end-column="42" />
+        <state relative-caret-position="235">
+          <caret line="220" column="38" lean-forward="true" selection-start-line="220" selection-start-column="38" selection-end-line="220" selection-end-column="38" />
           <folding>
             <element signature="n#style#0;n#v-flex#0;n#v-layout#0;n#div#0;n#template#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#span#2;n#div#0;n#div#0;n#div#0;n#template#0;n#!!top" expanded="true" />
