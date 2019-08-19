@@ -17,6 +17,7 @@ export default function geneD3() {
     var selectedTranscript = null;
 
     var geneD3_showBrush = false;
+    var geneD3_drawBrush = false;
     var geneD3_showLabel = false;
     var geneD3_showXAxis = true;
 
@@ -63,6 +64,37 @@ export default function geneD3() {
     };
 
     var featureGlyphHeight = +0;
+
+    var toggleBrush = function (showBrush, container) {
+        if (showBrush === true) {
+            var brushHeight = geneD3_height + margin.top + margin.bottom;
+            var brushY = (margin.top - 1) * -1; // TODO: get rid of?
+            container.select('svg').selectAll("g.x.brush").remove();
+            var theBrush = container.select('svg').selectAll("g.x.brush").data([0]);
+            theBrush.enter().append("g")
+                .attr("class", "x brush")
+                .call(brush)
+                .selectAll("rect")
+                .attr("y", 0)
+                .attr("height", brushHeight);
+
+            theBrush.selectAll(".resize")
+                .append("line")
+                .style("visibility", "visible")
+                .attr("y2", brushHeight);
+            theBrush.selectAll(".resize.e rect")
+                .attr("y0", 0);
+            theBrush.selectAll(".resize")
+                .append("path")
+                .style("visibility", "visible")
+                .attr("d", d3.svg.symbol().type("triangle-up").size(20))
+                .attr("transform", function (d, i) {
+                    return i ? "translate(-4," + (brushHeight / 2) + ") rotate(-90)" : "translate(4," + (brushHeight / 2) + ") rotate(90)";
+                });
+        } else {
+            container.select('svg').selectAll("g.x.brush").remove();
+        }
+    };
 
 
     function chart(selection, options) {
@@ -150,31 +182,30 @@ export default function geneD3() {
 
 
             // Brush
-            brush = d3.svg.brush()
-                .x(x)
-                .on("brushend", function () {
-                    var extentRect = d3.select("g.x.brush rect.extent");
-                    var xExtent = +extentRect.attr("x");
+            if (geneD3_drawBrush === true) {
+                brush = d3.svg.brush()
+                    .x(x)
+                    .on("brushend", function () {
+                        var extentRect = d3.select("g.x.brush rect.extent");
+                        var xExtent = +extentRect.attr("x");
 
-                    extentRect.attr("x", xExtent - 1);
+                        extentRect.attr("x", xExtent - 1);
 
-                    if (brush.empty()) {
+                        if (brush.empty()) {
+                            container.selectAll("svg").selectAll(".x.brush .resize line")
+                                .style("visibility", "hidden");
+                            container.selectAll("svg").selectAll(".x.brush .resize path")
+                                .style("visibility", "hidden");
+                        }
+                        dispatch.d3brush(brush);
+                    })
+                    .on("brush", function () {
                         container.selectAll("svg").selectAll(".x.brush .resize line")
-                            .style("visibility", "hidden");
+                            .style("visibility", "visible");
                         container.selectAll("svg").selectAll(".x.brush .resize path")
-                            .style("visibility", "hidden");
-                    }
-                    dispatch.d3brush(brush);
-
-
-                })
-                .on("brush", function () {
-                    container.selectAll("svg").selectAll(".x.brush .resize line")
-                        .style("visibility", "visible");
-                    container.selectAll("svg").selectAll(".x.brush .resize path")
-                        .style("visibility", "visible");
-                })
-
+                            .style("visibility", "visible");
+                    });
+            }
 
             var axisEnter = svg.selectAll("g.x.axis").data([0]).enter().append('g');
             if (geneD3_showXAxis) {
@@ -476,7 +507,7 @@ export default function geneD3() {
                 .call(xAxis);
 
             // Draw brush if desired
-            toggleBrush(geneD3_showBrush);
+            toggleBrush(geneD3_showBrush, container);
         });
 
     }
@@ -487,38 +518,6 @@ export default function geneD3() {
             this.parentNode.appendChild(this);
         });
     }
-
-    var toggleBrush = function (showBrush) {
-        container = d3.select('#transcript-panel').select('.ibo-gene');
-        if (showBrush === true) {
-            var brushHeight = geneD3_height + margin.top + margin.bottom;
-            var brushY = (margin.top - 1) * -1;
-            container.select('svg').selectAll("g.x.brush").remove();
-            var theBrush = container.select('svg').selectAll("g.x.brush").data([0]);
-            theBrush.enter().append("g")
-                .attr("class", "x brush")
-                .call(brush)
-                .selectAll("rect")
-                .attr("y", 0)
-                .attr("height", brushHeight);
-
-            theBrush.selectAll(".resize")
-                .append("line")
-                .style("visibility", "visible")
-                .attr("y2", brushHeight);
-            theBrush.selectAll(".resize.e rect")
-                .attr("y0", 0);
-            theBrush.selectAll(".resize")
-                .append("path")
-                .style("visibility", "visible")
-                .attr("d", d3.svg.symbol().type("triangle-up").size(20))
-                .attr("transform", function (d, i) {
-                    return i ? "translate(-4," + (brushHeight / 2) + ") rotate(-90)" : "translate(4," + (brushHeight / 2) + ") rotate(90)";
-                });
-        } else {
-            container.select('svg').selectAll("g.x.brush").remove();
-        }
-    };
 
     // updates the hash with the center of the biggest span between features
     function centerSpan(d) {
@@ -683,28 +682,34 @@ export default function geneD3() {
     };
 
     chart.showBrush = function (_) {
-        if (!arguments.length) return showBrush;
+        if (!arguments.length) return geneD3_showBrush;
         geneD3_showBrush = _;
         return chart;
     }
+
+    chart.drawBrush = function (_) {
+        if (!arguments.length) return geneD3_drawBrush;
+        geneD3_drawBrush = _;
+        return chart;
+    };
 
     chart.selectedTranscript = function (_) {
         if (!arguments.length) return selectedTranscript;
         selectedTranscript = _;
         return chart;
-    }
+    };
 
     chart.showLabel = function (_) {
         if (!arguments.length) return geneD3_showLabel;
         geneD3_showLabel = _;
         return chart;
-    }
+    };
 
     chart.toggleBrush = function (_) {
         if (!arguments.length) return toggleBrush;
         toggleBrush = _;
         return chart;
-    }
+    };
 
 
     // This adds the "on" methods to our custom exports

@@ -335,8 +335,8 @@
                               :regionStart="regionStart"
                               :regionEnd="regionEnd"
                               :showXAxis="geneVizShowXAxis"
-                              :showBrush="false"
                               :featureClass="getExonClass"
+                              :isZoomTrack="false"
                               @feature-selected="showExonTooltip"
                     >
                     </gene-viz>
@@ -840,19 +840,7 @@
                 }
             }
         },
-        watch: {
-            // showZoom: function () {
-            //     if (!this.showZoom) {
-            //         // make sure expansion panel is open
-            //         this.zoomMessage = "Drag to zoom";
-            //         this.$emit('gene-region-zoom-reset');
-            //     }
-            // },
-            // clearZoom: function () {
-            //     this.showZoom = false;
-            //     this.zoomMessage = "Drag to zoom";
-            // }
-        },
+        watch: {},
         mounted: function () {
             this.id = this.sampleModel.id;
         },

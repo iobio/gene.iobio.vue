@@ -129,7 +129,6 @@
               :fixedWidth=600
               :regionStart="selectedGene.start"
               :regionEnd="selectedGene.end"
-              :showBrush=false
               :showXAxis=false
               @transcript-selected="onTranscriptSelected">
             </gene-viz>

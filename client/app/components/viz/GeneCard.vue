@@ -213,7 +213,7 @@
             </div>
         </div>
 
-        <div id="transcript-panel" v-if="showGeneViz" class="level-edu fullview">
+        <div :id="geneVizName" v-if="showGeneViz" class="level-edu fullview">
             <gene-viz id="gene-viz"
                       ref="transcriptGeneVizRef"
                       :data="[selectedTranscript]"
@@ -223,7 +223,8 @@
                       :cdsHeight="cdsHeight"
                       :regionStart="geneRegionStart"
                       :regionEnd="geneRegionEnd"
-                      :showBrush="showZoom"
+                      :isZoomTrack="true"
+                      :zoomSwitchOn="showZoom"
                       @region-zoom="onRegionZoom"
                       @region-zoom-reset="onRegionZoomReset">
             </gene-viz>
@@ -301,6 +302,7 @@
                 ncbiSummary: null,
                 showZoom: false,
                 zoomMessage: "Drag to zoom",
+                geneVizName: 'transcript-panel'
             }
         },
         methods: {
@@ -326,9 +328,6 @@
                 }
                 self.$emit('gene-source-selected', self.geneSource);
             },
-            onGeneRegionBufferChange: _.debounce(function (newGeneRegionBuffer) {
-                this.$emit('gene-region-buffer-change', parseInt(newGeneRegionBuffer));
-            }, 100),
             onRegionZoom: function (regionStart, regionEnd) {
                 this.zoomMessage = "Click to zoom out";
                 this.$emit('gene-region-zoom', regionStart, regionEnd);
@@ -361,7 +360,10 @@
             toggleZoom: function () {
                 const self = this;
                 self.showZoom = !self.showZoom;
-            }
+            },
+            onGeneRegionBufferChange: _.debounce(function (newGeneRegionBuffer) {
+                this.$emit('gene-region-buffer-change', parseInt(newGeneRegionBuffer));
+            }, 100),
         },
         filters: {
             formatRegion: function (value) {
@@ -384,16 +386,16 @@
             showGeneTypeWarning: function () {
                 return this.selectedGene != null
                     && Object.keys(this.selectedGene).length > 0
-                    && this.selectedGene.gene_type != 'protein_coding'
-                    && this.selectedGene.gene_type != 'gene';
+                    && this.selectedGene.gene_type !== 'protein_coding'
+                    && this.selectedGene.gene_type !== 'gene';
             },
             showTranscriptTypeWarning: function () {
-                if (this.selectedTranscript == null || this.selectedTranscript.transcript_type == 'protein_coding'
-                    || this.selectedTranscript.transcript_type == 'mRNA'
-                    || this.selectedTranscript.transcript_type == 'transcript') {
+                if (this.selectedTranscript == null || this.selectedTranscript.transcript_type === 'protein_coding'
+                    || this.selectedTranscript.transcript_type === 'mRNA'
+                    || this.selectedTranscript.transcript_type === 'transcript') {
                     return false;
                 } else {
-                    if (this.selectedGene.gene_type != this.selectedTranscript.transcript_type) {
+                    if (this.selectedGene.gene_type !== this.selectedTranscript.transcript_type) {
                         return true;
                     } else {
                         return false;
@@ -402,7 +404,7 @@
             },
             regionBuffer: {
                 get() {
-                    return this.value == undefined ? 1000 : this.value
+                    return this.value == null ? 1000 : this.value
                 },
                 set(val) {
                     Vue.nextTick(() => {
@@ -420,24 +422,27 @@
             geneRegionEnd: function () {
             },
             selectedGene: function (newGene, oldGene) {
-                if (newGene.gene_name != oldGene.gene_name) {
+                if (newGene.gene_name !== oldGene.gene_name) {
                     this.initSummaryInfo();
                 }
             },
             showZoom: function () {
-                if (!this.showZoom) {
-                    // make sure expansion panel is open
-                    this.zoomMessage = "Drag to zoom";
-                    this.$refs.transcriptGeneVizRef.toggleBrush(this.showZoom);
-                    this.$emit('gene-region-zoom-reset');
+                const self = this;
+                let container = d3.select('#' + self.geneVizName).select('#gene-viz');
+                if (self.showZoom) {
+                    self.zoomMessage = "Drag to zoom";
+                    self.$refs.transcriptGeneVizRef.toggleBrush(self.showZoom, container);
                 } else {
-                    this.$refs.transcriptGeneVizRef.toggleBrush(this.showZoom);
+                    self.$refs.transcriptGeneVizRef.toggleBrush(self.showZoom, container);
+                    self.$emit('gene-region-zoom-reset');
                 }
             },
             clearZoom: function () {
-                this.showZoom = false;
-                this.zoomMessage = "Drag to zoom";
-                this.$emit('gene-region-zoom-reset');
+                const self = this;
+                // TODO: make sure this is being called properly when we select a new gene
+                self.showZoom = false;
+                self.zoomMessage = "Drag to zoom";
+                self.$emit('gene-region-zoom-reset');
             }
         },
         mounted: function () {

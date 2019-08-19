@@ -140,6 +140,7 @@
                             :geneRegionEnd="geneRegionEnd"
                             :showGeneViz="true"
                             :workingOffline="workingOffline"
+                            :clearZoom="clearZoom"
                             @transcript-selected="onTranscriptSelected"
                             @gene-source-selected="onGeneSourceSelected"
                             @gene-region-buffer-change="onGeneRegionBufferChange"
@@ -309,7 +310,6 @@
                         :globalAppProp="globalApp"
                         :isEduMode="isEduMode"
                         :isBasicMode="isBasicMode"
-                        :clearZoom="clearZoom"
                         :sampleModel="model"
                         :canonicalSampleIds="canonicalSampleIds"
                         :classifyVariantSymbolFunc="model.id === 'known-variants' ? model.classifyByClinvar : model.classifyByImpact"
@@ -1224,7 +1224,7 @@
                     })
             },
             onGeneRegionZoom: function (theStart, theEnd) {
-                // Gene-viz watches these for updates
+                // Gene-viz watches these for updates to redraw track
                 this.geneRegionStart = theStart;
                 this.geneRegionEnd = theEnd;
 

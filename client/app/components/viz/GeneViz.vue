@@ -157,8 +157,6 @@
 </template>
 
 <script>
-
-
     import geneD3 from '../../d3/Gene.d3.js'
 
     export default {
@@ -215,15 +213,18 @@
                 type: Boolean,
                 default: true
             },
-            showBrush: {
-                type: Boolean,
-                default: false
-            },
             fixedWidth: {
                 type: Number,
                 default: 0
+            },
+            isZoomTrack: {
+                type: Boolean,
+                default: false
+            },
+            zoomSwitchOn: {
+                type: Boolean,
+                default: false
             }
-
         },
         data() {
             return {
@@ -234,12 +235,11 @@
         },
         mounted: function () {
             this.draw();
-            const showBrush = false;
-            this.update(showBrush);
+            this.update(false); // Don't want to show zoom brush on mount
         },
         methods: {
             draw: function () {
-                var self = this;
+                const self = this;
 
                 this.geneChart = geneD3()
                     .width(self.fixedWidth > 0 ? self.fixedWidth : this.width)
@@ -247,7 +247,8 @@
                     .heightPercent("100%")
                     .margin(this.margin)
                     .showXAxis(this.showXAxis)
-                    .showBrush(this.showBrush)
+                    .drawBrush(self.isZoomTrack) // Controls drawing backing brush obj
+                    .showBrush(false)            // Controls displaying brush
                     .trackHeight(this.trackHeight)
                     .cdsHeight(this.cdsHeight)
                     .showLabel(this.showLabel)
@@ -273,22 +274,22 @@
                         self.$emit("feature-selected", featureObject, feature, lock);
                     });
             },
-            update: function (showBrush) {
+            update: function (showZoomBrush) {
                 const self = this;
                 if (self.data && self.data.length > 0 && self.data[0] != null && Object.keys(self.data[0]).length > 0) {
                     this.geneChart.regionStart(this.regionStart);
                     this.geneChart.regionEnd(this.regionEnd);
                     this.geneChart.width(self.fixedWidth > 0 ? self.fixedWidth : this.$el.clientWidth);
                     if (this.geneChart.width() > 0) {
-                        var selection = d3.select(this.$el).datum(self.data);
-                        this.geneChart.showBrush = showBrush;
+                        let selection = d3.select(this.$el).datum(self.data);
+                        this.geneChart.showBrush(showZoomBrush);
                         this.geneChart(selection);
                     }
                 }
             },
-            toggleBrush: function (showBrush) {
+            toggleBrush: function (showBrush, container) {
                 const self = this;
-                self.geneChart.toggleBrush()(showBrush);
+                self.geneChart.toggleBrush()(showBrush, container);
             },
             concatKeys: function (transcripts) {
                 if (transcripts) {
@@ -303,14 +304,14 @@
         watch: {
             data: function (newData, oldData) {
                 let self = this;
-                if ($(self.$el).find("svg").length == 0 || self.concatKeys(newData) != self.concatKeys(oldData)) {
-                    const showBrush = false;
-                    this.update(showBrush);
+                if ($(self.$el).find("svg").length === 0 || self.concatKeys(newData) != self.concatKeys(oldData)) {
+                    this.update(false);
                 }
             },
             regionStart: function () {
-                const showBrush = true;
-                this.update(showBrush);
+                const self = this;
+                const showZoomBrush = self.isZoomTrack && self.zoomSwitchOn;
+                self.update(showZoomBrush);
             }
         }
     }
