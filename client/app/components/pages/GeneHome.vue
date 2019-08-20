@@ -1234,7 +1234,7 @@
 
                 self.cohortModel.setCoverage(self.geneRegionStart, self.geneRegionEnd);
             },
-            onGeneRegionZoomReset: function (updateTrack = false) {
+            onGeneRegionZoomReset: function (updateTrack = true) {
                 const self = this;
                 self.geneRegionStart = this.selectedGene.start;
                 self.geneRegionEnd = this.selectedGene.end;
@@ -1242,7 +1242,7 @@
                 self.filterModel.regionStart = null;
                 self.filterModel.regionEnd = null;
 
-                if (updateTrack === true) {
+                if (updateTrack) {
                     self.featureMatrixModel.setRankedVariants();
                     self.cohortModel.setLoadedVariants(self.selectedGene);
                     self.cohortModel.setCoverage();

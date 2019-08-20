@@ -303,7 +303,8 @@
                 ncbiSummary: null,
                 showZoom: false,
                 zoomMessage: "Drag to zoom",
-                geneVizName: 'transcript-panel'
+                geneVizName: 'transcript-panel',
+                updateMatrix: false  // Used to control redraw of feature matrix when zoom status changes
             }
         },
         methods: {
@@ -334,7 +335,8 @@
                 this.$emit('gene-region-zoom', regionStart, regionEnd);
             },
             onRegionZoomReset: function () {
-                this.$emit('gene-region-zoom-reset');
+                const updateTrack = true;
+                this.$emit('gene-region-zoom-reset', updateTrack);
                 this.zoomMessage = "Drag to zoom";
             },
             initSummaryInfo: function () {
@@ -360,6 +362,7 @@
             },
             toggleZoom: function () {
                 const self = this;
+                self.updateMatrix = true;
                 self.showZoom = !self.showZoom;
             },
             onGeneRegionBufferChange: _.debounce(function (newGeneRegionBuffer) {
@@ -431,12 +434,14 @@
                     self.$refs.transcriptGeneVizRef.toggleBrush(self.showZoom, container);
                 } else {
                     self.$refs.transcriptGeneVizRef.toggleBrush(self.showZoom, container);
-                    self.$emit('gene-region-zoom-reset');
+                    // TODO: this needs to be conditional on if we're loading a new gene (updateTrack = false) or if we're toggling zoom off (updateTrack = true)
+                    self.$emit('gene-region-zoom-reset', self.updateMatrix);
                 }
             },
             clearZoom: function () {
                 const self = this;
                 if (self.clearZoom === true) {
+                    self.updateMatrix = false;
                     self.showZoom = false;
                     self.zoomMessage = "Drag to zoom";
                     const updateTrack = false;

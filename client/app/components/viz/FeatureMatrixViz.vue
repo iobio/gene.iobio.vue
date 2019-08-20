@@ -239,11 +239,7 @@
                     selection = d3.select(self.$el).data([self.data]);
                     self.featureMatrixChart(selection, {showColumnLabels: true, simpleColumnLabels: true});
                 } else {
-                    // clear matrix if data is empty
-                    // TODO: why is old data still lingering here...
                     d3.select('#' + self.name).selectAll('svg').remove();
-                    // selection = d3.select(self.$el).data([]);
-                    // self.featureMatrixChart(selection, {showColumnLabels: true, simpleColumnLabels: true});
                 }
             },
             setFeatureMatrixChart: function () {

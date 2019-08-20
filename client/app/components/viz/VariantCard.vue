@@ -166,16 +166,6 @@
                     <span slot="badge"> {{ coverageDangerRegions.length }} </span>
                     Exons with insufficient coverage
                 </v-badge>
-                <!--TODO: Moved this to genesCard, get rid of? -->
-                <!--<v-switch-->
-                        <!--v-if="sampleModel.id === 's0' && sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode"-->
-                        <!--v-on:click.self.stop.prevent="toggleZoom"-->
-                        <!--class="zoom-switch ml-4" style="max-width:80px"-->
-                        <!--label="Zoom"-->
-                        <!--v-model="showZoom"-->
-                <!--&gt;-->
-                <!--</v-switch>-->
-                <!--<span v-if="showZoom" class=" label label-warning text-xs-center">{{ zoomMessage }}</span>-->
             </div>
             <v-card :style="{padding: '5px 10px'}" id="card-viz">
                 <known-variants-toolbar
@@ -725,21 +715,6 @@
                         .style("opacity", 0);
                 }
             },
-            // onRegionZoom: function (regionStart, regionEnd) {
-            //     this.zoomMessage = "Click to zoom out";
-            //     this.$emit('gene-region-zoom', regionStart, regionEnd);
-            // },
-            // onRegionZoomReset: function () {
-            //     this.zoomMessage = "Drag to zoom";
-            //     this.$emit('gene-region-zoom-reset');
-            // },
-            // toggleZoom: function() {
-            //     let self = this;
-            //     self.showZoom = !self.showZoom;
-            //     if (self.showZoom === true)
-            //         self.openState[0] = true;
-            //         self.openState = self.openState.slice();
-            // },
             promiseFilterVariants: function(filterInfo, selectedTrackId, selectedVariantId, parentFilterName, parentFilterState) {
                 let self = this;
 
