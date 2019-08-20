@@ -175,9 +175,9 @@ class FeatureMatrixModel {
 
     // Called on home page mount
     init(sampleModels = null) {
-        let self = this;
-        this.matrixRowsEvaluated = false;
-        this.clearRankedVariants();
+        const self = this;
+        self.matrixRowsEvaluated = false;
+        //self.clearRankedVariants();   // TODO: SJG removed this... don't think we need it
 
         // if (self.isBasicMode) {
         //   this.filteredMatrixRows = $.extend([], this.matrixRowsBasic);
@@ -211,18 +211,19 @@ class FeatureMatrixModel {
         //   this.setRowLabel('Inheritance Mode',            'Inheritance');
         // } else {
         if (sampleModels != null) {
-            this.addAllLoadedSamples(sampleModels);
+            self.addAllLoadedSamples(sampleModels);
         }
-        this.filteredMatrixRows = $.extend([], this.matrixRows);
+        self.filteredMatrixRows = $.extend([], this.matrixRows);
         //this.removeRow('Genotype', self.filteredMatrixRows);
         //}
 
     }
 
     getProgressText() {
-        if (this.inProgress.loadingVariants) {
-            return "Annotation variants";
-        } else if (this.inProgress.rankingVariants) {
+        const self = this;
+        if (self.inProgress.loadingVariants) {
+            return "Annotating variants";
+        } else if (self.inProgress.rankingVariants) {
             return "Ranking variants";
         } else {
             return "";
@@ -334,17 +335,22 @@ class FeatureMatrixModel {
     }
 
     clearRankedVariants() {
-        this.rankedVariants = [];
+        const self = this;
+        self.rankedVariants = [];
+        // Trick Vue into refresh
+        self.rankedVariants.push('foo');
+        self.rankedVariants.pop();
     }
 
     setRankedVariants(regionStart, regionEnd) {
-        if (this.featureVcfData) {
+        const self = this;
+        if (self.featureVcfData) {
             if (regionStart && regionEnd) {
-                this.rankedVariants = this.featureVcfData.features.filter(function (feature) {
+                self.rankedVariants = self.featureVcfData.features.filter(function (feature) {
                     return feature.start >= regionStart && feature.start <= regionEnd;
                 })
             } else {
-                this.rankedVariants = this.featureVcfData.features;
+                self.rankedVariants = self.featureVcfData.features;
             }
         }
 
@@ -354,6 +360,7 @@ class FeatureMatrixModel {
     promiseRankVariants(theVcfData, allSomaticFeaturesLookup, allFilteredFeaturesLookup) {
         let self = this;
         self.featureVcfData = theVcfData;
+        self.inProgress.loadingVariants = false;
         self.inProgress.rankingVariants = true;
         self.clearRankedVariants();
 
@@ -422,40 +429,37 @@ class FeatureMatrixModel {
                 } else {
                     self.warning = "";
                 }
-
                 self.inProgress.rankingVariants = false;
                 resolve();
             }
         })
-
-
     }
 
     /* Assigns feature objects to each variant which coordinates their sorting in the feature matrix model. */
     setFeaturesForVariants(theVariants, allSomaticFeaturesLookup) {
-        let self = this;
+        const self = this;
 
         theVariants.forEach(function (variant) {
-            var features = [];
-            for (var i = 0; i < self.filteredMatrixRows.length; i++) {
+            let features = [];
+            for (let i = 0; i < self.filteredMatrixRows.length; i++) {
                 features.push(null);
             }
 
             self.filteredMatrixRows.forEach(function (matrixRow) {
-                var rawValue = null;
+                let rawValue = null;
                 if (matrixRow.attribute instanceof Array) {
                     rawValue = self.getGenericAnnotation().getValue(variant, matrixRow.attribute);
                 } else {
                     rawValue = variant[matrixRow.attribute];
                 }
-                var theValue = null;
-                var mappedValue = null;
-                var mappedClazz = null;
-                var symbolFunction = null;
-                var sampleTrackColor = null;    // Only used for variable colors for sample rows
-                var bindTo = null;
-                var isText = false;
-                var clickFunction = matrixRow.clickFunction;
+                let theValue = null;
+                let mappedValue = null;
+                let mappedClazz = null;
+                let symbolFunction = null;
+                let sampleTrackColor = null;    // Only used for variable colors for sample rows
+                let bindTo = null;
+                let isText = false;
+                let clickFunction = matrixRow.clickFunction;
                 // Don't fill in clinvar for now
                 if (matrixRow.attribute === 'clinvar') {
                     rawValue = 'N';
@@ -525,7 +529,7 @@ class FeatureMatrixModel {
                             // Keep the lowest mapped value
                             if (Object.keys(rawValue).length > 0) {
                                 for (var val in rawValue) {
-                                    var entry = matrixRow.map[val];
+                                    let entry = matrixRow.map[val];
                                     if (entry != null && entry.symbolFunction && (mappedValue == null || entry.value < mappedValue)) {
                                         mappedValue = entry.value;
                                         mappedClazz = entry.clazz;
@@ -535,7 +539,7 @@ class FeatureMatrixModel {
                                     }
                                 }
                             } else {
-                                var entry = matrixRow.map.none;
+                                let entry = matrixRow.map.none;
                                 if (entry != null && entry.symbolFunction && (mappedValue == null || entry.value < mappedValue)) {
                                     mappedValue = entry.value;
                                     mappedClazz = entry.clazz;
@@ -562,7 +566,7 @@ class FeatureMatrixModel {
                         // value is within a min-max range.
                         if (self.isNumeric(rawValue)) {
                             theValue = d3.format(",.3%")(+rawValue);
-                            var lowestValue = 9999;
+                            let lowestValue = 9999;
                             matrixRow.map.forEach(function (rangeEntry) {
                                 if (+rawValue > rangeEntry.min && +rawValue <= rangeEntry.max) {
                                     if (rangeEntry.value < lowestValue) {
@@ -605,7 +609,7 @@ class FeatureMatrixModel {
 
     /* Orders the columns of variants based on the rank property */
     sortVariantsByFeatures(theVariants) {
-        let self = this;
+        const self = this;
         // Sort the variants by the criteria that matches
         // For mygene2 basic, filter out everything that isn't clinvar pathogenic < 1% af
         return theVariants.sort(function (a, b) {
@@ -617,7 +621,7 @@ class FeatureMatrixModel {
             // loop, that means all features of a and b match
             // so return 0;
 
-            for (var i = 0; i < self.filteredMatrixRows.length; i++) {
+            for (let i = 0; i < self.filteredMatrixRows.length; i++) {
                 if (a.features[i] == null) {
                     return 1;
                 } else if (b.features[i] == null) {
@@ -730,8 +734,6 @@ class FeatureMatrixModel {
         }
         return lowestRank;
     }
-
-    // TODO: will need a COSMIC rank here
 
     getImpactRank(variant, highestImpactVep) {
         var me = this;

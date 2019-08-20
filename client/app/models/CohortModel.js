@@ -1120,7 +1120,7 @@ class CohortModel {
                     && self.allUniqueFeaturesObj.features.length > 0
                     && loadFromFlag) {
                 self.featureMatrixModel.promiseRankVariants(self.allUniqueFeaturesObj, self.allSomaticFeaturesLookup, self.getAllFilterPassingVariants())
-            } else {
+            } else if (allVariants && allVariants.features.length > 0) {
                 self.featureMatrixModel.promiseRankVariants(allVariants, self.allSomaticFeaturesLookup, self.getAllFilterPassingVariants());
                 self.allUniqueFeaturesObj = allVariants;
             }
@@ -1175,6 +1175,7 @@ class CohortModel {
         return new Promise(function (resolve, reject) {
             let annotatePromises = [];
             let theResultMap = {};
+            self.featureMatrixModel.inProgress.loadingVariants = true;
             for (var id in self.sampleMap) {
                 let model = self.sampleMap[id].model;
                 let noReloadNecessary = model.lastGeneLoaded === theGene.gene_name && model.loadedVariants != null && !model.entryDataChanged;

@@ -1118,19 +1118,17 @@
             },
 
             promiseLoadGene: function (geneName, theTranscript, loadingFromFlagEvent = false, loadFeatureMatrix = true) {
-                let self = this;
-                this.showWelcome = false;
-                this.applyFilters = false;
+                const self = this;
+                self.showWelcome = false;
+                self.applyFilters = false;
+                self.clearZoom = true;
                 return new Promise(function (resolve, reject) {
-                    self.clearZoom = true;
-
                     if (self.cohortModel) {
                         self.cohortModel.clearLoadedData(geneName);
                     }
                     if (self.featureMatrixModel) {
                         self.featureMatrixModel.clearRankedVariants();
                     }
-
                     self.geneModel.promiseAddGeneName(geneName)
                         .then(function () {
                             self.geneModel.promiseGetGeneObject(geneName)
@@ -1158,7 +1156,6 @@
                                         } else {
                                             self.selectedTranscript = latestTranscript;
                                         }
-
                                     }
 
                                     if (self.$refs.scrollButtonRefGene) {
@@ -1192,7 +1189,7 @@
                 })
             },
             onTranscriptIdSelected: function (transcriptId) {
-                var self = this;
+                const self = this;
                 let theTranscript = null;
                 self.selectedGene.transcripts.filter(function (transcript) {
                     if (transcript.transcript_id.indexOf(transcriptId) == 0) {
@@ -1204,18 +1201,18 @@
                 }
             },
             onTranscriptSelected: function (transcript) {
-                var self = this;
+                const self = this;
                 self.selectedTranscript = transcript;
                 self.geneModel.setLatestGeneTranscript(self.selectedGene.gene_name, self.selectedTranscript);
                 self.onGeneSelected(self.selectedGene.gene_name);
             },
             onGeneSourceSelected: function (theGeneSource) {
-                var self = this;
+                const self = this;
                 self.geneModel.geneSource = theGeneSource;
                 this.onGeneSelected(this.selectedGene.gene_name);
             },
             onGeneRegionBufferChange: function (theGeneRegionBuffer) {
-                let self = this;
+                const self = this;
                 self.geneModel.geneRegionBuffer = theGeneRegionBuffer;
                 // We have to clear the cache since the gene regions change
                 self.promiseClearCache()
@@ -1224,37 +1221,40 @@
                     })
             },
             onGeneRegionZoom: function (theStart, theEnd) {
+                const self = this;
                 // Gene-viz watches these for updates to redraw track
-                this.geneRegionStart = theStart;
-                this.geneRegionEnd = theEnd;
+                self.geneRegionStart = theStart;
+                self.geneRegionEnd = theEnd;
 
-                this.featureMatrixModel.setRankedVariants(this.geneRegionStart, this.geneRegionEnd);
+                self.featureMatrixModel.setRankedVariants(self.geneRegionStart, self.geneRegionEnd);
 
-                this.filterModel.regionStart = this.geneRegionStart;
-                this.filterModel.regionEnd = this.geneRegionEnd;
-                this.cohortModel.setLoadedVariants(this.selectedGene);
+                self.filterModel.regionStart = self.geneRegionStart;
+                self.filterModel.regionEnd = self.geneRegionEnd;
+                self.cohortModel.setLoadedVariants(self.selectedGene);
 
-                this.cohortModel.setCoverage(this.geneRegionStart, this.geneRegionEnd);
+                self.cohortModel.setCoverage(self.geneRegionStart, self.geneRegionEnd);
             },
-            onGeneRegionZoomReset: function () {
-                this.geneRegionStart = this.selectedGene.start;
-                this.geneRegionEnd = this.selectedGene.end;
+            onGeneRegionZoomReset: function (updateTrack = false) {
+                const self = this;
+                self.geneRegionStart = this.selectedGene.start;
+                self.geneRegionEnd = this.selectedGene.end;
 
-                this.featureMatrixModel.setRankedVariants();
+                self.filterModel.regionStart = null;
+                self.filterModel.regionEnd = null;
 
-                this.filterModel.regionStart = null;
-                this.filterModel.regionEnd = null;
-                this.cohortModel.setLoadedVariants(this.selectedGene);
-
-                this.cohortModel.setCoverage();
+                if (updateTrack === true) {
+                    self.featureMatrixModel.setRankedVariants();
+                    self.cohortModel.setLoadedVariants(self.selectedGene);
+                    self.cohortModel.setCoverage();
+                }
             },
             onCircleVariant: function (idx) {
-                let self = this;
-                var variant = self.cohortModel.getProbandModel().loadedVariants.features[2];
+                const self = this;
+                let variant = self.cohortModel.getProbandModel().loadedVariants.features[2];
                 self.onCohortVariantClick(variant, null, variant.sampleModelId);
             },
             onCohortVariantClick: function (variant, sourceComponent, sampleModelId) {
-                let self = this;
+                const self = this;
                 if (variant) {
                     self.calcFeatureMatrixWidthPercent();
                     self.selectedVariant = variant;
@@ -1288,7 +1288,7 @@
                 }
             },
             onCohortVariantHover: function (variant, sourceComponent) {
-                let self = this;
+                const self = this;
                 self.$refs.variantCardRef.forEach(function (variantCard) {
                     if (variantCard != sourceComponent) {
                         variantCard.showVariantCircle(variant, false);
@@ -1300,18 +1300,18 @@
                 }
             },
             onCohortVariantHoverEnd: function (sourceVariantCard) {
-                let self = this;
+                const self = this;
                 if (self.$refs.variantCardRef) {
                     self.$refs.variantCardRef.forEach(function (variantCard) {
                         variantCard.hideVariantCircle(false);
                         variantCard.hideCoverageCircle();
-                    })
+                    });
                     self.$refs.featureMatrixCardRef.selectVariant(null, 'highlight');
 
                 }
             },
             deselectVariant: function () {
-                let self = this;
+                const self = this;
                 self.selectedVariant = null;
                 self.selectedVariantRelationship = null;
                 self.activeGeneVariantTab = "feature-matrix-tab";
@@ -1431,7 +1431,7 @@
                         + "' "
                         + (filter.variants.length > 1 ? " exist in gene " : " exists in gene ")
                         + geneName + ".<br><br>";
-                })
+                });
                 msg += "Are you sure you want to remove gene " + geneName + "?"
                 alertify.confirm("",
                     msg,

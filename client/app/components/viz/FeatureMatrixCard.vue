@@ -79,17 +79,11 @@
     </div>
 
     <div style="clear:both;width:100%">
-      <div id="matrix-panel"  style="clear:both;min-height:30px"
-        class="fullview" aria-expanded="true">
-        <div id="feature-matrix-row-labels">
-          <!--TODO: LEFT OFF HERE - MOVE ROW LABELS OUT OF CHART-->
-          <!--TODO: no overflow on row labels -->
-        </div>
+      <div id="matrix-panel"  style="clear:both;min-height:30px" class="fullview"
+        aria-expanded="true">
         <div id="feature-matrix" style="overflow-x: auto;">
-
           <feature-matrix-viz id="feature-matrix-viz"
             ref="featureMatrixVizRef"
-            v-bind:class="{ hide: featureMatrixModel.rankedVariants.length === 0, 'basic' : isBasicMode}"
             :data="featureMatrixModel.rankedVariants"
             :annotationScheme="featureMatrixModel.cohort.annotationScheme"
             :matrixRows="featureMatrixModel.matrixRows"
@@ -115,7 +109,7 @@
 
 
 
-        <div id="feature-matrix-note" v-bind:class="{ hide: featureMatrixModel.rankedVariants.length == 0 }" >
+        <div id="feature-matrix-note" v-bind:class="{ hide: featureMatrixModel.rankedVariants && featureMatrixModel.rankedVariants.length === 0 }" >
 
           <!--<div style="display:inline-block;margin-left:110px">-->
             <!--<svg style="height: 10px;width:108px">-->
@@ -145,16 +139,17 @@
 
       <div style="text-align: center;clear: both;">
         <div class="loader featureMatrixLoader"
-        v-bind:class="{hide: featureMatrixModel.inProgress
-          && !featureMatrixModel.inProgress.loadingVariants
-          && !featureMatrixModel.inProgress.rankingVariants}" style="display: inline-block;">
+        v-bind:class="{hide: !(featureMatrixModel.inProgress.loadingVariants
+          || featureMatrixModel.inProgress.rankingVariants)}" style="display: inline-block;">
           <span class="loader-label">
             {{ featureMatrixModel.getProgressText() }}
           </span>
           <img src="../../../assets/images/wheel.gif">
         </div>
       </div>
-      <div  class="label label-warning level-edu" v-bind:class="{ hide: featureMatrixModel.warning.length == 0 }">
+    <!--TODO: these were in this below, but don't seem to be needed & mess up hiding, 'label': true, 'label-warning': true, 'level-edu': true,-->
+    <div v-bind:class="{'hide': (featureMatrixModel.warning && featureMatrixModel.warning.length === 0)
+      || featureMatrixModel.inProgress.loadingVariants || featureMatrixModel.inProgress.rankingVariants}">
         {{ featureMatrixModel.warning }}
       </div>
 
@@ -408,6 +403,13 @@ export default {
   },
 
   watch: {
+      // 'featureMatrixModel.rankedVariants': function() {
+      //     const self = this;
+      //     debugger; // TODO: we get reactivity here, but rankedVariants still contains old data...
+      //     if (self.featureMatrixModel.rankedVariants && self.featureMatrixModel.rankedVariants.length === 0) {
+      //         self.data = [];
+      //     }
+      // }
   },
 
   mounted: function() {

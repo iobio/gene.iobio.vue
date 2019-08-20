@@ -104,7 +104,7 @@
 
 
 <template>
-    <div id="feature-matrix-viz">
+    <div :id="name">
 
     </div>
 </template>
@@ -186,10 +186,10 @@
                     return;
                 }
             },
-
         },
         data() {
             return {
+                name: 'feature-matrix-viz',
                 featureMatrixChart: null
             }
         },
@@ -232,14 +232,18 @@
                 this.setFeatureMatrixChart();
             },
             update: function () {
-                var self = this;
+                const self = this;
 
-                if (self.data) {
-                    var selection = d3.select(self.$el).data([self.data]);
+                let selection = null;
+                if (self.data && self.data.length > 0) {
+                    selection = d3.select(self.$el).data([self.data]);
                     self.featureMatrixChart(selection, {showColumnLabels: true, simpleColumnLabels: true});
                 } else {
-                    var selection = d3.select(self.$el).data([]);
-                    self.featureMatrixChart(selection, {showColumnLabels: true, simpleColumnLabels: true});
+                    // clear matrix if data is empty
+                    // TODO: why is old data still lingering here...
+                    d3.select('#' + self.name).selectAll('svg').remove();
+                    // selection = d3.select(self.$el).data([]);
+                    // self.featureMatrixChart(selection, {showColumnLabels: true, simpleColumnLabels: true});
                 }
             },
             setFeatureMatrixChart: function () {

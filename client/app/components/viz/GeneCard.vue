@@ -279,7 +279,8 @@
             geneModel: null,
             showGeneViz: null,
             showTitle: null,
-            workingOffline: false
+            workingOffline: false,
+            clearZoom: false
         },
         data() {
             let self = this;
@@ -333,8 +334,8 @@
                 this.$emit('gene-region-zoom', regionStart, regionEnd);
             },
             onRegionZoomReset: function () {
-                this.zoomMessage = "Drag to zoom";
                 this.$emit('gene-region-zoom-reset');
+                this.zoomMessage = "Drag to zoom";
             },
             initSummaryInfo: function () {
                 let self = this;
@@ -417,10 +418,6 @@
             geneModel: function () {
                 this.geneRegionBuffer = this.geneModel ? this.geneModel.geneRegionBuffer : 0;
             },
-            geneRegionStart: function () {
-            },
-            geneRegionEnd: function () {
-            },
             selectedGene: function (newGene, oldGene) {
                 if (newGene.gene_name !== oldGene.gene_name) {
                     this.initSummaryInfo();
@@ -439,10 +436,12 @@
             },
             clearZoom: function () {
                 const self = this;
-                // TODO: make sure this is being called properly when we select a new gene
-                self.showZoom = false;
-                self.zoomMessage = "Drag to zoom";
-                self.$emit('gene-region-zoom-reset');
+                if (self.clearZoom === true) {
+                    self.showZoom = false;
+                    self.zoomMessage = "Drag to zoom";
+                    const updateTrack = false;
+                    self.$emit('gene-region-zoom-reset', updateTrack);
+                }
             }
         },
         mounted: function () {
