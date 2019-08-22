@@ -724,6 +724,10 @@
             onFilterSettingsApplied: function (filterInfo) {
                 const self = this;
                 self.$emit('on-filter-settings-applied', filterInfo);
+            },
+            applyActiveFilters: function() {
+                const self = this;
+                self.$refs.filterSettingsMenuRef.applyActiveFilters();
             }
         },
         created: function () {

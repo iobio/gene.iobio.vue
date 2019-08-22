@@ -246,6 +246,35 @@
                         checkRef.clearFilters();
                     });
                 }
+            },
+            applyActiveFilters: function() {
+                const self = this;
+
+                // TODO: left off at needing to test this!
+                self.$refs.filtCheckRef.forEach((checkRef) => {
+                    let matchingObj = self.categories[checkRef.grandparentFilterName].filter((cat) => {
+                        return cat.name === checkRef.parentFilterName;
+                    });
+                    if (matchingObj.length > 0 && matchingObj[0].active === true) {
+                        checkRef.applyActiveFilters();
+                    }
+                });
+                self.$refs.filtCutoffRef.forEach((cutoffRef) => {
+                    let matchingObj = self.categories[cutoffRef.parentFilterName].filter((cat) => {
+                        return cat.name === cutoffRef.filterName;
+                    });
+                    if (matchingObj.length > 0 && matchingObj[0].active === true) {
+                        cutoffRef.applyActiveFilters();
+                    }
+                });
+                self.$refs.filtSliderRef.forEach((sliderRef) => {
+                    let matchingObj = self.categories[sliderRef.parentFilterName].filter((cat) => {
+                        return cat.name === sliderRef.filterName;
+                    });
+                    if (matchingObj.length > 0 && matchingObj[0].active === true) {
+                        sliderRef.applyActiveFilters();
+                    }
+                });
             }
         },
         computed: {

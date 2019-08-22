@@ -1061,7 +1061,8 @@ class CohortModel {
                 // Note: this is TDS existing framework, can use later on if desired
                 let passesModelFilter = self.filterModel.passesModelFilter(model.id, feature);
 
-                return isTarget && !isHomRef && inRegion && passesModelFilter && feature.passesFilters;
+                // Don't want to filter by front end filters here! Otherwise zooming with active filters will not work b/c variants never get drawn
+                return isTarget && !isHomRef && inRegion && passesModelFilter;
             });
 
             let pileupObject = model._pileupVariants(filteredVariants.features, start, end);

@@ -122,8 +122,8 @@
             // TODO: incorporate reset to default params from cohort
             // TODO: incorporate gold or other highlight color for filtering
 
-            filterBoxToggled: function (filterName, filterState, parentFilterName, parentFilterState, tumorOnlyFilter, filterDisplayName) {
-                let self = this;
+            filterBoxToggled: function(filterName, filterState, parentFilterName, parentFilterState, tumorOnlyFilter, filterDisplayName) {
+                const self = this;
                 let filterObj = self.filters.filter((filt) => {
                     return filt.name === parentFilterName;
                 });
@@ -133,7 +133,7 @@
                 self.$emit('filter-box-toggled', filterName, filterState, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName);
             },
             filterSliderChanged: function(filterName, sliderLogic, sliderValue, parentFilterName, parentFilterState, tumorOnlyFilter, filterDisplayName) {
-                let self = this;
+                const self = this;
                 let filterObj = self.filters.filter((filt) => {
                     return filt.name === parentFilterName;
                 });
@@ -142,8 +142,8 @@
                 }
                 self.$emit('filter-slider-moved', filterName, sliderLogic, sliderValue, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName);
             },
-            filterCutoffApplied: function (filterName, filterLogic, cutoffValue, currParentFiltName, currParFilterState, tumorOnlyFilter, filterDisplayName) {
-                let self = this;
+            filterCutoffApplied: function(filterName, filterLogic, cutoffValue, currParentFiltName, currParFilterState, tumorOnlyFilter, filterDisplayName) {
+                const self = this;
                 let filterObj = self.filters.filter((filt) => {
                     return filt.name === currParentFiltName;
                 });
@@ -152,8 +152,8 @@
                 }
                 self.$emit('filter-cutoff-applied', filterName, filterLogic, cutoffValue, tumorOnlyFilter, currParentFiltName, currParFilterState, filterDisplayName);
             },
-            filterCutoffCleared: function (filterName, currParentFiltName, currParFilterState, tumorOnlyFilter, filterDisplayName) {
-                let self = this;
+            filterCutoffCleared: function(filterName, currParentFiltName, currParFilterState, tumorOnlyFilter, filterDisplayName) {
+                const self = this;
                 let filterObj = self.filters.filter((filt) => {
                     return filt.name === currParentFiltName;
                 });
@@ -162,8 +162,8 @@
                 }
                 self.$emit('filter-cutoff-cleared', filterName, tumorOnlyFilter, currParentFiltName, currParFilterState, filterDisplayName);
             },
-            clearFilters: function () {
-                let self = this;
+            clearFilters: function() {
+                const self = this;
                 self.filters.forEach((filter) => {
                     filter.active = false;
                 });
@@ -172,6 +172,14 @@
                         filtRef.clearFilters();
                     });
                 }
+            },
+            applyActiveFilters: function() {
+                const self = this;
+                self.$refs.filterSettingsRef.forEach((filtRef) => {
+                    if (self.filters[filtRef.filterName].active === true) {
+                        filtRef.applyActiveFilters();
+                    }
+                });
             }
         },
         computed: {},
