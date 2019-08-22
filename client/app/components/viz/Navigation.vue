@@ -662,7 +662,7 @@
                 this.$emit('update-samples');
             },
             filterBoxToggled: function(filterName, filterState, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
-                let self = this;
+                const self = this;
                 let filterInfo = {
                     name: filterName,
                     displayName: filterDisplayName,
@@ -676,7 +676,7 @@
                 self.onFilterSettingsApplied(filterInfo);
             },
             filterSliderMoved: function(filterName, sliderLogic, sliderValue, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
-                let self = this;
+                const self = this;
                 let filterInfo = {
                     name: filterName,
                     displayName: filterDisplayName,
@@ -690,7 +690,7 @@
                 self.onFilterSettingsApplied(filterInfo);
             },
             filterCutoffApplied: function(filterName, filterLogic, cutoffValue, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
-                let self = this;
+                const self = this;
                 let translatedFilterName = self.cohortModel.translator.getTranslatedFilterName(filterName);
                 let filterInfo = {
                     name: translatedFilterName,
@@ -722,9 +722,9 @@
                 self.onFilterSettingsApplied(filterInfo);
             },
             onFilterSettingsApplied: function (filterInfo) {
-                let self = this;
+                const self = this;
                 self.$emit('on-filter-settings-applied', filterInfo);
-            },
+            }
         },
         created: function () {
         },

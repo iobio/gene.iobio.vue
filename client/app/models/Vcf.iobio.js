@@ -1530,7 +1530,7 @@ var effectCategories = [
 
                         for (var i = 0; i < allVariants.length; i++) {
                             var genotype = gtResult.genotypes[i];
-                            let cssFormattedAlt = rec.alt === '*' ? 'D' : rec.alt;
+                            let cssFormattedAlt = getCssSafeAlt(rec.alt);
                             let cssFormattedStrand = geneObject.strand === '+' ? 'plus' : 'minus';
                             let trimmedChromName = refName.indexOf("chr") === 0 ? refName.slice(3) : refName; // We have to synonymize chromosome name between versions - no chr13 vs 13 b/c messes up track filtering
 
@@ -1664,6 +1664,31 @@ var effectCategories = [
             results.push(data);
         }
         return parseMultiSample ? results : results[0];
+    };
+
+    var getCssSafeAlt = function(alt) {
+      if (alt == null || alt === "") {
+        console.log("Bad alt input");
+        return alt;
+      }
+
+      if (alt === '*') {
+        return 'D';
+      }
+
+      let safeAlt = alt;
+      let checkAlt = true;
+      while(checkAlt) {
+        let badCharIdx = safeAlt.indexOf(',');
+        if (badCharIdx >= 0) {
+            safeAlt = alt.slice(0, badCharIdx);
+            safeAlt += '_';
+            safeAlt += alt.slice(badCharIdx+1);
+        } else {
+          checkAlt = false;
+        }
+    }
+      return safeAlt;
     };
 
     exports._parseAnnot = function (rec, altIdx, isMultiAllelic, geneObject, selectedTranscript, selectedTranscriptID, vepAF) {

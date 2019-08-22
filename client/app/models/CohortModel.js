@@ -1058,9 +1058,10 @@ class CohortModel {
                     inRegion = feature.start >= self.filterModel.regionStart && feature.start <= self.filterModel.regionEnd;
                 }
 
+                // Note: this is TDS existing framework, can use later on if desired
                 let passesModelFilter = self.filterModel.passesModelFilter(model.id, feature);
 
-                return isTarget && !isHomRef && inRegion && passesModelFilter;
+                return isTarget && !isHomRef && inRegion && passesModelFilter && feature.passesFilters;
             });
 
             let pileupObject = model._pileupVariants(filteredVariants.features, start, end);

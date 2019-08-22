@@ -528,7 +528,7 @@
                 showVarViz: true,
                 workingOffline: false,        // If working offline and want to style things TODO: get rid of this SJG
                 annotationComplete: false,
-                applyFilters: false
+                applyFilters: false     // Used only for the initial load of a gene to apply default filters
             }
         },
 
@@ -728,6 +728,8 @@
                     console.log(error);
                 })
             }
+            // See if this messes with anything
+            //document.addEventListener('touchstart', handler, {passive: true});
         },
 
 
@@ -1120,8 +1122,8 @@
             promiseLoadGene: function (geneName, theTranscript, loadingFromFlagEvent = false, loadFeatureMatrix = true) {
                 const self = this;
                 self.showWelcome = false;
-                self.applyFilters = false;
                 self.clearZoom = true;
+                self.applyFilters = false;
                 return new Promise(function (resolve, reject) {
                     if (self.cohortModel) {
                         self.cohortModel.clearLoadedData(geneName);
@@ -1222,6 +1224,7 @@
             },
             onGeneRegionZoom: function (theStart, theEnd) {
                 const self = this;
+
                 // Gene-viz watches these for updates to redraw track
                 self.geneRegionStart = theStart;
                 self.geneRegionEnd = theEnd;
@@ -1231,11 +1234,11 @@
                 self.filterModel.regionStart = self.geneRegionStart;
                 self.filterModel.regionEnd = self.geneRegionEnd;
                 self.cohortModel.setLoadedVariants(self.selectedGene);
-
                 self.cohortModel.setCoverage(self.geneRegionStart, self.geneRegionEnd);
             },
             onGeneRegionZoomReset: function (updateTrack = true) {
                 const self = this;
+
                 self.geneRegionStart = this.selectedGene.start;
                 self.geneRegionEnd = this.selectedGene.end;
 
@@ -2275,7 +2278,7 @@
                 }).catch((err) => {
                     console.log('There was a problem applying variant filter: ' + err);
                 });
-            },
+            }
         }
     }
 </script>

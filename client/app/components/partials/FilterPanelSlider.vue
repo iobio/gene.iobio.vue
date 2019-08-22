@@ -164,12 +164,16 @@
                     self.onSliderMoved();
                 }
             },
-            applyFilters: function() {
-                // Used to initialize filters on app load after variants annotated
-                const self = this;
-                if (self.applyFilters === true) {
-                    self.onSliderMoved();
-                }
+            applyFilters: {
+                handler: function() {
+                    // Used to initialize filters on app load after variants annotated
+                    const self = this;
+                    if (self.applyFilters === true) {
+                        self.onSliderMoved();
+                    }
+                },
+                deep: true,
+                immediate: true
             }
         },
         methods: {

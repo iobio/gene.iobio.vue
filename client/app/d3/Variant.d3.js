@@ -191,6 +191,11 @@ export default function variantD3() {
                     if (d === 0) {
                         return;
                     }
+                    // TODO: debugging complex variants - take out
+                    // if (d.id === "var_25378224_12_minus_ATATATATATATATATATATATATATA_T_TTATATATATA") {
+                    //     debugger;
+                    // }
+
                     cutoffs.forEach((cutoff) => {
                         let filterName = cutoff[0];
                         let filterLogic = cutoff[1];
@@ -234,6 +239,9 @@ export default function variantD3() {
                             // Do actual hiding
                             let selectionId = '#' + d.id;
                             let domD = svgContainer.selectAll(selectionId);
+                            if (domD.length === 0) {
+                                debugger;
+                            }
                             domD.classed({'filtered': false});
                             domD.style('pointer-events', 'none');
                         }
@@ -304,8 +312,6 @@ export default function variantD3() {
 
             // set svg element
             container = d3.select(this).classed('ibo-variant', true);
-
-
             container.selectAll("svg").remove();
 
             if (data && data.length > 0 && data[0] && data[0].features && data[0].features.length > 0) {
