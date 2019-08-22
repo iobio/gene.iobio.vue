@@ -177,8 +177,12 @@ export default function variantD3() {
 
             // Remove filtered class for any variants that contain the given class criteria
             filterClasses.forEach((filterClass) => {
-                allVariants.filter(filterClass).classed({'filtered': false});
-                allVariants.style("pointer-events", 'none');
+                let nonPassingVars = svgContainer.selectAll(".variant" + filterClass);
+                nonPassingVars.classed('filtered', false);
+                nonPassingVars.style("pointer-events", 'none');
+                nonPassingVars.each(function(d,i) {
+                    d.passesFilters = false;
+                });
             });
 
             // Include previously filtered variants into the equation
@@ -191,10 +195,6 @@ export default function variantD3() {
                     if (d === 0) {
                         return;
                     }
-                    // TODO: debugging complex variants - take out
-                    // if (d.id === "var_25378224_12_minus_ATATATATATATATATATATATATATA_T_TTATATATATA") {
-                    //     debugger;
-                    // }
 
                     cutoffs.forEach((cutoff) => {
                         let filterName = cutoff[0];
@@ -239,9 +239,6 @@ export default function variantD3() {
                             // Do actual hiding
                             let selectionId = '#' + d.id;
                             let domD = svgContainer.selectAll(selectionId);
-                            if (domD.length === 0) {
-                                debugger;
-                            }
                             domD.classed({'filtered': false});
                             domD.style('pointer-events', 'none');
                         }
@@ -251,6 +248,7 @@ export default function variantD3() {
 
             // Re-check for all filtered variants
             filteredVars = svgContainer.selectAll('.filtered');
+
 
             // Hide all variants
             allVariants.style("opacity", 0)
