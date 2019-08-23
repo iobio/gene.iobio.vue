@@ -138,7 +138,7 @@
                     return filt.name === parentFilterName;
                 });
                 if (filterObj.length > 0) {
-                    filterObj[0].active = parentFilterName;
+                    filterObj[0].active = parentFilterState;
                 }
                 self.$emit('filter-slider-moved', filterName, sliderLogic, sliderValue, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName);
             },
@@ -148,7 +148,7 @@
                     return filt.name === currParentFiltName;
                 });
                 if (filterObj.length > 0) {
-                    filterObj[0].active = currParentFiltName;
+                    filterObj[0].active = currParFilterState;
                 }
                 self.$emit('filter-cutoff-applied', filterName, filterLogic, cutoffValue, tumorOnlyFilter, currParentFiltName, currParFilterState, filterDisplayName);
             },
@@ -176,7 +176,10 @@
             applyActiveFilters: function() {
                 const self = this;
                 self.$refs.filterSettingsRef.forEach((filtRef) => {
-                    if (self.filters[filtRef.filterName].active === true) {
+                    let matchingFilter = self.filters.filter((filt) => {
+                        return filt.name === filtRef.filterName;
+                    });
+                    if (matchingFilter.length > 0 && matchingFilter[0].active === true) {
                         filtRef.applyActiveFilters();
                     }
                 });

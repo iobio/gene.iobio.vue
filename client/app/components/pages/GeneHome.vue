@@ -1235,7 +1235,6 @@
                 self.filterModel.regionEnd = self.geneRegionEnd;
                 self.cohortModel.setLoadedVariants(self.selectedGene);
                 self.cohortModel.setCoverage(self.geneRegionStart, self.geneRegionEnd);
-                self.applyActiveFilters();
             },
             onGeneRegionZoomReset: function (updateTrack = true) {
                 const self = this;
@@ -1250,7 +1249,6 @@
                     self.featureMatrixModel.setRankedVariants();
                     self.cohortModel.setLoadedVariants(self.selectedGene);
                     self.cohortModel.setCoverage();
-                    self.applyActiveFilters();
                 }
             },
             onCircleVariant: function (idx) {
@@ -2280,10 +2278,6 @@
                 }).catch((err) => {
                     console.log('There was a problem applying variant filter: ' + err);
                 });
-            },
-            applyActiveFilters: function() {
-                const self = this;
-                self.$refs.navRef.applyActiveFilters();
             }
         }
     }

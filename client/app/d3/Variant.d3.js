@@ -741,7 +741,6 @@ export default function variantD3() {
                 dispatch.d3rendered();
             }
         });
-
     }
 
     chart.showFlaggedVariant = function (svg, variant, key) {

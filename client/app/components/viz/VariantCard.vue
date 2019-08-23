@@ -282,7 +282,8 @@
                                  :isKnownOrCosmicTrack="isKnownOrCosmicTrack"
                                  @variantClick="onVariantClick"
                                  @variantHover="onVariantHover"
-                                 @variantHoverEnd="onVariantHoverEnd">
+                                 @variantHoverEnd="onVariantHoverEnd"
+                                 @apply-active-filters="applyActiveFilters">
                     </variant-viz>
 
                     <div class="chart-label"
@@ -736,6 +737,11 @@
                 if (self.$refs.variantVizRef) {
                     self.$refs.variantVizRef.updateVariantClasses(container);
                 }
+            },
+            applyActiveFilters: function() {
+                const self = this;
+                let container = self.getTrackSVG(self.sampleModel.id);
+                self.$refs.variantVizRef.applyActiveFilters(container);
             }
         },
 

@@ -177,7 +177,7 @@
                 let tumorOnly = false;
                 let displayName = '';
                 if (filterObj.length > 0) {
-                    filterObj[0].active = true;
+                    filterObj[0].active = filterLogic != null;
                     tumorOnly = filterObj[0].tumorOnly;
                     displayName = filterObj[0].display;
                     if (grandparentFilterName === 'frequencies') {
@@ -188,6 +188,7 @@
                 let parentFilters = self.categories[grandparentFilterName];
                 parentFilters.forEach((filt) => {
                     grandparentFilterState |= filt.active;
+                    grandparentFilterState = grandparentFilterState === 1;
                 });
                 self.$emit('filter-slider-changed', filterName, filterLogic, cutoffValue, grandparentFilterName, grandparentFilterState, tumorOnly, displayName);
             },
@@ -211,6 +212,7 @@
                 let parentFilters = self.categories[grandparentFilterName];
                 parentFilters.forEach((filt) => {
                     grandparentFilterState |= filt.active;
+                    grandparentFilterState = grandparentFilterState === 1;
                 });
                 self.$emit('filter-applied', filterName, filterLogic, cutoffValue, grandparentFilterName, grandparentFilterState, tumorOnly, displayName);
             },
@@ -246,35 +248,6 @@
                         checkRef.clearFilters();
                     });
                 }
-            },
-            applyActiveFilters: function() {
-                const self = this;
-
-                // TODO: left off at needing to test this!
-                self.$refs.filtCheckRef.forEach((checkRef) => {
-                    let matchingObj = self.categories[checkRef.grandparentFilterName].filter((cat) => {
-                        return cat.name === checkRef.parentFilterName;
-                    });
-                    if (matchingObj.length > 0 && matchingObj[0].active === true) {
-                        checkRef.applyActiveFilters();
-                    }
-                });
-                self.$refs.filtCutoffRef.forEach((cutoffRef) => {
-                    let matchingObj = self.categories[cutoffRef.parentFilterName].filter((cat) => {
-                        return cat.name === cutoffRef.filterName;
-                    });
-                    if (matchingObj.length > 0 && matchingObj[0].active === true) {
-                        cutoffRef.applyActiveFilters();
-                    }
-                });
-                self.$refs.filtSliderRef.forEach((sliderRef) => {
-                    let matchingObj = self.categories[sliderRef.parentFilterName].filter((cat) => {
-                        return cat.name === sliderRef.filterName;
-                    });
-                    if (matchingObj.length > 0 && matchingObj[0].active === true) {
-                        sliderRef.applyActiveFilters();
-                    }
-                });
             }
         },
         computed: {

@@ -171,9 +171,7 @@
                     if (self.applyFilters === true) {
                         self.onSliderMoved();
                     }
-                },
-                deep: true,
-                immediate: true
+                }
             }
         },
         methods: {

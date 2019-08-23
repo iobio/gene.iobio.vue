@@ -159,7 +159,7 @@
         },
         methods: {
             draw: function () {
-                var self = this;
+                const self = this;
 
                 this.variantChart = variantD3()
                     .width(this.width)
@@ -177,6 +177,7 @@
                     .regionStart(this.regionStart)
                     .regionEnd(this.regionEnd)
                     .on("d3rendered", function () {
+                        self.$emit("apply-active-filters");
                     })
                     .on('d3outsideclick', function () {
                         self.onVariantClick(null);
@@ -391,7 +392,12 @@
                         resolve();
                     });
                 });
+            },
+            applyActiveFilters: function(svg) {
+                const self = this;
+                self.variantChart.promiseFilterVariants()(self.excludeFilters, self.cutoffFilters, svg);
             }
+
         },
         watch: {
             data: function () {
