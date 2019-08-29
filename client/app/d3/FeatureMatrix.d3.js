@@ -413,7 +413,7 @@ export default function featureMatrixD3() {
 
             cells.append("text")
                 .text(function (d, i) {
-                    return d.value;
+                    return d.symbolFunction !== 'sampleRow' ? d.value : "";
                 })
                 .attr("class", function (d, i) {
                     if (!d.isText) {
@@ -432,14 +432,30 @@ export default function featureMatrixD3() {
                 return matrixRows[i].symbol != null;
             });
 
+            // Build color scale
+            var heatMapScale = d3.scale.linear()
+                .range(["#ffffff", "#9c1a1a"])
+                .domain([0, 100]);
+
+            let colors = ["#eff3ff","#bdd7e7","#6baed6","#2171b5"];
+            var colorScale = d3.scale.quantile()
+                .domain([0, 3, 100])
+                .range(colors);
+
             cells.each(function (d, i) {
-                var symbolFunction = d.symbolFunction;
-                if (symbolFunction) {
-                    d3.select(this).call(symbolFunction, {
-                        'self': d.bindTo,
-                        'cellSize': (cellWidth != null ? cellWidth : cellSize),
-                        'color': d.color
-                    });
+                if (d.symbolFunction === 'sampleRow') {
+                    let afColor = colorScale(d.value);
+                    d3.select(this).select('.cellbox')
+                        .style("fill", afColor);
+                } else {
+                    var symbolFunction = d.symbolFunction;
+                    if (symbolFunction) {
+                        d3.select(this).call(symbolFunction, {
+                            'self': d.bindTo,
+                            'cellSize': (cellWidth != null ? cellWidth : cellSize),
+                            'color': d.color
+                        });
+                    }
                 }
             });
 
@@ -488,10 +504,7 @@ export default function featureMatrixD3() {
                     // If tooltip sits outside of the of the feature matrix, so make necessary adjustments
                     chart.adjustTooltipCoordinates()(colObject);
 
-
                     dispatch.d3mouseover(colObject);
-
-
                 })
                 .on("mouseout", function (d) {
                     var column = d3.select(this.parentNode.parentNode);
@@ -516,7 +529,6 @@ export default function featureMatrixD3() {
                         dispatch.d3click();
                     }
                 });
-
 
             // update
             /*

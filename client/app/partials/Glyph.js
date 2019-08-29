@@ -147,6 +147,26 @@ export default class Glyph {
           .text('copyright');
   }
 
+  shadeCell(selection, options) {
+      // TODO: instead of drawing text here, fill in square
+      var attrs = {
+          transform: "translate(1,17)",
+          styles: "font-size: 16px"
+      };
+
+      var datumAttrs = selection.datum() || {};
+
+      var cellSizeAttrs = {};
+      if (options.cellSize > 18) {
+          cellSizeAttrs.width = "17",
+              cellSizeAttrs.height = "17",
+              cellSizeAttrs.transform = "translate(2,2)"
+      }
+
+      // TODO: just change background-color attr on cell selection?
+  }
+
+  // NOTE: went away from these symbols but keeping for now
   showNormalSampleSymbol(selection, options) {
       options = options || {};
 
@@ -160,8 +180,8 @@ export default class Glyph {
       var cellSizeAttrs = {};
       if (options.cellSize > 18) {
           cellSizeAttrs.width = "17",
-              cellSizeAttrs.height = "17",
-              cellSizeAttrs.transform = "translate(2,2)"
+          cellSizeAttrs.height = "17",
+          cellSizeAttrs.transform = "translate(2,2)"
       }
 
       $.extend(attrs, datumAttrs, cellSizeAttrs, options);
@@ -187,8 +207,8 @@ export default class Glyph {
       var cellSizeAttrs = {};
       if (options.cellSize > 18) {
           cellSizeAttrs.width = "17",
-              cellSizeAttrs.height = "17",
-              cellSizeAttrs.transform = "translate(2,2)"
+          cellSizeAttrs.height = "17",
+          cellSizeAttrs.transform = "translate(2,2)"
       }
 
       $.extend(attrs, datumAttrs, cellSizeAttrs, options);

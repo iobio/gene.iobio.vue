@@ -179,6 +179,18 @@ class SampleModel {
         return self.cohort;
     }
 
+    getFeature(id) {
+        const self = this;
+        let variant = null;
+        if (self.vcfData && self.vcfData.features && self.vcfData.features.length > 0) {
+            let matchingVars = self.vcfData.features.filter((feat) => {
+                return feat.id === id;
+            });
+            variant = matchingVars[0];
+        }
+        return variant;
+    }
+
 
     promiseGetVcfData(geneObject, selectedTranscript, whenEmptyUseFbData = true) {
         var me = this;

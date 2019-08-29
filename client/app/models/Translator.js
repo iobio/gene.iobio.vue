@@ -79,7 +79,7 @@ export default class Translator {
                       gt_unknown: {value: 4, badge: false, clazz: 'gt_unknown' }
                        };
 
-    this.samplePresenceMap = {
+    this.alleleFreqMap = {
                       'tumorSample'  : {value: 1,   badge: true, examineBadge: true, clazz: '', symbolFunction: this.glyph.showTumorSampleSymbol},
                       'normalSample' : {value: 2,   badge: true, examineBadge: true, clazz: '', symbolFunction: this.glyph.showNormalSampleSymbol},
     };

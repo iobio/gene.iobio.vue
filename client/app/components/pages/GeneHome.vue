@@ -173,9 +173,9 @@
                             <v-tab-item v-if="!isBasicMode" style="margin-bottom:0;overflow-y:auto"
                                         :key="'featureMatrixTab'"
                                         :id="'feature-matrix-tab'">
-                                <feature-matrix-card :style="{'min-width': '300px', 'max-width': cardWidth/2 + 'px'}"
+                                <feature-matrix-card :style="{'min-width': '300px'}"
                                                      ref="featureMatrixCardRef"
-                                                     v-if="featureMatrixModel.filteredMatrixRows.length > 0"
+                                                     v-if="featureMatrixModel.filteredMatrixRows.length > 0 && cohortModel.varAfLinks && cohortModel.allUniqueFeaturesObj"
                                                      v-bind:class="{ hide: !cohortModel || !cohortModel.isLoaded || !featureMatrixModel || !featureMatrixModel.rankedVariants }"
                                                      :isEduMode="isEduMode"
                                                      :isBasicMode="isBasicMode"
@@ -191,15 +191,6 @@
                                                      @cohort-variant-hover-end="onCohortVariantHoverEnd"
                                                      @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj, cohortModel.allSomaticFeaturesLookup, cohortModel.getAllFilterPassingVariants())">
                                 </feature-matrix-card>
-                                <!--<variant-frequency-card :style="{'width': cardWidth/2 + 'px'}"-->
-                                        <!--v-if="cohortModel && cohortModel.varAfLinks"-->
-                                        <!--style="min-width:300px"-->
-                                        <!--ref="varFreqCardRef"-->
-                                        <!--:width="cardWidth"-->
-                                        <!--:numVars="Object.keys(cohortModel.allUniqueFeaturesObj.features).length"-->
-                                        <!--:afLinks="cohortModel.varAfLinks"-->
-                                        <!--:afNodes="cohortModel.varAfNodes">-->
-                                <!--</variant-frequency-card>-->
                             </v-tab-item>
                             <v-tab-item v-if="!isBasicMode" style="margin-bottom:0;overflow-y:auto"
                                         :key="'varFreqTab'"
@@ -242,6 +233,25 @@
                         </v-tabs>
                     </v-card>
                 </div>
+
+                <!--<div v-if="geneModel && Object.keys(selectedGene).length > 0 && (!isBasicMode || selectedVariant != null)"-->
+                     <!--style="height:auto;margin-bottom:5px;"-->
+                     <!--v-bind:class="{hide : showWelcome, 'full-width': true }">-->
+                    <!--<v-card v-if="geneModel && cohortModel.isLoaded && Object.keys(selectedGene).length > 0"-->
+                            <!--id="allele-freq-viz" slot="right"-->
+                            <!--class="full-width"-->
+                            <!--style="margin-bottom:0;padding-top:0;margin-top:10px;">-->
+                        <!--<variant-frequency-card-->
+                                <!--v-if="cohortModel && cohortModel.varAfLinks && cohortModel.allUniqueFeaturesObj"-->
+                                <!--style="min-width:300px"-->
+                                <!--ref="varFreqCardRef"-->
+                                <!--:width="cardWidth"-->
+                                <!--:numVars="Object.keys(cohortModel.allUniqueFeaturesObj.features).length"-->
+                                <!--:afLinks="cohortModel.varAfLinks"-->
+                                <!--:afNodes="cohortModel.varAfNodes">-->
+                        <!--</variant-frequency-card>-->
+                    <!--</v-card>-->
+                <!--</div>-->
 
                 <v-flex xs12 v-if="showWelcome">
                     <welcome

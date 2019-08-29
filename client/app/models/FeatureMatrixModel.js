@@ -67,22 +67,22 @@ class FeatureMatrixModel {
                 attribute: this.globalApp.impactFieldToColor,
                 map: this.getTranslator().impactMap
             },
-            {
-                name: 'Max impact',
-                id: 'highest-impact',
-                order: 5,
-                index: 5,
-                match: 'exact',
-                attribute: this.globalApp.impactFieldToFilter,
-                map: this.getTranslator().highestImpactMap
-            },
+            // {
+            //     name: 'Max impact',
+            //     id: 'highest-impact',
+            //     order: 5,
+            //     index: 5,
+            //     match: 'exact',
+            //     attribute: this.globalApp.impactFieldToFilter,
+            //     map: this.getTranslator().highestImpactMap
+            // },
             // {name:'SIFT'                         , id:'sift',           order:5, index:5, match: 'exact', attribute: 'sift',                             map: this.getTranslator().siftMap},
             // {name:'PolyPhen'                     , id:'polyphen',       order:6, index:6, match: 'exact', attribute: 'polyphen',                         map: this.getTranslator().polyphenMap},
             {
                 name: 'Zygosity',
                 id: 'zygosity',
-                order: 6,
-                index: 6,
+                order: 5,
+                index: 5,
                 match: 'exact',
                 attribute: 'zygosity',
                 map: this.getTranslator().zygosityMap
@@ -256,9 +256,10 @@ class FeatureMatrixModel {
             rowObj['id'] = model.id;
             rowObj['order'] = self.matrixRows.length;
             rowObj['index'] = self.matrixRows.length;
-            rowObj['match'] = 'exact';
+            rowObj['match'] = 'field';      // TODO: I think this should be range, but going w/ field first
             rowObj['attribute'] = 'sampleRow';
-            rowObj['map'] = self.getTranslator().samplePresenceMap;
+            rowObj['map'] = self.getTranslator().alleleFreqMap;
+            rowObj['formatFunction'] = self.formatAlleleFrequencyPercentage;
             self.matrixRows.push(rowObj);
         })
     }
@@ -436,10 +437,11 @@ class FeatureMatrixModel {
     }
 
     /* Assigns feature objects to each variant which coordinates their sorting in the feature matrix model. */
+    // TODO: the problem here is sending in unique variant list
     setFeaturesForVariants(theVariants, allSomaticFeaturesLookup) {
         const self = this;
 
-        theVariants.forEach(function (variant) {
+        theVariants.forEach(function(variant) {
             let features = [];
             for (let i = 0; i < self.filteredMatrixRows.length; i++) {
                 features.push(null);
@@ -457,6 +459,7 @@ class FeatureMatrixModel {
                 let mappedClazz = null;
                 let symbolFunction = null;
                 let sampleTrackColor = null;    // Only used for variable colors for sample rows
+                let alleleFreq = 0;
                 let bindTo = null;
                 let isText = false;
                 let clickFunction = matrixRow.clickFunction;
@@ -489,23 +492,31 @@ class FeatureMatrixModel {
 
                     // Only show that we have the variant in the matrix if it passes filters and is visible in current track (MUST pull from hash for this)
                     if (varIdHash[variant.id] != null && (varIdHash[variant.id]).passesFilters) {
-                        if (matchingModel.isTumor) {
-                            rawValue = 'tumorSample';
+                        // if (matchingModel.isTumor) {
+                        //     rawValue = 'tumorSample';
+                        // } else {
+                        //     rawValue = 'normalSample';
+                        // }
+                        let sampleSpecVar = self.cohort.sampleMap[matrixRow.id].model.getFeature(variant.id);
+                        if (parseInt(sampleSpecVar.genotypeDepth) > 0) {
+                            rawValue = parseInt(sampleSpecVar.genotypeAltCount) / parseInt(sampleSpecVar.genotypeDepth);
                         } else {
-                            rawValue = 'normalSample';
+                            rawValue = 0;
                         }
                     } else {
                         rawValue = '';
                     }
 
                     // Get track color
-                    sampleTrackColor = self.globalApp.utility.getTrackColor(matchingModel.categoryOrder, matchingModel.isTumor)
+                    sampleTrackColor = self.globalApp.utility.getTrackColor(matchingModel.categoryOrder, matchingModel.isTumor);
+                    symbolFunction = "sampleRow";
                 }
 
                 if (rawValue != null && (self.isNumeric(rawValue) || rawValue !== "")) {
                     if (matrixRow.match === 'field') {
                         if (matrixRow.formatFunction) {
-                            theValue = matrixRow.formatFunction.call(self, variant, rawValue);
+                            let showSymbol = matrixRow.attribute !== 'sampleRow';
+                            theValue = matrixRow.formatFunction.call(self, variant, rawValue, showSymbol);
                         } else {
                             theValue = rawValue;
                         }
@@ -515,7 +526,9 @@ class FeatureMatrixModel {
                         } else {
                             mappedValue = theValue;
                         }
-                        symbolFunction = matrixRow.symbolFunction ? matrixRow.symbolFunction : self.showTextSymbol;
+                        if (symbolFunction !== "sampleRow") {
+                            symbolFunction = matrixRow.symbolFunction ? matrixRow.symbolFunction : self.showTextSymbol;
+                        }
                         bindTo = matrixRow.bind ? matrixRow.bind : null;
                         isText = matrixRow.symbolFunction ? false : true;
                     } else if (matrixRow.match === 'exact') {
@@ -689,9 +702,11 @@ class FeatureMatrixModel {
         return display;
     }
 
-
-    formatAlleleFrequencyPercentage(variant, value) {
-        return value && value != "" && +value >= 0 ? this.globalApp.utility.round(+value * 100, 2) + "%" : "";
+    formatAlleleFrequencyPercentage(variant, value, showSymbol = true) {
+        if (!showSymbol) {
+            return this.globalApp.utility.round(+value * 100, 2);
+        }
+        return value && value !== "" && +value >= 0 ? this.globalApp.utility.round(+value * 100, 2) + "%" : "";
     }
 
     formatCanonicalTranscript(variant, value) {
