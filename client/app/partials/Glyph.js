@@ -163,7 +163,7 @@ export default class Glyph {
               cellSizeAttrs.transform = "translate(2,2)"
       }
 
-      // TODO: just change background-color attr on cell selection?
+      // TODO: just change background-color attr on
   }
 
   // NOTE: went away from these symbols but keeping for now

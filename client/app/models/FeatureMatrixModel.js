@@ -78,15 +78,15 @@ class FeatureMatrixModel {
             // },
             // {name:'SIFT'                         , id:'sift',           order:5, index:5, match: 'exact', attribute: 'sift',                             map: this.getTranslator().siftMap},
             // {name:'PolyPhen'                     , id:'polyphen',       order:6, index:6, match: 'exact', attribute: 'polyphen',                         map: this.getTranslator().polyphenMap},
-            {
-                name: 'Zygosity',
-                id: 'zygosity',
-                order: 5,
-                index: 5,
-                match: 'exact',
-                attribute: 'zygosity',
-                map: this.getTranslator().zygosityMap
-            },
+            // {
+            //     name: 'Zygosity',
+            //     id: 'zygosity',
+            //     order: 5,
+            //     index: 5,
+            //     match: 'exact',
+            //     attribute: 'zygosity',
+            //     map: this.getTranslator().zygosityMap
+            // },
             // {name: 'Genotype', id: 'genotype', order: 6, index: 6, match: 'field', attribute: 'eduGenotypeReversed'}
         ];
 
@@ -437,7 +437,6 @@ class FeatureMatrixModel {
     }
 
     /* Assigns feature objects to each variant which coordinates their sorting in the feature matrix model. */
-    // TODO: the problem here is sending in unique variant list
     setFeaturesForVariants(theVariants, allSomaticFeaturesLookup) {
         const self = this;
 

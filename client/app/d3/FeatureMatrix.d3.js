@@ -435,9 +435,9 @@ export default function featureMatrixD3() {
             });
 
             // Build color scale
-            let colors = ["#eff3ff","#bdd7e7","#6baed6","#2171b5", "#08519c"];
+            let colors = ["#f1eef6","#bdc9e1","#74a9cf","#2b8cbe", "#045a8d"];
             var colorScale = d3.scale.quantile()
-                .domain([0, colors.length, 100])
+                .domain([0, 100])
                 .range(colors);
 
             cells.each(function (d, i) {
