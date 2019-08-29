@@ -97,11 +97,13 @@ export default function featureMatrixD3() {
                 firstCellHeight = (cellHeight != null ? cellHeight : cellSize);
             }
             height = matrixHeight;
+            const legendHeight = firstCellHeight * 3;
+            height += legendHeight;  // Include legend in height
             height += margin.top + margin.bottom;
             if (options.showColumnLabels) {
                 height += columnLabelHeight;
             }
-            var innerHeight = height - margin.top - margin.bottom;
+            var innerHeight = height - margin.top - margin.bottom - legendHeight;
             if (options.showColumnLabels) {
                 innerHeight -= columnLabelHeight;
             }
@@ -433,13 +435,9 @@ export default function featureMatrixD3() {
             });
 
             // Build color scale
-            var heatMapScale = d3.scale.linear()
-                .range(["#ffffff", "#9c1a1a"])
-                .domain([0, 100]);
-
-            let colors = ["#eff3ff","#bdd7e7","#6baed6","#2171b5"];
+            let colors = ["#eff3ff","#bdd7e7","#6baed6","#2171b5", "#08519c"];
             var colorScale = d3.scale.quantile()
-                .domain([0, 3, 100])
+                .domain([0, colors.length, 100])
                 .range(colors);
 
             cells.each(function (d, i) {
@@ -476,6 +474,29 @@ export default function featureMatrixD3() {
 
                 })
                 .attr('width', (cellWidth != null ? cellWidth : cellSize) - 1);
+
+            // Draw color scale legend (sourced from http://bl.ocks.org/tjdecke/5558084)
+            var legend = svg.selectAll(".legend")
+                .data([0].concat(colorScale.quantiles()), function(d) { return d; });
+
+            legend.enter().append("g")
+                .attr("class", "legend");
+
+            const legendBuffer = firstCellHeight * 2;
+            legend.append("rect")
+                .attr("x", function(d, i) { return rowLabelWidth + (cellSize * 3 * i); })
+                .attr("y", matrixHeight + legendBuffer)
+                .attr("width", cellSize * 3)
+                .attr("height", firstCellHeight)
+                .style("fill", function(d, i) { return colors[i]; });
+
+            legend.append("text")
+                .attr("class", "mono")
+                .text(function(d, i) { return '≥' + Math.round(100/colors.length * i) + '%'; })
+                .attr("x", function(d, i) { return rowLabelWidth + (cellSize * 3 * i); })
+                .attr("y", matrixHeight + (legendBuffer + (firstCellHeight * 1.55)));
+
+            legend.exit().remove();
 
 
             g.selectAll('rect.cellbox')
