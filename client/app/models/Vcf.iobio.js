@@ -1618,7 +1618,7 @@ var effectCategories = [
                                     'highestSIFT': highestSIFT,
                                     'highestPolyphen': highestPolyphen,
                                     'highestREVEL': highestREVEL,
-                                    'isInherited': true,
+                                    'isInherited': null,
                                     'passesFilters': true,            // Used for somatic calling when other filters applied
                                     'inCosmic': false,
                                     'sampleModelId': sampleModelId   // Used for feature matrix tracking

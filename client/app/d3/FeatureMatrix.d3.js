@@ -479,10 +479,11 @@ export default function featureMatrixD3() {
             var legend = svg.selectAll(".legend")
                 .data([0].concat(colorScale.quantiles()), function(d) { return d; });
 
+            const legendBuffer = firstCellHeight * 2;
+
             legend.enter().append("g")
                 .attr("class", "legend");
 
-            const legendBuffer = firstCellHeight * 2;
             legend.append("rect")
                 .attr("x", function(d, i) { return rowLabelWidth + (cellSize * 3 * i); })
                 .attr("y", matrixHeight + legendBuffer)
@@ -491,13 +492,19 @@ export default function featureMatrixD3() {
                 .style("fill", function(d, i) { return colors[i]; });
 
             legend.append("text")
-                .attr("class", "mono")
-                .text(function(d, i) { return '≥' + Math.round(100/colors.length * i) + '%'; })
+                .text(function(d, i) { return '≥ ' + Math.round(100/colors.length * i) + '%'; })
                 .attr("x", function(d, i) { return rowLabelWidth + (cellSize * 3 * i); })
-                .attr("y", matrixHeight + (legendBuffer + (firstCellHeight * 1.55)));
+                .attr("y", matrixHeight + (legendBuffer + (firstCellHeight * 1.55)))
+                .attr('class', columnLabelClass);
 
             legend.exit().remove();
 
+            // Just draw label for first legend element
+            d3.select(".legend")
+                .append("text")
+                .text("AF Scale")
+                .attr("y", matrixHeight + legendBuffer + firstCellHeight)
+                .attr("class", columnLabelClass);
 
             g.selectAll('rect.cellbox')
                 .on("mouseover", function (d) {

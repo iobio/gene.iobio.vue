@@ -473,6 +473,8 @@ class FeatureMatrixModel {
                     rawValue = 'isSomatic';
                 } else if (matrixRow.attribute === 'isInherited' && !allSomaticFeaturesLookup[variant.id]) {
                     rawValue = 'isInherited';
+                } else {
+                    rawValue = 'undetermined';
                 }
 
                 // Input modification for COSMIC

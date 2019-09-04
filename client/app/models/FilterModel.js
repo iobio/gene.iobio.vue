@@ -261,8 +261,7 @@ class FilterModel {
                     let passesTumorCount = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltCount'], feature.genotypeAltCount, self.currentSomaticCutoffs['tumorAltCount']);
                     let passesTumorAf = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltFreq'], currAltFreq, self.currentSomaticCutoffs['tumorAltFreq']);
                     let normalQualityMet = true;
-                    // TODO: determine if this area has enough coverage to make sure normal really doesn't have variant
-                    // TODO: promiseGetCachedGeneCoverage may be how to get this
+                    // TODO: need to add logic here to mark isInherited = true to avoid default of undetermined
                     if ((passesFiltersLookup[feature.id] || (normalContainsLookup[feature.id] == null && normalQualityMet)) && passesTumorAf && passesTumorCount) {
                         feature.isInherited = false;
                         somaticVarLookup[feature.id] = true;

@@ -29,7 +29,8 @@ export default class Translator {
                        };
     this.somaticMap = {
               'isSomatic'             : {value: 1,   badge: true, examineBadge: true, clazz: 'impact_SOMATIC', symbolFunction: this.glyph.showSomaticSymbol},
-              'isInherited'           : {value: 104,   badge: false, examineBadge: false, clazz: ''}
+              'isInherited'           : {value: 2,   badge: false, examineBadge: false, clazz: ''},
+              'undetermined'          : {value: 3,   badge: true, examineBadge: true, clazz: 'impact_UNDETERMINED', symbolFunction: this.glyph.showUndeterminedSymbol}
                       };
     this.cosmicMap = {
               'inCosmic'             : {value: 1,   badge: true, examineBadge: true, clazz: 'in_cosmic', symbolFunction: this.glyph.showCosmicSymbol},
