@@ -2272,10 +2272,12 @@
                 Promise.all(promises).then(() => {
                     // Regardless of what filter applied, we need to re-annotate somatic variants (b/c respective normal may be hidden!)
                     let allVariantsPassingFilters = self.cohortModel.getAllFilterPassingVariants();
-                    self.cohortModel.allSomaticFeaturesLookup = self.filterModel.annotateVariantInheritance(self.cohortModel.sampleMap);
+                    let inheritanceObj = self.filterModel.annotateVariantInheritance(self.cohortModel.sampleMap);
+                    self.cohortModel.allSomaticFeaturesLookup = inheritanceObj.somaticLookup;
+                    self.cohortModel.allInheritedFeaturesLookup = inheritanceObj.inheritedLookup;
 
                     // Draw feature matrix after somatic field filled
-                    self.featureMatrixModel.promiseRankVariants(self.cohortModel.allUniqueFeaturesObj, self.cohortModel.allSomaticFeaturesLookup, allVariantsPassingFilters);
+                    self.featureMatrixModel.promiseRankVariants(self.cohortModel.allUniqueFeaturesObj, self.cohortModel.allSomaticFeaturesLookup, self.cohortModel.allInheritedFeaturesLookup, allVariantsPassingFilters);
 
                     // Then we need to update coloring for tumor tracks only
                     if (self.$refs.variantCardRef) {

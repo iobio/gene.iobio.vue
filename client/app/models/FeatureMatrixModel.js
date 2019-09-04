@@ -256,7 +256,7 @@ class FeatureMatrixModel {
             rowObj['id'] = model.id;
             rowObj['order'] = self.matrixRows.length;
             rowObj['index'] = self.matrixRows.length;
-            rowObj['match'] = 'field';      // TODO: I think this should be range, but going w/ field first
+            rowObj['match'] = 'field';
             rowObj['attribute'] = 'sampleRow';
             rowObj['map'] = self.getTranslator().alleleFreqMap;
             rowObj['formatFunction'] = self.formatAlleleFrequencyPercentage;
@@ -358,7 +358,7 @@ class FeatureMatrixModel {
     }
 
 
-    promiseRankVariants(theVcfData, allSomaticFeaturesLookup, allFilteredFeaturesLookup) {
+    promiseRankVariants(theVcfData, allSomaticFeaturesLookup, allInheritedFeaturesLookup, allFilteredFeaturesLookup) {
         let self = this;
         self.featureVcfData = theVcfData;
         self.inProgress.loadingVariants = false;
@@ -412,7 +412,7 @@ class FeatureMatrixModel {
                 });
 
                 // Fill all features used in feature matrix for each variant
-                self.setFeaturesForVariants(self.featureVcfData.features, allSomaticFeaturesLookup);
+                self.setFeaturesForVariants(self.featureVcfData.features, allSomaticFeaturesLookup, allInheritedFeaturesLookup);
 
                 // Order the variants according to the features
                 self.rankedVariants = self.sortVariantsByFeatures(self.featureVcfData.features);
@@ -437,7 +437,7 @@ class FeatureMatrixModel {
     }
 
     /* Assigns feature objects to each variant which coordinates their sorting in the feature matrix model. */
-    setFeaturesForVariants(theVariants, allSomaticFeaturesLookup) {
+    setFeaturesForVariants(theVariants, allSomaticFeaturesLookup, filteredInheritedFeaturesLookup) {
         const self = this;
 
         theVariants.forEach(function(variant) {
@@ -458,7 +458,6 @@ class FeatureMatrixModel {
                 let mappedClazz = null;
                 let symbolFunction = null;
                 let sampleTrackColor = null;    // Only used for variable colors for sample rows
-                let alleleFreq = 0;
                 let bindTo = null;
                 let isText = false;
                 let clickFunction = matrixRow.clickFunction;
@@ -471,9 +470,9 @@ class FeatureMatrixModel {
                 // but whether any of the track's instance of the variant qualifies as somatic
                 if (matrixRow.attribute === 'isInherited' && allSomaticFeaturesLookup[variant.id]) {
                     rawValue = 'isSomatic';
-                } else if (matrixRow.attribute === 'isInherited' && !allSomaticFeaturesLookup[variant.id]) {
+                } else if (matrixRow.attribute === 'isInherited' && filteredInheritedFeaturesLookup[variant.id]) {
                     rawValue = 'isInherited';
-                } else {
+                } else if  (matrixRow.attribute === 'isInherited') {
                     rawValue = 'undetermined';
                 }
 

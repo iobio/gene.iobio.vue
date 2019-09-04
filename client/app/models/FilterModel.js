@@ -199,6 +199,10 @@ class FilterModel {
      *      A) contains the variant at a threshold meeting slider-set criteria
      *      B) is visible/ not filtered out by other non-somatic filters
      *
+     *  Marks variants as inherited, if they fulfill the following:
+     *
+     *  The normal track contains the variant with quality thresholds met AND the tumor track contains the variant with quality thresholds met but not somatic ones
+     *
      *  Returns a dictionary of somatic variant IDs from all tumor tracks combined.
      */
     annotateVariantInheritance(resultMap) {
@@ -207,6 +211,7 @@ class FilterModel {
         let tumorSamples = [];
         let tumorSampleModelIds = [];
         let somaticVarLookup = {};
+        let inheritedVarLookup = {};
         let i = 0;
 
         // Classify samples
@@ -222,16 +227,20 @@ class FilterModel {
         }
 
         // Make normal variant hash table
-        let passesFiltersLookup = {};
-        let normalContainsLookup = {};
+        let passesNormalFiltersLookup = {};   // Hash of variants that pass the Normal somatic filters ONLY (normal alt count and normal alt freq)
+        let normalContainsLookup = {};        // Hash of all variants in normal sample
+        let passesOtherFiltersLookup = {};    // Hash of variants in normal track ONLY that pass any active filters except somatic related (this includes quality)
         normalSamples.forEach((currNorm) => {
             if (currNorm && currNorm.features.length > 0) {
                 let normFeatures = currNorm.features;
                 let filteredNormFeatures = [];
                 normFeatures.forEach((feature) => {
+                    feature.isInherited = true;   // Need to mark all normal variants as inherited from null
                     normalContainsLookup[feature.id] = true;
                     if (feature.passesFilters === true) {
                         filteredNormFeatures.push(feature);
+                        inheritedVarLookup[feature.id] = true;
+                        passesOtherFiltersLookup[feature.id] = true;
                     }
                 });
               for (i = 0; i < filteredNormFeatures.length; i++) {
@@ -240,13 +249,13 @@ class FilterModel {
                   let passesNormalCount = self.matchAndPassFilter(self.currentSomaticLogic['normalAltCount'], currFeat.genotypeAltCount, self.currentSomaticCutoffs['normalAltCount']);
                   let passesNormalAf = self.matchAndPassFilter(self.currentSomaticLogic['normalAltFreq'], currNormAf, self.currentSomaticCutoffs['normalAltFreq']);
                   if (currFeat.id != null && passesNormalCount && passesNormalAf) {
-                      passesFiltersLookup[currFeat.id] = true;
+                      passesNormalFiltersLookup[currFeat.id] = true;
                   }
               }
             }
         });
 
-        // Mark somatic variants
+        // Mark somatic and inherited variants
         for (i = 0; i < tumorSamples.length; i++) {
             let currTumor = tumorSamples[i];
             if (currTumor.features && currTumor.features.length > 0) {
@@ -260,16 +269,21 @@ class FilterModel {
                     let currAltFreq = Math.round(feature.genotypeAltCount / feature.genotypeDepth * 100) / 100;
                     let passesTumorCount = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltCount'], feature.genotypeAltCount, self.currentSomaticCutoffs['tumorAltCount']);
                     let passesTumorAf = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltFreq'], currAltFreq, self.currentSomaticCutoffs['tumorAltFreq']);
-                    let normalQualityMet = true;
-                    // TODO: need to add logic here to mark isInherited = true to avoid default of undetermined
-                    if ((passesFiltersLookup[feature.id] || (normalContainsLookup[feature.id] == null && normalQualityMet)) && passesTumorAf && passesTumorCount) {
+                    if ((passesNormalFiltersLookup[feature.id] || (normalContainsLookup[feature.id] == null)) && passesTumorAf && passesTumorCount) {
                         feature.isInherited = false;
                         somaticVarLookup[feature.id] = true;
+                        inheritedVarLookup[feature.id] = false;
+                    } else if (passesOtherFiltersLookup[feature.id]) {
+                        feature.isInherited = true;
+                        inheritedVarLookup[feature.id] = true;
+                    } else {
+                        feature.isInherited = null;
+                        inheritedVarLookup[feature.id] = false;
                     }
                 })
             }
         }
-        return somaticVarLookup;
+        return {'somaticLookup': somaticVarLookup, 'inheritedLookup': inheritedVarLookup};
     }
 
     matchAndPassFilter(logic, varVal, cutoffVal) {

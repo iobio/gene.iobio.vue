@@ -44,6 +44,7 @@ class CohortModel {
         };
 
         this.allSomaticFeaturesLookup = {};     // Contains the IDs corresponding to variants from all tumor tracks classified as somatic
+        this.allInheritedFeaturesLookup = {};   // Contains the IDs corresponding to variants from all tumor tracks classified as inherited
 
         this.genesInProgress = [];
         this.flaggedVariants = [];
@@ -1121,9 +1122,9 @@ class CohortModel {
             if (self.allUniqueFeaturesObj != null && self.allUniqueFeaturesObj.features
                     && self.allUniqueFeaturesObj.features.length > 0
                     && loadFromFlag) {
-                self.featureMatrixModel.promiseRankVariants(self.allUniqueFeaturesObj, self.allSomaticFeaturesLookup, self.getAllFilterPassingVariants())
+                self.featureMatrixModel.promiseRankVariants(self.allUniqueFeaturesObj, self.allSomaticFeaturesLookup, self.allInheritedFeaturesLookup, self.getAllFilterPassingVariants())
             } else if (allVariants && allVariants.features.length > 0) {
-                self.featureMatrixModel.promiseRankVariants(allVariants, self.allSomaticFeaturesLookup, self.getAllFilterPassingVariants());
+                self.featureMatrixModel.promiseRankVariants(allVariants, self.allSomaticFeaturesLookup, self.allInheritedFeaturesLookup, self.getAllFilterPassingVariants());
                 self.allUniqueFeaturesObj = allVariants;
             }
         } else if (!drawFeatureMatrix) {
