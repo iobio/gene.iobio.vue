@@ -13,7 +13,7 @@
             background-color: $app-color
             span
                 color: white
-                font-weight: bold
+                font-weight: 600
                 font-size: 14px
 
 

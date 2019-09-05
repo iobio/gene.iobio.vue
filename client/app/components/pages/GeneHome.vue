@@ -1249,17 +1249,17 @@
             onGeneRegionZoomReset: function (updateTrack = true) {
                 const self = this;
 
-                self.geneRegionStart = this.selectedGene.start;
-                self.geneRegionEnd = this.selectedGene.end;
-
-                self.filterModel.regionStart = null;
-                self.filterModel.regionEnd = null;
+                self.geneRegionStart = self.selectedGene.start;
+                self.geneRegionEnd = self.selectedGene.end;
 
                 if (updateTrack) {
                     self.featureMatrixModel.setRankedVariants();
                     self.cohortModel.setLoadedVariants(self.selectedGene);
-                    self.cohortModel.setCoverage();
+                    self.cohortModel.setCoverage(self.geneRegionStart, self.geneRegionEnd);
                 }
+
+                self.filterModel.regionStart = null;
+                self.filterModel.regionEnd = null;
             },
             onCircleVariant: function (idx) {
                 const self = this;

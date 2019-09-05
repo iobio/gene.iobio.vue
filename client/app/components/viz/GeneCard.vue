@@ -335,9 +335,9 @@
                 this.$emit('gene-region-zoom', regionStart, regionEnd);
             },
             onRegionZoomReset: function () {
-                const updateTrack = true;
-                this.$emit('gene-region-zoom-reset', updateTrack);
+                let updateTrack = true;
                 this.zoomMessage = "Drag to zoom";
+                this.$emit('gene-region-zoom-reset', updateTrack);
             },
             initSummaryInfo: function () {
                 let self = this;
@@ -360,7 +360,7 @@
                     self.phenotypes = null;
                 }
             },
-            toggleZoom: function () {
+            toggleZoom: function() {
                 const self = this;
                 self.updateMatrix = true;
                 self.showZoom = !self.showZoom;
@@ -434,7 +434,6 @@
                     self.$refs.transcriptGeneVizRef.toggleBrush(self.showZoom, container);
                 } else {
                     self.$refs.transcriptGeneVizRef.toggleBrush(self.showZoom, container);
-                    // TODO: this needs to be conditional on if we're loading a new gene (updateTrack = false) or if we're toggling zoom off (updateTrack = true)
                     self.$emit('gene-region-zoom-reset', self.updateMatrix);
                 }
             },
