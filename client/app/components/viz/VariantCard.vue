@@ -8,6 +8,15 @@
         margin-top: -5px
 
     #variant-card
+        .sample-avatar
+            margin: 2px 4px
+            background-color: $app-color
+            span
+                color: white
+                font-weight: bold
+                font-size: 14px
+
+
         #sample-label
             vertical-align: top
             display: inline-block
@@ -84,7 +93,13 @@
                 vertical-align: top
                 .badge__badge
                     background-color: $coverage-problem-color !important
+            &.tumor
+                .badge__badge
+                    padding: 0px
+                    font-weight: bold
+                    background-color: $app-color !important
             .badge__badge
+                padding: 0px
                 font-size: 11px
                 font-weight: normal
                 width: 24px
@@ -138,14 +153,12 @@
     <v-expansion-panel expand class="app-card" id="variant-card" v-model="openState">
         <v-expansion-panel-content :value="openState">
             <div slot="header">
-                <v-icon v-if="sampleModel.isTumor && sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode"
-                        v-bind:style="{color: trackColor, 'padding-top': '2px'}">
-                    flash_on
-                </v-icon>
-                <v-icon v-if="!sampleModel.isTumor && sampleModel.loadedVariants  && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode"
-                        v-bind:style="{color: trackColor}">
-                    fiber_manual_record
-                </v-icon>
+                <v-avatar v-if="sampleModel.isTumor && sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode" class="sample-avatar" size="22">
+                    <span>T</span>
+                </v-avatar>
+                <v-avatar v-if="!sampleModel.isTumor && sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode" class="sample-avatar" size="22">
+                    <span>N</span>
+                </v-avatar>
                 <span id="sample-label">
                         {{ sampleLabel }}
                     </span>
