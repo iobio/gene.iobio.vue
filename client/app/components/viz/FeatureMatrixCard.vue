@@ -57,7 +57,7 @@
 
 <template>
 
-    <v-card tile id="matrix-card" class="app-card">
+    <v-container>
         <v-layout style="width:100%">
             <v-flex xs12>
             <span style="float:left">
@@ -150,7 +150,7 @@
             {{ featureMatrixModel.warning }}
         </div>
 
-    </v-card>
+    </v-container>
 
 
 </template>

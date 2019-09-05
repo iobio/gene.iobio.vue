@@ -109,6 +109,12 @@ export default function featureMatrixD3() {
             }
 
             width = data.length * (cellWidth != null ? cellWidth : cellSize);
+            // Have to make sure we don't cut off the legend if matrix thinner
+            let legendWidth = 15 * cellSize + rowLabelWidth;
+            if (width < legendWidth) {
+                width = legendWidth;
+            }
+
             width += margin.left + margin.right + rowLabelWidth + (cellWidth != null ? cellWidth : cellSize);
             var innerWidth = width - margin.left - margin.right - rowLabelWidth;
 

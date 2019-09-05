@@ -1,4 +1,4 @@
-<style lang="sass" >
+<style lang="sass">
     @import ../../../assets/sass/variables
     #variant-detail
         padding-left: 0px
@@ -46,7 +46,6 @@
             margin-top: 12px !important
             margin-bottom: 7px
             margin-left: -10px
-
 
         #show-notes-button
             .btn__content
@@ -97,7 +96,7 @@
             min-width: 80px
 
         .field-value.level-high
-            color: $high-impact-color  !important
+            color: $high-impact-color !important
             font-weight: bold !important
         .field-value.level-medium
             color: $moderate-impact-color !important
@@ -119,7 +118,6 @@
             &.revel_moderate
                 color: $moderate-impact-color
                 font-weight: bold
-
 
         .field-value.sift-field
             &.sift_deleterious
@@ -149,21 +147,18 @@
                 color: $link-color !important
                 padding: 0px
 
-
             .material-icons
                 font-size: 17px
 
         a
-            color:  $link-color !important
+            color: $link-color !important
 
             &.level-high
-                color: $high-impact-color  !important
+                color: $high-impact-color !important
                 font-weight: bold !important
             &.level-medium
                 color: $moderate-impact-color !important
                 font-weight: bold !important
-
-
 
         .content
             font-size: 13px
@@ -171,8 +166,6 @@
             margin-bottom: 0px
             float: left
             min-width: 360px
-
-
 
         span.clinvar-submission
             display: flex
@@ -212,7 +205,7 @@
 
                 &.other-count
                     stroke: black !important
-                    fill: rgb(132,132,132) !important
+                    fill: rgb(132, 132, 132) !important
 
             text
                 font-size: 12px !important
@@ -224,15 +217,15 @@
                     fill: $text-color !important
 
                 &.other-count
-                    fill: white  !important
+                    fill: white !important
                     font-style: italic !important
 
                 &.other-count-under
-                    fill: $text-color  !important
+                    fill: $text-color !important
                     font-style: italic !important
 
                 &.ref-count
-                    fill: $text-color  !important
+                    fill: $text-color !important
 
             .header-small
                 overflow-wrap: break-word
@@ -240,12 +233,11 @@
                 width: 120px
                 float: left
                 color: #9c9a9a
-                fill:  #9c9a9a
+                fill: #9c9a9a
                 font-style: italic
                 padding-left: 0px
                 font-size: 13px !important
                 line-height: 14px
-
 
             .allele-count-legend
                 .header-small
@@ -253,19 +245,17 @@
             .allele-count-bar
                 text
                     font-size: 11px !important
-                    fill:  $text-color
+                    fill: $text-color
 
             #allele-count-legend
                 padding-top: 0px
                 padding-bottom: 5px
-
 
             .affected-symbol
                 font-size: 14px
                 color: $danger-color !important
                 float: right
                 padding-right: 2px
-
 
             .allele-count-bar
                 overflow-wrap: break-word
@@ -286,7 +276,7 @@
                 float: left
                 font-size: 13px
                 color: #9c9a9a
-                fill:  #9c9a9a
+                fill: #9c9a9a
 
             .ped-zygosity
                 width: 75px
@@ -322,7 +312,6 @@
                     width: 29px !important
                     margin-right: 10px
 
-
                 &.homref
                     background-color: $homref-color !important
                     color: $text-color !important
@@ -335,19 +324,17 @@
                     border: solid thin $info-color !important
 
 
-
 </style>
 
 
 <template>
-
-    <div v-if="selectedVariant && info" tile id="variant-detail"
+    <v-container v-if="selectedVariant && info" id="variant-detail"
          :class="{'app-card': true, 'has-notes': notes ? true : false}">
         <div style="width:100%;">
             <span style="display:inline-block" v-if="showTitle ">Variant</span>
         </div>
 
-        <div  id="variant-heading" v-if="selectedVariant && !isEduMode" class="mt-1 text-xs-left">
+        <div id="variant-heading" v-if="selectedVariant && !isEduMode" class="mt-1 text-xs-left">
 
       <span style="float:left;margin-top:-4px" v-if="!isBasicMode && !forMyGene2 && interpretation" class="pr-2 pl-1">
                   <variant-interpretation
@@ -385,16 +372,18 @@
 
             <!--// TODO: left off here get rid of proband stuff & update known-variants + cosmic-variants-->
             <!--<v-btn v-if="!isBasicMode && !isEduMode && selectedVariantRelationship !== 'known-variants' && cohortModel.getModel(trackId).isBamLoaded() "-->
-                   <!--class="variant-action-button"  @click="onShowPileup">-->
-                <!--<v-icon>line_style</v-icon>-->
-                <!--Pileup-->
+            <!--class="variant-action-button"  @click="onShowPileup">-->
+            <!--<v-icon>line_style</v-icon>-->
+            <!--Pileup-->
             <!--</v-btn>-->
 
-            <div id="user-flag-buttons" v-if="selectedVariant && !isEduMode && !isBasicMode && selectedVariantRelationship != 'known-variants'" >
+            <div id="user-flag-buttons"
+                 v-if="selectedVariant && !isEduMode && !isBasicMode && selectedVariantRelationship != 'known-variants'">
                 <v-btn class="flag-button variant-action-button" small raised
                        v-if="!selectedVariant.isUserFlagged && !selectedVariant.isFlagged"
                        @click="setUserFlag">
-                    <app-icon icon="user-flagged" width="14" height="14" style="padding-top:1px;padding-right:3px"></app-icon>
+                    <app-icon icon="user-flagged" width="14" height="14"
+                              style="padding-top:1px;padding-right:3px"></app-icon>
                     Flag variant
                 </v-btn>
 
@@ -413,67 +402,52 @@
                     :selectedVariant="selectedVariant"
                     :geneModel="cohortModel.geneModel">
             </variant-links-menu>
-
-
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
         <div v-if="isBasicMode" style="margin-left: 10px;float:left;width:31%;">
-
             <v-flex v-if="isBasicMode">
-                <v-layout  row>
+                <v-layout row>
                     <v-flex xs5 class="field-label">Transcript</v-flex>
                     <v-flex xs7 class="field-value">{{ formatCanonicalTranscript() }}</v-flex>
                 </v-layout>
             </v-flex>
 
             <v-flex v-if="isBasicMode">
-                <v-layout  row>
+                <v-layout row>
                     <v-flex xs5 class="field-label">cDNA</v-flex>
                     <v-flex xs7 class="field-value">{{ info.HGVScAbbrev }}</v-flex>
                 </v-layout>
             </v-flex>
 
             <v-flex v-if="isBasicMode">
-                <v-layout  row>
+                <v-layout row>
                     <v-flex xs5 class="field-label">Protein</v-flex>
                     <v-flex xs7 class="field-value">{{ info.HGVSpAbbrev }}</v-flex>
                 </v-layout>
             </v-flex>
 
             <v-flex v-if="isBasicMode">
-                <v-layout  row>
+                <v-layout row>
                     <v-flex xs5 class="field-label">Chr</v-flex>
                     <v-flex xs7 class="field-value">{{ selectedVariant.chrom }}</v-flex>
                 </v-layout>
             </v-flex>
 
             <v-flex v-if="isBasicMode">
-                <v-layout  row>
+                <v-layout row>
                     <v-flex xs5 class="field-label">Position</v-flex>
                     <v-flex xs7 class="field-value">{{ selectedVariant.start }}</v-flex>
                 </v-layout>
             </v-flex>
 
             <v-flex v-if="isBasicMode">
-                <v-layout  row>
+                <v-layout row>
                     <v-flex xs5 class="field-label">Reference</v-flex>
                     <v-flex xs7 class="field-value">{{ selectedVariant.ref }}</v-flex>
                 </v-layout>
             </v-flex>
 
             <v-flex v-if="isBasicMode">
-                <v-layout  row>
+                <v-layout row>
                     <v-flex xs5 class="field-label">Alternate</v-flex>
                     <v-flex xs7 class="field-value">{{ selectedVariant.alt }}</v-flex>
                 </v-layout>
@@ -482,76 +456,61 @@
 
 
         <div style="float:left;width:31%;min-width:350px">
-
-
-            <v-layout  v-if="selectedVariant && !isEduMode" class="content" column nowrap>
-
-
-
-
-
-
+            <v-layout v-if="selectedVariant && !isEduMode" class="content" column nowrap>
                 <!--<v-flex v-if="!isBasicMode && selectedVariant.inheritance !== '' && selectedVariant.inheritance !== 'none' ">-->
-                    <!--<v-layout row class="">-->
-                        <!--<v-flex xs3 class="field-label">Inheritance</v-flex>-->
-                        <!--<v-flex id="inheritance" xs9 class="field-value">-->
-                            <!--<app-icon :icon="selectedVariant.inheritance" height="16" width="16">-->
-                            <!--</app-icon>-->
-                            <!--{{ selectedVariant.inheritance == 'denovo' ? 'de novo' : selectedVariant.inheritance }}-->
-                        <!--</v-flex>-->
-                    <!--</v-layout>-->
+                <!--<v-layout row class="">-->
+                <!--<v-flex xs3 class="field-label">Inheritance</v-flex>-->
+                <!--<v-flex id="inheritance" xs9 class="field-value">-->
+                <!--<app-icon :icon="selectedVariant.inheritance" height="16" width="16">-->
+                <!--</app-icon>-->
+                <!--{{ selectedVariant.inheritance == 'denovo' ? 'de novo' : selectedVariant.inheritance }}-->
+                <!--</v-flex>-->
+                <!--</v-layout>-->
                 <!--</v-flex>-->
                 <v-flex>
                     <v-layout row>
                         <v-flex xs3 v-if="!isBasicMode" class="field-label">Impact</v-flex>
-                        <v-flex xs9 v-if="!isBasicMode"  class="field-value" v-html="impactAndConsequence"></v-flex>
-
+                        <v-flex xs9 v-if="!isBasicMode" class="field-value" v-html="impactAndConsequence"></v-flex>
                         <v-flex xs4 v-if="isBasicMode" class="field-label">Predicted Impact</v-flex>
                         <v-flex xs8 v-if="isBasicMode" class="field-value">{{ info.vepImpact }}</v-flex>
                     </v-layout>
                 </v-flex>
                 <v-flex v-if="info.vepHighestImpact !== '' && !isBasicMode">
-                    <v-layout row >
+                    <v-layout row>
                         <v-flex xs3 class="field-label">Most severe impact</v-flex>
                         <v-flex xs9 class="field-value">
-                  <span v-for="(impactRec, idx) in info.vepHighestImpactRecs" :key="impactRec.impact">
-                    <span :class="getImpactClass(impactRec.impact.toLowerCase())">
-                      {{ getNonCanonicalImpactDisplay(idx, impactRec) }}
-                    </span>
-                    <span v-for="(effectRec, idx1) in impactRec.effects" :key="effectRec.key">
-                      {{ getNonCanonicalEffectDisplay(idx1, effectRec) }}
-                      <a v-for="transcriptId in effectRec.transcripts"
-                         :key="transcriptId"
-                         href="javascript:void(0)"
-                         @click="selectTranscript(transcriptId)">
-                        {{ transcriptId }}
-                      </a>
-                    </span>
-                  </span>
-
+                          <span v-for="(impactRec, idx) in info.vepHighestImpactRecs" :key="impactRec.impact">
+                            <span :class="getImpactClass(impactRec.impact.toLowerCase())">
+                              {{ getNonCanonicalImpactDisplay(idx, impactRec) }}
+                            </span>
+                            <span v-for="(effectRec, idx1) in impactRec.effects" :key="effectRec.key">
+                              {{ getNonCanonicalEffectDisplay(idx1, effectRec) }}
+                              <a v-for="transcriptId in effectRec.transcripts"
+                                 :key="transcriptId"
+                                 href="javascript:void(0)"
+                                 @click="selectTranscript(transcriptId)">
+                                {{ transcriptId }}
+                              </a>
+                            </span>
+                          </span>
                         </v-flex>
                     </v-layout>
                 </v-flex>
-                <v-flex >
-                    <v-layout row  v-if="info.clinVarLinks && info.clinvarLinks.length > 0">
-                        <v-flex :xs3="!isBasicMode" :xs4="isBasicMode"  class="field-label">Clinvar</v-flex>
-                        <v-flex :xs9="!isBasicMode" :xs8="isBasicMode"   class="field-value">
-                <span class="clinvar-submission" v-for="clinvarLink in info.clinvarLinks"
-                      :key="clinvarLink.key">
-                   <app-icon width="14" height="14" icon="clinvar" :significance="clinvarLink.significance">
-                   </app-icon>
-
-                   <span style="padding-left: 5px" v-html="clinvarLink.link">
-                   </span>
-
-                </span>
+                <v-flex>
+                    <v-layout row v-if="info.clinVarLinks && info.clinvarLinks.length > 0">
+                        <v-flex :xs3="!isBasicMode" :xs4="isBasicMode" class="field-label">Clinvar</v-flex>
+                        <v-flex :xs9="!isBasicMode" :xs8="isBasicMode" class="field-value">
+                            <span class="clinvar-submission" v-for="clinvarLink in info.clinvarLinks"
+                                  :key="clinvarLink.key">
+                               <app-icon width="14" height="14" icon="clinvar" :significance="clinvarLink.significance">
+                               </app-icon>
+                               <span style="padding-left: 5px" v-html="clinvarLink.link">
+                               </span>
+                            </span>
                         </v-flex>
                     </v-layout>
-
-
                 </v-flex>
-
-                <v-flex  v-if="info.revel !== '' && info.revel != null && !isBasicMode" >
+                <v-flex v-if="info.revel !== '' && info.revel != null && !isBasicMode">
                     <v-layout row class="">
                         <v-flex xs3 class="field-label revel">REVEL</v-flex>
                         <v-flex xs9 :class="getRevelClass(info)">
@@ -560,35 +519,31 @@
                         </v-flex>
                     </v-layout>
                 </v-flex>
-                <v-flex   v-if="info.polyphen !== '' && !isBasicMode">
-                    <v-layout row class="" >
+                <v-flex v-if="info.polyphen !== '' && !isBasicMode">
+                    <v-layout row class="">
                         <v-flex xs3 class="field-label">Polyphen</v-flex>
                         <v-flex xs9 :class="getPolyphenClass(selectedVariant)">{{ info.polyphen }}</v-flex>
                     </v-layout>
                 </v-flex>
-                <v-flex  v-if="info.sift !== '' && !isBasicMode" >
+                <v-flex v-if="info.sift !== '' && !isBasicMode">
                     <v-layout row class="">
                         <v-flex xs3 class="field-label">SIFT</v-flex>
                         <v-flex xs9 :class="getSiftClass(selectedVariant)">{{ info.sift }}</v-flex>
                     </v-layout>
                 </v-flex>
-
-
-
             </v-layout>
         </div>
 
 
-
         <div v-if="selectedVariant" style="float:left;width:25%">
-            <v-flex  v-if="!isBasicMode">
-                <v-layout  row>
+            <v-flex v-if="!isBasicMode">
+                <v-layout row>
                     <v-flex xs3 class="field-label">gnomAD</v-flex>
                     <v-flex xs9 class="field-value" v-html="afGnomAD"></v-flex>
                 </v-layout>
             </v-flex>
 
-            <v-flex   v-if="genomeBuildHelper.getCurrentBuildName() !== 'GRCh37' && !isBasicMode" xs6>
+            <v-flex v-if="genomeBuildHelper.getCurrentBuildName() !== 'GRCh37' && !isBasicMode" xs6>
                 <v-layout row>
                     <v-flex xs3 class="field-label">ExAC</v-flex>
                     <v-flex xs9 class="field-value" v-html="afExAC"></v-flex>
@@ -597,52 +552,54 @@
 
 
             <v-flex v-if="!isBasicMode">
-                <v-layout  row>
+                <v-layout row>
                     <v-flex xs3 class="field-label">1000G</v-flex>
                     <v-flex xs9 class="field-value" v-html="af1000G"></v-flex>
                 </v-layout>
             </v-flex>
 
 
-            <v-flex  v-if="info.regulatory !== '' & !isBasicMode">
+            <v-flex v-if="info.regulatory !== '' & !isBasicMode">
                 <v-layout row>
                     <v-flex xs3 class="field-label">Regulatory</v-flex>
-                    <v-flex xs9  v-html="info.regulatory" class="field-value"></v-flex>
+                    <v-flex xs9 v-html="info.regulatory" class="field-value"></v-flex>
                 </v-layout>
             </v-flex>
 
 
-            <v-flex  v-if="!isBasicMode">
+            <v-flex v-if="!isBasicMode">
                 <v-layout row class="">
-                    <v-flex xs3 class="field-label  " >Transcript</v-flex>
-                    <v-flex xs9 class="field-value">{{ selectedVariant.transcript ? selectedVariant.transcript.transcript_id : selectedTranscript.transcript_id }}</v-flex>
+                    <v-flex xs3 class="field-label  ">Transcript</v-flex>
+                    <v-flex xs9 class="field-value">{{ selectedVariant.transcript ?
+                        selectedVariant.transcript.transcript_id : selectedTranscript.transcript_id }}
+                    </v-flex>
                 </v-layout>
             </v-flex>
 
-            <v-flex  v-if="!isBasicMode">
+            <v-flex v-if="!isBasicMode">
                 <v-layout row class="">
-                    <v-flex xs3 class="field-label  "  >Exon </v-flex>
+                    <v-flex xs3 class="field-label  ">Exon</v-flex>
                     <v-flex xs9 class="field-value">{{ info.exon }}</v-flex>
                 </v-layout>
             </v-flex>
 
-            <v-flex  v-if="!isBasicMode">
+            <v-flex v-if="!isBasicMode">
                 <v-layout row class="">
-                    <v-flex xs3 class="field-label  "  >dbSNP ID</v-flex>
+                    <v-flex xs3 class="field-label  ">dbSNP ID</v-flex>
                     <v-flex xs9 class="field-value" v-html="info.dbSnpLink"></v-flex>
                 </v-layout>
             </v-flex>
 
 
-            <v-flex  v-if="!isBasicMode">
+            <v-flex v-if="!isBasicMode">
                 <v-layout row class="">
-                    <v-flex xs3 class="field-label  "  >HGVSc </v-flex>
+                    <v-flex xs3 class="field-label  ">HGVSc</v-flex>
                     <v-flex xs9 class="field-value">{{ info.HGVSc }}</v-flex>
                 </v-layout>
             </v-flex>
-            <v-flex   v-if="!isBasicMode">
+            <v-flex v-if="!isBasicMode">
                 <v-layout row>
-                    <v-flex xs3 class="field-label  "  >HGVSp </v-flex>
+                    <v-flex xs3 class="field-label  ">HGVSp</v-flex>
                     <v-flex xs9 class="field-value">{{ info.HGVSp }}</v-flex>
                 </v-layout>
             </v-flex>
@@ -651,9 +608,8 @@
         </div>
 
 
-        <div id="coverage-svg" v-if="selectedVariant" style="float:left;min-width:445px" v-bind:class="{hide: isEduMode || isBasicMode }">
-
-
+        <div id="coverage-svg" v-if="selectedVariant" style="float:left;min-width:445px"
+             v-bind:class="{hide: isEduMode || isBasicMode }">
 
 
         </div>
@@ -662,22 +618,19 @@
         <div v-if="isBasicMode" style="float:left;width:31%;">
 
             <v-flex v-if="isBasicMode">
-                <v-layout  row>
+                <v-layout row>
                     <v-flex xs5 class="field-label  ">Frequency (1000G)</v-flex>
                     <v-flex xs7 class="field-value">{{ info.af1000G }}</v-flex>
                 </v-layout>
             </v-flex>
 
             <v-flex v-if="isBasicMode">
-                <v-layout  row>
+                <v-layout row>
                     <v-flex xs5 class="field-label ">Frequency (gnomAD)</v-flex>
                     <v-flex xs7 class="field-value">{{ info.afgnomAD }}</v-flex>
                 </v-layout>
             </v-flex>
-
         </div>
-
-
         <div style="float:left;width:31%;"
              v-if="selectedVariant && selectedVariant.genericAnnots && selectedVariant.genericAnnots.AVIA3">
             <span style="text-align:center;font-size:12px">AVIA3 Annotations</span>
@@ -688,21 +641,17 @@
                 <v-flex xs7 class="field-value">{{ annotValue }}</v-flex>
             </v-layout>
         </div>
-
-
-
-
-    </div>
+    </v-container>
 </template>
 
 <script>
 
-    import Vue              from 'vue'
-    import AppIcon          from "../partials/AppIcon.vue"
+    import Vue from 'vue'
+    import AppIcon from "../partials/AppIcon.vue"
     import variantInterpretation from "../partials/VariantInterpretation.vue"
     import VariantNotesMenu from "../partials/VariantNotesMenu.vue"
     import VariantLinksMenu from "../partials/VariantLinksMenu.vue"
-    import InfoPopup        from "../partials/InfoPopup.vue"
+    import InfoPopup from "../partials/InfoPopup.vue"
 
     export default {
         name: 'variant-detail-card',
@@ -740,7 +689,7 @@
 
 
         methods: {
-            formatPopAF: function(afObject) {
+            formatPopAF: function (afObject) {
                 let self = this;
                 var popAF = "";
                 if (afObject['AF'] != ".") {
@@ -756,15 +705,15 @@
                 }
                 return popAF;
             },
-            refreshGlyphs: function() {
+            refreshGlyphs: function () {
                 if (this.selectedVariant) {
                     this.createAlleleCountsSVG();
 
                 }
             },
-            createAlleleCountsSVG: function() {
+            createAlleleCountsSVG: function () {
                 let self = this;
-                self.$nextTick(function() {
+                self.$nextTick(function () {
                     var selection = d3.select("#variant-detail #coverage-svg");
                     selection.selectAll(".ped-info").remove();
                     self.createAlleleCountSVGTrio(selection,
@@ -778,10 +727,10 @@
                 });
 
             },
-            selectTranscript: function(transcriptId) {
+            selectTranscript: function (transcriptId) {
                 this.$emit("transcript-id-selected", transcriptId);
             },
-            getNonCanonicalImpactDisplay: function(idx, impactRec) {
+            getNonCanonicalImpactDisplay: function (idx, impactRec) {
                 let buf = "";
                 if (idx > 0) {
                     buf += " | ";
@@ -789,7 +738,7 @@
                 buf += impactRec.impact.toLowerCase() + ' impact ';
                 return buf;
             },
-            getNonCanonicalEffectDisplay: function(idx, effectRec) {
+            getNonCanonicalEffectDisplay: function (idx, effectRec) {
                 let buf = "";
                 if (idx > 0) {
                     buf += " ,";
@@ -799,15 +748,14 @@
                 buf += effectRec.display + " in non-canonical transcripts ";
                 return buf;
             },
-            onShowPileup: function() {
+            onShowPileup: function () {
                 this.$emit("show-pileup-for-variant",
                     this.selectedVariantRelationship ? this.selectedVariantRelationship : 'proband',
                     this.selectedVariant);
             },
 
 
-
-            formatCanonicalTranscript: function() {
+            formatCanonicalTranscript: function () {
                 if (this.selectedTranscript) {
                     return this.globalApp.utility.stripTranscriptPrefix(this.selectedTranscript.transcript_id);
                 } else {
@@ -816,17 +764,16 @@
             },
 
 
-
-            createAlleleCountSVGTrio: function(container, variant, id, affectedInfo, cohortMode, maxAlleleCount, barWidth) {
+            createAlleleCountSVGTrio: function (container, variant, id, affectedInfo, cohortMode, maxAlleleCount, barWidth) {
                 var me = this;
 
                 var firstTime = true;
 
                 // Workaround to adjust max allele count for siblings
                 let adjustedMaxAlleleCount = maxAlleleCount;
-                affectedInfo.forEach(function(info) {
-                    var sampleName     = info.model.getSelectedSample();
-                    var genotype       = variant.genotypes ? variant.genotypes[sampleName] : null;
+                affectedInfo.forEach(function (info) {
+                    var sampleName = info.model.getSelectedSample();
+                    var genotype = variant.genotypes ? variant.genotypes[sampleName] : null;
 
                     if (genotype == null || genotype.absent && cohortMode === 'single') {
                     } else {
@@ -840,20 +787,20 @@
                 })
 
 
-                affectedInfo.forEach(function(info) {
+                affectedInfo.forEach(function (info) {
 
-                    var isSomatic      = !info.isInherited;
-                    var sampleName     = info.model.getSelectedSample();
-                    var genotype       = variant.genotypes ? variant.genotypes[sampleName] : null;
+                    var isSomatic = !info.isInherited;
+                    var sampleName = info.model.getSelectedSample();
+                    var genotype = variant.genotypes ? variant.genotypes[sampleName] : null;
 
                     if (genotype == null || genotype.absent && cohortMode === 'single') {
                         // If vcf doesn't have any genotypes, skip showing this
 
                     } else {
 
-                        var selectedClazz  = info.model.id === id ? 'selected' : '';
+                        var selectedClazz = info.model.id === id ? 'selected' : '';
 
-                        var displayName      = info.model.displayName ? info.model.displayName : sampleName;
+                        var displayName = info.model.displayName ? info.model.displayName : sampleName;
                         var row = container.append("div")
                             .attr("class", "ped-info");
 
@@ -871,7 +818,7 @@
 
                         var zyg = genotype ? (!genotype.hasOwnProperty('zygosity') || genotype.zygosity == null || genotype.zygosity === "gt_unknown" ? "unknown" : genotype.zygosity.toLowerCase()) : "none";
                         row.append("div")
-                            .attr("class",  "zygosity label " + zyg)
+                            .attr("class", "zygosity label " + zyg)
                             .text(me.globalApp.utility.capitalizeFirstLetter(zyg));
 
 
@@ -895,9 +842,7 @@
             },
 
 
-
-
-            _appendReadCountHeading: function(container) {
+            _appendReadCountHeading: function (container) {
                 var me = this;
                 var svg = container.append("div")
                     .attr("id", "allele-count-legend")
@@ -943,25 +888,25 @@
                     .attr("x", "1")
                     .attr("y", "10")
                     .attr("height", 4)
-                    .attr("width",28)
+                    .attr("width", 28)
                     .attr("class", "alt-count");
                 g.append("rect")
                     .attr("x", "29")
                     .attr("y", "10")
                     .attr("height", 4)
-                    .attr("width",28)
+                    .attr("width", 28)
                     .attr("class", "other-count");
                 g.append("rect")
                     .attr("x", "57")
                     .attr("y", "10")
                     .attr("height", 4)
-                    .attr("width",28)
+                    .attr("width", 28)
                     .attr("class", "ref-count");
 
             },
 
-            _appendAlleleCountSVG: function(container, genotypeAltCount,
-                                            genotypeRefCount, genotypeDepth, bamDepth, barWidth, maxAlleleCount) {
+            _appendAlleleCountSVG: function (container, genotypeAltCount,
+                                             genotypeRefCount, genotypeDepth, bamDepth, barWidth, maxAlleleCount) {
                 var me = this;
 
                 var MAX_BAR_WIDTH = barWidth ? barWidth : me.ALLELE_COUNT_BAR_WIDTH;
@@ -978,7 +923,6 @@
                 }
 
 
-
                 if (genotypeAltCount == null || genotypeAltCount.indexOf(",") >= 0) {
                     BAR_WIDTH = d3.round(MAX_BAR_WIDTH * (genotypeDepth / maxAlleleCount));
                     container.select("svg").remove();
@@ -990,7 +934,7 @@
                         .attr("x", "1")
                         .attr("y", "1")
                         .attr("height", 10)
-                        .attr("width",BAR_WIDTH)
+                        .attr("width", BAR_WIDTH)
                         .attr("class", "ref-count");
 
                     svg.append("text")
@@ -1013,7 +957,7 @@
                 var otherCount = totalCount - (+genotypeRefCount + +genotypeAltCount);
 
                 // proportion the widths of alt, other (for multi-allelic), and ref
-                BAR_WIDTH      = d3.round((MAX_BAR_WIDTH) * (totalCount / maxAlleleCount));
+                BAR_WIDTH = d3.round((MAX_BAR_WIDTH) * (totalCount / maxAlleleCount));
                 if (BAR_WIDTH < 10) {
                     BAR_WIDTH = 10;
                 }
@@ -1021,10 +965,10 @@
                     BAR_WIDTH = BAR_WIDTH - PADDING;
                 }
                 var altPercent = +genotypeAltCount / totalCount;
-                var altWidth   = d3.round(altPercent * BAR_WIDTH);
+                var altWidth = d3.round(altPercent * BAR_WIDTH);
                 var refPercent = +genotypeRefCount / totalCount;
-                var refWidth   = d3.round(refPercent * BAR_WIDTH);
-                var otherWidth = BAR_WIDTH - (altWidth+refWidth);
+                var refWidth = d3.round(refPercent * BAR_WIDTH);
+                var otherWidth = BAR_WIDTH - (altWidth + refWidth);
 
                 // Force a separate line if the bar width is too narrow for count to fit inside or
                 // this is a multi-allelic.
@@ -1041,7 +985,7 @@
                         .attr("x", "1")
                         .attr("y", "1")
                         .attr("height", 10)
-                        .attr("width",altWidth)
+                        .attr("width", altWidth)
                         .attr("class", "alt-count");
 
                 }
@@ -1057,7 +1001,7 @@
 
                 if (refWidth > 0) {
                     svg.append("rect")
-                        .attr("x",  altWidth + otherWidth)
+                        .attr("x", altWidth + otherWidth)
                         .attr("y", "1")
                         .attr("height", 10)
                         .attr("width", refWidth)
@@ -1065,12 +1009,10 @@
                 }
 
 
-
                 svg.append("text")
                     .attr("x", BAR_WIDTH + 5)
                     .attr("y", "9")
                     .text(totalCount);
-
 
 
                 var altX = 0;
@@ -1093,7 +1035,7 @@
                 }
 
                 if (otherCount > 0) {
-                    otherX = altWidth  + d3.round(otherWidth / 2);
+                    otherX = altWidth + d3.round(otherWidth / 2);
                     // Nudge the multi-allelic "other" count over to the right if it is
                     // too close to the alt count.
                     if (otherX - 11 < altX) {
@@ -1113,10 +1055,10 @@
                         .attr("x", otherX < 20 ? 20 : otherX)
                         .attr("y", "9")
                         .attr("text-anchor", "start")
-                        .attr("class", "other-count-under" )
+                        .attr("class", "other-count-under")
                         .text("(multi-allelic)");
                 }
-                if (genotypeRefCount > 0  && (altWidth > 0 || otherWidth > 0)) {
+                if (genotypeRefCount > 0 && (altWidth > 0 || otherWidth > 0)) {
                     refX = altWidth + otherWidth + d3.round(refWidth / 2);
                     if (refX - 11 < otherX || refX - 11 < altX) {
                         refX = refX + 10;
@@ -1130,27 +1072,27 @@
                 }
 
             },
-            setUserFlag: function() {
+            setUserFlag: function () {
                 let self = this;
                 self.selectedVariant.isUserFlagged = true;
                 self.$emit('flag-variant', self.selectedVariant);
             },
-            removeUserFlag: function() {
+            removeUserFlag: function () {
                 let self = this;
                 self.selectedVariant.isUserFlagged = false;
                 self.$emit('remove-flagged-variant', self.selectedVariant);
             },
-            onApplyVariantNotes: function(variant) {
+            onApplyVariantNotes: function (variant) {
                 this.$emit("apply-variant-notes", variant);
             },
-            onApplyVariantInterpretation: function(variant) {
+            onApplyVariantInterpretation: function (variant) {
                 this.$emit("apply-variant-interpretation", variant);
             },
-            getRevelClass: function(info) {
+            getRevelClass: function (info) {
                 let self = this;
                 let clazz = "field-value revel-field";
                 if (self.cohortModel && self.cohortModel.translator && self.cohortModel.translator.revelMap) {
-                    self.cohortModel.translator.revelMap.forEach(function(revelRange) {
+                    self.cohortModel.translator.revelMap.forEach(function (revelRange) {
                         if (info.revel >= revelRange.min && info.revel < revelRange.max) {
                             clazz += " " + revelRange.clazz;
                         }
@@ -1158,7 +1100,7 @@
                 }
                 return clazz;
             },
-            getSiftClass: function(variant) {
+            getSiftClass: function (variant) {
                 let self = this;
                 let clazz = "field-value sift-field";
                 for (var key in variant.vepSIFT) {
@@ -1166,7 +1108,7 @@
                 }
                 return clazz;
             },
-            getPolyphenClass: function(variant) {
+            getPolyphenClass: function (variant) {
                 let self = this;
                 let clazz = "field-value polyphen-field";
                 for (var key in variant.vepPolyPhen) {
@@ -1174,7 +1116,7 @@
                 }
                 return clazz;
             },
-            getAfClass: function(af) {
+            getAfClass: function (af) {
                 if (af <= .01) {
                     return 'level-high';
                 } else if (af <= .05) {
@@ -1183,7 +1125,7 @@
                     return '';
                 }
             },
-            getImpactClass: function(impact) {
+            getImpactClass: function (impact) {
                 if (impact == 'high') {
                     return 'level-high'
                 } else if (impact == 'moderate') {
@@ -1196,14 +1138,14 @@
 
 
         computed: {
-            impactAndConsequence: function() {
+            impactAndConsequence: function () {
                 return "<span class='" + this.getImpactClass(this.info.vepImpact) + "'>"
                     + this.info.vepImpact
                     + " - "
-                    +  this.info.vepConsequence
+                    + this.info.vepConsequence
                     + "</span>"
             },
-            refAlt: function() {
+            refAlt: function () {
                 let self = this;
                 var refAlt = "";
                 if (self.selectedGene && self.selectedGene.strand && self.selectedVariant) {
@@ -1214,12 +1156,12 @@
                             refAlt = self.selectedVariant.eduGenotype;
                         }
                     } else {
-                        refAlt =   self.info.refalt;
+                        refAlt = self.info.refalt;
                     }
                 }
                 return refAlt;
             },
-            afGnomAD: function(af) {
+            afGnomAD: function (af) {
                 if (this.selectedVariant.vepAF == null || this.selectedVariant.vepAf.gnomAD.AF == null) {
                     return "unknown";
                 } else if (this.selectedVariant.vepAf.gnomAD.AF == ".") {
@@ -1230,7 +1172,7 @@
                         + "</span>";
                 } else if (this.isBasicMode) {
                     return this.globalApp.utility.percentage(this.selectedVariant.vepAf.gnomAD.AF);
-                } else  {
+                } else {
                     var af = this.globalApp.utility.percentage(this.selectedVariant.vepAf.gnomAD.AF);
                     var link = "<a target='_gnomad' "
                         + " class='" + this.getAfClass(this.selectedVariant.vepAf.gnomAD.AF) + "' "
@@ -1241,34 +1183,34 @@
                     return link;
                 }
             },
-            af1000G: function(af) {
+            af1000G: function (af) {
                 if (this.selectedVariant.af1000G == null) {
                     return "0%";
-                } else  {
+                } else {
                     var af = this.globalApp.utility.percentage(this.selectedVariant.af1000G);
                     var popAF = this.formatPopAF(this.selectedVariant.vepAf['1000G']);
                     return "<span class='"
                         + this.getAfClass(this.selectedVariant.af1000G) + "'>"
                         + af
                         + "</span>"
-                        +"<span style='margin-left:2px''>"
+                        + "<span style='margin-left:2px''>"
                         + popAF
                         + "</span>";
                 }
             },
-            afExAC: function() {
+            afExAC: function () {
                 return this.selectedVariant.afExAC ? this.globalApp.utility.percentage(this.selectedVariant.afExAC) : "";
             },
-            notes: function() {
+            notes: function () {
                 return this.selectedVariantNotes && this.selectedVariantNotes.length > 0 ? this.selectedVariantNotes : null;
             },
-            interpretation: function() {
+            interpretation: function () {
                 return this.selectedVariantInterpretation && this.selectedVariantInterpretation.length > 0 ? this.selectedVariantInterpretation : 'not-reviewed';
             }
         },
 
         watch: {
-            selectedVariant: function() {
+            selectedVariant: function () {
                 if (this.selectedVariant) {
                     this.createAlleleCountsSVG();
                 }
@@ -1276,7 +1218,7 @@
         },
 
         filters: {
-            showRelationship: function(buf) {
+            showRelationship: function (buf) {
                 if (buf == null) {
                     return "";
                 } else if (buf === 'known-variants') {
@@ -1290,16 +1232,16 @@
 
         },
 
-        updated: function() {
+        updated: function () {
             //if (this.selectedVariant) {
             //  this.createAlleleCountsSVG();
             //}
         },
 
-        mounted: function() {
+        mounted: function () {
         },
 
-        created: function() {
+        created: function () {
         }
 
 

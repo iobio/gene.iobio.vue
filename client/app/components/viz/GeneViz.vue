@@ -259,11 +259,13 @@
                     .regionStart(this.regionStart)
                     .regionEnd(this.regionEnd)
                     .on("d3brush", function (brush) {
+
                         if (!brush.empty()) {
                             let regionStart = d3.round(brush.extent()[0]);
                             let regionEnd = d3.round(brush.extent()[1]);
                             self.$emit('region-zoom', regionStart, regionEnd);
                         } else {
+                            // Only being hit once
                             self.$emit('region-zoom-reset');
                         }
                     })

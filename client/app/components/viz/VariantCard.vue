@@ -9,12 +9,12 @@
 
     #variant-card
         .sample-avatar
-            margin: 2px 4px
+            margin: 0px 4px
             background-color: $app-color
             span
                 color: white
                 font-weight: 600
-                font-size: 14px
+                font-size: 12px
 
 
         #sample-label
@@ -60,19 +60,6 @@
             .cds, .exon, .utr
                 fill: rgba(159, 159, 159, 0.63)
                 stroke: rgb(159, 159, 159)
-                /*TODO: get rid of zoom-switch*/
-        .zoom-switch
-            display: inline-block
-            pointer-events: auto
-            cursor: auto
-            padding-top: 2px
-            label
-                padding-left: 7px
-                line-height: 18px
-                font-size: 12px
-                font-weight: bold
-                padding-top: 2px
-                color: $text-color
         .badge
             padding: 0px 5px 0px 0px
             padding: 3px 7px
@@ -153,10 +140,10 @@
     <v-expansion-panel expand class="app-card" id="variant-card" v-model="openState">
         <v-expansion-panel-content :value="openState">
             <div slot="header">
-                <v-avatar v-if="sampleModel.isTumor && sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode" class="sample-avatar" size="22">
+                <v-avatar v-if="sampleModel.isTumor" class="sample-avatar" size="18">
                     <span>T</span>
                 </v-avatar>
-                <v-avatar v-if="!sampleModel.isTumor && sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]  && !isEduMode && !isBasicMode" class="sample-avatar" size="22">
+                <v-avatar v-if="!sampleModel.isTumor" class="sample-avatar" size="18">
                     <span>N</span>
                 </v-avatar>
                 <span id="sample-label">
@@ -179,6 +166,8 @@
                     <span slot="badge"> {{ coverageDangerRegions.length }} </span>
                     Exons with insufficient coverage
                 </v-badge>
+                <div style="float:left" id="cnv-ideo"></div>
+                <div style="float:left" id="loh-ideo"></div>
             </div>
             <v-card :style="{padding: '5px 10px'}" id="card-viz">
                 <known-variants-toolbar
@@ -222,22 +211,6 @@
                 </div>
 
                 <div style="width:100%" id="viz-div">
-                    <!--<gene-viz id="gene-viz-zoom"-->
-                              <!--v-if="showZoom"-->
-                              <!--:data="[selectedTranscript]"-->
-                              <!--:margin="geneZoomVizMargin"-->
-                              <!--:width="width"-->
-                              <!--:showXAxis="false"-->
-                              <!--:trackHeight="geneVizTrackHeight + 20"-->
-                              <!--:cdsHeight="geneVizCdsHeight + 20"-->
-                              <!--:regionStart="parseInt(selectedGene.start)"-->
-                              <!--:regionEnd="parseInt(selectedGene.end)"-->
-                              <!--:showBrush="true"-->
-                              <!--@region-zoom="onRegionZoom"-->
-                              <!--@region-zoom-reset="onRegionZoomReset"-->
-                    <!--&gt;-->
-                    <!--</gene-viz>-->
-
                     <div class="chart-label"
                          v-if="showVariantViz && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name] && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name].CALLED && sampleModel.calledVariants && sampleModel.calledVariants.features.length > 0"
                     >
@@ -437,11 +410,7 @@
                 coveragePoint: null,
                 id: null,
                 selectedExon: null,
-
                 knownVariantsViz: null,
-
-                //showZoom: false,
-                // zoomMessage: "Drag to zoom",
                 openState: [true]      // Array which controls expansion panel open/close - want open on load
             }
         },
@@ -755,6 +724,39 @@
                 const self = this;
                 let container = self.getTrackSVG(self.sampleModel.id);
                 self.$refs.variantVizRef.applyActiveFilters(container);
+            },
+            drawIdeograms: function() {
+                // TODO: reformat this for our use
+                let cnvConfig = {
+                    organism: 'human',
+                    container: '#cnv-ideo',
+                    chromosome: this.ncbiSummary.chromosome,
+                    chrHeight: 700,
+                    orientation: 'horizontal',
+                    annotations: [{
+                        name: this.gene,
+                        chr: this.ncbiSummary.chromosome,
+                        start: this.ncbiSummary.genomicinfo[0].chrstart,
+                        stop: this.ncbiSummary.genomicinfo[0].chrstop
+                    }]
+                };
+                let cnvIdeogram = new Ideogram(cnvConfig);
+
+                let lohConfig = {
+                    organism: 'human',
+                    container: '#loh-ideo',
+                    chromosome: this.ncbiSummary.chromosome,
+                    chrHeight: 700,
+                    orientation: 'horizontal',
+                    annotations: [{
+                        name: this.gene,
+                        chr: this.ncbiSummary.chromosome,
+                        start: this.ncbiSummary.genomicinfo[0].chrstart,
+                        stop: this.ncbiSummary.genomicinfo[0].chrstop
+                    }]
+                };
+                let lohIdeogram = newIdeogram(lohConfig);
+
             }
         },
 

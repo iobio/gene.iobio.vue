@@ -154,84 +154,131 @@
                         style="height:auto;margin-bottom:5px;"
                         v-bind:class="{hide : showWelcome, 'full-width': true }">
                     <v-card v-if="geneModel && cohortModel.isLoaded && Object.keys(selectedGene).length > 0"
-                            id="gene-and-variant-tabs" slot="right"
-                            class="full-width"
-                            style="margin-bottom:0;padding-top:0;margin-top:10px;">
-                        <v-tabs
-                                v-model="activeGeneVariantTab"
-                                light
-                                :class="{'basic': isBasicMode}">
-                            <v-tab v-if="!isBasicMode" href="#feature-matrix-tab">
-                                Ranked Variants in Gene
-                            </v-tab>
-                            <v-tab v-if="!isBasicMode" href="#var-freq-tab">
-                                Variant Allele Frequencies
-                            </v-tab>
-                            <v-tab v-if="!isEduMode" href="#var-detail-tab">
-                                Variant Details
-                            </v-tab>
-                            <v-tab-item v-if="!isBasicMode" style="margin-bottom:0;overflow-y:auto"
-                                        :key="'featureMatrixTab'"
-                                        :id="'feature-matrix-tab'">
-                                <feature-matrix-card :style="{'min-width': '300px'}"
-                                                     ref="featureMatrixCardRef"
-                                                     v-if="featureMatrixModel.filteredMatrixRows.length > 0 && cohortModel.varAfLinks && cohortModel.allUniqueFeaturesObj"
-                                                     v-bind:class="{ hide: !cohortModel || !cohortModel.isLoaded || !featureMatrixModel || !featureMatrixModel.rankedVariants }"
-                                                     :isEduMode="isEduMode"
-                                                     :isBasicMode="isBasicMode"
-                                                     :featureMatrixModel="featureMatrixModel"
-                                                     :selectedGene="selectedGene"
-                                                     :selectedTranscript="analyzedTranscript"
-                                                     :selectedVariant="selectedVariant"
-                                                     :id="'s0'"
-                                                     :variantTooltip="variantTooltip"
-                                                     :width="cardWidth"
-                                                     @cohort-variant-click="onCohortVariantClick"
-                                                     @cohort-variant-hover="onCohortVariantHover"
-                                                     @cohort-variant-hover-end="onCohortVariantHoverEnd"
-                                                     @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj, cohortModel.allSomaticFeaturesLookup, cohortModel.getAllFilterPassingVariants())">
-                                </feature-matrix-card>
-                            </v-tab-item>
-                            <v-tab-item v-if="!isBasicMode" style="margin-bottom:0;overflow-y:auto"
-                                        :key="'varFreqTab'"
-                                        :id="'var-freq-tab'">
-                                <variant-frequency-card
-                                    v-if="cohortModel && cohortModel.varAfLinks && cohortModel.allUniqueFeaturesObj"
-                                    style="min-width:300px"
-                                    ref="varFreqCardRef"
-                                    :width="cardWidth"
-                                    :numVars="Object.keys(cohortModel.allUniqueFeaturesObj.features).length"
-                                    :afLinks="cohortModel.varAfLinks"
-                                    :afNodes="cohortModel.varAfNodes">
-                                </variant-frequency-card>
-                            </v-tab-item>
-                            <v-tab-item style="margin-bottom:0;overflow-y:auto"
-                                        :key="'varDetailTab'"
-                                        :id="'var-detail-tab'">
-                                <variant-detail-card
-                                        ref="variantDetailCardRef"
-                                        :isEduMode="isEduMode"
-                                        :isBasicMode="isBasicMode"
-                                        :forMyGene2="forMyGene2"
-                                        :showTitle="false"
-                                        :selectedGene="selectedGene"
-                                        :selectedTranscript="analyzedTranscript"
-                                        :selectedVariant="selectedVariant"
-                                        :selectedVariantRelationship="selectedVariantRelationship"
-                                        :genomeBuildHelper="genomeBuildHelper"
-                                        :variantTooltip="variantTooltip"
-                                        :cohortModel="cohortModel"
-                                        :info="selectedVariantInfo"
-                                        @transcript-id-selected="onTranscriptIdSelected"
-                                        @flag-variant="onFlagVariant"
-                                        @remove-flagged-variant="onRemoveUserFlaggedVariant">
-                                </variant-detail-card>
+                                   id="gene-and-variant-tabs" slot="right"
+                                   class="full-width"
+                                   style="margin-bottom:0;padding-top:0;margin-top:10px;">
+                        <v-flex xs9>
+                            <feature-matrix-card :style="{'min-width': '300px'}"
+                                                 ref="featureMatrixCardRef"
+                                                 v-if="featureMatrixModel.filteredMatrixRows.length > 0 && cohortModel.varAfLinks && cohortModel.allUniqueFeaturesObj"
+                                                 v-bind:class="{ hide: !cohortModel || !cohortModel.isLoaded || !featureMatrixModel || !featureMatrixModel.rankedVariants }"
+                                                 :isEduMode="isEduMode"
+                                                 :isBasicMode="isBasicMode"
+                                                 :featureMatrixModel="featureMatrixModel"
+                                                 :selectedGene="selectedGene"
+                                                 :selectedTranscript="analyzedTranscript"
+                                                 :selectedVariant="selectedVariant"
+                                                 :id="'s0'"
+                                                 :variantTooltip="variantTooltip"
+                                                 :width="cardWidth"
+                                                 @cohort-variant-click="onCohortVariantClick"
+                                                 @cohort-variant-hover="onCohortVariantHover"
+                                                 @cohort-variant-hover-end="onCohortVariantHoverEnd"
+                                                 @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj, cohortModel.allSomaticFeaturesLookup, cohortModel.getAllFilterPassingVariants())">
+                            </feature-matrix-card>
+                        </v-flex>
+                        <v-flex xs3>
+                            <variant-detail-card
+                                    ref="variantDetailCardRef"
+                                    :isEduMode="isEduMode"
+                                    :isBasicMode="isBasicMode"
+                                    :forMyGene2="forMyGene2"
+                                    :showTitle="false"
+                                    :selectedGene="selectedGene"
+                                    :selectedTranscript="analyzedTranscript"
+                                    :selectedVariant="selectedVariant"
+                                    :selectedVariantRelationship="selectedVariantRelationship"
+                                    :genomeBuildHelper="genomeBuildHelper"
+                                    :variantTooltip="variantTooltip"
+                                    :cohortModel="cohortModel"
+                                    :info="selectedVariantInfo"
+                                    @transcript-id-selected="onTranscriptIdSelected"
+                                    @flag-variant="onFlagVariant"
+                                    @remove-flagged-variant="onRemoveUserFlaggedVariant">
+                            </variant-detail-card>
+                        </v-flex>
 
-                                <scroll-button ref="scrollButtonRefVariant" :parentId="`variant-detail`">
-                                </scroll-button>
-                            </v-tab-item>
-                        </v-tabs>
                     </v-card>
+
+                    <!--<v-card v-if="geneModel && cohortModel.isLoaded && Object.keys(selectedGene).length > 0"-->
+                            <!--id="gene-and-variant-tabs" slot="right"-->
+                            <!--class="full-width"-->
+                            <!--style="margin-bottom:0;padding-top:0;margin-top:10px;">-->
+                        <!--<v-tabs-->
+                                <!--v-model="activeGeneVariantTab"-->
+                                <!--light-->
+                                <!--:class="{'basic': isBasicMode}">-->
+                            <!--<v-tab v-if="!isBasicMode" href="#feature-matrix-tab">-->
+                                <!--Ranked Variants in Gene-->
+                            <!--</v-tab>-->
+                            <!--<v-tab v-if="!isBasicMode" href="#var-freq-tab">-->
+                                <!--Variant Allele Frequencies-->
+                            <!--</v-tab>-->
+                            <!--<v-tab v-if="!isEduMode" href="#var-detail-tab">-->
+                                <!--Variant Details-->
+                            <!--</v-tab>-->
+                            <!--<v-tab-item v-if="!isBasicMode" style="margin-bottom:0;overflow-y:auto"-->
+                                        <!--:key="'featureMatrixTab'"-->
+                                        <!--:id="'feature-matrix-tab'">-->
+                                <!--<feature-matrix-card :style="{'min-width': '300px'}"-->
+                                                     <!--ref="featureMatrixCardRef"-->
+                                                     <!--v-if="featureMatrixModel.filteredMatrixRows.length > 0 && cohortModel.varAfLinks && cohortModel.allUniqueFeaturesObj"-->
+                                                     <!--v-bind:class="{ hide: !cohortModel || !cohortModel.isLoaded || !featureMatrixModel || !featureMatrixModel.rankedVariants }"-->
+                                                     <!--:isEduMode="isEduMode"-->
+                                                     <!--:isBasicMode="isBasicMode"-->
+                                                     <!--:featureMatrixModel="featureMatrixModel"-->
+                                                     <!--:selectedGene="selectedGene"-->
+                                                     <!--:selectedTranscript="analyzedTranscript"-->
+                                                     <!--:selectedVariant="selectedVariant"-->
+                                                     <!--:id="'s0'"-->
+                                                     <!--:variantTooltip="variantTooltip"-->
+                                                     <!--:width="cardWidth"-->
+                                                     <!--@cohort-variant-click="onCohortVariantClick"-->
+                                                     <!--@cohort-variant-hover="onCohortVariantHover"-->
+                                                     <!--@cohort-variant-hover-end="onCohortVariantHoverEnd"-->
+                                                     <!--@variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj, cohortModel.allSomaticFeaturesLookup, cohortModel.getAllFilterPassingVariants())">-->
+                                <!--</feature-matrix-card>-->
+                            <!--</v-tab-item>-->
+                            <!--<v-tab-item v-if="!isBasicMode" style="margin-bottom:0;overflow-y:auto"-->
+                                        <!--:key="'varFreqTab'"-->
+                                        <!--:id="'var-freq-tab'">-->
+                                <!--<variant-frequency-card-->
+                                    <!--v-if="cohortModel && cohortModel.varAfLinks && cohortModel.allUniqueFeaturesObj"-->
+                                    <!--style="min-width:300px"-->
+                                    <!--ref="varFreqCardRef"-->
+                                    <!--:width="cardWidth"-->
+                                    <!--:numVars="Object.keys(cohortModel.allUniqueFeaturesObj.features).length"-->
+                                    <!--:afLinks="cohortModel.varAfLinks"-->
+                                    <!--:afNodes="cohortModel.varAfNodes">-->
+                                <!--</variant-frequency-card>-->
+                            <!--</v-tab-item>-->
+                            <!--<v-tab-item style="margin-bottom:0;overflow-y:auto"-->
+                                        <!--:key="'varDetailTab'"-->
+                                        <!--:id="'var-detail-tab'">-->
+                                <!--<variant-detail-card-->
+                                        <!--ref="variantDetailCardRef"-->
+                                        <!--:isEduMode="isEduMode"-->
+                                        <!--:isBasicMode="isBasicMode"-->
+                                        <!--:forMyGene2="forMyGene2"-->
+                                        <!--:showTitle="false"-->
+                                        <!--:selectedGene="selectedGene"-->
+                                        <!--:selectedTranscript="analyzedTranscript"-->
+                                        <!--:selectedVariant="selectedVariant"-->
+                                        <!--:selectedVariantRelationship="selectedVariantRelationship"-->
+                                        <!--:genomeBuildHelper="genomeBuildHelper"-->
+                                        <!--:variantTooltip="variantTooltip"-->
+                                        <!--:cohortModel="cohortModel"-->
+                                        <!--:info="selectedVariantInfo"-->
+                                        <!--@transcript-id-selected="onTranscriptIdSelected"-->
+                                        <!--@flag-variant="onFlagVariant"-->
+                                        <!--@remove-flagged-variant="onRemoveUserFlaggedVariant">-->
+                                <!--</variant-detail-card>-->
+
+                                <!--<scroll-button ref="scrollButtonRefVariant" :parentId="`variant-detail`">-->
+                                <!--</scroll-button>-->
+                            <!--</v-tab-item>-->
+                        <!--</v-tabs>-->
+                    <!--</v-card>-->
                 </div>
 
                 <!--<div v-if="geneModel && Object.keys(selectedGene).length > 0 && (!isBasicMode || selectedVariant != null)"-->
@@ -1234,7 +1281,6 @@
             },
             onGeneRegionZoom: function (theStart, theEnd) {
                 const self = this;
-
                 // Gene-viz watches these for updates to redraw track
                 self.geneRegionStart = theStart;
                 self.geneRegionEnd = theEnd;
@@ -1243,8 +1289,13 @@
 
                 self.filterModel.regionStart = self.geneRegionStart;
                 self.filterModel.regionEnd = self.geneRegionEnd;
+
+                let start = Date.now();
                 self.cohortModel.setLoadedVariants(self.selectedGene);
+                let delta = Date.now() - start;
+                console.log("Took " + delta + " ms to zoom region");
                 self.cohortModel.setCoverage(self.geneRegionStart, self.geneRegionEnd);
+
             },
             onGeneRegionZoomReset: function (updateTrack = true) {
                 const self = this;
@@ -1252,14 +1303,17 @@
                 self.geneRegionStart = self.selectedGene.start;
                 self.geneRegionEnd = self.selectedGene.end;
 
-                if (updateTrack) {
-                    self.featureMatrixModel.setRankedVariants();
-                    self.cohortModel.setLoadedVariants(self.selectedGene);
-                    self.cohortModel.setCoverage(self.geneRegionStart, self.geneRegionEnd);
-                }
-
                 self.filterModel.regionStart = null;
                 self.filterModel.regionEnd = null;
+
+                if (updateTrack) {
+                    self.featureMatrixModel.setRankedVariants();
+                    let start = Date.now();
+                    self.cohortModel.setLoadedVariants(self.selectedGene);
+                    let delta = Date.now() - start;
+                    console.log("Took " + delta + " ms to RESET zoom region");
+                    self.cohortModel.setCoverage();
+                }
             },
             onCircleVariant: function (idx) {
                 const self = this;
