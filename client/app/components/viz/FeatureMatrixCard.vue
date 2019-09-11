@@ -56,8 +56,7 @@
 </style>
 
 <template>
-
-    <v-container>
+    <v-container style="padding-top: 10px; padding-left: 10px">
         <v-layout style="width:100%">
             <v-flex xs12>
             <span style="float:left">
@@ -77,10 +76,10 @@
             </v-flex>
         </v-layout>
 
-        <v-layout style="clear:both;width:100%">
-            <v-flex xs12 id="matrix-panel" style="clear:both;min-height:30px" class="fullview"
+        <v-layout>
+            <v-flex xs12 id="matrix-panel" style="clear:both;min-height:30px;" class="fullview"
                     aria-expanded="true">
-                <div id="feature-matrix" style="overflow-x: auto;">
+                <div id="feature-matrix">
                     <feature-matrix-viz id="feature-matrix-viz"
                                         ref="featureMatrixVizRef"
                                         :data="featureMatrixModel.rankedVariants"

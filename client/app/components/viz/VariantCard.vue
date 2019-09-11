@@ -352,7 +352,8 @@
             annotationScheme: null,
             classifyVariantSymbolFunc: null,
 
-            variantTooltip: null,
+            variantTooltip: null,       // tooltip TODO: rename this hoverTooltip
+            clickTooltip: null,
             selectedGene: {},
             selectedTranscript: {},
 
@@ -440,6 +441,8 @@
                 }
             },
             onVariantClick: function (variant) {
+                // tooltip TODO: if variant == null, call hideClickTooltip
+
                 if (this.showDepthViz) {
                     if (variant) {
                         this.showCoverageCircle(variant);
@@ -448,6 +451,10 @@
                 if (this.showVariantViz) {
                     if (variant) {
                         this.showVariantCircle(variant, true);
+                        // tooltip TODO: call showClickTooltip here
+                    } else {
+                        let tipType = "click";
+                        this.hideVariantTooltip(tipType);
                     }
                 }
                 this.$emit('cohort-variant-click', variant, this, this.sampleModel.id);
@@ -468,16 +475,22 @@
                 }
                 if (this.showVariantViz) {
                     this.hideVariantCircle(false);
-                    this.hideVariantTooltip(this);
+                    let tipType = "hover";
+                    this.hideVariantTooltip(tipType);
                 }
                 this.$emit('cohort-variant-hover-end');
 
             },
-            showVariantTooltip: function (variant, lock) {
+            // tooltip TODO: refactor to support hover and click types
+            showVariantTooltip: function (variant, tipType, lock) {
                 let self = this;
 
                 let tooltip = d3.select("#main-tooltip");
+                if (tipType === "click") {
+                    tooltip = d3.select("#click-tooltip");
+                }
 
+                // TODO: will this work with click tooltip
                 if (lock) {
                     tooltip.style("pointer-events", "all");
                 } else {
@@ -487,7 +500,6 @@
 
                 let x = variant.screenX;
                 let y = variant.screenY;
-
                 let coord = {
                     'x': x,
                     'y': y,
@@ -514,7 +526,11 @@
                     }
                 }
 
-                self.variantTooltip.fillAndPositionTooltip(tooltip,
+                let tooltipObj = self.variantTooltip;
+                if (self.tipType === "click") {
+                    tooltipObj = self.clickTooltip;
+                }
+                tooltipObj.fillAndPositionTooltip(tooltip,
                     trackVariant,
                     self.selectedGene,
                     self.selectedTranscript,
@@ -526,16 +542,40 @@
                     self.sampleModel.cohort.maxAlleleCount);
 
             },
+            // tooltip TODO: add clickTooltipScroll maybe? I don't think this is ever called...
             tooltipScroll(direction) {
                 this.variantTooltip.scroll(direction, "#main-tooltip");
             },
-            hideVariantTooltip: function () {
-                let tooltip = d3.select("#main-tooltip");
-                tooltip.transition()
-                    .duration(500)
-                    .style("opacity", 0)
-                    .style("z-index", 0)
-                    .style("pointer-events", "none");
+            hideVariantTooltip: function (tipType) {
+                let hoverTooltip = d3.select("#main-tooltip");
+                let clickTooltip = d3.select("#click-tooltip");
+
+                // If we haven't specified a type, hide them boths
+                if (tipType == null) {
+                    hoverTooltip.transition()
+                        .duration(500)
+                        .style("opacity", 0)
+                        .style("z-index", 0)
+                        .style("pointer-events", "none");
+
+                    clickTooltip.transition()
+                        .duration(500)
+                        .style("opacity", 0)
+                        .style("z-index", 0)
+                        .style("pointer-events", "none");
+                } else if (tipType === "click") {
+                    clickTooltip.transition()
+                        .duration(500)
+                        .style("opacity", 0)
+                        .style("z-index", 0)
+                        .style("pointer-events", "none");
+                } else if (tipType === "hover") {
+                    hoverTooltip.transition()
+                        .duration(500)
+                        .style("opacity", 0)
+                        .style("z-index", 0)
+                        .style("pointer-events", "none");
+                }
             },
             showVariantCircle: function (variant, lock) {
                 if (this.showVariantViz) {

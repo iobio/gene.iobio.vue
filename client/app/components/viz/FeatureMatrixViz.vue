@@ -99,6 +99,8 @@
 
                 pointer-events: all
 
+    #feature-matrix-viz
+        overflow-y: scroll
 
 </style>
 

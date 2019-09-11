@@ -1,64 +1,54 @@
 export default class VariantTooltip {
 
-  constructor(globalApp, isEduMode, isBasicMode, tourNumber, genericAnnotation, glyph, translator, annotationScheme, genomeBuildHelper) {
+  // tooltip TODO: add a parameter for hover vs click type
+  constructor(globalApp, genericAnnotation, glyph, translator, annotationScheme, genomeBuildHelper, tipType) {
     this.globalApp = globalApp;
-    this.isEduMode = isEduMode;
-    this.isBasicMode = isBasicMode;
-    this.tourNumber = tourNumber;
-
     this.genericAnnotation = genericAnnotation;
     this.glyph = glyph;
     this.translator = translator;
     this.annotationScheme = annotationScheme;
     this.genomeBuildHelper = genomeBuildHelper;
-
-    this.WIDTH_HOVER            = 360;
-    this.WIDTH_SIMPLE           = 280;
+    this.WIDTH = tipType === "click" ? 660 : 360;
     this.ARROW_OFFSET           = 10;
     this.ARROW_WIDTH            = 10;
     this.SIDE_TOOLTIP_HORZ_OFFSET = 35;
     this.SIDE_TOOLTIP_VERT_OFFSET = 30;
-
     this.VALUE_EMPTY        = "-";
-
+    this.tipType = tipType;
   }
 
 
+  // tooltip = html element selection
   fillAndPositionTooltip(tooltip, variant, geneObject, theTranscript, lock, coord, trackId, affectedInfo, cohortMode, maxAlleleCount, html) {
-    var me = this;
-
+    const me = this;
     if (lock) {
       return;
     }
-
     tooltip.style("z-index", 1032);
     tooltip.transition()
      .duration(1000)
      .style("opacity", .9)
      .style("pointer-events", "all");
 
-    if (me.isEduMode || me.isBasicMode) {
-      tooltip.classed("level-edu", "true");
-    }
-
-
     if (html == null) {
-      var pinMessage = "click on variant for more details";
-      html = me.formatContent(variant, pinMessage, 'tooltip', geneObject, theTranscript, trackId, lock);
+      let pinMessage = "click on variant for more details";
+      if (me.tipType === "click") {
+          html = me.formatClickContent(variant, pinMessage, 'tooltip', geneObject, theTranscript, trackId, lock);
+      } else {
+          html = me.formatHoverContent(variant, pinMessage, 'tooltip', geneObject, theTranscript, trackId, lock);
+      }
     }
     tooltip.html(html);
     me.injectVariantGlyphs(tooltip, variant, lock ? '.tooltip-wide' : '.tooltip');
 
-
-
-    var w = me.WIDTH_HOVER;
-    var h = d3.round(tooltip[0][0].offsetHeight);
+    let w = me.WIDTH;
+    let h = d3.round(tooltip[0][0].offsetHeight);
 
     // We use css variables to place the tooltip chevron in the middle, center of the tooltip
-    var middlePos = (h/2);
+    let middlePos = (h/2);
     tooltip.style("--tooltip-middle", middlePos  + "px");
     tooltip.style("--tooltip-middle-before", (middlePos - 3) + "px");
-    var centerPos = (w/2);
+    let centerPos = (w/2);
     tooltip.style("--tooltip-center", centerPos + "px");
     tooltip.style("--tooltip-center-before", (centerPos - 3) + "px");
     tooltip.classed("chevron", false);
@@ -71,22 +61,22 @@ export default class VariantTooltip {
     tooltip.classed("chevron-right", false);
     tooltip.classed("chevron-center", false);
 
-    var x = coord.x;
-    var y = coord.y;
-    var yScroll = window.pageYOffset;
+    let x = coord.x;
+    let y = coord.y;
+    let yScroll = window.pageYOffset;
 
-    var tooltipPos = {
+    let tooltipPos = {
       top: null,
       left: null,
       arrowClasses: []
-    }
+    };
 
     me.findBestTooltipPosition(tooltipPos, coord, x, y, h, w, yScroll);
 
     if (tooltipPos.left && tooltipPos.top) {
       tooltipPos.arrowClasses.forEach(function(arrowClass) {
         tooltip.classed(arrowClass, true);
-      })
+      });
       tooltip.style("width", w + "px")
              .style("left", tooltipPos.left + "px")
              .style("text-align", 'left')
@@ -95,9 +85,9 @@ export default class VariantTooltip {
 
   }
 
-  findBestTooltipPosition(tooltipPos, coord, x, y, h, w, yScroll ) {
-    var me = this;
-    var availSpace = {
+  findBestTooltipPosition(tooltipPos, coord, x, y, h, w, yScroll) {
+    const me = this;
+    let availSpace = {
       'top':    {allowed: false},
       'bottom': {allowed: false},
       'middle': {allowed: false},
@@ -154,8 +144,8 @@ export default class VariantTooltip {
       availSpace.center.sideTooltipHorzOffset = 0;
     }
 
-    var found = false;
-    var assignTooltip = function(key1, key2, force=false) {
+    let found = false;
+    let assignTooltip = function(key1, key2, force=false) {
       found = false;
       tooltipPos.top = null;
       tooltipPos.left = null;
@@ -166,7 +156,7 @@ export default class VariantTooltip {
       found = (tooltipPos.top && tooltipPos.left) || force;
 
       if (found) {
-        if (key1 == 'top' || key1 == 'bottom') {
+        if (key1 === 'top' || key1 === 'bottom') {
           tooltipPos.arrowClasses.push('chevron-vertical');
         } else {
           tooltipPos.arrowClasses.push('chevron-horizontal');
@@ -176,7 +166,7 @@ export default class VariantTooltip {
         tooltipPos.arrowClasses.push("chevron-" + key1);
         tooltipPos.arrowClasses.push("chevron-" + key2);
       }
-    }
+    };
 
     coord.preferredPositions.forEach(function(preferredPos) {
       for (var key1 in preferredPos) {
@@ -188,23 +178,23 @@ export default class VariantTooltip {
           })
         }
       }
-    })
+    });
 
     // If we can't find enough space, just choose first preferred position.
     if (!found) {
-      var pp = coord.preferredPositions[0];
-      var key1 = Object.keys(pp)[0];
-      var key2 = pp[key1][0];
+      let pp = coord.preferredPositions[0];
+      let key1 = Object.keys(pp)[0];
+      let key2 = pp[key1][0];
       assignTooltip(key1, key2, true)
     }
   }
 
 
   injectVariantGlyphs(tooltip, variant, selector) {
-    var me = this;
-    var tooltipNode = $(tooltip.node());
+    const me = this;
+    let tooltipNode = $(tooltip.node());
 
-    var injectClinvarBadge = function(clinsig, key, translate) {
+    let injectClinvarBadge = function(clinsig, key, translate) {
       clinsig.split(",").forEach( function(clinsigToken) {
         if (me.translator.clinvarMap.hasOwnProperty(clinsigToken)) {
             var clazz = me.translator.clinvarMap[clinsigToken].clazz;
@@ -220,7 +210,7 @@ export default class VariantTooltip {
             }
         }
       })
-    }
+    };
 
 
     if (variant.clinvarSubmissions && variant.clinvarSubmissions.length > 0) {
@@ -254,99 +244,70 @@ export default class VariantTooltip {
 
   }
 
+  formatHoverContent(variant, pinMessage, tooltipClazz, geneObject, theTranscript, trackId, lock) {
+    const me = this;
 
-  formatContent(variant, pinMessage, tooltipClazz, geneObject, theTranscript, trackId, lock) {
-    var me = this;
+    let info = me.globalApp.utility.formatDisplay(variant, me.translator, me.isEduMode);
 
-    var info = me.globalApp.utility.formatDisplay(variant, me.translator, me.isEduMode);
-
-
-    var calledVariantRow = "";
-    if (variant.hasOwnProperty("fbCalled") && variant.fbCalled == "Y") {
-      var calledGlyph = '<i id="gene-badge-called" class="material-icons glyph" style="display: inline-block;font-size: 15px;vertical-align: top;float:initial">check_circle</i>';
-      var marginTop = tooltipClazz == 'tooltip-wide' ? ';margin-top: 1px;' : ';margin-top: 3px;';
+    // Called variant information
+    let calledVariantRow = "";
+    if (variant.hasOwnProperty("fbCalled") && variant.fbCalled === "Y") {
+      var calledGlyph = '<i id="gene-badge-called" class="material-icons glyph" style="display:inline-block;font-size:15px;vertical-align:top;float:initial">check_circle</i>';
+      var marginTop = tooltipClazz === 'tooltip-wide' ? ';margin-top: 1px;' : ';margin-top: 3px;';
       calledGlyph    += '<span style="display: inline-block;vertical-align: top;margin-left:3px' + marginTop + '">Called variant</span>';
       calledVariantRow = me._tooltipMainHeaderRow(calledGlyph, '', '', '');
     }
 
-
-    var clinvarSimpleRow1 = '';
-    var clinvarSimpleRow2 = '';
-    if (me.isEduMode) {
-      if (info.clinvarSig !== "") {
-        clinvarSimpleRow1 = me._tooltipWideHeadingRow('Known from research', info.clinvarSig, '2px');
-        if (info.phenotype) {
-          clinvarSimpleRow2 = me._tooltipWideHeadingSecondRow('', info.phenotype, null, 'tooltip-clinvar-pheno');
-        }
-      }
-    }
-
+    // Clinvar information
+    let clinvarSimpleRow1 = '';
+    let clinvarSimpleRow2 = '';
     if (info.clinvarSig !== "") {
       if (variant.clinVarUid != null && variant.clinVarUid !== '') {
         clinvarSimpleRow1 = me._tooltipWideHeadingSecondRow('ClinVar', '<span class="tooltip-clinsig-link0">' + info.clinvarSig + '</span>', null);
         if (info.phenotype) {
           clinvarSimpleRow2 = me._tooltipWideHeadingSecondRow('&nbsp;', info.phenotype, null, 'tooltip-clinvar-pheno');
         }
-
       } else if (variant.clinvarSubmissions != null && variant.clinvarSubmissions.length > 0) {
         clinvarSimpleRow1 = me._tooltipSimpleClinvarSigRow('ClinVar', info.clinvarSigSummary );
         clinvarSimpleRow2 = me._tooltipHeaderRow(info.phenotypeSimple !== '' ? info.phenotypeSimple : info.phenotype, '', '', '', '', null, 'style=padding-top:0px');
       }
     }
 
-
-    var vepHighestImpactRowSimple = "";
+    // Impact information
+    let vepHighestImpactRowSimple = "";
     if (info.vepHighestImpact.length > 0) {
       vepHighestImpactRowSimple = me._tooltipHeaderRow(info.vepHighestImpactSimple, '', '', '', 'highest-impact-badge');
     }
 
-    var inheritanceModeRow =  variant.isInherited == null || variant.isInherited === ''
-                              ? ''
-                    : me._tooltipHeaderRow('<span class="tooltip-inheritance-mode-label">' + me.translator.getSomaticLabel(variant.isInherited) + ' </span>', '', '', '', null, 'padding-top:0px;');
+    // Somatic information
+    let inheritanceModeRow =  me._tooltipHeaderRow('<span class="tooltip-inheritance-mode-label">'
+                    + me.translator.getSomaticLabel(variant.isInherited) + ' </span>', '', '', '', null, 'padding-top:0px;');
 
-    var cosmicRow =  variant.inCosmic == null || variant.inCosmic === false
-          ? ''
+    // Cosmic information
+    let cosmicRow =  variant.inCosmic == null || variant.inCosmic === false ? ''
           : me._tooltipHeaderRow('<span class="tooltip-cosmic-label">' + me.translator.getCosmicLabel(variant.inCosmic) + ' </span>', '', '', '', null, 'padding-top:0px;');
 
-    var siftLabel = info.sift !== ''  && info.sift  !== 'unknown'
-                    ? 'SIFT ' + info.sift
-                    : "";
-    var polyphenLabel = info.polyphen  !== '' && info.polyphen !== 'unknown'
-                        ? 'PolyPhen ' + info.polyphen
-                        : "";
-    var sep = siftLabel !== '' && polyphenLabel !== '' ? '&nbsp;&nbsp;&nbsp;&nbsp;' : ''
-    var siftPolyphenRow = '';
+    // Sift and PolyPhen information
+    let siftLabel = info.sift !== ''  && info.sift  !== 'unknown' ? 'SIFT ' + info.sift : "";
+    let polyphenLabel = info.polyphen  !== '' && info.polyphen !== 'unknown' ? 'PolyPhen ' + info.polyphen : "";
+    let sep = siftLabel !== '' && polyphenLabel !== '' ? '&nbsp;&nbsp;&nbsp;&nbsp;' : '';
+    let siftPolyphenRow = '';
     if (siftLabel || polyphenLabel) {
       siftPolyphenRow = me._tooltipClassedRow(polyphenLabel + sep, 'polyphen', siftLabel, 'sift', 'padding-top:2px;');
     }
+    let polyphenRowSimple = info.polyphen !== "" ? me._tooltipWideHeadingRow('Predicted effect', info.polyphen + ' to protein', '2px') : "";
 
+    // Genotype information
+    let genotypeRow = me.isEduMode && me.tourNumber === 2 ? me._tooltipHeaderRow('Genotype', me.globalApp.utility.switchGenotype(variant.eduGenotype), '','')  : "";
 
-    var polyphenRowSimple = info.polyphen !== "" ? me._tooltipWideHeadingRow('Predicted effect', info.polyphen + ' to protein', '2px') : "";
-
-    var genotypeRow = me.isEduMode && me.tourNumber === 2 ? me._tooltipHeaderRow('Genotype', me.globalApp.utility.switchGenotype(variant.eduGenotype), '','')  : "";
-
-    var sampleAf = 0;
+    // AF information
+    let sampleAf = 0;
     if (parseInt(variant.genotypeDepth) > 0) {
         sampleAf = parseInt(variant.genotypeAltCount) / parseInt(variant.genotypeDepth);
     }
-    var afRow = me._tooltipMainHeaderRow('Allele Freq', (sampleAf > 0 ?  me.globalApp.utility.percentage(sampleAf) : '0%'),'','');
+    let afRow = me._tooltipMainHeaderRow('Allele Freq', (sampleAf > 0 ?  me.globalApp.utility.percentage(sampleAf) : '0%'),'','');
 
-    if (me.isEduMode) {
-      return (
-        genotypeRow
-        + me._tooltipMainHeaderRow('Severity - ' + info.vepImpact , '', '', '')
-        + inheritanceModeRow
-        + polyphenRowSimple
-        + clinvarSimpleRow1
-        + clinvarSimpleRow2 );
-    } if (me.isBasicMode) {
-      return (
-        me._tooltipMainHeaderRow(geneObject ? geneObject.gene_name : "", variant.type ? variant.type.toUpperCase() : "", info.refalt + " " + info.coord, '', 'ref-alt')
-        + me._tooltipMainHeaderRow(info.vepImpact, info.vepConsequence, '', '', 'impact-badge')
-        + vepHighestImpactRowSimple
-        + clinvarSimpleRow1
-        + clinvarSimpleRow2 );
-    } else if (trackId === 'matrix') {
+    if (trackId === 'matrix') {
       // Don't show AF if we're hovering over matrix - may be in multiple tracks at diff AFs
       return (
         me._tooltipMainHeaderRow(geneObject ? geneObject.gene_name : "", variant.type ? variant.type.toUpperCase() : "", info.refalt + " " + info.coord, info.dbSnpLink, 'ref-alt')
@@ -354,13 +315,11 @@ export default class VariantTooltip {
         + me._tooltipMainHeaderRow(info.vepImpact, info.vepConsequence, '', '', 'impact-badge')
         + vepHighestImpactRowSimple
         + inheritanceModeRow
-        + siftPolyphenRow
         + (trackId === 'known-variants' ? me._tooltipRow('&nbsp;', info.clinvarLinkKnownVariants, '6px')  : clinvarSimpleRow1)
         + clinvarSimpleRow2
         + cosmicRow
-        + me._linksRow(variant, pinMessage)
+        +  me._linksRow(variant, pinMessage)
       );
-
     } else {
           return (
               me._tooltipMainHeaderRow(geneObject ? geneObject.gene_name : "", variant.type ? variant.type.toUpperCase() : "", info.refalt + " " + info.coord, info.dbSnpLink, 'ref-alt')
@@ -368,7 +327,6 @@ export default class VariantTooltip {
               + me._tooltipMainHeaderRow(info.vepImpact, info.vepConsequence, '', '', 'impact-badge')
               + vepHighestImpactRowSimple
               + inheritanceModeRow
-              + siftPolyphenRow
               + afRow
               + (trackId === 'known-variants' ? me._tooltipRow('&nbsp;', info.clinvarLinkKnownVariants, '6px')  : clinvarSimpleRow1)
               + clinvarSimpleRow2
@@ -376,6 +334,10 @@ export default class VariantTooltip {
               + me._linksRow(variant, pinMessage)
           );
       }
+  }
+
+  formatClickContent(variant, pinMessage, tooltipClazz, geneObject, theTranscript, trackId, lock) {
+    // TODO: implement
   }
 
 
@@ -399,6 +361,7 @@ export default class VariantTooltip {
           + '<div class="' + clazzList + '" style="text-align:center">' + value1 + ' ' + value2 + ' ' + value3 +  ' ' + value4 + '</div>'
           + '</div>';
   }
+
   _tooltipMainHeaderRow(value1, value2, value3, value4, clazz) {
     var theClass = "col-md-12 tooltip-title main-header";
     if (clazz) {
@@ -408,7 +371,6 @@ export default class VariantTooltip {
           + '<div class="' + theClass + '" style="text-align:center">' + value1 + ' ' + value2 + ' ' + value3 +  ' ' + value4 + '</div>'
           + '</div>';
   }
-
 
 
   _tooltipClassedRow(value1, class1, value2, class2, style) {
@@ -452,7 +414,7 @@ export default class VariantTooltip {
   }
 
   _tooltipRow(label, value, paddingTop, alwaysShow, valueClazz, paddingBottom) {
-    if (alwaysShow || (value && value != '')) {
+    if (alwaysShow || (value && value !== '')) {
       var style = paddingTop || paddingBottom ?
                     (' style="'
                      + (paddingTop    ? 'padding-top:'    + paddingTop + ';'  : '' )
@@ -462,7 +424,7 @@ export default class VariantTooltip {
       if (valueClazz) {
         valueClazzes += " " + valueClazz;
       }
-      if (value == "") {
+      if (value === "") {
         value = this.VALUE_EMPTY;
       }
       return '<div class="tooltip-row"' + style + '>'

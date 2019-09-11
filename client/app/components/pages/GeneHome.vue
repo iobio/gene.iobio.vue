@@ -157,47 +157,48 @@
                                    id="gene-and-variant-tabs" slot="right"
                                    class="full-width"
                                    style="margin-bottom:0;padding-top:0;margin-top:10px;">
-                        <v-flex xs9>
-                            <feature-matrix-card :style="{'min-width': '300px'}"
-                                                 ref="featureMatrixCardRef"
-                                                 v-if="featureMatrixModel.filteredMatrixRows.length > 0 && cohortModel.varAfLinks && cohortModel.allUniqueFeaturesObj"
-                                                 v-bind:class="{ hide: !cohortModel || !cohortModel.isLoaded || !featureMatrixModel || !featureMatrixModel.rankedVariants }"
-                                                 :isEduMode="isEduMode"
-                                                 :isBasicMode="isBasicMode"
-                                                 :featureMatrixModel="featureMatrixModel"
-                                                 :selectedGene="selectedGene"
-                                                 :selectedTranscript="analyzedTranscript"
-                                                 :selectedVariant="selectedVariant"
-                                                 :id="'s0'"
-                                                 :variantTooltip="variantTooltip"
-                                                 :width="cardWidth"
-                                                 @cohort-variant-click="onCohortVariantClick"
-                                                 @cohort-variant-hover="onCohortVariantHover"
-                                                 @cohort-variant-hover-end="onCohortVariantHoverEnd"
-                                                 @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj, cohortModel.allSomaticFeaturesLookup, cohortModel.getAllFilterPassingVariants())">
-                            </feature-matrix-card>
-                        </v-flex>
-                        <v-flex xs3>
-                            <variant-detail-card
-                                    ref="variantDetailCardRef"
-                                    :isEduMode="isEduMode"
-                                    :isBasicMode="isBasicMode"
-                                    :forMyGene2="forMyGene2"
-                                    :showTitle="false"
-                                    :selectedGene="selectedGene"
-                                    :selectedTranscript="analyzedTranscript"
-                                    :selectedVariant="selectedVariant"
-                                    :selectedVariantRelationship="selectedVariantRelationship"
-                                    :genomeBuildHelper="genomeBuildHelper"
-                                    :variantTooltip="variantTooltip"
-                                    :cohortModel="cohortModel"
-                                    :info="selectedVariantInfo"
-                                    @transcript-id-selected="onTranscriptIdSelected"
-                                    @flag-variant="onFlagVariant"
-                                    @remove-flagged-variant="onRemoveUserFlaggedVariant">
-                            </variant-detail-card>
-                        </v-flex>
-
+                        <v-layout>
+                            <v-flex xs12>
+                                <feature-matrix-card ref="featureMatrixCardRef"
+                                                     v-if="featureMatrixModel.filteredMatrixRows.length > 0 && cohortModel.varAfLinks && cohortModel.allUniqueFeaturesObj"
+                                                     v-bind:class="{ hide: !cohortModel || !cohortModel.isLoaded || !featureMatrixModel || !featureMatrixModel.rankedVariants }"
+                                                     :isEduMode="isEduMode"
+                                                     :isBasicMode="isBasicMode"
+                                                     :featureMatrixModel="featureMatrixModel"
+                                                     :selectedGene="selectedGene"
+                                                     :selectedTranscript="analyzedTranscript"
+                                                     :selectedVariant="selectedVariant"
+                                                     :id="'s0'"
+                                                     :variantTooltip="variantTooltip"
+                                                     :width="cardWidth"
+                                                     @cohort-variant-click="onCohortVariantClick"
+                                                     @cohort-variant-hover="onCohortVariantHover"
+                                                     @cohort-variant-hover-end="onCohortVariantHoverEnd"
+                                                     @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj, cohortModel.allSomaticFeaturesLookup, cohortModel.getAllFilterPassingVariants())">
+                                </feature-matrix-card>
+                                <!--<v-navigation-drawer-->
+                                        <!--v-model="detailDrawer" mini-variant.sync="true" right floating>-->
+                                    <!--<variant-detail-card-->
+                                            <!--ref="variantDetailCardRef"-->
+                                            <!--:isEduMode="isEduMode"-->
+                                            <!--:isBasicMode="isBasicMode"-->
+                                            <!--:forMyGene2="forMyGene2"-->
+                                            <!--:showTitle="true"-->
+                                            <!--:selectedGene="selectedGene"-->
+                                            <!--:selectedTranscript="analyzedTranscript"-->
+                                            <!--:selectedVariant="selectedVariant"-->
+                                            <!--:selectedVariantRelationship="selectedVariantRelationship"-->
+                                            <!--:genomeBuildHelper="genomeBuildHelper"-->
+                                            <!--:variantTooltip="variantTooltip"-->
+                                            <!--:cohortModel="cohortModel"-->
+                                            <!--:info="selectedVariantInfo"-->
+                                            <!--@transcript-id-selected="onTranscriptIdSelected"-->
+                                            <!--@flag-variant="onFlagVariant"-->
+                                            <!--@remove-flagged-variant="onRemoveUserFlaggedVariant">-->
+                                    <!--</variant-detail-card>-->
+                                <!--</v-navigation-drawer>-->
+                            </v-flex>
+                        </v-layout>
                     </v-card>
 
                     <!--<v-card v-if="geneModel && cohortModel.isLoaded && Object.keys(selectedGene).length > 0"-->
@@ -712,16 +713,25 @@
                         self.featureMatrixModel.init();
                         self.cohortModel.featureMatrixModel = self.featureMatrixModel;
 
+                        let tipType = "hover";
                         self.variantTooltip = new VariantTooltip(
                             self.globalApp,
-                            self.isEduMode,
-                            self.isBasicMode,
-                            self.tourNumber,
                             genericAnnotation,
                             glyph,
                             translator,
                             self.cohortModel.annotationScheme,
-                            self.genomeBuildHelper);
+                            self.genomeBuildHelper,
+                            tipType);
+
+                        tipType = "click";
+                        self.variantTooltip = new VariantTooltip(
+                            self.globalApp,
+                            genericAnnotation,
+                            glyph,
+                            translator,
+                            self.cohortModel.annotationScheme,
+                            self.genomeBuildHelper,
+                            tipType);
 
                         self.filterModel = new FilterModel(self.globalApp, self.cohortModel.affectedInfo, self.isBasicMode);
                         self.cohortModel.filterModel = self.filterModel;
@@ -813,6 +823,10 @@
                     })
                 }
                 return ids;
+            },
+            detailDrawer: function() {
+                const self = this;
+                return self.selectedVariant != null;
             }
         },
 

@@ -141,7 +141,13 @@ export default class Translator {
   }
 
   getSomaticLabel(isInherited) {
-      return isInherited === true ? 'inherited' : 'somatic';
+      if (isInherited === false) {
+          return 'somatic';
+      } else if (isInherited === true) {
+          return 'inherited';
+      } else {
+          return 'undetermined';
+      }
   }
 
   getCosmicLabel(inCosmic) {
