@@ -352,7 +352,7 @@
             annotationScheme: null,
             classifyVariantSymbolFunc: null,
 
-            variantTooltip: null,       // tooltip TODO: rename this hoverTooltip
+            hoverTooltip: null,
             clickTooltip: null,
             selectedGene: {},
             selectedTranscript: {},
@@ -441,31 +441,35 @@
                 }
             },
             onVariantClick: function (variant) {
-                // tooltip TODO: if variant == null, call hideClickTooltip
-
+                // tooltip TODO: pass in X, Y coordinates here...
                 if (this.showDepthViz) {
                     if (variant) {
                         this.showCoverageCircle(variant);
                     }
                 }
                 if (this.showVariantViz) {
+                    let tipType = "click";
                     if (variant) {
                         this.showVariantCircle(variant, true);
-                        // tooltip TODO: call showClickTooltip here
+
+                        // Hide hover tip and show click tip
+                        this.hideVariantTooltip("hover");
+                        // TODO: have to figure out how to lock here so that hover tooltip doesn't pop up
+                        this.showVariantTooltip(variant, tipType, false);
                     } else {
-                        let tipType = "click";
                         this.hideVariantTooltip(tipType);
                     }
                 }
                 this.$emit('cohort-variant-click', variant, this, this.sampleModel.id);
             },
-            onVariantHover: function (variant, showTooltip = true) {
+            onVariantHover: function (variant) {
                 if (this.showDepthViz) {
                     this.showCoverageCircle(variant);
                 }
                 if (this.showVariantViz) {
                     this.showVariantCircle(variant);
-                    this.showVariantTooltip(variant, false);
+                    let tipType = "hover";
+                    this.showVariantTooltip(variant, tipType, false);
                 }
                 this.$emit('cohort-variant-hover', variant, this);
             },
@@ -481,16 +485,17 @@
                 this.$emit('cohort-variant-hover-end');
 
             },
-            // tooltip TODO: refactor to support hover and click types
             showVariantTooltip: function (variant, tipType, lock) {
                 let self = this;
 
                 let tooltip = d3.select("#main-tooltip");
+                let tooltipObj = self.hoverTooltip;
                 if (tipType === "click") {
                     tooltip = d3.select("#click-tooltip");
+                    tooltipObj = self.clickTooltip;
                 }
 
-                // TODO: will this work with click tooltip
+                // TODO: will lock work with click tooltip
                 if (lock) {
                     tooltip.style("pointer-events", "all");
                 } else {
@@ -525,11 +530,6 @@
                         trackVariant = matchingFeat;
                     }
                 }
-
-                let tooltipObj = self.variantTooltip;
-                if (self.tipType === "click") {
-                    tooltipObj = self.clickTooltip;
-                }
                 tooltipObj.fillAndPositionTooltip(tooltip,
                     trackVariant,
                     self.selectedGene,
@@ -542,15 +542,15 @@
                     self.sampleModel.cohort.maxAlleleCount);
 
             },
-            // tooltip TODO: add clickTooltipScroll maybe? I don't think this is ever called...
             tooltipScroll(direction) {
-                this.variantTooltip.scroll(direction, "#main-tooltip");
+                this.hoverTooltip.scroll(direction, "#main-tooltip");
+                this.clickTooltip.scroll(direction, "#click-tooltip");
             },
             hideVariantTooltip: function (tipType) {
                 let hoverTooltip = d3.select("#main-tooltip");
                 let clickTooltip = d3.select("#click-tooltip");
 
-                // If we haven't specified a type, hide them boths
+                // If we haven't specified a type, hide them both
                 if (tipType == null) {
                     hoverTooltip.transition()
                         .duration(500)
@@ -599,7 +599,7 @@
                 return d3.select(this.$el).select('.expansion-panel__container').select('.expansion-panel__body').select('#card-viz').selectAll('.variant-viz > svg');
             },
             getTrackSVG: function (vizTrackName) {
-                var svg = d3.select(this.$el).select('#' + vizTrackName + ' > svg');
+                let svg = d3.select(this.$el).select('#' + vizTrackName + ' > svg');
                 return svg;
             },
             hideCoverageCircle: function () {

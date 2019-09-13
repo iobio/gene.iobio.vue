@@ -1,6 +1,5 @@
 export default class VariantTooltip {
 
-  // tooltip TODO: add a parameter for hover vs click type
   constructor(globalApp, genericAnnotation, glyph, translator, annotationScheme, genomeBuildHelper, tipType) {
     this.globalApp = globalApp;
     this.genericAnnotation = genericAnnotation;
@@ -8,9 +7,9 @@ export default class VariantTooltip {
     this.translator = translator;
     this.annotationScheme = annotationScheme;
     this.genomeBuildHelper = genomeBuildHelper;
-    this.WIDTH = tipType === "click" ? 660 : 360;
-    this.ARROW_OFFSET           = 10;
-    this.ARROW_WIDTH            = 10;
+    this.WIDTH = tipType === "click" ? 460 : 360;
+    this.ARROW_OFFSET = 10;
+    this.ARROW_WIDTH = 10;
     this.SIDE_TOOLTIP_HORZ_OFFSET = 35;
     this.SIDE_TOOLTIP_VERT_OFFSET = 30;
     this.VALUE_EMPTY        = "-";
@@ -18,17 +17,24 @@ export default class VariantTooltip {
   }
 
 
-  // tooltip = html element selection
   fillAndPositionTooltip(tooltip, variant, geneObject, theTranscript, lock, coord, trackId, affectedInfo, cohortMode, maxAlleleCount, html) {
     const me = this;
     if (lock) {
       return;
     }
     tooltip.style("z-index", 1032);
-    tooltip.transition()
-     .duration(1000)
-     .style("opacity", .9)
-     .style("pointer-events", "all");
+
+    if (me.tipType === "click") {
+        tooltip.transition()
+            .duration(1000)
+            .style("opacity", 1)
+            .style("pointer-events", "all");
+    } else {
+        tooltip.transition()
+            .duration(1000)
+            .style("opacity", .9)
+            .style("pointer-events", "all");
+    }
 
     if (html == null) {
       let pinMessage = "click on variant for more details";
@@ -48,6 +54,7 @@ export default class VariantTooltip {
     let middlePos = (h/2);
     tooltip.style("--tooltip-middle", middlePos  + "px");
     tooltip.style("--tooltip-middle-before", (middlePos - 3) + "px");
+
     let centerPos = (w/2);
     tooltip.style("--tooltip-center", centerPos + "px");
     tooltip.style("--tooltip-center-before", (centerPos - 3) + "px");
@@ -72,7 +79,6 @@ export default class VariantTooltip {
     };
 
     me.findBestTooltipPosition(tooltipPos, coord, x, y, h, w, yScroll);
-
     if (tooltipPos.left && tooltipPos.top) {
       tooltipPos.arrowClasses.forEach(function(arrowClass) {
         tooltip.classed(arrowClass, true);
@@ -82,7 +88,6 @@ export default class VariantTooltip {
              .style("text-align", 'left')
              .style("top", tooltipPos.top + "px");
     }
-
   }
 
   findBestTooltipPosition(tooltipPos, coord, x, y, h, w, yScroll) {
@@ -102,7 +107,6 @@ export default class VariantTooltip {
       availSpace.top.allowed = true;
       availSpace.top.tooltipTop = y - h;
       availSpace.top.sideTooltipVertOffset = me.SIDE_TOOLTIP_VERT_OFFSET;
-
     }
     // If the tooltip sits below the elements, is the bottom of the tooltip
     // above the bottom of the window?
@@ -179,7 +183,6 @@ export default class VariantTooltip {
         }
       }
     });
-
     // If we can't find enough space, just choose first preferred position.
     if (!found) {
       let pp = coord.preferredPositions[0];
@@ -188,7 +191,6 @@ export default class VariantTooltip {
       assignTooltip(key1, key2, true)
     }
   }
-
 
   injectVariantGlyphs(tooltip, variant, selector) {
     const me = this;
@@ -211,15 +213,13 @@ export default class VariantTooltip {
         }
       })
     };
-
-
     if (variant.clinvarSubmissions && variant.clinvarSubmissions.length > 0) {
-      var clinsigUniq = {};
+      let clinsigUniq = {};
       variant.clinvarSubmissions.forEach(function(submission) {
         submission.clinsig.split(",").forEach(function(clinsig) {
           clinsigUniq[clinsig] = "";
         })
-      })
+      });
       for (let clinsig in clinsigUniq) {
         injectClinvarBadge(clinsig, clinsig, 'translate(0,0)');
       }
@@ -229,9 +229,8 @@ export default class VariantTooltip {
         injectClinvarBadge(clinsig, key);
       }
     }
-
-
-    if (variant.inheritance && variant.inheritance != '') {
+    // tooltip TODO: update this to display somatic, inherited, undetermined badges
+    if (variant.inheritance && variant.inheritance !== '') {
       var clazz = me.translator.inheritanceMap[variant.inheritance].clazz;
       var symbolFunction = me.translator.inheritanceMap[variant.inheritance].symbolFunction;
       if (tooltipNode.find(".tooltip-title:contains('inheritance')").length > 0) {
@@ -242,6 +241,7 @@ export default class VariantTooltip {
       }
     }
 
+    // tooltip TODO: add cosmic badge, etc
   }
 
   formatHoverContent(variant, pinMessage, tooltipClazz, geneObject, theTranscript, trackId, lock) {
@@ -263,7 +263,7 @@ export default class VariantTooltip {
     let clinvarSimpleRow2 = '';
     if (info.clinvarSig !== "") {
       if (variant.clinVarUid != null && variant.clinVarUid !== '') {
-        clinvarSimpleRow1 = me._tooltipWideHeadingSecondRow('ClinVar', '<span class="tooltip-clinsig-link0">' + info.clinvarSig + '</span>', null);
+        clinvarSimpleRow1 = me._tooltipWideHeadingSecondRow('ClinVar', '<span class="tooltip-clinsig-link">' + info.clinvarSig + '</span>', null);
         if (info.phenotype) {
           clinvarSimpleRow2 = me._tooltipWideHeadingSecondRow('&nbsp;', info.phenotype, null, 'tooltip-clinvar-pheno');
         }
@@ -337,7 +337,55 @@ export default class VariantTooltip {
   }
 
   formatClickContent(variant, pinMessage, tooltipClazz, geneObject, theTranscript, trackId, lock) {
-    // TODO: implement
+      const me = this;
+
+      let info = me.globalApp.utility.formatDisplay(variant, me.translator, me.isEduMode);
+
+      // Called variant information
+      let calledVariantRow = "";
+      if (variant.hasOwnProperty("fbCalled") && variant.fbCalled === "Y") {
+          let calledGlyph = '<i id="gene-badge-called" class="material-icons glyph" style="display:inline-block;font-size:15px;vertical-align:top;float:initial">check_circle</i>';
+          let marginTop = tooltipClazz === 'tooltip-wide' ? ';margin-top: 1px;' : ';margin-top: 3px;';
+          calledGlyph += '<span style="display: inline-block;vertical-align: top;margin-left:3px' + marginTop + '">Called variant</span>';
+          calledVariantRow = me._tooltipMainHeaderRow(calledGlyph, '', '', '');
+      }
+
+      if (trackId === 'matrix') {
+          // Don't show AF if we're hovering over matrix - may be in multiple tracks at diff AFs
+          return (
+              me._tooltipClickHeader("Variant Details", geneObject ? geneObject.gene_name : "", variant.type ? variant.type.toUpperCase() : "", info.refalt + " " + info.coord, info.dbSnpLink)
+              + calledVariantRow
+              + me._tooltipMainHeaderRow(info.vepImpact, info.vepConsequence, '', '', 'impact-badge')
+              + vepHighestImpactRowSimple
+              + inheritanceModeRow
+              + (trackId === 'known-variants' ? me._tooltipRow('&nbsp;', info.clinvarLinkKnownVariants, '6px')  : clinvarSimpleRow1)
+              + clinvarSimpleRow2
+              + cosmicRow
+              +  me._linksRow(variant, pinMessage)
+          );
+      } else {
+          let positionInfo = (geneObject ? geneObject.gene_name : "") + " " + info.coord;
+          let clinvarInfo = me.globalApp.utility.capitalizeFirstLetter(info.clinvarSig);
+          return (
+              me._tooltipClickHeader("Variant Details")
+              + me._tooltipLabeledRow('Position', positionInfo, 'click-label', 'click-value')
+              + me._tooltipLabeledRow('Type', me.globalApp.utility.translateVariantType(variant.type), 'click-label', 'click-value')
+              + me._tooltipLabeledRow('Base \u0394', info.refalt, 'click-label', 'click-value')
+              + me._tooltipLabeledRow('Impact', me.globalApp.utility.capitalizeFirstLetter(info.vepImpact), 'click-label', 'click-value')
+              + me._tooltipLabeledRow('Is Somatic', variant.isInherited == null ? 'Unable to determine': variant.isInherited === true ? 'No' : 'Yes', 'click-label', 'click-value')
+              + me._tooltipLabeledRow('In COSMIC', variant.inCosmic === true ? 'Yes' : 'No', 'click-label', 'click-value')
+              + me._tooltipLabeledRow('ClinVar', clinvarInfo === "" ? "N/A" : clinvarInfo, 'click-label', 'click-value')
+
+              // + me._tooltipMainHeaderRow(info.vepImpact, info.vepConsequence, '', '', 'impact-badge')
+              // + vepHighestImpactRowSimple
+              // + inheritanceModeRow
+              // + afRow
+              // + (trackId === 'known-variants' ? me._tooltipRow('&nbsp;', info.clinvarLinkKnownVariants, '6px')  : clinvarSimpleRow1)
+              // + clinvarSimpleRow2
+              // + cosmicRow
+              // + me._linksRow(variant, pinMessage)
+          );
+      }
   }
 
 
@@ -372,6 +420,12 @@ export default class VariantTooltip {
           + '</div>';
   }
 
+  _tooltipClickHeader(tooltipName, value1, value2, value3, value4) {
+    let titleLine = '<div class="click-tip-header">' + tooltipName +  '</div><hr class="click-tip-divider">';
+    // let subTitleLine = '<div>' + '<span style="text-align: left">' + value1 + ' ' + value2 + ' ' + value3 + ' ' + value4 + '</span></div>';
+    // TODO: add flag button here
+    return titleLine;
+  }
 
   _tooltipClassedRow(value1, class1, value2, class2, style) {
     var theStyle = style ? style : '';
@@ -383,12 +437,10 @@ export default class VariantTooltip {
           + '</div>';
   }
 
-  _tooltipLabeledRow(value1, value2, paddingTop, paddingBottom) {
-    var thePaddingTop    = paddingTop    ? "padding-top:"    + paddingTop    + ";" : "";
-    var thePaddingBottom = paddingBottom ? "padding-bottom:" + paddingBottom + ";" : "";
-    return '<div class="row" style="' + thePaddingTop + thePaddingBottom + '">'
-          + '<div class="col-sm-6 tooltip-title"  style="text-align:right;word-break:normal">' + value1  +'</div>'
-          + '<div class="col-sm-6 tooltip-title" style="text-align:left;word-break:normal">' + value2 + '</div>'
+  _tooltipLabeledRow(label, value, labelClazz, valueClazz) {
+    return '<div class="row" style="padding: 2px 0px">'
+          + '<div class="col-xs-3 "' + labelClazz + 'style="text-align:left;word-break:normal">' + label +':</div>'
+          + '<div class="col-xs-9 "' + valueClazz + 'style="text-align:left;word-break:normal">' + value + '</div>'
           + '</div>';
   }
 

@@ -126,6 +126,9 @@
                             @on-basic-mode="onBasicMode">
                 </intro-card>
 
+                <!--TODO: implement this when time to refactor tooltip code-->
+                <!--<tooltip id="click-tooltip" v-show="true"></tooltip>-->
+
                 <v-card class="full-width" style="margin-bottom:5px;padding-bottom:2px;padding-top:10px"
                         v-if="geneModel && Object.keys(selectedGene).length > 0"
                         v-bind:class="{hide : showWelcome }">
@@ -169,7 +172,7 @@
                                                      :selectedTranscript="analyzedTranscript"
                                                      :selectedVariant="selectedVariant"
                                                      :id="'s0'"
-                                                     :variantTooltip="variantTooltip"
+                                                     :variantTooltip="hoverTooltip"
                                                      :width="cardWidth"
                                                      @cohort-variant-click="onCohortVariantClick"
                                                      @cohort-variant-hover="onCohortVariantHover"
@@ -371,7 +374,8 @@
                         :sampleModel="model"
                         :canonicalSampleIds="canonicalSampleIds"
                         :classifyVariantSymbolFunc="model.id === 'known-variants' ? model.classifyByClinvar : model.classifyByImpact"
-                        :variantTooltip="variantTooltip"
+                        :hoverTooltip="hoverTooltip"
+                        :clickTooltip="clickTooltip"
                         :selectedGene="selectedGene"
                         :selectedTranscript="analyzedTranscript"
                         :selectedVariant="selectedVariant"
@@ -436,10 +440,9 @@
     import VariantFrequencyCard from '../viz/VariantFrequencyCard.vue'
     import VariantCard from '../viz/VariantCard.vue'
     import AppTour from '../viz/AppTour.vue'
+    import Tooltip from '../partials/Tooltip.vue'
 
     import HubSession from '../../models/HubSession.js'
-    import Bam from '../../models/Bam.iobio.js'
-    import vcfiobio from '../../models/Vcf.iobio.js'
     import Translator from '../../models/Translator.js'
     import EndpointCmd from '../../models/EndpointCmd.js'
     import GenericAnnotation from '../../models/GenericAnnotation.js'
@@ -475,7 +478,8 @@
             FeatureMatrixCard,
             VariantCard,
             SplitPane,
-            AppTour
+            AppTour,
+            Tooltip
         },
         props: {
             paramGene: null,
@@ -528,7 +532,11 @@
                 cacheHelper: null,
                 genomeBuildHelper: null,
 
-                variantTooltip: null,
+                hoverTooltip: null,
+                clickTooltip: null,
+                // TODO: implement this when time to refactor tooltip code
+                // clickTooltipX: 0,
+                // clickTooltipY: 0,
                 appTour: null,
 
                 selectedVariant: null,
@@ -714,7 +722,7 @@
                         self.cohortModel.featureMatrixModel = self.featureMatrixModel;
 
                         let tipType = "hover";
-                        self.variantTooltip = new VariantTooltip(
+                        self.hoverTooltip = new VariantTooltip(
                             self.globalApp,
                             genericAnnotation,
                             glyph,
@@ -724,7 +732,7 @@
                             tipType);
 
                         tipType = "click";
-                        self.variantTooltip = new VariantTooltip(
+                        self.clickTooltip = new VariantTooltip(
                             self.globalApp,
                             genericAnnotation,
                             glyph,
@@ -1352,18 +1360,9 @@
                             variantCard.showCoverageCircle(variant);
                         }
                     });
-                    // if (!self.isBasicMode && self.$refs.featureMatrixCardRef) {
-                    //     if (sourceComponent == null || self.$refs.featureMatrixCardRef != sourceComponent) {
-                    //         self.$refs.featureMatrixCardRef.selectVariant(self.selectedVariant);
-                    //     }
-                    // }
-                    // if (self.isEduMode) {
-                    //     self.$refs.appTourRef.checkVariant(variant);
-                    // }
                     if (self.$refs.scrollButtonRefVariant) {
                         self.$refs.scrollButtonRefVariant.showScrollButtons();
                     }
-
                 } else {
                     self.deselectVariant();
                 }

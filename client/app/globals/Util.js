@@ -938,6 +938,25 @@ class Util {
     }
   }
 
+    translateVariantType(type) {
+      switch (type) {
+        case "del": {
+          return "Deletion";
+        }
+        case "ins": {
+          return "Insertion";
+        }
+        case "snp": {
+          return "SNP";
+        }
+        case "complex": {
+          return "Complex";
+        }
+        default:
+            return "";
+      }
+    }
+
 }
 export default Util
 
