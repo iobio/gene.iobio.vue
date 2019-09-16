@@ -957,6 +957,14 @@ class Util {
       }
     }
 
+    translateExonInfo(exonString) {
+      if (exonString !== '') {
+        return exonString;
+      } else {
+        return 'Intronic';
+      }
+    }
+
 }
 export default Util
 

@@ -761,9 +761,8 @@
                 // Workaround to adjust max allele count for siblings
                 let adjustedMaxAlleleCount = maxAlleleCount;
                 affectedInfo.forEach(function (info) {
-                    var sampleName = info.model.getSelectedSample();
-                    var genotype = variant.genotypes ? variant.genotypes[sampleName] : null;
-
+                    let sampleName = info.model.getSelectedSample();
+                    let genotype = variant.genotypes ? variant.genotypes[sampleName] : null;
                     if (genotype == null || genotype.absent && cohortMode === 'single') {
                     } else {
                         if ((+genotype.altCount + +genotype.refCount) > adjustedMaxAlleleCount) {
@@ -773,7 +772,7 @@
                             adjustedMaxAlleleCount = +genotype.genotypeDepth;
                         }
                     }
-                })
+                });
 
 
                 affectedInfo.forEach(function (info) {
@@ -893,29 +892,25 @@
                     .attr("class", "ref-count");
 
             },
-
-            _appendAlleleCountSVG: function (container, genotypeAltCount,
-                                             genotypeRefCount, genotypeDepth, bamDepth, barWidth, maxAlleleCount) {
-                var me = this;
-
-                var MAX_BAR_WIDTH = barWidth ? barWidth : me.ALLELE_COUNT_BAR_WIDTH;
-                var PADDING = 20;
+            _appendAlleleCountSVG: function (container, genotypeAltCount, genotypeRefCount, genotypeDepth, bamDepth, barWidth, maxAlleleCount) {
+                let MAX_BAR_WIDTH = barWidth;
+                let PADDING = 20;
                 MAX_BAR_WIDTH = MAX_BAR_WIDTH - PADDING;
-                var BAR_WIDTH = 0;
-                if ((genotypeDepth == null || genotypeDepth == '') && (genotypeAltCount == null || genotypeAltCount.indexOf(",") >= 0)) {
+                let BAR_WIDTH = 0;
+
+                if ((genotypeDepth == null || genotypeDepth === '') && (genotypeAltCount == null || genotypeAltCount.indexOf(",") >= 0)) {
                     container.text("");
-                    var svg = container
+                    container
                         .append("svg")
                         .attr("width", MAX_BAR_WIDTH + PADDING)
                         .attr("height", "21");
                     return;
                 }
 
-
                 if (genotypeAltCount == null || genotypeAltCount.indexOf(",") >= 0) {
                     BAR_WIDTH = d3.round(MAX_BAR_WIDTH * (genotypeDepth / maxAlleleCount));
                     container.select("svg").remove();
-                    var svg = container
+                    let svg = container
                         .append("svg")
                         .attr("width", MAX_BAR_WIDTH + PADDING)
                         .attr("height", "12");
@@ -931,7 +926,7 @@
                         .attr("y", "9")
                         .text(genotypeDepth);
 
-                    var g = svg.append("g")
+                    let g = svg.append("g")
                         .attr("transform", "translate(0,0)");
                     g.append("text")
                         .attr("x", BAR_WIDTH / 2)
@@ -942,8 +937,8 @@
                     return;
                 }
 
-                var totalCount = genotypeDepth;
-                var otherCount = totalCount - (+genotypeRefCount + +genotypeAltCount);
+                let totalCount = genotypeDepth;
+                let otherCount = totalCount - (+genotypeRefCount + +genotypeAltCount);
 
                 // proportion the widths of alt, other (for multi-allelic), and ref
                 BAR_WIDTH = d3.round((MAX_BAR_WIDTH) * (totalCount / maxAlleleCount));
@@ -953,18 +948,18 @@
                 if (BAR_WIDTH > PADDING + 10) {
                     BAR_WIDTH = BAR_WIDTH - PADDING;
                 }
-                var altPercent = +genotypeAltCount / totalCount;
-                var altWidth = d3.round(altPercent * BAR_WIDTH);
-                var refPercent = +genotypeRefCount / totalCount;
-                var refWidth = d3.round(refPercent * BAR_WIDTH);
-                var otherWidth = BAR_WIDTH - (altWidth + refWidth);
+                let altPercent = +genotypeAltCount / totalCount;
+                let altWidth = d3.round(altPercent * BAR_WIDTH);
+                let refPercent = +genotypeRefCount / totalCount;
+                let refWidth = d3.round(refPercent * BAR_WIDTH);
+                let otherWidth = BAR_WIDTH - (altWidth + refWidth);
 
                 // Force a separate line if the bar width is too narrow for count to fit inside or
                 // this is a multi-allelic.
-                var separateLineForLabel = (altWidth > 0 && altWidth / 2 < 11) || (refWidth > 0 && refWidth / 2 < 11) || (otherWidth > 0);
+                let separateLineForLabel = (altWidth > 0 && altWidth / 2 < 11) || (refWidth > 0 && refWidth / 2 < 11) || (otherWidth > 0);
 
                 container.select("svg").remove();
-                var svg = container
+                let svg = container
                     .append("svg")
                     .attr("width", MAX_BAR_WIDTH + PADDING)
                     .attr("height", separateLineForLabel ? "31" : "21");
@@ -978,7 +973,6 @@
                         .attr("class", "alt-count");
 
                 }
-
                 if (otherWidth > 0) {
                     svg.append("rect")
                         .attr("x", altWidth)
@@ -987,7 +981,6 @@
                         .attr("width", otherWidth)
                         .attr("class", "other-count");
                 }
-
                 if (refWidth > 0) {
                     svg.append("rect")
                         .attr("x", altWidth + otherWidth)
@@ -996,21 +989,19 @@
                         .attr("width", refWidth)
                         .attr("class", "ref-count");
                 }
-
-
                 svg.append("text")
                     .attr("x", BAR_WIDTH + 5)
                     .attr("y", "9")
                     .text(totalCount);
 
 
-                var altX = 0;
-                var otherX = 0;
-                var refX = 0;
-                var g = svg.append("g")
+                let altX = 0;
+                let otherX = 0;
+                let refX = 0;
+                let g = svg.append("g")
                     .attr("transform", (separateLineForLabel ? "translate(-6,11)" : "translate(0,0)"));
                 if (altWidth > 0) {
-                    var altX = d3.round(altWidth / 2);
+                    let altX = d3.round(altWidth / 2);
                     if (altX < 6) {
                         altX = 6;
                     }
@@ -1037,7 +1028,7 @@
                         .attr("class", separateLineForLabel ? "other-count-under" : "other-count")
                         .text(otherCount);
 
-                    var gNextLine = g.append("g")
+                    let gNextLine = g.append("g")
                         .attr("transform", "translate(-15,9)");
                     svg.attr("height", 45);
                     gNextLine.append("text")
@@ -1059,7 +1050,6 @@
                         .attr("class", "ref-count")
                         .text(genotypeRefCount);
                 }
-
             },
             setUserFlag: function () {
                 let self = this;

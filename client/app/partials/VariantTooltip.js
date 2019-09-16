@@ -7,12 +7,13 @@ export default class VariantTooltip {
     this.translator = translator;
     this.annotationScheme = annotationScheme;
     this.genomeBuildHelper = genomeBuildHelper;
-    this.WIDTH = tipType === "click" ? 460 : 360;
+    this.WIDTH = tipType === "click" ? 750 : 360;
     this.ARROW_OFFSET = 10;
     this.ARROW_WIDTH = 10;
     this.SIDE_TOOLTIP_HORZ_OFFSET = 35;
     this.SIDE_TOOLTIP_VERT_OFFSET = 30;
     this.VALUE_EMPTY        = "-";
+    this.AF_BAR_WIDTH = '300';
     this.tipType = tipType;
   }
 
@@ -46,6 +47,9 @@ export default class VariantTooltip {
     }
     tooltip.html(html);
     me.injectVariantGlyphs(tooltip, variant, lock ? '.tooltip-wide' : '.tooltip');
+    if (me.tipType === 'click') {
+      me.injectAlleleCountSvg('af-svg', variant, affectedInfo, maxAlleleCount, trackId, me.AF_BAR_WIDTH);
+    }
 
     let w = me.WIDTH;
     let h = d3.round(tooltip[0][0].offsetHeight);
@@ -244,6 +248,287 @@ export default class VariantTooltip {
     // tooltip TODO: add cosmic badge, etc
   }
 
+  injectAlleleCountSvg(divId, variant, affectedInfo, maxAlleleCount, trackId, barWidth) {
+    const me = this;
+
+    // Add header
+    let container = d3.select('#' + divId);
+    let svg = container.append("div")
+        .attr("id", "allele-count-legend")
+        .append("svg")
+        .attr("width", "350")
+        .attr("height", "20");
+    svg.append("text")
+        .attr("x", "5")
+        .attr("y", "15")
+        .attr("anchor", "start")
+        .attr("class", "click-label")
+        .text("Sample");
+
+    let g = svg.append("g")
+        .attr("transform", "translate(100,1)");
+
+    g.append("text")
+        .attr("x", "7")
+        .attr("y", "9")
+        .attr("class", "alt-count-under")
+        .attr("anchor", "start")
+        .text("alt");
+    g.append("text")
+        .attr("x", "28")
+        .attr("y", "9")
+        .attr("class", "other-count-under")
+        .attr("anchor", "start")
+        .text("other");
+    g.append("text")
+        .attr("x", "67")
+        .attr("y", "9")
+        .attr("class", "ref-count")
+        .attr("anchor", "start")
+        .text("ref");
+    g.append("text")
+        .attr("x", "90")
+        .attr("y", "14")
+        .attr("class", "ref-count")
+        .attr("anchor", "start")
+        .text("total");
+
+    g.append("rect")
+        .attr("x", "1")
+        .attr("y", "10")
+        .attr("height", 4)
+        .attr("width", 28)
+        .attr("class", "alt-count");
+    g.append("rect")
+        .attr("x", "29")
+        .attr("y", "10")
+        .attr("height", 4)
+        .attr("width", 28)
+        .attr("class", "other-count");
+    g.append("rect")
+        .attr("x", "57")
+        .attr("y", "10")
+        .attr("height", 4)
+        .attr("width", 28)
+        .attr("class", "ref-count");
+
+    // Add body
+    me._injectAlleleCountBody(container, variant, trackId, affectedInfo, 'time', maxAlleleCount, barWidth);
+  }
+
+  _injectAlleleCountBody(container, variant, id, affectedInfo, cohortMode, maxAlleleCount, barWidth) {
+      const me = this;
+
+      // Workaround to adjust max allele count for all samples
+      let adjustedMaxAlleleCount = maxAlleleCount;
+      affectedInfo.forEach(function (info) {
+          let sampleName = info.model.getSelectedSample();
+          let genotype = variant.genotypes ? variant.genotypes[sampleName] : null;
+          if (genotype == null || genotype.absent && cohortMode === 'single') {
+          } else {
+              if ((+genotype.altCount + +genotype.refCount) > adjustedMaxAlleleCount) {
+                  adjustedMaxAlleleCount = +genotype.altCount + +genotype.refCount;
+              }
+              if (+genotype.genotypeDepth > adjustedMaxAlleleCount) {
+                  adjustedMaxAlleleCount = +genotype.genotypeDepth;
+              }
+          }
+      });
+
+      affectedInfo.forEach(function(info) {
+          let sampleName = info.model.getSelectedSample();
+          let genotype = variant.genotypes ? variant.genotypes[sampleName] : null;
+
+          if (genotype == null || genotype.absent && cohortMode === 'single') {
+              // If vcf doesn't have any genotypes, skip showing this
+          } else {
+              let selectedClazz = info.model.id === id ? 'selected' : '';
+              let displayName = info.model.displayName ? info.model.displayName : sampleName;
+              let row = container.append("div")
+                  .attr("class", "ped-info");
+              row.append("div")
+                  .attr("class", "click-value ")
+                  .html("<span class='sample-type-symbol'></span>"
+                      + "<span class='ped-label "
+                      + selectedClazz + "'>"
+                      + (" " + displayName)
+                      + "</span>");
+
+              let barContainer = row.append("div")
+                  .attr("class", "allele-count-bar");
+              if (genotype) {
+                  me._appendAlleleCountSVG(barContainer,
+                      genotype.altCount,
+                      genotype.refCount,
+                      genotype.genotypeDepth,
+                      null,
+                      barWidth,
+                      adjustedMaxAlleleCount);
+              }
+          }
+      });
+  }
+
+  _appendAlleleCountSVG(container, genotypeAltCount, genotypeRefCount, genotypeDepth, bamDepth, barWidth, maxAlleleCount) {
+      let MAX_BAR_WIDTH = barWidth;
+      let PADDING = 20;
+      MAX_BAR_WIDTH = MAX_BAR_WIDTH - PADDING;
+      let BAR_WIDTH = 0;
+
+      if ((genotypeDepth == null || genotypeDepth === '') && (genotypeAltCount == null || genotypeAltCount.indexOf(",") >= 0)) {
+          container.text("");
+          container
+              .append("svg")
+              .attr("width", MAX_BAR_WIDTH + PADDING)
+              .attr("height", "21");
+          return;
+      }
+
+      if (genotypeAltCount == null || genotypeAltCount.indexOf(",") >= 0) {
+          BAR_WIDTH = d3.round(MAX_BAR_WIDTH * (genotypeDepth / maxAlleleCount));
+          container.select("svg").remove();
+          let svg = container
+              .append("svg")
+              .attr("width", MAX_BAR_WIDTH + PADDING)
+              .attr("height", "15");
+          svg.append("rect")
+              .attr("x", "1")
+              .attr("y", "1")
+              .attr("height", 15)
+              .attr("width", BAR_WIDTH)
+              .attr("class", "ref-count");
+
+          svg.append("text")
+              .attr("x", BAR_WIDTH + 5)
+              .attr("y", "10")
+              .text(genotypeDepth);
+
+          let g = svg.append("g")
+              .attr("transform", "translate(0,0)");
+          g.append("text")
+              .attr("x", BAR_WIDTH / 2)
+              .attr("y", 10)
+              .attr("text-anchor", "middle")
+              .attr("class", "ref-count")
+              .text("?");
+          return;
+      }
+
+      let totalCount = genotypeDepth;
+      let otherCount = totalCount - (+genotypeRefCount + +genotypeAltCount);
+
+      // proportion the widths of alt, other (for multi-allelic), and ref
+      BAR_WIDTH = d3.round((MAX_BAR_WIDTH) * (totalCount / maxAlleleCount));
+      if (BAR_WIDTH < 10) {
+          BAR_WIDTH = 10;
+      }
+      if (BAR_WIDTH > PADDING + 10) {
+          BAR_WIDTH = BAR_WIDTH - PADDING;
+      }
+      let altPercent = +genotypeAltCount / totalCount;
+      let altWidth = d3.round(altPercent * BAR_WIDTH);
+      let refPercent = +genotypeRefCount / totalCount;
+      let refWidth = d3.round(refPercent * BAR_WIDTH);
+      let otherWidth = BAR_WIDTH - (altWidth + refWidth);
+
+      // Force a separate line if the bar width is too narrow for count to fit inside or
+      // this is a multi-allelic.
+      let separateLineForLabel = (altWidth > 0 && altWidth / 2 < 11) || (refWidth > 0 && refWidth / 2 < 11) || (otherWidth > 0);
+
+      container.select("svg").remove();
+      let svg = container
+          .append("svg")
+          .attr("width", MAX_BAR_WIDTH + PADDING)
+          .attr("height", separateLineForLabel ? "31" : "21");
+
+      if (altWidth > 0) {
+          svg.append("rect")
+              .attr("x", "1")
+              .attr("y", "1")
+              .attr("height", 10)
+              .attr("width", altWidth)
+              .attr("class", "alt-count");
+
+      }
+      if (otherWidth > 0) {
+          svg.append("rect")
+              .attr("x", altWidth)
+              .attr("y", "1")
+              .attr("height", 10)
+              .attr("width", otherWidth)
+              .attr("class", "other-count");
+      }
+      if (refWidth > 0) {
+          svg.append("rect")
+              .attr("x", altWidth + otherWidth)
+              .attr("y", "1")
+              .attr("height", 10)
+              .attr("width", refWidth)
+              .attr("class", "ref-count");
+      }
+      svg.append("text")
+          .attr("x", BAR_WIDTH + 5)
+          .attr("y", "10")
+          .text(totalCount);
+
+
+      let altX = 0;
+      let otherX = 0;
+      let refX = 0;
+      let g = svg.append("g")
+          .attr("transform", (separateLineForLabel ? "translate(-6,11)" : "translate(0,0)"));
+      if (altWidth > 0) {
+          let altX = d3.round(altWidth / 2);
+          if (altX < 6) {
+              altX = 6;
+          }
+          g.append("text")
+              .attr("x", altX)
+              .attr("y", "10")
+              .attr("text-anchor", separateLineForLabel ? "start" : "middle")
+              .attr("class", separateLineForLabel ? "alt-count-under" : "alt-count")
+              .text(genotypeAltCount);
+
+      }
+
+      if (otherCount > 0) {
+          otherX = altWidth + d3.round(otherWidth / 2);
+          // Nudge the multi-allelic "other" count over to the right if it is
+          // too close to the alt count.
+          if (otherX - 11 < altX) {
+              otherX = altX + 10;
+          }
+          g.append("text")
+              .attr("x", otherX)
+              .attr("y", "10")
+              .attr("text-anchor", separateLineForLabel ? "start" : "middle")
+              .attr("class", separateLineForLabel ? "other-count-under" : "other-count")
+              .text(otherCount);
+
+          let gNextLine = g.append("g")
+              .attr("transform", "translate(-15,9)");
+          svg.attr("height", 45);
+          gNextLine.append("text")
+              .attr("x", otherX < 20 ? 20 : otherX)
+              .attr("y", "10")
+              .attr("text-anchor", "start")
+              .attr("class", "other-count-under")
+              .text("(multi-allelic)");
+      }
+      if (genotypeRefCount > 0 && (altWidth > 0 || otherWidth > 0)) {
+          refX = altWidth + otherWidth + d3.round(refWidth / 2);
+          if (refX - 11 < otherX || refX - 11 < altX) {
+              refX = refX + 10;
+          }
+          g.append("text")
+              .attr("x", refX)
+              .attr("y", "10")
+              .attr("text-anchor", separateLineForLabel ? "start" : "middle")
+              .attr("class", "ref-count")
+              .text(genotypeRefCount);
+      }
+  }
+
   formatHoverContent(variant, pinMessage, tooltipClazz, geneObject, theTranscript, trackId, lock) {
     const me = this;
 
@@ -305,7 +590,7 @@ export default class VariantTooltip {
     if (parseInt(variant.genotypeDepth) > 0) {
         sampleAf = parseInt(variant.genotypeAltCount) / parseInt(variant.genotypeDepth);
     }
-    let afRow = me._tooltipMainHeaderRow('Allele Freq', (sampleAf > 0 ?  me.globalApp.utility.percentage(sampleAf) : '0%'),'','');
+    let afRow = me._tooltipMainHeaderRow('Coverage', (sampleAf > 0 ?  me.globalApp.utility.percentage(sampleAf) : '0%'),'','');
 
     if (trackId === 'matrix') {
       // Don't show AF if we're hovering over matrix - may be in multiple tracks at diff AFs
@@ -336,6 +621,7 @@ export default class VariantTooltip {
       }
   }
 
+  /* Returns HTML that gets displayed within the tooltip */
   formatClickContent(variant, pinMessage, tooltipClazz, geneObject, theTranscript, trackId, lock) {
       const me = this;
 
@@ -364,28 +650,48 @@ export default class VariantTooltip {
               +  me._linksRow(variant, pinMessage)
           );
       } else {
+        // TODO: to finish tooltip:
+          // 1) put into matrix
+          // 2) lock out hover tooltip when click one is displayed
+          // 3) add AF to count viz
+          // 4) Add flag variant button
+          // 5) insert glyphs
+          // 6) Add pileup
+
           let positionInfo = (geneObject ? geneObject.gene_name : "") + " " + info.coord;
           let clinvarInfo = me.globalApp.utility.capitalizeFirstLetter(info.clinvarSig);
+          let labelClasses = 'click-label col-xs-5';
+          let valueClasses = 'click-value col-xs-7';
+          let svgLabelClasses = 'click-svg-label col-xs-2';
+          let svgValueClasses = 'click-svg-value col-xs-10';
           return (
               me._tooltipClickHeader("Variant Details")
-              + me._tooltipLabeledRow('Position', positionInfo, 'click-label', 'click-value')
-              + me._tooltipLabeledRow('Type', me.globalApp.utility.translateVariantType(variant.type), 'click-label', 'click-value')
-              + me._tooltipLabeledRow('Base \u0394', info.refalt, 'click-label', 'click-value')
-              + me._tooltipLabeledRow('Impact', me.globalApp.utility.capitalizeFirstLetter(info.vepImpact), 'click-label', 'click-value')
-              + me._tooltipLabeledRow('Is Somatic', variant.isInherited == null ? 'Unable to determine': variant.isInherited === true ? 'No' : 'Yes', 'click-label', 'click-value')
-              + me._tooltipLabeledRow('In COSMIC', variant.inCosmic === true ? 'Yes' : 'No', 'click-label', 'click-value')
-              + me._tooltipLabeledRow('ClinVar', clinvarInfo === "" ? "N/A" : clinvarInfo, 'click-label', 'click-value')
-
-              // + me._tooltipMainHeaderRow(info.vepImpact, info.vepConsequence, '', '', 'impact-badge')
-              // + vepHighestImpactRowSimple
-              // + inheritanceModeRow
-              // + afRow
-              // + (trackId === 'known-variants' ? me._tooltipRow('&nbsp;', info.clinvarLinkKnownVariants, '6px')  : clinvarSimpleRow1)
-              // + clinvarSimpleRow2
-              // + cosmicRow
-              // + me._linksRow(variant, pinMessage)
+              + me._formatLeftHalf(me._tooltipLabeledRow('Position', positionInfo, labelClasses, valueClasses)
+              + me._tooltipLabeledRow('Type', me.globalApp.utility.translateExonInfo(info.exon) + ' ' + me.globalApp.utility.translateVariantType(variant.type), labelClasses, valueClasses)
+              + me._tooltipLabeledRow('Base \u0394', info.refalt, labelClasses, valueClasses)
+              + me._tooltipLabeledRow('Impact', me.globalApp.utility.capitalizeFirstLetter(info.vepImpact), labelClasses, valueClasses)
+              + me._tooltipLabeledRow('Is Somatic', variant.isInherited == null ? 'Unable to determine': variant.isInherited === true ? 'No' : 'Yes', labelClasses, valueClasses)
+              + me._tooltipLabeledRow('In COSMIC', variant.inCosmic === true ? 'Yes' : 'No', labelClasses, valueClasses)
+              + me._tooltipLabeledRow('ClinVar', clinvarInfo === "" ? "N/A" : clinvarInfo, labelClasses, valueClasses))
+              + me._formatRightHalf(me._tooltipLabeledRow('Counts', me._getAfDiv(), svgLabelClasses, svgValueClasses))
           );
       }
+  }
+
+  _formatLeftHalf(html) {
+    return '<div class="col-xs-4" style="padding:5px">' + html + '</div>';
+  }
+
+  _formatRightHalf(html) {
+    return '<div class="col-xs-8" style="padding:5px">' + html + '</div>';
+  }
+
+  _getAfDiv() {
+    return '<div id="af-svg"></div>';
+  }
+
+  _getCoverageDiv() {
+      return '<div id="coverage-svg"></div>'
   }
 
 
@@ -438,11 +744,12 @@ export default class VariantTooltip {
   }
 
   _tooltipLabeledRow(label, value, labelClazz, valueClazz) {
-    return '<div class="row" style="padding: 2px 0px">'
-          + '<div class="col-xs-3 "' + labelClazz + 'style="text-align:left;word-break:normal">' + label +':</div>'
-          + '<div class="col-xs-9 "' + valueClazz + 'style="text-align:left;word-break:normal">' + value + '</div>'
+    return '<div style="padding: 2px 0px">'
+          + '<div class="' + labelClazz + '" style="text-align:left;word-break:none"><u>' + label +'</u>:</div>'
+          + '<div class="' + valueClazz + '" style="text-align:left;word-break:normal">' + value + '</div>'
           + '</div>';
   }
+
 
   _tooltipWideHeadingRow(value1, value2, paddingTop) {
     var thePaddingTop = paddingTop ? "padding-top:" + paddingTop + ";" : "";

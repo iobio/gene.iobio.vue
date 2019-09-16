@@ -1,19 +1,163 @@
+#af-svg
+  float: left
+
+  rect
+    &.alt-count
+      stroke: black !important
+
+    &.ref-count
+      stroke: black !important
+      fill: none !important
+
+    &.alt-count
+      fill: $app-color-light !important
+
+    &.other-count
+      stroke: black !important
+      fill: rgb(132, 132, 132) !important
+
+  text
+    font-size: 12px !important
+
+    &.alt-count
+      fill: white !important
+
+    &.alt-count-under
+      fill: $text-color !important
+
+    &.other-count
+      fill: white !important
+      font-style: italic !important
+
+    &.other-count-under
+      fill: $text-color !important
+      font-style: italic !important
+
+    &.ref-count
+      fill: $text-color !important
+
+  .header-small
+    overflow: hidden
+    text-align: left
+    width: 100px
+    float: left
+    color: #9c9a9a
+    fill: #9c9a9a
+    font-style: italic
+    padding-left: 0
+    font-size: 13px !important
+    line-height: 14px
+
+  .allele-count-bar
+    text
+      font-size: 11px !important
+      fill: $text-color
+
+  #allele-count-legend
+    padding-top: 0px
+    padding-bottom: 5px
+
+  .affected-symbol
+    font-size: 14px
+    color: $danger-color !important
+    float: right
+    padding-right: 2px
+
+  .allele-count-bar
+    overflow-wrap: break-word
+    float: left
+    width: 300px
+    min-height: 25px
+
+  .ped-info
+    width: 445px
+    clear: both
+    line-height: 13px !important
+
+  .ped-label
+    padding-top: 0px
+    vertical-align: top
+    text-align: left
+    width: 75px
+    float: left
+    font-size: 13px
+    color: #9c9a9a
+    fill: #9c9a9a
+
+  .ped-zygosity
+    width: 75px
+    float: left
+
+  .zygosity
+    float: left
+    font-size: 10px
+    font-weight: bold !important
+    padding-top: 1px !important
+    padding-bottom: 0px !important
+    padding-right: 0px !important
+    padding-left: 0px !important
+    background-color: #D3D5D8 !important
+    margin-right: 2px
+    margin-top: 0px !important
+    width: 39px !important
+    color: black
+    cursor: none
+    pointer-events: none
+    height: 13px
+
+  .zygosity
+    &.hom
+      background-color: $hom-color !important
+      color: white
+      width: 29px !important
+      margin-right: 10px
+
+    &.het
+      background-color: $het-color !important
+      color: white
+      width: 29px !important
+      margin-right: 10px
+
+    &.homref
+      background-color: $homref-color !important
+      color: $text-color !important
+
+    &.unknown
+      background-color: $info-color !important
+
+    &.none
+      background-color: transparent !important
+      border: solid thin $info-color !important
 
 .click-label
   font-size: 12px
-  border-bottom: 1px
+  color: #8D8D8D
+  fill: #8D8D8D
+  padding-left: 0
+  padding-right: 0
 
 .click-value
   font-size: 14px
+  color: #7f7f7f
+  padding-left: 5px
+  word-wrap: normal
+
+.click-svg-label
+  font-size: 12px
+  padding: 2px 0 0 5px
+  color: #8D8D8D
+
+.click-svg-value
+
 
 .click-tip-header
   font-size: 16px
-  padding-top: 5px
+  padding: 5px 5px 0 5px
 
 .click-tip-divider
   margin-top: 5px
   margin-bottom: 5px
-  border-color: $app-gray
+  border-color: $app-color
 
 .tooltip-title
   font-size: 14px
@@ -52,6 +196,9 @@
   width: 220px
   margin-right: 0px
   margin-left: 10px
+
+.tooltip-svg-value
+  padding: 0
 
 .tooltip-clinvar-link
   padding-top: 1px
