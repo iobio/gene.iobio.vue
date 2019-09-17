@@ -48,11 +48,6 @@
     font-size: 13px !important
     line-height: 14px
 
-  .allele-count-bar
-    text
-      font-size: 11px !important
-      fill: $text-color
-
   #allele-count-legend
     padding-top: 0px
     padding-bottom: 5px
@@ -65,14 +60,18 @@
 
   .allele-count-bar
     overflow-wrap: break-word
-    float: left
+    //float: left
     width: 300px
     min-height: 25px
+    text
+      font-size: 11px !important
+      fill: $text-color
 
   .ped-info
-    width: 445px
+    width: 500px
     clear: both
     line-height: 13px !important
+    display: inline-block
 
   .ped-label
     padding-top: 0px
@@ -129,6 +128,9 @@
       background-color: transparent !important
       border: solid thin $info-color !important
 
+.click-af-field
+  text-align: left
+
 .click-label
   font-size: 12px
   color: #8D8D8D
@@ -148,7 +150,7 @@
   color: #8D8D8D
 
 .click-svg-value
-
+  padding-left: 0
 
 .click-tip-header
   font-size: 16px

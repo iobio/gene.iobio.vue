@@ -35,11 +35,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="VariantTooltip.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="VariantTooltip.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/app/partials/VariantTooltip.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="161">
-              <caret line="255" column="37" lean-forward="true" selection-start-line="255" selection-start-column="37" selection-end-line="255" selection-end-column="37" />
+            <state relative-caret-position="373">
+              <caret line="286" column="41" selection-start-line="286" selection-start-column="41" selection-end-line="286" selection-end-column="41" />
               <folding>
                 <element signature="n#style#0;n#svg#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#i#0;n#!!top" expanded="true" />
@@ -68,34 +68,6 @@
                 <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="GlobalApp.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/app/globals/GlobalApp.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="688">
-              <caret line="43" column="96" selection-start-line="43" selection-start-column="95" selection-end-line="43" selection-end-column="96" />
-              <folding>
-                <element signature="n#!!doc" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Util.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/app/globals/Util.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="166">
-              <caret line="928" lean-forward="true" selection-start-line="928" selection-end-line="928" />
-              <folding>
-                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -149,11 +121,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_tooltip.sass" pinned="false" current-in-tab="true">
+      <file leaf-file-name="_tooltip.sass" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/assets/sass/_tooltip.sass">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="440">
-              <caret line="154" column="24" selection-start-line="154" selection-start-column="24" selection-end-line="154" selection-end-column="24" />
+            <state relative-caret-position="197">
+              <caret line="127" column="46" lean-forward="true" selection-start-line="127" selection-start-column="46" selection-end-line="127" selection-end-column="46" />
             </state>
           </provider>
         </entry>
@@ -161,8 +133,8 @@
       <file leaf-file-name="CohortModel.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="304">
-              <caret line="35" column="8" selection-start-line="35" selection-start-column="8" selection-end-line="35" selection-end-column="8" />
+            <state relative-caret-position="241">
+              <caret line="35" column="49" selection-start-line="35" selection-start-column="49" selection-end-line="35" selection-end-column="49" />
               <folding>
                 <element signature="e#0#42#0" expanded="true" />
               </folding>
@@ -182,29 +154,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>id</find>
-      <find>appendallelecountsvg</find>
-      <find>zyg</find>
-      <find>ned</find>
-      <find>xs5</find>
-      <find>af-sc</find>
-      <find>af-svg</find>
-      <find>_appendAlleleCountSVG</find>
-      <find>injectAlleleCountSvg</find>
-      <find>tooltip-svg</find>
-      <find>clickcon</find>
-      <find>tooltip-left</find>
-      <find>click-label</find>
-      <find>xs-4</find>
-      <find>xs-3</find>
-      <find>click-tip-header</find>
-      <find>xs-7</find>
-      <find>svg</find>
-      <find>9</find>
-      <find>read counts</find>
-      <find>Allele Freq</find>
-      <find>Af/</find>
-      <find>coverage</find>
       <find>header-small</find>
       <find>small</find>
       <find>value-lab</find>
@@ -212,6 +161,29 @@
       <find>5</find>
       <find>todo</find>
       <find>samples</find>
+      <find>click-svg</find>
+      <find>clickcont</find>
+      <find>Sample count</find>
+      <find>allelefreq</find>
+      <find>genotype.alt</find>
+      <find>allele freq</find>
+      <find>Coverage</find>
+      <find>parseInt</find>
+      <find>Allele Freq</find>
+      <find>column</find>
+      <find>allele-cou</find>
+      <find>percentage</find>
+      <find>allele-freq-div</find>
+      <find>allele-count-bar</find>
+      <find>ped-info</find>
+      <find>xs</find>
+      <find>4</find>
+      <find>svg</find>
+      <find>allele-count-lege</find>
+      <find>225</find>
+      <find>170</find>
+      <find>40</find>
+      <find>95</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -279,8 +251,8 @@
         <option value="$PROJECT_DIR$/client/app/components/pages/GeneHome.vue" />
         <option value="$PROJECT_DIR$/client/app/globals/Util.js" />
         <option value="$PROJECT_DIR$/client/app/components/viz/VariantDetailCard.vue" />
-        <option value="$PROJECT_DIR$/client/app/partials/VariantTooltip.js" />
         <option value="$PROJECT_DIR$/client/assets/sass/_tooltip.sass" />
+        <option value="$PROJECT_DIR$/client/app/partials/VariantTooltip.js" />
       </list>
     </option>
   </component>
@@ -301,10 +273,9 @@
     </packageJsonPaths>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1440" />
-    <option name="y" value="-277" />
-    <option name="width" value="1920" />
-    <option name="height" value="1057" />
+    <option name="y" value="203" />
+    <option name="width" value="1440" />
+    <option name="height" value="877" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -494,18 +465,18 @@
       <workItem from="1565121291426" duration="10998000" />
       <workItem from="1565229535674" duration="128731000" />
       <workItem from="1566088066342" duration="28788000" />
-      <workItem from="1566582771809" duration="105824000" />
+      <workItem from="1566582771809" duration="116008000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1146117000" />
+    <option name="totallyTimeSpent" value="1156301000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1440" y="-277" width="1920" height="1057" extended-state="6" />
+    <frame x="0" y="23" width="1440" height="877" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.15677084" />
+      <window_info content_ui="combo" id="Project" order="3" visible="true" weight="0.20902778" />
       <window_info anchor="bottom" id="TODO" order="10" />
       <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" weight="0.32971016" />
@@ -524,26 +495,6 @@
       <window_info anchor="bottom" id="Message" order="4" />
       <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
     </layout>
-    <layout-to-restore>
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
-      <window_info id="npm" order="0" side_tool="true" />
-      <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
-      <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.20694445" />
-      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="TODO" order="10" />
-      <window_info anchor="bottom" id="Version Control" order="3" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="6" />
-      <window_info anchor="bottom" id="Message" order="4" />
-      <window_info anchor="bottom" id="Debug" order="7" weight="0.4" />
-      <window_info anchor="bottom" id="Terminal" order="1" />
-      <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" weight="0.32971016" />
-      <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="5" weight="0.32604167" />
-      <window_info id="Favorites" order="1" side_tool="true" />
-    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -746,13 +697,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/FeatureMatrixModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="360" column="4" selection-start-line="360" selection-start-column="4" selection-end-line="360" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/components/viz/GeneCard.vue">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="241">
@@ -952,16 +896,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="35" column="8" selection-start-line="35" selection-start-column="8" selection-end-line="35" selection-end-column="8" />
-          <folding>
-            <element signature="e#0#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/components/viz/VariantDetailCard.vue">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="362">
@@ -986,10 +920,34 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/models/FeatureMatrixModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="218">
+          <caret line="704" column="4" selection-start-line="704" selection-start-column="4" selection-end-line="704" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="241">
+          <caret line="35" column="49" selection-start-line="35" selection-start-column="49" selection-end-line="35" selection-end-column="49" />
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/assets/sass/_tooltip.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="127" column="46" lean-forward="true" selection-start-line="127" selection-start-column="46" selection-end-line="127" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/partials/VariantTooltip.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="255" column="37" lean-forward="true" selection-start-line="255" selection-start-column="37" selection-end-line="255" selection-end-column="37" />
+        <state relative-caret-position="373">
+          <caret line="286" column="41" selection-start-line="286" selection-start-column="41" selection-end-line="286" selection-end-column="41" />
           <folding>
             <element signature="n#style#0;n#svg#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#i#0;n#!!top" expanded="true" />
@@ -1019,13 +977,6 @@
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/assets/sass/_tooltip.sass">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="154" column="24" selection-start-line="154" selection-start-column="24" selection-end-line="154" selection-end-column="24" />
         </state>
       </provider>
     </entry>

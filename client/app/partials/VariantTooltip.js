@@ -263,51 +263,69 @@ export default class VariantTooltip {
         .attr("y", "15")
         .attr("anchor", "start")
         .attr("class", "click-label")
-        .text("Sample");
+        .text("Sample")
+        .style('text-decoration', 'underline');
 
-    let g = svg.append("g")
-        .attr("transform", "translate(100,1)");
+    let af_g = svg.append("g")
+        .attr("transform", "translate(75,1)");
+
+    af_g.append('text')
+        .attr("x", "5")
+        .attr("y", "14")
+        .attr("class", "click-label")
+        .attr("anchor", "start")
+        .text("Allele Freq")
+        .style('text-decoration', 'underline');
+    af_g.append('text')
+        .attr('x', '107')
+        .attr('y', '14')
+        .attr('class', 'click-label')
+        .text('Counts')
+        .style('text-decoration', 'underline');
+
+      let g = svg.append("g")
+        .attr("transform", "translate(232,-4)");
 
     g.append("text")
         .attr("x", "7")
-        .attr("y", "9")
+        .attr("y", "14")
         .attr("class", "alt-count-under")
         .attr("anchor", "start")
         .text("alt");
     g.append("text")
         .attr("x", "28")
-        .attr("y", "9")
+        .attr("y", "13")
         .attr("class", "other-count-under")
         .attr("anchor", "start")
         .text("other");
     g.append("text")
         .attr("x", "67")
-        .attr("y", "9")
+        .attr("y", "14")
         .attr("class", "ref-count")
         .attr("anchor", "start")
         .text("ref");
     g.append("text")
         .attr("x", "90")
-        .attr("y", "14")
+        .attr("y", "19")
         .attr("class", "ref-count")
         .attr("anchor", "start")
         .text("total");
 
     g.append("rect")
         .attr("x", "1")
-        .attr("y", "10")
+        .attr("y", "16")
         .attr("height", 4)
         .attr("width", 28)
         .attr("class", "alt-count");
     g.append("rect")
         .attr("x", "29")
-        .attr("y", "10")
+        .attr("y", "16")
         .attr("height", 4)
         .attr("width", 28)
         .attr("class", "other-count");
     g.append("rect")
         .attr("x", "57")
-        .attr("y", "10")
+        .attr("y", "16")
         .attr("height", 4)
         .attr("width", 28)
         .attr("class", "ref-count");
@@ -347,15 +365,23 @@ export default class VariantTooltip {
               let row = container.append("div")
                   .attr("class", "ped-info");
               row.append("div")
-                  .attr("class", "click-value ")
+                  .attr("class", "click-value col-xs-2")
                   .html("<span class='sample-type-symbol'></span>"
                       + "<span class='ped-label "
                       + selectedClazz + "'>"
                       + (" " + displayName)
                       + "</span>");
 
+              // Add AF column header
+              let formattedAf = parseInt(variant.genotypeAltCount) / parseInt(variant.genotypeDepth);
+              let afText = formattedAf > 0 ?  me.globalApp.utility.percentage(formattedAf) : '0%';
+              row.append("div")
+                  .attr("class", "click-af-field col-xs-2")
+                  .append('text')
+                  .text(afText);
+
               let barContainer = row.append("div")
-                  .attr("class", "allele-count-bar");
+                  .attr("class", "allele-count-bar col-xs-8");
               if (genotype) {
                   me._appendAlleleCountSVG(barContainer,
                       genotype.altCount,
@@ -590,7 +616,7 @@ export default class VariantTooltip {
     if (parseInt(variant.genotypeDepth) > 0) {
         sampleAf = parseInt(variant.genotypeAltCount) / parseInt(variant.genotypeDepth);
     }
-    let afRow = me._tooltipMainHeaderRow('Coverage', (sampleAf > 0 ?  me.globalApp.utility.percentage(sampleAf) : '0%'),'','');
+    let afRow = me._tooltipMainHeaderRow('Allele Freq', (sampleAf > 0 ?  me.globalApp.utility.percentage(sampleAf) : '0%'),'','');
 
     if (trackId === 'matrix') {
       // Don't show AF if we're hovering over matrix - may be in multiple tracks at diff AFs
@@ -662,8 +688,7 @@ export default class VariantTooltip {
           let clinvarInfo = me.globalApp.utility.capitalizeFirstLetter(info.clinvarSig);
           let labelClasses = 'click-label col-xs-5';
           let valueClasses = 'click-value col-xs-7';
-          let svgLabelClasses = 'click-svg-label col-xs-2';
-          let svgValueClasses = 'click-svg-value col-xs-10';
+          let svgValueClasses = 'click-svg-value col-xs-12';
           return (
               me._tooltipClickHeader("Variant Details")
               + me._formatLeftHalf(me._tooltipLabeledRow('Position', positionInfo, labelClasses, valueClasses)
@@ -673,7 +698,7 @@ export default class VariantTooltip {
               + me._tooltipLabeledRow('Is Somatic', variant.isInherited == null ? 'Unable to determine': variant.isInherited === true ? 'No' : 'Yes', labelClasses, valueClasses)
               + me._tooltipLabeledRow('In COSMIC', variant.inCosmic === true ? 'Yes' : 'No', labelClasses, valueClasses)
               + me._tooltipLabeledRow('ClinVar', clinvarInfo === "" ? "N/A" : clinvarInfo, labelClasses, valueClasses))
-              + me._formatRightHalf(me._tooltipLabeledRow('Counts', me._getAfDiv(), svgLabelClasses, svgValueClasses))
+              + me._formatRightHalf(me._tooltipClickRow(me._getAfDiv(), svgValueClasses))
           );
       }
   }
@@ -733,6 +758,10 @@ export default class VariantTooltip {
     return titleLine;
   }
 
+  _tooltipClickRow(value, clazz) {
+    return '<div class="' + clazz + '">' + value + '</div>';
+  }
+
   _tooltipClassedRow(value1, class1, value2, class2, style) {
     var theStyle = style ? style : '';
     return '<div class="row" style="' + theStyle + '">'
@@ -749,7 +778,6 @@ export default class VariantTooltip {
           + '<div class="' + valueClazz + '" style="text-align:left;word-break:normal">' + value + '</div>'
           + '</div>';
   }
-
 
   _tooltipWideHeadingRow(value1, value2, paddingTop) {
     var thePaddingTop = paddingTop ? "padding-top:" + paddingTop + ";" : "";
