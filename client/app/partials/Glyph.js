@@ -75,8 +75,6 @@ export default class Glyph {
       clinvar_cd: "rgb(111, 182, 180)"
     };
 
-
-
     selection.append("g")
              .attr("transform", attrs.transform)
              .append("use")
@@ -159,6 +157,12 @@ export default class Glyph {
           transform: "translate(1,17)",
           styles: "font-size: 16px"
       };
+      if (options && options.styles) {
+          attrs.styles = options.styles;
+      }
+      if (options && options.transform) {
+          attrs.transform = options.transform;
+      }
 
       var datumAttrs = selection.datum() || {};
 
@@ -655,11 +659,18 @@ export default class Glyph {
   }
 
 
-  showImpactBadge(selection, variant, impactClazz) {
+  showImpactBadge(selection, variant, impactClazz, options) {
     var me = this;
     var type = null;
     var transform1 = "translate(1,3)";
     var transform2 = "translate(5,6)";
+    if (options && options.transform1) {
+        transform1 = options.transform1;
+    }
+    if (options && options.transform2) {
+        transform2 = options.transform2;
+    }
+
     var clazz = null;
     if (variant) {
       type = variant.type ? variant.type : 'SNP';
@@ -676,7 +687,7 @@ export default class Glyph {
 
       var symbolSize = symbolScale(6);
 
-    if (type.toUpperCase() == 'SNP' || type.toUpperCase() == 'MNP') {
+    if (type.toUpperCase() === 'SNP' || type.toUpperCase() === 'MNP') {
       selection.append("g")
                 .attr("transform", transform1)
                .append("rect")
@@ -694,18 +705,17 @@ export default class Glyph {
                        .symbol()
                        .size(symbolSize)
                        .type( function(d,i) {
-                        if (type.toUpperCase() == 'DEL') {
-                  return 'triangle-up';
-              } else if (type.toUpperCase() == 'INS') {
-                  return  'circle';
-              } else if (type.toUpperCase() == 'COMPLEX') {
-                  return 'diamond';
-              }
+                        if (type.toUpperCase() === 'DEL') {
+                            return 'triangle-up';
+                        } else if (type.toUpperCase() === 'INS') {
+                            return 'circle';
+                        } else if (type.toUpperCase() === 'COMPLEX') {
+                            return 'diamond';
+                        }
                        })();
             })
             .attr("class", "filter-symbol " + clazz);
     }
-
   }
 
 

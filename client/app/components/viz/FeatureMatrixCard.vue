@@ -174,7 +174,8 @@
             selectedTranscript: null,
             selectedVariant: null,
             id: null,
-            variantTooltip: null,
+            hoverTooltip: null,
+            clickTooltip: null,
             width: 0
         },
         data() {
@@ -322,34 +323,43 @@
             selectVariant: function (variant, clazz) {
                 this.$refs.featureMatrixVizRef.selectVariant(variant, clazz);
             },
-
             onVariantClick: function (variant) {
+                let tipType = "click";
+                if (variant == null) {
+                    this.hideVariantTooltip(tipType);
+                } else {
+                    this.hideVariantTooltip("hover");
+                    this.showVariantTooltip(variant, tipType, false);
+                }
                 this.$emit('cohort-variant-click', variant, this, variant.sampleModelId);
             },
-
             onVariantHover: function (variant) {
-                this.showVariantTooltip(variant, false);
+                this.showVariantTooltip(variant, 'hover', false);
                 this.$emit('cohort-variant-hover', variant, this);
             },
-
             onVariantHoverEnd: function () {
-                this.hideVariantTooltip(false);
+                this.hideVariantTooltip('hover', false);
                 this.$emit('cohort-variant-hover-end', this);
             },
 
-            showVariantTooltip: function (variant, lock) {
+            showVariantTooltip: function (variant, tipType, lock) {
                 let self = this;
 
                 let tooltip = d3.select("#main-tooltip");
+                let tooltipObj = self.hoverTooltip;
+                if (tipType === "click") {
+                    tooltip = d3.select("#click-tooltip");
+                    tooltipObj = self.clickTooltip;
+                }
 
                 if (lock) {
                     tooltip.style("pointer-events", "all");
                 } else {
                     tooltip.style("pointer-events", "none");
                 }
-                var x = variant.screenXMatrix;
-                var y = variant.screenYMatrix;
-                var coord = {
+                let x = variant.screenXMatrix;
+                let y = variant.screenYMatrix;
+                let coord = {
                     'x': x,
                     'y': y,
                     'height': self.$el.offsetHeight,
@@ -361,30 +371,54 @@
                         {bottom: ['right', 'left', 'center']}]
                 };
 
-                self.variantTooltip.fillAndPositionTooltip(tooltip,
+                tooltipObj.fillAndPositionTooltip(tooltip,
                     variant,
                     self.selectedGene,
                     self.selectedTranscript,
                     lock,
                     coord,
                     'matrix',
-                    self.featureMatrixModel.cohort.affectedInfo,
+                    self.featureMatrixModel.cohort.tumorInfo,
                     self.featureMatrixModel.cohort.mode,
                     self.featureMatrixModel.cohort.maxAlleleCount);
             },
 
             tooltipScroll(direction) {
-                this.variantTooltip.scroll(direction, "#main-tooltip");
+                this.hoverTooltip.scroll(direction, "#main-tooltip");
+                this.clickTooltip.scroll(direction, '#click-tooltip');
             },
 
 
-            hideVariantTooltip() {
-                let tooltip = d3.select("#main-tooltip");
-                tooltip.transition()
-                    .duration(500)
-                    .style("opacity", 0)
-                    .style("z-index", 0)
-                    .style("pointer-events", "none");
+            hideVariantTooltip(tipType) {
+                let hoverTooltip = d3.select("#main-tooltip");
+                let clickTooltip = d3.select("#click-tooltip");
+
+                // If we haven't specified a type, hide them both
+                if (tipType == null) {
+                    hoverTooltip.transition()
+                        .duration(500)
+                        .style("opacity", 0)
+                        .style("z-index", 0)
+                        .style("pointer-events", "none");
+
+                    clickTooltip.transition()
+                        .duration(500)
+                        .style("opacity", 0)
+                        .style("z-index", 0)
+                        .style("pointer-events", "none");
+                } else if (tipType === "click") {
+                    clickTooltip.transition()
+                        .duration(500)
+                        .style("opacity", 0)
+                        .style("z-index", 0)
+                        .style("pointer-events", "none");
+                } else if (tipType === "hover") {
+                    hoverTooltip.transition()
+                        .duration(500)
+                        .style("opacity", 0)
+                        .style("z-index", 0)
+                        .style("pointer-events", "none");
+                }
             },
             drawViz() {
                 let self = this;

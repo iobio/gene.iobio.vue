@@ -10,7 +10,7 @@
     <v-layout row justify-center>
         <v-dialog v-model="dialog" persistent max-width="700px">
             <v-toolbar>
-                <v-toolbar-title style="color: white; padding-left: 6px">Terms of Use</v-toolbar-title>
+                <v-toolbar-title style="color: white; padding-left: 10px">Terms of Use</v-toolbar-title>
             </v-toolbar>
             <v-card>
                 <v-card-text>
