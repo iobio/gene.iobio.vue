@@ -19,11 +19,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="VariantTooltip.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="VariantTooltip.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/partials/VariantTooltip.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="875">
-              <caret line="873" column="64" lean-forward="true" selection-start-line="873" selection-start-column="64" selection-end-line="873" selection-end-column="64" />
+            <state relative-caret-position="470">
+              <caret line="871" column="114" selection-start-line="871" selection-start-column="114" selection-end-line="871" selection-end-column="114" />
               <folding>
                 <element signature="n#style#0;n#svg#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#i#0;n#!!top" expanded="true" />
@@ -33,15 +33,16 @@
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#button#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#span#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#button#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#i#0;n#button#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
@@ -60,7 +61,7 @@
         <entry file="file://$PROJECT_DIR$/client/app/models/Vcf.iobio.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="313">
-              <caret line="1558" column="76" lean-forward="true" selection-start-line="1558" selection-start-column="76" selection-end-line="1558" selection-end-column="76" />
+              <caret line="1558" column="76" selection-start-line="1558" selection-start-column="76" selection-end-line="1558" selection-end-column="76" />
             </state>
           </provider>
         </entry>
@@ -105,11 +106,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_tooltip.sass" pinned="false" current-in-tab="false">
+      <file leaf-file-name="_tooltip.sass" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/assets/sass/_tooltip.sass">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="547">
-              <caret line="177" lean-forward="true" selection-start-line="177" selection-end-line="177" />
+            <state relative-caret-position="520">
+              <caret line="170" column="18" selection-start-line="170" selection-start-column="18" selection-end-line="170" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -138,8 +139,8 @@
       <file leaf-file-name="VariantDetailCard.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/viz/VariantDetailCard.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="308">
-              <caret line="383" column="83" lean-forward="true" selection-start-line="383" selection-start-column="83" selection-end-line="383" selection-end-column="83" />
+            <state relative-caret-position="304">
+              <caret line="372" column="27" lean-forward="true" selection-start-line="372" selection-start-column="27" selection-end-line="372" selection-end-column="48" />
               <folding>
                 <element signature="n#style#0;n#span#0;n#v-flex#0;n#v-layout#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#app-icon#0;n#v-btn#0;n#div#0;n#div#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
@@ -151,8 +152,8 @@
       <file leaf-file-name="AppIcon.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/partials/AppIcon.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="641">
-              <caret line="457" column="4" selection-start-line="457" selection-start-column="4" selection-end-line="457" selection-end-column="4" />
+            <state relative-caret-position="337">
+              <caret line="132" column="58" lean-forward="true" selection-start-line="132" selection-start-column="58" selection-end-line="132" selection-end-column="58" />
             </state>
           </provider>
         </entry>
@@ -169,17 +170,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>clinvar-badge'</find>
-      <find>translate</find>
-      <find>inheritancemap</find>
-      <find>injectClickSomaticBadge</find>
-      <find>unablwe</find>
-      <find>showImpactSymbol</find>
-      <find>showHighestImpactSymbol</find>
-      <find>symbolfunction</find>
-      <find>vepImpact</find>
-      <find>vep</find>
-      <find>vepHighestImpact</find>
       <find>info</find>
       <find>feature-matrix-card</find>
       <find>showVariantTooltip</find>
@@ -193,12 +183,23 @@
       <find>fillAndPositionTooltip</find>
       <find>todo</find>
       <find>click</find>
-      <find>_tooltipClickHeader</find>
       <find>button</find>
       <find>flag</find>
       <find>flag</find>
       <find>btn sm</find>
       <find>terms of us</find>
+      <find>_tooltipButtonRow</find>
+      <find>_tooltipClickHeader</find>
+      <find>flag var</find>
+      <find>flag variant</find>
+      <find>flag-button</find>
+      <find>user-flag-buttons</find>
+      <find>M14.4 6L14</find>
+      <find>pileup</find>
+      <find>class=&quot;material-icons glyph&quot;</find>
+      <find>&lt;i</find>
+      <find>click-tip-btn</find>
+      <find>click-tip-he</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -288,9 +289,10 @@
     </packageJsonPaths>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="y" value="203" />
-    <option name="width" value="1440" />
-    <option name="height" value="877" />
+    <option name="x" value="1440" />
+    <option name="y" value="-277" />
+    <option name="width" value="1920" />
+    <option name="height" value="1057" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -480,18 +482,18 @@
       <workItem from="1565121291426" duration="10998000" />
       <workItem from="1565229535674" duration="128731000" />
       <workItem from="1566088066342" duration="28788000" />
-      <workItem from="1566582771809" duration="131501000" />
+      <workItem from="1566582771809" duration="134711000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1171794000" />
+    <option name="totallyTimeSpent" value="1175004000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1080" height="1897" extended-state="6" />
+    <frame x="1440" y="-277" width="1920" height="1057" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="3" weight="0.2787037" />
+      <window_info content_ui="combo" id="Project" order="3" visible="true" weight="0.1421875" />
       <window_info anchor="bottom" id="TODO" order="10" />
       <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" weight="0.32971016" />
@@ -510,26 +512,6 @@
       <window_info anchor="bottom" id="Message" order="4" />
       <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
     </layout>
-    <layout-to-restore>
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
-      <window_info id="npm" order="0" side_tool="true" />
-      <window_info anchor="bottom" id="Run" order="6" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.2787037" />
-      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="10" />
-      <window_info anchor="bottom" id="Find" order="5" weight="0.32604167" />
-      <window_info anchor="bottom" id="Debug" order="7" weight="0.4" />
-      <window_info anchor="bottom" id="Terminal" order="1" />
-      <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" weight="0.32971016" />
-      <window_info anchor="bottom" id="Inspection" order="9" weight="0.4" />
-      <window_info anchor="bottom" id="Version Control" order="3" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Message" order="4" />
-      <window_info id="Favorites" order="1" side_tool="true" />
-    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -923,13 +905,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/partials/AppIcon.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="641">
-          <caret line="457" column="4" selection-start-line="457" selection-start-column="4" selection-end-line="457" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilterSettingsMenu.vue">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="311">
@@ -950,18 +925,7 @@
     <entry file="file://$PROJECT_DIR$/client/app/models/Vcf.iobio.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="313">
-          <caret line="1558" column="76" lean-forward="true" selection-start-line="1558" selection-start-column="76" selection-end-line="1558" selection-end-column="76" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/viz/VariantDetailCard.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
-          <caret line="383" column="83" lean-forward="true" selection-start-line="383" selection-start-column="83" selection-end-line="383" selection-end-column="83" />
-          <folding>
-            <element signature="n#style#0;n#span#0;n#v-flex#0;n#v-layout#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#app-icon#0;n#v-btn#0;n#div#0;n#div#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
-          </folding>
+          <caret line="1558" column="76" selection-start-line="1558" selection-start-column="76" selection-end-line="1558" selection-end-column="76" />
         </state>
       </provider>
     </entry>
@@ -972,17 +936,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/assets/sass/_tooltip.sass">
+    <entry file="file://$PROJECT_DIR$/client/app/components/partials/AppIcon.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="547">
-          <caret line="177" lean-forward="true" selection-start-line="177" selection-end-line="177" />
+        <state relative-caret-position="337">
+          <caret line="132" column="58" lean-forward="true" selection-start-line="132" selection-start-column="58" selection-end-line="132" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/viz/VariantDetailCard.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="372" column="27" lean-forward="true" selection-start-line="372" selection-start-column="27" selection-end-line="372" selection-end-column="48" />
+          <folding>
+            <element signature="n#style#0;n#span#0;n#v-flex#0;n#v-layout#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#app-icon#0;n#v-btn#0;n#div#0;n#div#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/app/partials/VariantTooltip.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="875">
-          <caret line="873" column="64" lean-forward="true" selection-start-line="873" selection-start-column="64" selection-end-line="873" selection-end-column="64" />
+        <state relative-caret-position="470">
+          <caret line="871" column="114" selection-start-line="871" selection-start-column="114" selection-end-line="871" selection-end-column="114" />
           <folding>
             <element signature="n#style#0;n#svg#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#i#0;n#!!top" expanded="true" />
@@ -992,15 +967,16 @@
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#button#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#button#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#i#0;n#button#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
@@ -1011,6 +987,13 @@
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/assets/sass/_tooltip.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="520">
+          <caret line="170" column="18" selection-start-line="170" selection-start-column="18" selection-end-line="170" selection-end-column="18" />
         </state>
       </provider>
     </entry>

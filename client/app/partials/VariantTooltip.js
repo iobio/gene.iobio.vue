@@ -778,7 +778,7 @@ export default class VariantTooltip {
         let valueClasses = 'click-value col-xs-7';
         let svgValueClasses = 'click-svg-value col-xs-12';
         return (
-            me._tooltipClickHeader("Variant Details", true, true, true)
+            me._tooltipClickHeader("Variant Details", true)
             + me._formatLeftHalf(me._tooltipLabeledRow('Position', positionInfo, labelClasses, valueClasses, 'clickTipPosition')
                 + me._tooltipLabeledRow('Type', me.globalApp.utility.translateExonInfo(info.exon) + ' ' + me.globalApp.utility.translateVariantType(variant.type), labelClasses, valueClasses, 'clickTipVarType')
                 + me._tooltipLabeledRow('Base \u0394', info.refalt, labelClasses, valueClasses, 'clickTipDelta')
@@ -786,7 +786,7 @@ export default class VariantTooltip {
                 + me._tooltipLabeledRow('Is Somatic', variant.isInherited == null ? 'Undetermined' : variant.isInherited === true ? 'No' : 'Yes', labelClasses, valueClasses, 'clickTipSomatic')
                 + me._tooltipLabeledRow('In COSMIC', variant.inCosmic === true ? 'Yes' : 'No', labelClasses, valueClasses, 'clickTipCosmic')
                 + me._tooltipLabeledRow('ClinVar', clinvarInfo === "" ? "N/A" : clinvarInfo, labelClasses, valueClasses, 'clickTipClinvar'))
-            + me._formatRightHalf(me._tooltipClickRow(me._getAfDiv(), svgValueClasses))
+            + me._formatRightHalf(me._tooltipClickRow(me._getAfDiv(), svgValueClasses) + me._tooltipButtonRow(true, true))
         );
 
     }
@@ -796,7 +796,7 @@ export default class VariantTooltip {
     }
 
     _formatRightHalf(html) {
-        return '<div class="col-xs-8" style="padding:5px">' + html + '</div>';
+        return '<div class="col-xs-8" style="padding:5px">' + html + '</div>';``
     }
 
     _getAfDiv() {
@@ -839,27 +839,17 @@ export default class VariantTooltip {
             + '</div>';
     }
 
-    _tooltipClickHeader(tooltipName, showFlagButton, showPileupButton, showExitButton) {
-        let titleLine = '<div class="col-xs-3 click-tip-header">' + tooltipName + '</div>';
-        let buttons = '';
-
-        if (showFlagButton) {
-            buttons += '<div class="col-xs-8"><button type="button" class="btn click-tip-btn">' +
-                '<svg id="user-flagged-symbol" viewBox="0 0 24 24" width="18" height="18" class="click-tip-flag-icon" >' +
-                '<path d="M0 0h24v24H0z" fill="none"/>' +
-                '<path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/>' +
-                '</svg>Flag Variant</button></div>'
-        }
-        if (showPileupButton) {
-
-        }
+    _tooltipClickHeader(tooltipName, showExitButton) {
+        let titleWidth = 'col-xs-12';
         if (showExitButton) {
-            buttons += '<div class="col-xs-1"><button type="button" class="click-tip-close-btn btn btn--flat btn--icon" style="float: right"><i class="icon material-icons">clear</i></button></div>'
+            titleWidth = 'col-xs-11';
         }
-
+        let titleLine = '<div class="' + titleWidth + ' click-tip-header">' + tooltipName + '</div>';
+        let buttons = '';
+        if (showExitButton) {
+            buttons += '<div class="col-xs-1" style="padding-right: 4px"><button type="button" class="click-tip-close-btn btn btn--flat btn--small btn--icon" style="float: right"><i class="icon material-icons">clear</i></button></div>'
+        }
         let dividerLine = '<hr class="click-tip-divider">';
-        // let subTitleLine = '<div>' + '<span style="text-align: left">' + value1 + ' ' + value2 + ' ' + value3 + ' ' + value4 + '</span></div>';
-        // TODO: add flag button here
         return titleLine + buttons + dividerLine;
     }
 
@@ -882,6 +872,23 @@ export default class VariantTooltip {
             + '<div class="' + labelClazz + '" style="text-align:left;word-break:none"><u>' + label + '</u>:</div>'
             + '<div class="' + valueClazz + '" style="text-align:left;word-break:normal" id="' + valueId + '">' + value + '</div>'
             + '</div>';
+    }
+
+    _tooltipButtonRow(showFlagBtn, showPileupBtn) {
+        let buttons = '';
+        if (showFlagBtn) {
+            buttons += '<button type="button" class="btn btn--small click-tip-btn" style="padding-top: 5px">' +
+                '<svg id="user-flagged-symbol" viewBox="0 0 24 24" width="18" height="18" class="click-tip-flag-icon" >' +
+                '<path d="M0 0h24v24H0z" fill="none"/>' +
+                '<path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/>' +
+                '</svg>Flag Variant</button>'
+        }
+        if (showPileupBtn) {
+            buttons += '<button type="button" class="btn btn--small click-tip-btn">' +
+                '<i class="material-icons glyph" style="padding-right: 3px; font-size: 16px">line_style</i>Show Pileup</button>'
+        }
+        // buttons += '</div>';
+        return buttons;
     }
 
     _tooltipWideHeadingRow(value1, value2, paddingTop) {
