@@ -334,7 +334,8 @@
                     this.showVariantTooltip(variant, tipType, false);
                     this.lastActivatedClickTooltip = true;
                 }
-                this.$emit('cohort-variant-click', variant, this, variant.sampleModelId);
+                let sampleModelId = variant != null ? variant.sampleModelId : '';
+                this.$emit('cohort-variant-click', variant, this, sampleModelId);
             },
             onVariantHover: function (variant) {
                 this.showVariantTooltip(variant, 'hover', false);
@@ -384,6 +385,8 @@
                     self.featureMatrixModel.cohort.tumorInfo,
                     self.featureMatrixModel.cohort.mode,
                     self.featureMatrixModel.cohort.maxAlleleCount);
+
+                tooltipObj.addClickExitListener();
             },
 
             tooltipScroll(direction) {
