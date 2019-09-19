@@ -1,6 +1,6 @@
 export default class VariantTooltip {
 
-    constructor(globalApp, genericAnnotation, glyph, translator, annotationScheme, genomeBuildHelper, tipType) {
+    constructor(globalApp, genericAnnotation, glyph, translator, annotationScheme, genomeBuildHelper, tipType, homeComponent) {
         this.globalApp = globalApp;
         this.genericAnnotation = genericAnnotation;
         this.glyph = glyph;
@@ -15,6 +15,13 @@ export default class VariantTooltip {
         this.VALUE_EMPTY = "-";
         this.AF_BAR_WIDTH = '300';
         this.tipType = tipType;
+        this.parent = homeComponent;
+    }
+
+    addClickExitListener() {
+        $('#click-tip-exit-btn').on('click', () => {
+            this.parent.onExitClickTooltip();
+        });
     }
 
 
@@ -847,7 +854,7 @@ export default class VariantTooltip {
         let titleLine = '<div class="' + titleWidth + ' click-tip-header">' + tooltipName + '</div>';
         let buttons = '';
         if (showExitButton) {
-            buttons += '<div class="col-xs-1" style="padding-right: 4px"><button type="button" class="click-tip-close-btn btn btn--flat btn--small btn--icon" style="float: right"><i class="icon material-icons">clear</i></button></div>'
+            buttons += '<div class="col-xs-1" style="padding-right:4px"><button id="click-tip-exit-btn" type="button" class="click-tip-close-btn btn btn--flat btn--small btn--icon" style="float: right"><i class="icon material-icons">clear</i></button></div>'
         }
         let dividerLine = '<hr class="click-tip-divider">';
         return titleLine + buttons + dividerLine;

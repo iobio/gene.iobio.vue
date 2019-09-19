@@ -730,7 +730,8 @@
                             translator,
                             self.cohortModel.annotationScheme,
                             self.genomeBuildHelper,
-                            tipType);
+                            tipType,
+                            null);
 
                         tipType = "click";
                         self.clickTooltip = new VariantTooltip(
@@ -740,7 +741,9 @@
                             translator,
                             self.cohortModel.annotationScheme,
                             self.genomeBuildHelper,
-                            tipType);
+                            tipType,
+                            self);
+
 
                         self.filterModel = new FilterModel(self.globalApp, self.cohortModel.affectedInfo, self.isBasicMode);
                         self.cohortModel.filterModel = self.filterModel;
@@ -2358,6 +2361,18 @@
                 }).catch((err) => {
                     console.log('There was a problem applying variant filter: ' + err);
                 });
+            },
+            onExitClickTooltip: function() {
+                const self = this;
+                if (self.$refs.featureMatrixCardRef.lastActivatedClickTooltip === true) {
+                    self.$refs.featureMatrixCardRef.onVariantClick(null);
+                } else {
+                    self.$refs.variantCardRef.forEach((cardRef) => {
+                        if (cardRef.lastActivatedClickTooltip === true) {
+                            cardRef.onVariantClick(null);
+                        }
+                    })
+                }
             }
         }
     }

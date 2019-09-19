@@ -279,7 +279,6 @@
                     </div>
 
                     <div id="bam-track">
-
                         <depth-viz
                                 v-if="showDepthViz"
                                 ref="depthVizRef"
@@ -412,7 +411,8 @@
                 id: null,
                 selectedExon: null,
                 knownVariantsViz: null,
-                openState: [true]      // Array which controls expansion panel open/close - want open on load
+                openState: [true],      // Array which controls expansion panel open/close - want open on load
+                lastActivatedClickTooltip: false
             }
         },
         methods: {
@@ -458,6 +458,7 @@
                         this.showVariantTooltip(variant, tipType, false);
                     } else {
                         this.hideVariantTooltip(tipType);
+                        this.lastActivatedClickTooltip = false;
                     }
                 }
                 this.$emit('cohort-variant-click', variant, this, this.sampleModel.id);
@@ -491,6 +492,7 @@
                 let tooltip = d3.select("#main-tooltip");
                 let tooltipObj = self.hoverTooltip;
                 if (tipType === "click") {
+                    self.lastActivatedClickTooltip = true;
                     tooltip = d3.select("#click-tooltip");
                     tooltipObj = self.clickTooltip;
                 }
@@ -541,6 +543,7 @@
                     self.sampleModel.cohort.mode,
                     self.sampleModel.cohort.maxAlleleCount);
 
+                tooltipObj.addClickExitListener();
             },
             tooltipScroll(direction) {
                 this.hoverTooltip.scroll(direction, "#main-tooltip");

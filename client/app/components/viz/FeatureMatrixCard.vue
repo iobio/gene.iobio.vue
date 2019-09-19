@@ -201,7 +201,8 @@
                 columnLabelSymbol: this.columnHeaderSymbol,
                 adjustTooltipCoordinates: function (variant) {
                 },
-                showSettings: false
+                showSettings: false,
+                lastActivatedClickTooltip: false
             }
         },
 
@@ -326,10 +327,12 @@
             onVariantClick: function (variant) {
                 let tipType = "click";
                 if (variant == null) {
+                    this.lastActivatedClickTooltip = false;
                     this.hideVariantTooltip(tipType);
                 } else {
                     this.hideVariantTooltip("hover");
                     this.showVariantTooltip(variant, tipType, false);
+                    this.lastActivatedClickTooltip = true;
                 }
                 this.$emit('cohort-variant-click', variant, this, variant.sampleModelId);
             },
