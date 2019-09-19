@@ -3,48 +3,36 @@
 *
 */
 <style lang="sass">
-
     @import ../../../assets/sass/variables
-
     main.content
         margin-top: 50px
-
     .app-card
         margin-bottom: 5px
-
     #data-sources-loader
         margin-top: 20px
         margin-left: auto
         margin-right: auto
         text-align: center
-
     .tabs__container
         height: 31px !important
         margin-left: 0px
-
         .tabs__item
             color: $text-color
-
     .tabs__div
         text-transform: none !important
-
     .tabs__slider
         background-color: $app-color !important
         border-color: $app-color !important
-
     .gene-badge-coverage-problem
         color: $coverage-problem-color
         fill: $coverage-problem-color
-
     .split-pane-item
         height: initial !important
         display: flex !important
-
     .clinvar-switch
         position: absolute
         top: 5px
         left: 200px
-
         label
             padding-left: 7px
             line-height: 18px
@@ -52,15 +40,12 @@
             font-weight: bold
             padding-top: 2px
             color: $text-color
-
     .switch
         &.accent--text
             color: $app-color !important
-
     .radio
         &.accent--text
             color: $app-color !important
-
 </style>
 
 
@@ -117,6 +102,21 @@
 
         <v-content>
             <v-container fluid>
+                <v-dialog id="pileup-modal"
+                        v-model="displayPileup"
+                        width="50%"
+                        height="540">
+                    <v-card class='full-width' style="overflow-y:auto;height:height:-moz-available;height:100%">
+                        <pileup id="pileup-container"
+                                :heading="pileupInfo.title"
+                                :referenceURL="pileupInfo.referenceURL"
+                                :tracks="pileupInfo.tracks"
+                                :locus="pileupInfo.coord"
+                                :visible="pileupInfo.show"
+                                :showLabels=true
+                        />
+                    </v-card>
+                </v-dialog>
                 <intro-card v-if="forMyGene2"
                             :closeIntro="closeIntro"
                             :isBasicMode="isBasicMode"
@@ -125,9 +125,6 @@
                             @on-advanced-mode="onAdvancedMode"
                             @on-basic-mode="onBasicMode">
                 </intro-card>
-
-                <!--TODO: implement this when time to refactor tooltip code-->
-                <!--<tooltip id="click-tooltip" v-show="true"></tooltip>-->
 
                 <v-card class="full-width" style="margin-bottom:5px;padding-bottom:2px;padding-top:10px"
                         v-if="geneModel && Object.keys(selectedGene).length > 0"
@@ -462,6 +459,7 @@
     import allGenesData from '../../../data/genes.json'
     import SplitPane from '../partials/SplitPane.vue'
     import ScrollButton from '../partials/ScrollButton.vue'
+    import Pileup from '../partials/Pileup.vue'
 
 
     export default {
@@ -480,7 +478,8 @@
             VariantCard,
             SplitPane,
             AppTour,
-            Tooltip
+            Tooltip,
+            pileup: Pileup
         },
         props: {
             paramGene: null,
@@ -595,10 +594,33 @@
                 showVarViz: true,
                 workingOffline: false,        // If working offline and want to style things TODO: get rid of this SJG
                 annotationComplete: false,
-                applyFilters: false     // Used only for the initial load of a gene to apply default filters
+                applyFilters: false,     // Used only for the initial load of a gene to apply default filters
+                pileupInfo: {
+                    // This controls how many base pairs are displayed on either side of
+                    // the center of the locus.
+                    SPAN: 200,
+                    // These are the reference URLs for the human genome builds currently supported
+                    referenceURLs: {
+                        'GRCh37': 'https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/hg19/hg19.fasta',
+                        'GRCh38': 'https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/hg38/hg38.fa'
+                    },
+                    // Show the pileup dialog
+                    show: false,
+                    // Title in the pileup dialog
+                    title: 'Pileup View',
+                    // The bam file
+                    alignmentURL: null,
+                    alignmentIndexURL: null,
+                    // The vcf file
+                    // TODO: update this dynamically
+                    variantURL: null,
+                    variantIndexURL: null,
+                    // The reference URL (for the current genome build)
+                    referenceURL: 'https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/hg19/hg19.fasta',
+                },
+                displayPileup: false
             }
         },
-
         created: function () {
         },
 
@@ -2373,7 +2395,47 @@
                         }
                     })
                 }
-            }
+            },
+            flagVariant: function() {
+                alert('flag');
+            },
+            onShowPileupForVariant: function(sampleId="s0", variant) {
+                let self = this;
+                let theVariant = variant ? variant : this.selectedVariant;
+                if (theVariant) {
+                    let variantInfo = this.globalApp.utility.formatDisplay(theVariant, this.cohortModel.translator, this.isEduMode);
+                    // Format the coordinate for the variant
+                    const chrom = this.globalApp.utility.stripRefName(theVariant.chrom);
+                    const start = theVariant.start - this.pileupInfo.SPAN;
+                    const end   = theVariant.start + this.pileupInfo.SPAN;
+                    this.pileupInfo.coord =  'chr' + chrom + ':' + start + '-' + end;
+                    this.pileupInfo.tracks = [];
+                    // Set the bam, vcf, and references
+                    this.cohortModel.getCanonicalModels().forEach(function(model) {
+                        let track               = {name: model.id};
+                        track.variantURL        = model.vcf.getVcfURL();
+                        track.variantIndexURL   = model.vcf.getTbiURL();
+                        track.alignmentURL      = model.bam.bamUri;
+                        track.alignmentIndexURL = model.bam.baiUri;
+                        self.pileupInfo.tracks.push(track);
+                    });
+                    // Set the reference
+                    this.pileupInfo.referenceURL = this.pileupInfo.referenceURLs[this.genomeBuildHelper.getCurrentBuildName()];
+                    // set the title
+                    const titleParts = [];
+                    titleParts.push("Read pileup");
+                    titleParts.push(this.selectedGene.gene_name);
+                    titleParts.push((theVariant.type ? theVariant.type.toUpperCase() + " " : "")
+                        + theVariant.chrom + ":" + theVariant.start + " " + theVariant.ref + "->" + theVariant.alt);
+                    titleParts.push(variantInfo.HGVSpAbbrev);
+                    this.pileupInfo.title = titleParts.join(' ');
+                    this.pileupInfo.show         = true;    // TODO: do I still need this?
+                    this.displayPileup = true;
+                }
+                else {
+                    return '';
+                }
+            },
         }
     }
 </script>

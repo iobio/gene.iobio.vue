@@ -542,8 +542,6 @@
                     self.sampleModel.getAffectedInfo(),
                     self.sampleModel.cohort.mode,
                     self.sampleModel.cohort.maxAlleleCount);
-
-                tooltipObj.addClickExitListener();
             },
             tooltipScroll(direction) {
                 this.hoverTooltip.scroll(direction, "#main-tooltip");

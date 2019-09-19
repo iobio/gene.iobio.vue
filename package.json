@@ -9,11 +9,13 @@
     "test:watch": "npm test -- --auto-watch --no-single-run"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.4.4",
     "bootstrap": "^3.3.7",
     "d3": "^3.5.17",
     "debug": "^2.6.8",
     "express": "^4.15.3",
     "ideogram": "^1.12.0",
+    "igv": "^2.2.13",
     "jquery": "^3.3.1",
     "lodash": "^4.17.10",
     "serve-favicon": "^2.4.3",

@@ -18,9 +18,15 @@ export default class VariantTooltip {
         this.parent = homeComponent;
     }
 
-    addClickExitListener() {
+    addClickButtonListeners() {
         $('#click-tip-exit-btn').on('click', () => {
             this.parent.onExitClickTooltip();
+        });
+        $('#click-tip-flag-btn').on('click', () => {
+            this.parent.flagVariant();
+        });
+        $('#click-tip-pileup-btn').on('click', () => {
+            this.parent.onShowPileupForVariant();
         });
     }
 
@@ -98,6 +104,10 @@ export default class VariantTooltip {
                 .style("left", tooltipPos.left + "px")
                 .style("text-align", 'left')
                 .style("top", tooltipPos.top + "px");
+        }
+
+        if (me.tipType === 'click') {
+            me.addClickButtonListeners();
         }
     }
 
@@ -884,14 +894,14 @@ export default class VariantTooltip {
     _tooltipButtonRow(showFlagBtn, showPileupBtn) {
         let buttons = '';
         if (showFlagBtn) {
-            buttons += '<button type="button" class="btn btn--small click-tip-btn" style="padding-top: 5px">' +
+            buttons += '<button id="click-tip-flag-btn" type="button" class="btn btn--small click-tip-btn" style="padding-top: 5px">' +
                 '<svg id="user-flagged-symbol" viewBox="0 0 24 24" width="18" height="18" class="click-tip-flag-icon" >' +
                 '<path d="M0 0h24v24H0z" fill="none"/>' +
                 '<path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/>' +
                 '</svg>Flag Variant</button>'
         }
         if (showPileupBtn) {
-            buttons += '<button type="button" class="btn btn--small click-tip-btn">' +
+            buttons += '<button id="click-tip-pileup-btn" type="button" class="btn btn--small click-tip-btn">' +
                 '<i class="material-icons glyph" style="padding-right: 3px; font-size: 16px">line_style</i>Show Pileup</button>'
         }
         // buttons += '</div>';

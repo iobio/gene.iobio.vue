@@ -385,8 +385,6 @@
                     self.featureMatrixModel.cohort.tumorInfo,
                     self.featureMatrixModel.cohort.mode,
                     self.featureMatrixModel.cohort.maxAlleleCount);
-
-                tooltipObj.addClickExitListener();
             },
 
             tooltipScroll(direction) {
