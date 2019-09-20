@@ -3,22 +3,16 @@
         <v-card>
             <v-layout column>
                 <v-layout>
-                    <v-flex xs3 style="font-size: 18px">
+                    <v-flex xs4 style="font-size: 18px">
                         {{heading}}
                     </v-flex>
-                    <v-layout xs9 style="justify-content: flex-end">
-                        <v-tooltip bottom>
-                            <v-btn fab small @click='zoomOut'>
-                                <v-icon style="font-size: 26px">zoom_out</v-icon>
-                            </v-btn>
-                            <span>Zoom Out</span>
-                        </v-tooltip>
-                        <v-tooltip bottom>
-                            <v-btn fab small @click='zoomIn'>
-                                <v-icon style="font-size: 26px">zoom_in</v-icon>
-                            </v-btn>
-                            <span>Zoom In</span>
-                        </v-tooltip>
+                    <v-layout xs8 style="justify-content: flex-end">
+                        <v-btn fab small @click='zoomOut'>
+                            <v-icon style="font-size: 26px">zoom_out</v-icon>
+                        </v-btn>
+                        <v-btn fab small @click='zoomIn'>
+                            <v-icon style="font-size: 26px">zoom_in</v-icon>
+                        </v-btn>
                         <v-btn @click='launchFullIGV'>Open IGV in a Tab</v-btn>
                     </v-layout>
                 </v-layout>

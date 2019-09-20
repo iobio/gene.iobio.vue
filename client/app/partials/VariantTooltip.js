@@ -781,14 +781,14 @@ export default class VariantTooltip {
 
         // TODO: to finish tooltip:
         // 1) put into matrix: DONE
-        // 2) lock out hover tooltip when click one is displayed
+        // 2) lock out hover tooltip when click one is displayed: Not doing...
         // 3) add AF to count viz: DONE
         // 4) Add flag variant button and flagged chip
         // 5) insert glyphs: DONE
-        // 6) Add pileup
+        // 6) Add pileup: DONE
         // 7) Add links
-        // 8) Fix AF down
-        // 9) Add X-out functionality
+        // 8) Fix AF down: DONE
+        // 9) Add X-out functionality: DONE
 
         let positionInfo = (geneObject ? geneObject.gene_name : "") + " " + info.coord;
         let clinvarInfo = me.globalApp.utility.capitalizeFirstLetter(info.clinvarSig);
