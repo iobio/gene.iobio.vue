@@ -105,16 +105,16 @@
                 <v-dialog id="pileup-modal"
                         v-model="displayPileup"
                         width="50%"
-                        height="540">
-                    <v-card class='full-width' style="overflow-y:auto;height:height:-moz-available;height:100%">
+                        height="540"
+                        style="z-index: 1033">
+                    <v-card class='full-width' style="overflow-y:auto;height:100%;z-index:1033">
                         <pileup id="pileup-container"
                                 :heading="pileupInfo.title"
                                 :referenceURL="pileupInfo.referenceURL"
                                 :tracks="pileupInfo.tracks"
                                 :locus="pileupInfo.coord"
                                 :visible="pileupInfo.show"
-                                :showLabels=true
-                        />
+                                :showLabels=true />
                     </v-card>
                 </v-dialog>
                 <intro-card v-if="forMyGene2"
@@ -2401,6 +2401,7 @@
             },
             onShowPileupForVariant: function(sampleId="s0", variant) {
                 let self = this;
+
                 let theVariant = variant ? variant : this.selectedVariant;
                 if (theVariant) {
                     let variantInfo = this.globalApp.utility.formatDisplay(theVariant, this.cohortModel.translator, this.isEduMode);

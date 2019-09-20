@@ -36,14 +36,15 @@ export default class VariantTooltip {
         if (lock) {
             return;
         }
-        tooltip.style("z-index", 1032);
 
         if (me.tipType === "click") {
+            tooltip.style("z-index", 128);      // Make work w/ pileup dialog
             tooltip.transition()
                 .duration(1000)
                 .style("opacity", 1)
                 .style("pointer-events", "all");
         } else {
+            tooltip.style("z-index", 1032);
             tooltip.transition()
                 .duration(1000)
                 .style("opacity", .9)
