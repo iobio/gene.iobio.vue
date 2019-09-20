@@ -105,8 +105,8 @@ class CohortModel {
                     't3': 'https://s3.amazonaws.com/iobio/samples/bam/NA12891.exome.bam'
                 },
                 'dual': {
-                    'normal': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12891.bam',
-                    'tumor': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12878.bam'
+                    'normal': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12878.bam',
+                    'tumor': 'https://s3.amazonaws.com/iobio/gene/wgs_platinum/NA12892.bam'
                 }
             };
         }

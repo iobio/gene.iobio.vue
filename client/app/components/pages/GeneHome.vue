@@ -104,7 +104,7 @@
             <v-container fluid>
                 <v-dialog id="pileup-modal"
                         v-model="displayPileup"
-                        width="50%"
+                        width="75%"
                         height="540"
                         style="z-index: 1033">
                     <v-card class='full-width' style="overflow-y:auto;height:100%;z-index:1033">
@@ -113,7 +113,7 @@
                                 :referenceURL="pileupInfo.referenceURL"
                                 :tracks="pileupInfo.tracks"
                                 :locus="pileupInfo.coord"
-                                :visible="pileupInfo.show"
+                                :visible="displayPileup"
                                 :showLabels=true />
                     </v-card>
                 </v-dialog>
@@ -598,7 +598,7 @@
                 pileupInfo: {
                     // This controls how many base pairs are displayed on either side of
                     // the center of the locus.
-                    SPAN: 200,
+                    SPAN: 30,
                     // These are the reference URLs for the human genome builds currently supported
                     referenceURLs: {
                         'GRCh37': 'https://s3.amazonaws.com/igv.broadinstitute.org/genomes/seq/hg19/hg19.fasta',
@@ -2399,7 +2399,7 @@
             flagVariant: function() {
                 alert('flag');
             },
-            onShowPileupForVariant: function(sampleId="s0", variant) {
+            onShowPileupForVariant: function(variant) {
                 let self = this;
 
                 let theVariant = variant ? variant : this.selectedVariant;
@@ -2413,7 +2413,13 @@
                     this.pileupInfo.tracks = [];
                     // Set the bam, vcf, and references
                     this.cohortModel.getCanonicalModels().forEach(function(model) {
-                        let track               = {name: model.id};
+                        let currName = model.displayName !== '' ? model.displayName : '';
+                        if (currName === '') {
+                            currName = model.selectedSample;
+                        } else {
+                            currName += ' (' + model.selectedSample + ')';
+                        }
+                        let track               = {name: currName};
                         track.variantURL        = model.vcf.getVcfURL();
                         track.variantIndexURL   = model.vcf.getTbiURL();
                         track.alignmentURL      = model.bam.bamUri;
@@ -2424,13 +2430,12 @@
                     this.pileupInfo.referenceURL = this.pileupInfo.referenceURLs[this.genomeBuildHelper.getCurrentBuildName()];
                     // set the title
                     const titleParts = [];
-                    titleParts.push("Read pileup");
+                    titleParts.push("Read Pileup");
                     titleParts.push(this.selectedGene.gene_name);
                     titleParts.push((theVariant.type ? theVariant.type.toUpperCase() + " " : "")
                         + theVariant.chrom + ":" + theVariant.start + " " + theVariant.ref + "->" + theVariant.alt);
                     titleParts.push(variantInfo.HGVSpAbbrev);
                     this.pileupInfo.title = titleParts.join(' ');
-                    this.pileupInfo.show         = true;    // TODO: do I still need this?
                     this.displayPileup = true;
                 }
                 else {

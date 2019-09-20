@@ -2,21 +2,25 @@
     <v-container>
         <v-card>
             <v-layout column>
-                <v-layout row justify-space-between>
-                    <v-flex xs3>
+                <v-layout>
+                    <v-flex xs3 style="font-size: 18px">
                         {{heading}}
                     </v-flex>
-                    <v-layout xs3 justify-center>
-                        <v-btn fab small @click='zoomOut'>
-                            <v-icon>zoom_out</v-icon>
-                        </v-btn>
-                        <v-btn fab small @click='zoomIn'>
-                            <v-icon>zoom_in</v-icon>
-                        </v-btn>
-                    </v-layout>
-                    <v-flex xs3>
+                    <v-layout xs9 style="justify-content: flex-end">
+                        <v-tooltip bottom>
+                            <v-btn fab small @click='zoomOut'>
+                                <v-icon style="font-size: 26px">zoom_out</v-icon>
+                            </v-btn>
+                            <span>Zoom Out</span>
+                        </v-tooltip>
+                        <v-tooltip bottom>
+                            <v-btn fab small @click='zoomIn'>
+                                <v-icon style="font-size: 26px">zoom_in</v-icon>
+                            </v-btn>
+                            <span>Zoom In</span>
+                        </v-tooltip>
                         <v-btn @click='launchFullIGV'>Open IGV in a Tab</v-btn>
-                    </v-flex>
+                    </v-layout>
                 </v-layout>
                 <v-flex xs12>
                     <div id='igv-content'></div>
@@ -76,7 +80,7 @@
                     //showRuler: false,
                     //flanking: 1000,
                     //locus: 'chr8:128748750-128749000',
-                }
+                };
 
                 for (const track of this.tracks) {
 
@@ -107,6 +111,8 @@
 
                 igv.createBrowser(igvDiv, options).then((browser) => {
                     this.browser = browser;
+                    // For now, remove gears and options
+                    d3.selectAll('.igv-trackgear-container').style('display', 'none');
                 })
             },
             zoomOut: function() {
@@ -120,14 +126,19 @@
             },
         },
         watch: {
-            visible: function() {
-                if (!this.browser) {
-                    this.init();
-                }
-                else if (!this.visible) {
+            locus: function() {
+                if (this.browser != null) {
                     igv.removeBrowser(this.browser);
-                    this.browser = null;
                 }
+                this.init();
+
+                // if (!this.browser) {
+                //     this.init();
+                // }
+                // else if (!this.visible) {
+                //     igv.removeBrowser(this.browser);
+                //     this.browser = null;
+                // }
                 //igv.visibilityChange();
             },
         }
@@ -141,7 +152,7 @@
             url: track.alignmentURL,
             indexURL: track.alignmentIndexURL,
             name: track.name,
-        }))
+        }));
 
         const igvConfig = {
             showIdeogram: true,
@@ -150,7 +161,7 @@
             },
             locus,
             tracks: igvTracks,
-        }
+        };
 
         if (tracks[0].variantURL) {
             igvConfig.tracks.unshift({
@@ -161,21 +172,15 @@
             })
         }
 
-        const url = 'https://s3.amazonaws.com/static.iobio.io/dev/igv.iobio.io/index.html?config=' + JSON.stringify(igvConfig)
+        const url = 'https://s3.amazonaws.com/static.iobio.io/dev/igv.iobio.io/index.html?config=' + JSON.stringify(igvConfig);
         window.open(url, '_blank')
     }
 
 </script>
 
 <style>
-
     .igv-right-hand-gutter {
         right: initial;
         left: -10px;
     }
-
-    .igv-content-header {
-    //display: none;
-    }
-
 </style>
