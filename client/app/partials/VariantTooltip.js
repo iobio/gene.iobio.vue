@@ -18,12 +18,13 @@ export default class VariantTooltip {
         this.parent = homeComponent;
     }
 
-    addClickButtonListeners() {
+    addClickButtonListeners(variant) {
         $('#click-tip-exit-btn').on('click', () => {
             this.parent.onExitClickTooltip();
         });
         $('#click-tip-flag-btn').on('click', () => {
-            this.parent.flagVariant();
+            this._toggleFlagButton(variant);
+            this.parent.onFlagVariant(variant);
         });
         $('#click-tip-pileup-btn').on('click', () => {
             this.parent.onShowPileupForVariant();
@@ -108,7 +109,7 @@ export default class VariantTooltip {
         }
 
         if (me.tipType === 'click') {
-            me.addClickButtonListeners();
+            me.addClickButtonListeners(variant);
         }
     }
 
@@ -774,7 +775,7 @@ export default class VariantTooltip {
     }
 
     /* Returns HTML that gets displayed within the tooltip */
-    formatClickContent(variant, pinMessage, tooltipClazz, geneObject, theTranscript, trackId, lock) {
+    formatClickContent(variant, pinMessage, tooltipClazz, geneObject) {
         const me = this;
 
         let info = me.globalApp.utility.formatDisplay(variant, me.translator, me.isEduMode);
@@ -804,9 +805,39 @@ export default class VariantTooltip {
                 + me._tooltipLabeledRow('Is Somatic', variant.isInherited == null ? 'Undetermined' : variant.isInherited === true ? 'No' : 'Yes', labelClasses, valueClasses, 'clickTipSomatic')
                 + me._tooltipLabeledRow('In COSMIC', variant.inCosmic === true ? 'Yes' : 'No', labelClasses, valueClasses, 'clickTipCosmic')
                 + me._tooltipLabeledRow('ClinVar', clinvarInfo === "" ? "N/A" : clinvarInfo, labelClasses, valueClasses, 'clickTipClinvar'))
-            + me._formatRightHalf(me._tooltipClickRow(me._getAfDiv(), svgValueClasses) + me._tooltipButtonRow(true, true))
+            + me._formatRightHalf(me._tooltipClickRow(me._getAfDiv(), svgValueClasses) + me._tooltipButtonRow(variant, true, true))
         );
 
+    }
+
+    _toggleFlagButton(variant) {
+        if (!variant.isFlagged) {
+            d3.select('#click-tip-flag-btn').text('Remove Flag');
+            let svg = d3.select('#click-tip-flag-btn').append('svg')
+                .attr('id', 'user-flagged-symbol')
+                .attr('viewBox', '0 0 24 24')
+                .attr('width', 18)
+                .attr('height', 18)
+                .attr('class', 'click-tip-flag-icon');
+            svg.append('path')
+                .attr('d', 'M0 0h24v24H0z')
+                .attr('fill', 'none');
+            svg.append('path')
+                .attr('d', 'M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z');
+        } else {
+            d3.select('#click-tip-flag-btn').text('Flag Variant');
+            let svg = d3.select('#click-tip-flag-btn').append('svg')
+                .attr('id', 'user-flagged-symbol')
+                .attr('viewBox', '0 0 24 24')
+                .attr('width', 18)
+                .attr('height', 18)
+                .attr('class', 'click-tip-flag-icon');
+            svg.append('path')
+                .attr('d', 'M0 0h24v24H0z')
+                .attr('fill', 'none');
+            svg.append('path')
+                .attr('d', 'M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z');
+        }
     }
 
     _formatLeftHalf(html) {
@@ -892,20 +923,22 @@ export default class VariantTooltip {
             + '</div>';
     }
 
-    _tooltipButtonRow(showFlagBtn, showPileupBtn) {
+    _tooltipButtonRow(variant, showFlagBtn, showPileupBtn) {
         let buttons = '';
         if (showFlagBtn) {
-            buttons += '<button id="click-tip-flag-btn" type="button" class="btn btn--small click-tip-btn" style="padding-top: 5px">' +
-                '<svg id="user-flagged-symbol" viewBox="0 0 24 24" width="18" height="18" class="click-tip-flag-icon" >' +
-                '<path d="M0 0h24v24H0z" fill="none"/>' +
-                '<path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/>' +
-                '</svg>Flag Variant</button>'
+            let buttonText = variant.isFlagged ? 'Remove Flag' : 'Flag Variant';
+            buttons += '<button id="click-tip-flag-btn" type="button" class="btn btn--small click-tip-btn" style="padding-top: 5px">'
+                + buttonText
+                + '<svg id="user-flagged-symbol" viewBox="0 0 24 24" width="18" height="18" class="click-tip-icon">'
+                + '<path d="M0 0h24v24H0z" fill="none"/>'
+                + '<path d="M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z"/>'
+                + '</svg>'
+                + '</button>'
         }
         if (showPileupBtn) {
-            buttons += '<button id="click-tip-pileup-btn" type="button" class="btn btn--small click-tip-btn">' +
-                '<i class="material-icons glyph" style="padding-right: 3px; font-size: 16px">line_style</i>Show Pileup</button>'
+            buttons += '<button id="click-tip-pileup-btn" type="button" class="btn btn--small click-tip-btn">Show Pileup' +
+                '<i class="material-icons glyph click-tip-icon" style="padding-right: 3px; font-size: 16px">line_style</i></button>'
         }
-        // buttons += '</div>';
         return buttons;
     }
 

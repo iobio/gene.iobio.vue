@@ -22,8 +22,8 @@
       <file leaf-file-name="GeneHome.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/components/pages/GeneHome.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="689">
-              <caret line="2432" column="43" selection-start-line="2432" selection-start-column="43" selection-end-line="2432" selection-end-column="43" />
+            <state relative-caret-position="450">
+              <caret line="1855" column="40" lean-forward="true" selection-start-line="1855" selection-start-column="40" selection-end-line="1855" selection-end-column="40" />
               <folding>
                 <element signature="n#style#0;n#v-dialog#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#v-card#0;n#v-dialog#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
@@ -36,20 +36,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FilesMenu.vue" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="341">
-              <caret line="470" column="60" selection-start-line="470" selection-start-column="60" selection-end-line="470" selection-end-column="60" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="VariantTooltip.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="VariantTooltip.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/app/partials/VariantTooltip.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5077">
-              <caret line="788" column="23" lean-forward="true" selection-start-line="788" selection-start-column="23" selection-end-line="788" selection-end-column="23" />
+            <state relative-caret-position="417">
+              <caret line="931" column="114" lean-forward="true" selection-start-line="931" selection-start-column="114" selection-end-line="931" selection-end-column="114" />
               <folding>
                 <element signature="n#style#0;n#svg#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#i#0;n#!!top" expanded="true" />
@@ -67,7 +58,7 @@
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#button#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#button#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#i#0;n#button#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
@@ -83,16 +74,22 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Pileup.vue" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/client/app/components/partials/Pileup.vue">
+      <file leaf-file-name="_tooltip.sass" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/assets/sass/_tooltip.sass">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1661">
-              <caret line="10" column="77" lean-forward="true" selection-start-line="10" selection-start-column="77" selection-end-line="10" selection-end-column="77" />
+            <state relative-caret-position="751">
+              <caret line="176" column="10" selection-start-line="176" selection-start-column="10" selection-end-line="176" selection-end-column="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CohortModel.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="664">
+              <caret line="2075" column="28" selection-start-line="2075" selection-start-column="4" selection-end-line="2075" selection-end-column="28" />
               <folding>
-                <element signature="n#style#0;n#v-flex#0;n#v-layout#0;n#v-layout#0;n#v-card#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#v-layout#0;n#v-layout#0;n#v-layout#0;n#v-card#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#v-icon#0;n#v-btn#0;n#v-layout#0;n#v-layout#0;n#v-layout#0;n#v-card#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#v-icon#0;n#v-btn#1;n#v-layout#0;n#v-layout#0;n#v-layout#0;n#v-card#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
+                <element signature="e#0#42#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -110,18 +107,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>import pileup</find>
-      <find>import</find>
-      <find>igv</find>
-      <find>sample</find>
-      <find>relationship</find>
-      <find>onshowpileup</find>
-      <find>displayPileup</find>
-      <find>showpileup</find>
-      <find>click-tip-pileup-btn</find>
-      <find>z-index: 20</find>
-      <find>202</find>
-      <find>1032</find>
       <find>click-tooltip</find>
       <find>100</find>
       <find>loaddemodata</find>
@@ -140,6 +125,18 @@
       <find>material</find>
       <find>flagvaria</find>
       <find>todo</find>
+      <find>flag</find>
+      <find>onflagvariat</find>
+      <find>onFlagVariant</find>
+      <find>addClickButtonListeners</find>
+      <find>Un-</find>
+      <find>un-fl</find>
+      <find>toggl</find>
+      <find>toggle</find>
+      <find>user-flagged-symbol</find>
+      <find>click-tip-flag-icon</find>
+      <find>_tooltipButtonRow</find>
+      <find>click-tip</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -197,7 +194,6 @@
         <option value="$PROJECT_DIR$/client/app/components/viz/VariantDetailCard.vue" />
         <option value="$PROJECT_DIR$/client/app/partials/Glyph.js" />
         <option value="$PROJECT_DIR$/client/app/components/partials/CosmicConfirmationDialog.vue" />
-        <option value="$PROJECT_DIR$/client/assets/sass/_tooltip.sass" />
         <option value="$PROJECT_DIR$/client/app/components/viz/FeatureMatrixCard.vue" />
         <option value="$PROJECT_DIR$/client/app/components/viz/VariantCard.vue" />
         <option value="$PROJECT_DIR$/node_modules/vue-pileup/src/main.js" />
@@ -206,9 +202,10 @@
         <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/client/app/routes.js" />
         <option value="$PROJECT_DIR$/client/app/models/CohortModel.js" />
-        <option value="$PROJECT_DIR$/client/app/components/pages/GeneHome.vue" />
-        <option value="$PROJECT_DIR$/client/app/partials/VariantTooltip.js" />
         <option value="$PROJECT_DIR$/client/app/components/partials/Pileup.vue" />
+        <option value="$PROJECT_DIR$/client/app/components/pages/GeneHome.vue" />
+        <option value="$PROJECT_DIR$/client/assets/sass/_tooltip.sass" />
+        <option value="$PROJECT_DIR$/client/app/partials/VariantTooltip.js" />
       </list>
     </option>
   </component>
@@ -377,12 +374,12 @@
       <workItem from="1565121291426" duration="10998000" />
       <workItem from="1565229535674" duration="128731000" />
       <workItem from="1566088066342" duration="28788000" />
-      <workItem from="1566582771809" duration="157976000" />
+      <workItem from="1566582771809" duration="161584000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1198269000" />
+    <option name="totallyTimeSpent" value="1201877000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1440" y="-277" width="1920" height="1057" extended-state="6" />
@@ -645,13 +642,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/partials/AppIcon.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
-          <caret line="132" column="58" selection-start-line="132" selection-start-column="58" selection-end-line="132" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/components/viz/VariantDetailCard.vue">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="304">
@@ -660,13 +650,6 @@
             <element signature="n#style#0;n#span#0;n#v-flex#0;n#v-layout#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#app-icon#0;n#v-btn#0;n#div#0;n#div#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/assets/sass/_tooltip.sass">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2347">
-          <caret line="169" column="17" selection-start-line="169" selection-start-column="17" selection-end-line="169" selection-end-column="17" />
         </state>
       </provider>
     </entry>
@@ -820,23 +803,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="341">
-          <caret line="470" column="60" selection-start-line="470" selection-start-column="60" selection-end-line="470" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="504">
-          <caret line="244" column="36" lean-forward="true" selection-start-line="244" selection-start-column="36" selection-end-line="244" selection-end-column="36" />
-          <folding>
-            <element signature="e#0#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/deploy/app/third-party/igv.esm.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1344">
@@ -844,10 +810,40 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/partials/Pileup.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1661">
+          <caret line="10" column="77" lean-forward="true" selection-start-line="10" selection-start-column="77" selection-end-line="10" selection-end-column="77" />
+          <folding>
+            <element signature="n#style#0;n#v-flex#0;n#v-layout#0;n#v-layout#0;n#v-card#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#v-layout#0;n#v-layout#0;n#v-layout#0;n#v-card#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#v-icon#0;n#v-btn#0;n#v-layout#0;n#v-layout#0;n#v-layout#0;n#v-card#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#v-icon#0;n#v-btn#1;n#v-layout#0;n#v-layout#0;n#v-layout#0;n#v-card#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/partials/FilesMenu.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6458">
+          <caret line="470" column="60" selection-start-line="470" selection-start-column="60" selection-end-line="470" selection-end-column="60" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="664">
+          <caret line="2075" column="28" selection-start-line="2075" selection-start-column="4" selection-end-line="2075" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/components/pages/GeneHome.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="689">
-          <caret line="2432" column="43" selection-start-line="2432" selection-start-column="43" selection-end-line="2432" selection-end-column="43" />
+        <state relative-caret-position="450">
+          <caret line="1855" column="40" lean-forward="true" selection-start-line="1855" selection-start-column="40" selection-end-line="1855" selection-end-column="40" />
           <folding>
             <element signature="n#style#0;n#v-dialog#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#v-card#0;n#v-dialog#0;n#v-container#0;n#v-content#0;n#div#0;n#template#0;n#!!top" expanded="true" />
@@ -859,10 +855,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/partials/AppIcon.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="337">
+          <caret line="30" column="1" selection-start-line="30" selection-start-column="1" selection-end-line="30" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/assets/sass/_tooltip.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="751">
+          <caret line="176" column="10" selection-start-line="176" selection-start-column="10" selection-end-line="176" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/partials/VariantTooltip.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5077">
-          <caret line="788" column="23" lean-forward="true" selection-start-line="788" selection-start-column="23" selection-end-line="788" selection-end-column="23" />
+        <state relative-caret-position="417">
+          <caret line="931" column="114" lean-forward="true" selection-start-line="931" selection-start-column="114" selection-end-line="931" selection-end-column="114" />
           <folding>
             <element signature="n#style#0;n#svg#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#i#0;n#!!top" expanded="true" />
@@ -880,7 +890,7 @@
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#button#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#button#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#i#0;n#button#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
@@ -891,19 +901,6 @@
             <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/partials/Pileup.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1661">
-          <caret line="10" column="77" lean-forward="true" selection-start-line="10" selection-start-column="77" selection-end-line="10" selection-end-column="77" />
-          <folding>
-            <element signature="n#style#0;n#v-flex#0;n#v-layout#0;n#v-layout#0;n#v-card#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#v-layout#0;n#v-layout#0;n#v-layout#0;n#v-card#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#v-icon#0;n#v-btn#0;n#v-layout#0;n#v-layout#0;n#v-layout#0;n#v-card#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#v-icon#0;n#v-btn#1;n#v-layout#0;n#v-layout#0;n#v-layout#0;n#v-card#0;n#v-container#0;n#template#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>

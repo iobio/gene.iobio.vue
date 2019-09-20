@@ -1847,10 +1847,17 @@
             },
             onFlagVariant: function (variant) {
                 let self = this;
-
+                if (variant == null) {
+                    variant = this.selectedVariant;
+                }
                 variant.gene = this.selectedGene;
                 variant.transcript = this.selectedTranscript;
-                self.cohortModel.addUserFlaggedVariant(self.selectedGene, self.selectedTranscript, variant);
+
+                if (variant.isFlagged) {
+                    self.cohortModel.removeUserFlaggedVariant(self.selectedGene, self.selectedTranscript, variant);
+                } else {
+                    self.cohortModel.addUserFlaggedVariant(self.selectedGene, self.selectedTranscript, variant);
+                }
 
                 // Refresh the loaded variants so that the ranked variants table
                 // reflects the flagged variants
@@ -2395,9 +2402,6 @@
                         }
                     })
                 }
-            },
-            flagVariant: function() {
-                alert('flag');
             },
             onShowPileupForVariant: function(variant) {
                 let self = this;
