@@ -194,12 +194,37 @@
                         v-model="activeLeftDrawerTab"
                         light
                         :class="{'basic': isBasicMode}">
+                    <v-tab href="#matrix-tab">
+                        Ranked Variants
+                    </v-tab>
                     <v-tab href="#filter-tab">
                         Filters
                     </v-tab>
                     <v-tab href="#flagged-vars-tab">
                         Flagged Variants
                     </v-tab>
+                    <v-tab-item
+                        :key="'matrix-tab'"
+                        :id="'matrix-tab'">
+                        <feature-matrix-card ref="featureMatrixCardRef"
+                             v-if="featureMatrixModel.filteredMatrixRows.length > 0 && cohortModel.varAfLinks && cohortModel.allUniqueFeaturesObj"
+                             v-bind:class="{ hide: !cohortModel || !cohortModel.isLoaded || !featureMatrixModel || !featureMatrixModel.rankedVariants }"
+                             :isEduMode="isEduMode"
+                             :isBasicMode="isBasicMode"
+                             :featureMatrixModel="featureMatrixModel"
+                             :selectedGene="selectedGene"
+                             :selectedTranscript="analyzedTranscript"
+                             :selectedVariant="selectedVariant"
+                             :id="'s0'"
+                             :hoverTooltip="hoverTooltip"
+                             :clickTooltip="clickTooltip"
+                             :width="'100%'"
+                             @cohort-variant-click="$emit('onCohortVariantClick')"
+                             @cohort-variant-hover="$emit('onCohortVariantHover')"
+                             @cohort-variant-hover-end="$emit('onCohortVariantHoverEnd')"
+                             @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj, cohortModel.allSomaticFeaturesLookup, cohortModel.getAllFilterPassingVariants())">
+                        </feature-matrix-card>
+                    </v-tab-item>
                     <v-tab-item
                             :key="'filterTab'"
                             :id="'filter-tab'">
@@ -480,17 +505,19 @@
     import FlaggedVariantsCard from '../viz/FlaggedVariantsCard.vue'
     import PhenotypeSearch from '../partials/PhenotypeSearch.vue'
     import FilterPanelMenu from '../partials/FilterPanelMenu.vue'
+    import FeatureMatrixCard from "./FeatureMatrixCard.vue";
 
     export default {
         name: 'navigation',
         components: {
+            FeatureMatrixCard,
             Typeahead,
             GenesMenu,
             FilesMenu,
             FlaggedVariantsCard,
             LegendPanel,
             PhenotypeSearch,
-            FilterPanelMenu
+            FilterPanelMenu,
         },
         props: {
             isEduMode: null,
@@ -500,10 +527,12 @@
             callAllInProgress: null,
             selectedGene: null,
             selectedVariant: null,
+            analyzedTranscript: null,
             filteredGeneNames: null,
             geneModel: null,
             filterModel: null,
             cohortModel: null,
+            featureMatrixModel: null,
             cacheHelper: null,
             activeFilterName: null,
             launchedFromClin: null,
@@ -519,21 +548,20 @@
             selectedGeneName: "",
             selectedChr: "",
             selectedBuild: '',
-            applyFilters: false
-            // interpretationMap: null
+            applyFilters: false,
+            clickTooltip: null,
+            hoverTooltip: null
         },
         data() {
             let self = this;
             return {
                 title: 'gene.iobio',    // onco portion is prepended via symbol
                 betaTitle: 'beta',
-
                 lookupGene: {},
                 geneEntered: null,
                 clipped: false,
                 leftDrawer: self.forMyGene2 ? true : false,
                 rightDrawer: false,
-
                 leftDrawerContents: "flagged-variants",
                 showLegendMenu: false,
                 showDisclaimer: false,

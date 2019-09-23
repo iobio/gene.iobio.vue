@@ -63,7 +63,6 @@
               Ranked Variants for {{ selectedGene.gene_name }}
             </span>
                 <div id="rank-variants-title" class="hide card-label" style="">Evaluate Variants</div>
-
                 <!--TODO: took out for AACR, reincorporate-->
                 <!--<v-btn flat fab small slot="activator" class="show-settings-button" @click="showSettings = !showSettings"-->
                 <!--light>-->
@@ -75,7 +74,6 @@
                 <!--</a>-->
             </v-flex>
         </v-layout>
-
         <v-layout>
             <v-flex xs12 id="matrix-panel" style="clear:both;min-height:30px;" class="fullview"
                     aria-expanded="true">
@@ -104,8 +102,6 @@
                     >
                     </feature-matrix-viz>
                 </div>
-
-
                 <div id="feature-matrix-note"
                      v-bind:class="{ hide: featureMatrixModel.rankedVariants && featureMatrixModel.rankedVariants.length === 0 }">
 
@@ -429,25 +425,10 @@
                 self.$refs.featureMatrixVizRef.draw(self.featureMatrixModel.filteredMatrixRows);
             }
         },
-
-
         filters: {},
-
         computed: {},
-
-        watch: {
-            // 'featureMatrixModel.rankedVariants': function() {
-            //     const self = this;
-            //     debugger; // TODO: we get reactivity here, but rankedVariants still contains old data...
-            //     if (self.featureMatrixModel.rankedVariants && self.featureMatrixModel.rankedVariants.length === 0) {
-            //         self.data = [];
-            //     }
-            // }
-        },
-
-        mounted: function () {
-        },
-
+        watch: {},
+        mounted: function () {},
         created: function () {
             this.setCellSize('small');
             this.cellSize = (this.isBasicMode ? null : this.CELL_SIZE);
