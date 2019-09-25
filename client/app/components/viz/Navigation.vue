@@ -218,10 +218,11 @@
                              :id="'s0'"
                              :hoverTooltip="hoverTooltip"
                              :clickTooltip="clickTooltip"
-                             :width="'100%'"
+                             :width="0"
                              @cohort-variant-click="$emit('onCohortVariantClick')"
                              @cohort-variant-hover="$emit('onCohortVariantHover')"
                              @cohort-variant-hover-end="$emit('onCohortVariantHoverEnd')"
+                             @set-last-click-card="$emit('set-last-click-card')"
                              @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj, cohortModel.allSomaticFeaturesLookup, cohortModel.getAllFilterPassingVariants())">
                         </feature-matrix-card>
                     </v-tab-item>

@@ -124,7 +124,7 @@
                     return [];
                 }
             },
-            matrixRows: {
+            matrixColumns: {
                 type: Array,
                 default: function () {
                     return [];
@@ -202,11 +202,11 @@
         },
         methods: {
             draw: function () {
-                var self = this;
+                const self = this;
 
                 this.featureMatrixChart = featureMatrixD3()
                     .margin(this.margin)
-                    .matrixRows(this.matrixRows)
+                    .matrixColumns(this.matrixColumns)
                     .cellSize(this.cellSize)
                     .cellWidth(this.cellWidth)
                     .cellHeights(this.cellHeights)
@@ -239,7 +239,7 @@
                 let selection = null;
                 if (self.data && self.data.length > 0) {
                     selection = d3.select(self.$el).data([self.data]);
-                    self.featureMatrixChart(selection, {showColumnLabels: true, simpleColumnLabels: true});
+                    self.featureMatrixChart(selection, {showColumnLabels: true, simpleColumnLabels: false});
                 } else {
                     d3.select('#' + self.name).selectAll('svg').remove();
                 }

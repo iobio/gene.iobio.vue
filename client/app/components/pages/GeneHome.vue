@@ -102,6 +102,7 @@
                 @show-snackbar="onShowSnackbar"
                 @hide-snackbar="onHideSnackbar"
                 @on-filter-settings-applied="onVariantFilterSettingsApplied"
+                @set-last-click-card="setLastClickCard"
         >
         </navigation>
 
@@ -277,6 +278,7 @@
                         @cosmic-variants-viz-change="onCosmicVariantsVizChange"
                         @cosmic-variants-filter-change="onCosmicVariantsFilterChange"
                         @show-coverage-cutoffs="showCoverageCutoffs = true"
+                        @set-last-click-card="setLastClickCard"
                 >
                 </variant-card>
 
@@ -419,9 +421,7 @@
 
                 hoverTooltip: null,
                 clickTooltip: null,
-                // TODO: implement this when time to refactor tooltip code
-                // clickTooltipX: 0,
-                // clickTooltipY: 0,
+                lastClickCard: null,    // Either variantCard of featureMatrixCard - whoever last called up the click tooltip
                 appTour: null,
 
                 selectedVariant: null,
@@ -2278,15 +2278,28 @@
             },
             onExitClickTooltip: function() {
                 const self = this;
-                if (self.$refs.featureMatrixCardRef.lastActivatedClickTooltip === true) {
+                if (self.lastClickCard === 'featureMatrix') {
                     self.$refs.featureMatrixCardRef.onVariantClick(null);
-                } else {
+                } else if (self.lastClickCard) {
                     self.$refs.variantCardRef.forEach((cardRef) => {
-                        if (cardRef.lastActivatedClickTooltip === true) {
+                        if (self.lastClickCard === cardRef.sampleModel.id) {
                             cardRef.onVariantClick(null);
                         }
                     })
                 }
+                // if (self.$refs.featureMatrixCardRef.lastActivatedClickTooltip === true) {
+                //     self.$refs.featureMatrixCardRef.onVariantClick(null);
+                // } else {
+                //     self.$refs.variantCardRef.forEach((cardRef) => {
+                //         if (cardRef.lastActivatedClickTooltip === true) {
+                //             cardRef.onVariantClick(null);
+                //         }
+                //     })
+                // }
+            },
+            setLastClickCard: function(cardId) {
+                const self = this;
+                self.lastClickCard = cardId;
             },
             onShowPileupForVariant: function(variant) {
                 let self = this;

@@ -82,7 +82,7 @@
                                         ref="featureMatrixVizRef"
                                         :data="featureMatrixModel.rankedVariants"
                                         :annotationScheme="featureMatrixModel.cohort.annotationScheme"
-                                        :matrixRows="featureMatrixModel.matrixRows"
+                                        :matrixColumns="featureMatrixModel.matrixRows"
                                         :width="width"
                                         :margin="margin"
                                         :cellSize="cellSize"
@@ -260,7 +260,7 @@
 
                 selection.each(function (d) {
                     var colhdr = d3.select(this);
-                    if (d.hasOwnProperty("fbCalled") && d.fbCalled == "Y") {
+                    if (d.hasOwnProperty("fbCalled") && d.fbCalled === "Y") {
                         colhdr.append("g")
                             .attr("transform", "translate(" + (options.cellSize - 17) / 2 + ",-25)")
                             .append("use")
@@ -323,12 +323,14 @@
             onVariantClick: function (variant) {
                 let tipType = "click";
                 if (variant == null) {
-                    this.lastActivatedClickTooltip = false;
+                    // this.lastActivatedClickTooltip = false;
                     this.hideVariantTooltip(tipType);
+                    this.$emit('set-last-click-card', null);
                 } else {
                     this.hideVariantTooltip("hover");
                     this.showVariantTooltip(variant, tipType, false);
-                    this.lastActivatedClickTooltip = true;
+                    this.$emit('set-last-click-card', 'featureMatrix');
+                    // this.lastActivatedClickTooltip = true;
                 }
                 let sampleModelId = variant != null ? variant.sampleModelId : '';
                 this.$emit('cohort-variant-click', variant, this, sampleModelId);

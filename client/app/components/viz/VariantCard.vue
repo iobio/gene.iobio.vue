@@ -412,7 +412,6 @@
                 selectedExon: null,
                 knownVariantsViz: null,
                 openState: [true],      // Array which controls expansion panel open/close - want open on load
-                lastActivatedClickTooltip: false
             }
         },
         methods: {
@@ -458,7 +457,8 @@
                         this.showVariantTooltip(variant, tipType, false);
                     } else {
                         this.hideVariantTooltip(tipType);
-                        this.lastActivatedClickTooltip = false;
+                        //this.lastActivatedClickTooltip = false;
+                        this.$emit('set-last-click-card', null);
                     }
                 }
                 this.$emit('cohort-variant-click', variant, this, this.sampleModel.id);
@@ -492,9 +492,10 @@
                 let tooltip = d3.select("#main-tooltip");
                 let tooltipObj = self.hoverTooltip;
                 if (tipType === "click") {
-                    self.lastActivatedClickTooltip = true;
+                    // self.lastActivatedClickTooltip = true;
                     tooltip = d3.select("#click-tooltip");
                     tooltipObj = self.clickTooltip;
+                    self.$emit('set-last-click-card', self.sampleModel.id);
                 }
 
                 // TODO: will lock work with click tooltip

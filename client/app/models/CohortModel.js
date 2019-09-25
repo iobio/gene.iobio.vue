@@ -625,11 +625,12 @@ class CohortModel {
                 vm.setId('cosmic-variants');
                 vm.setDisplayName('COSMIC');
 
-                let cosmicUrl = "https://s3.amazonaws.com/iobio/samples/vcf/cosmic.coding.noncoding.GRCh37.final.vcf.gz";
-                let cosmicTbi = "https://s3.amazonaws.com/iobio/samples/vcf/cosmic.coding.noncoding.GRCh37.final.vcf.gz.tbi";
+                // Version updated 23Sept2019 to v90 release
+                let cosmicUrl = "https://s3.amazonaws.com/iobio/samples/vcf/COSMIC_data/v90_05Sept2019/cosmic_all_grch37_v90.vcf.gz";
+                let cosmicTbi = "https://s3.amazonaws.com/iobio/samples/vcf/COSMIC_data/v90_05Sept2019/cosmic_all_grch37_v90.vcf.gz.tbi";
                 if (self.genomeBuildHelper.currentBuild === 'GRCh38') {
-                    cosmicUrl = "https://s3.amazonaws.com/iobio/samples/vcf/cosmic.coding.GRCh38.vcf.gz";
-                    cosmicTbi = "https://s3.amazonaws.com/iobio/samples/vcf/cosmic.coding.GRCh38.vcf.gz.tbi";
+                    cosmicUrl = "https://s3.amazonaws.com/iobio/samples/vcf/COSMIC_data/v90_05Sept2019/cosmic_all_grch38_v90.vcf.gz";
+                    cosmicTbi = "https://s3.amazonaws.com/iobio/samples/vcf/COSMIC_data/v90_05Sept2019/cosmic_all_grch38_v90.vcf.gz.tbi";
                 }
                 vm.onVcfUrlEntered(cosmicUrl, cosmicTbi, function () {
                         self.sampleModels.push(vm);
