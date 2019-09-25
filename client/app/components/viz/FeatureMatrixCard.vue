@@ -88,6 +88,7 @@
                                         :cellSize="cellSize"
                                         :cellWidth="cellWidth"
                                         :cellHeights="featureMatrixModel.getCellHeights()"
+                                        :cellWidths="featureMatrixModel.getCellHeights()"
                                         :columnLabel="columnLabel"
                                         :columnLabelHeight="columnLabelHeight"
                                         :columnLabelClass="columnLabelClass"

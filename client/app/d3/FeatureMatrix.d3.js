@@ -38,6 +38,7 @@ export default function featureMatrixD3() {
         cellWidth = null,
         cellHeight = null,
         cellHeights = null,
+        cellWidths = null,
         rowLabelWidth = 20, // transpose TODO: changed from 100
         columnLabelHeight = 100,
         columnLabelShift = 80;
@@ -87,16 +88,29 @@ export default function featureMatrixD3() {
             // Calculate height of matrix
 
             var firstCellHeight = null;
+            var firstCellWidth = null;
             var matrixHeight = null;
+            var matrixWidth = null; // TODO: not using for the moment but probably need to...
             if (cellHeights && cellHeights.length > 0) {
                 matrixHeight = cellHeights.reduce(function (pv, cv) {
                     return pv + cv;
                 }, 0);
                 firstCellHeight = cellHeights[0];
+
             } else {
                 // matrixHeight = matrixRowNames.length * (cellHeight != null ? cellHeight : cellSize); // transpose TODO
                 matrixHeight = data.length * (cellHeight != null ? cellHeight: cellSize);
                 firstCellHeight = (cellHeight != null ? cellHeight : cellSize);
+            }
+            if (cellWidths && cellWidths.length > 0) {
+                matrixHeight = cellWidths.reduce(function (pv, cv) {
+                    return pv + cv;
+                }, 0);
+                firstCellWidth = cellWidths[0];
+            } else {
+                // matrixHeight = matrixRowNames.length * (cellHeight != null ? cellHeight : cellSize); // transpose TODO
+                matrixWidth = data.length * (cellWidth != null ? cellHeight: cellSize);
+                firstCellWidth = (cellWidth != null ? cellWidth : cellSize);
             }
             height = matrixHeight;
             const legendHeight = firstCellHeight * 3;
@@ -128,7 +142,6 @@ export default function featureMatrixD3() {
             // transpose TODO: swapped x and y here for domain (not rangeRoundBands)
             y.domain(data.map(function (d, i) {
                 return i + 1;
-                //return d.type + " " + d.start + " " + d.ref + "->" + d.alt transpose TODO
             }));
             y.rangeRoundBands([0, innerHeight], 0, 0);
 
@@ -146,7 +159,6 @@ export default function featureMatrixD3() {
                 .scale(y)
                 .orient("left")
                 .outerTickSize(0)
-                // .ticks(matrixRowNames.length);
                 .ticks(data.length);
 
             // Select the svg element, if it exists.
@@ -181,7 +193,6 @@ export default function featureMatrixD3() {
                 var translateColHdrGroup = "";
                 if (options.simpleColumnLabels) {
                     if (cellWidth) {
-                        // TODO: need to push y down more, not x...
                         translateColHdrGroup = "translate(" + (+rowLabelWidth + (cellWidth / 2) - 4) + "," + columnLabelHeight + ")";
                     } else {
                         translateColHdrGroup = "translate(" + (+rowLabelWidth) + "," + (columnLabelHeight - 4) + ")";
@@ -245,7 +256,6 @@ export default function featureMatrixD3() {
             topLevelGroup.selectAll("g.y").data([matrixColumnNames]).enter()
                 .append("g")
                 .attr("class", "y axis")
-                // .attr("transform", "translate(20," + (options.showColumnLabels ? columnLabelHeight + (cellHeights != null && cellHeights.length > 0 ? 4 : 0) : "0") + ")")
                 .attr("transform", "translate(20," + (options.showColumnLabels ? columnLabelShift : "0") + ")")
                 .call(yAxis)
                 .selectAll("text")
@@ -377,31 +387,32 @@ export default function featureMatrixD3() {
                     return "row  " + d;
                 })
                 .attr('transform', function (d, i) {
-                    return "translate(" + ((cellWidth != null ? cellWidth : cellSize) * (i)) + ",0)";
+                    // return "translate(" + ((cellWidth != null ? cellWidth : cellSize) * (i)) + ",0)";
+                    return "translate(" + "0," + ((cellHeight != null ? cellHeight : cellSize) * (i)) + ")";
                 });
 
             console.log("ABOUT TO DRAW CELLS");
 
             // Generate cells
             var cells = rows.selectAll('.cell').data(function (d) {
-                return d['name'];
+                return d['features'];
             }).enter().append('g')
                 .attr('class', "cell")
                 .attr('transform', function (d, i) {
-                    var yPos = 0;
-                    if (cellHeights && cellHeights.length > 0) {
-                        var pos = (i + 1) % data.length;
+                    let xPos = 0;
+                    if (cellWidths && cellWidths.length > 0) {
+                        let pos = (i + 1) % data.length;
                         if (pos === 0) {
                             pos = data.length;
                         }
-                        for (var idx = 0; idx < pos - 1; idx++) {
-                            yPos += cellHeights[idx];
+                        for (let idx = 0; idx < pos - 1; idx++) {
+                            xPos += cellWidths[idx];
                         }
-                        yPos = yPos + firstCellHeight;
+                        xPos = xPos + firstCellWidth;
                     } else {
-                        yPos = y(data[i]) + y.rangeBand();
+                        xPos = x(matrixColumnNames[i]) + x.rangeBand();
                     }
-                    return 'translate(0,' + yPos + ')';
+                    return 'translate(' + xPos + ',0)';
                 });
 
             console.log("ABOUT TO DRAW RECTS");
@@ -736,6 +747,15 @@ export default function featureMatrixD3() {
             return cellHeights;
         } else {
             cellHeights = _;
+            return chart;
+        }
+    }
+
+    chart.cellWidths = function (_) {
+        if (!arguments.length) {
+            return cellWidths;
+        } else {
+            cellWidths = _;
             return chart;
         }
     }

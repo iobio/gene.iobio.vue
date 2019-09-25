@@ -160,6 +160,12 @@
                     return [];
                 }
             },
+            cellWidths: {
+                type: Array,
+                default: function () {
+                    return [];
+                }
+            },
             columnLabelHeight: {
                 type: Number,
                 default: 0
@@ -210,6 +216,7 @@
                     .cellSize(this.cellSize)
                     .cellWidth(this.cellWidth)
                     .cellHeights(this.cellHeights)
+                    .cellWidths(this.cellWidths)
                     .columnLabelHeight(this.columnLabelHeight)
                     .columnLabel(this.columnLabel)
                     .columnLabelClass(this.columnLabelClass)
