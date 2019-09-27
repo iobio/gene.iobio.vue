@@ -13,7 +13,7 @@
                     fill: rgba(255, 236, 179, 0.54)
 
         .colhdr text
-            font-size: 11px
+            font-size: 12px
             pointer-events: none
 
         .colhdr text.long-label
@@ -106,7 +106,7 @@
 
 
 <template>
-    <div :id="name">
+    <div :id="name" style="margin-left: 15px">
 
     </div>
 </template>

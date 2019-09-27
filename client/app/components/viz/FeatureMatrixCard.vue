@@ -181,14 +181,14 @@
                 CELL_SIZE_LARGE: 22,
                 CELL_SIZE_EDU: 23,
                 CELL_WIDTH_BASIC: 160,
-                COLUMN_LABEL_HEIGHT: 28,
+                COLUMN_LABEL_HEIGHT: 80,
                 COLUMN_LABEL_HEIGHT_BASIC: 28,
-                ROW_LABEL_WIDTH: 95,  // Note: prev 165
+                ROW_LABEL_WIDTH: 20,  // Note: prev 165
                 ROW_LABEL_WIDTH_BASIC: 165,
                 ROW_LABEL_WIDTH_EDU: 130,
                 CELL_SIZE: null,
 
-                margin: {top: 0, right: 40, bottom: 7, left: 0},
+                margin: {top: 10, right: 40, bottom: 7, left: 20},
                 cellSize: null,
                 cellWidth: null,
                 columnLabelHeight: null,
@@ -220,10 +220,10 @@
                 var toggle = false;
                 let cellSizeSmall = this.isEduMode ? this.CELL_SIZE_EDU : this.CELL_SIZE_SMALL;
                 let cellSizeLarge = this.isEduMode ? this.CELL_SIZE_EDU : this.CELL_SIZE_LARGE;
-                if (sizeEnum == 'small' && this.CELL_SIZE != cellSizeSmall) {
+                if (sizeEnum === 'small' && this.CELL_SIZE !== cellSizeSmall) {
                     this.CELL_SIZE = cellSizeSmall;
                     toggle = true;
-                } else if (sizeEnum == 'large' && this.CELL_SIZE != cellSizeLarge) {
+                } else if (sizeEnum === 'large' && this.CELL_SIZE !== cellSizeLarge) {
                     this.CELL_SIZE = cellSizeLarge;
                     toggle = true;
                 }

@@ -561,7 +561,7 @@
                 lookupGene: {},
                 geneEntered: null,
                 clipped: false,
-                leftDrawer: self.forMyGene2 ? true : false,
+                leftDrawer: false,
                 rightDrawer: false,
                 leftDrawerContents: "flagged-variants",
                 showLegendMenu: false,
@@ -753,6 +753,9 @@
             onFilterSettingsApplied: function (filterInfo) {
                 const self = this;
                 self.$emit('on-filter-settings-applied', filterInfo);
+            },
+            toggleLeftDrawer: function(drawerState) {
+                this.leftDrawer = drawerState;
             }
         },
         created: function () {

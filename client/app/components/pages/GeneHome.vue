@@ -759,6 +759,7 @@
             'cohortModel.annotationComplete': function() {
                 if (this.cohortModel && this.cohortModel.getNormalModel()) {
                     this.annotationComplete = !this.cohortModel.getNormalModel().inProgress.loadingVariants;
+                    this.toggleLeftDrawer(true);
                 } else {
                     this.annotationComplete = false;
                 }
@@ -774,7 +775,7 @@
                         self.$refs.genesCardRef.determineFlaggedGenes();
 
                         if (self.selectedGene && self.selectedGene.hasOwnProperty("gene_name")
-                            && geneName == self.selectedGene.gene_name) {
+                            && geneName === self.selectedGene.gene_name) {
                             self.promiseLoadData();
                         }
                     });
@@ -1904,6 +1905,9 @@
                 if (!this.isEduMode) {
                     this.isLeftDrawerOpen = isOpen;
                 }
+            },
+            toggleLeftDrawer: function(showDrawer) {
+                this.$refs.navRef.toggleLeftDrawer(showDrawer);
             },
             onShowWelcome: function () {
                 this.showWelcome = true;
