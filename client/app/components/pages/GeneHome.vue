@@ -1286,9 +1286,9 @@
                         variantCard.showVariantCircle(variant, false);
                         variantCard.showCoverageCircle(variant);
                     }
-                })
-                if (self.$refs.featureMatrixCardRef != sourceComponent) {
-                    self.$refs.featureMatrixCardRef.selectVariant(variant, 'highlight');
+                });
+                if (self.$refs.navRef != sourceComponent) {
+                    self.$refs.navRef.selectVariant(variant, 'highlight');
                 }
             },
             onCohortVariantHoverEnd: function (sourceVariantCard) {
@@ -1298,7 +1298,7 @@
                         variantCard.hideVariantCircle(false);
                         variantCard.hideCoverageCircle();
                     });
-                    self.$refs.featureMatrixCardRef.selectVariant(null, 'highlight');
+                    self.$refs.navRef.selectVariant(null, 'highlight');
 
                 }
             },
@@ -1314,8 +1314,8 @@
                         variantCard.hideCoverageCircle();
                     })
                 }
-                if (self.$refs.featureMatrixCardRef) {
-                    self.$refs.featureMatrixCardRef.selectVariant(null);
+                if (self.$refs.navRef) {
+                    self.$refs.navRef.selectVariant(null);
                 }
             },
             showVariantExtraAnnots: function (parentSampleId, variant) {
@@ -1850,12 +1850,12 @@
 
                                 self.$set(self, "selectedVariant", flaggedVariant);
                                 self.$refs.variantCardRef.forEach(function (variantCard) {
-                                    if (variantCard.relationship == 'proband') {
+                                    if (variantCard.relationship === 'proband') {
                                         variantCard.showFlaggedVariant(flaggedVariant);
                                     }
                                 })
 
-                                self.$refs.featureMatrixCardRef.selectVariant(flaggedVariant);
+                                self.$refs.navRef.selectVariant(flaggedVariant);
 
 
                                 self.$refs.variantCardRef.forEach(function (variantCard) {
@@ -2283,7 +2283,7 @@
             onExitClickTooltip: function() {
                 const self = this;
                 if (self.lastClickCard === 'featureMatrix') {
-                    self.$refs.featureMatrixCardRef.onVariantClick(null);
+                    self.$refs.navRef.onVariantClick(null);
                 } else if (self.lastClickCard) {
                     self.$refs.variantCardRef.forEach((cardRef) => {
                         if (self.lastClickCard === cardRef.sampleModel.id) {

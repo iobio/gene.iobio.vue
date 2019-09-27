@@ -50,22 +50,22 @@ export default function featureMatrixD3() {
             if (clazz == null) {
                 clazz = "current";
             }
-            container.selectAll("g.group>g.group>.col .colbox").classed(clazz, false);
-            container.selectAll("g.group>g.group>.col").each(function (d, i) {
-                if (d.start == variant.start &&
-                    d.ref == variant.ref &&
-                    d.alt == variant.alt) {
-                    d3.select(this).select(".colbox").classed(clazz, true);
+            container.selectAll("g.group>g.group>.row .rowbox").classed(clazz, false);
+            container.selectAll("g.group>g.group>.row").each(function (d, i) {
+                if (d.start === variant.start &&
+                    d.ref === variant.ref &&
+                    d.alt === variant.alt) {
+                    d3.select(this).select(".rowbox").classed(clazz, true);
                 }
             });
 
         } else {
             if (container) {
                 if (clazz) {
-                    container.selectAll("g.group>g.group>.col .colbox").classed(clazz, false);
+                    container.selectAll("g.group>g.group>.row .rowbox").classed(clazz, false);
                 } else {
-                    container.selectAll("g.group>g.group>.col .colbox").attr('class', function (d, i) {
-                        return "colbox";
+                    container.selectAll("g.group>g.group>.row .rowbox").attr('class', function (d, i) {
+                        return "rowbox";
                     });
 
                 }
@@ -97,7 +97,6 @@ export default function featureMatrixD3() {
                 firstCellHeight = cellHeights[0];
 
             } else {
-                // matrixHeight = matrixRowNames.length * (cellHeight != null ? cellHeight : cellSize); // transpose TODO
                 matrixHeight = data.length * (cellHeight != null ? cellHeight: cellSize);
                 firstCellHeight = (cellHeight != null ? cellHeight : cellSize);
             }
@@ -107,7 +106,6 @@ export default function featureMatrixD3() {
                 }, 0);
                 firstCellWidth = cellWidths[0];
             } else {
-                // matrixHeight = matrixRowNames.length * (cellHeight != null ? cellHeight : cellSize); // transpose TODO
                 matrixWidth = data.length * (cellWidth != null ? cellHeight: cellSize);
                 firstCellWidth = (cellWidth != null ? cellWidth : cellSize);
             }
@@ -118,23 +116,13 @@ export default function featureMatrixD3() {
             if (options.showColumnLabels) {
                 height += columnLabelHeight;
             }
-            // transpose TODO: not sure what logic is here yet
             var innerHeight = height - margin.top - margin.bottom - legendHeight;
 
             if (options.showColumnLabels) {
                 innerHeight -= columnLabelHeight;
             }
 
-            // width = data.length * (cellWidth != null ? cellWidth : cellSize); // transpose TODO
             width = matrixColumnNames.length * (cellWidth != null ? cellWidth : cellSize);
-
-            // Have to make sure we don't cut off the legend if matrix thinner
-            // tranpose TODO: not sure what the logic here should be yet
-            // let legendWidth = 15 * cellSize + rowLabelWidth;
-            // if (width < legendWidth) {
-            //     width = legendWidth;
-            // }
-
             width += margin.left + margin.right + rowLabelWidth + (cellWidth != null ? cellWidth : cellSize);
             var innerWidth = width - margin.left - margin.right - rowLabelWidth;
 
@@ -191,12 +179,12 @@ export default function featureMatrixD3() {
                 var translateColHdrGroup = "";
                 if (options.simpleColumnLabels) {
                     if (cellWidth) {
-                        translateColHdrGroup = "translate(" + (+(parseInt(rowLabelWidth) + 10) + (cellWidth / 2) - 4) + "," + columnLabelHeight + ")";
+                        translateColHdrGroup = "translate(" + (+(parseInt(rowLabelWidth) + 6) + (cellWidth / 2) - 4) + "," + columnLabelHeight + ")";
                     } else {
-                        translateColHdrGroup = "translate(" + (+(parseInt(rowLabelWidth) + 10)) + "," + (columnLabelHeight - 4) + ")";
+                        translateColHdrGroup = "translate(" + (+(parseInt(rowLabelWidth) + 6)) + "," + (columnLabelHeight - 4) + ")";
                     }
                 } else {
-                    translateColHdrGroup = "translate(" + (+(parseInt(rowLabelWidth) + 10) + ((cellWidth != null ? cellWidth : cellSize) / 2)) + "," + columnLabelShift + ")";
+                    translateColHdrGroup = "translate(" + (+(parseInt(rowLabelWidth) + 6) + ((cellWidth != null ? cellWidth : cellSize) / 2)) + "," + columnLabelShift + ")";
                 }
                 var colhdrGroup = topLevelGroup.selectAll("g.colhdr").data([matrixColumnNames])
                     .enter()
@@ -235,12 +223,6 @@ export default function featureMatrixD3() {
 
             }
 
-            // var translate = "translate(" + rowLabelWidth + ",";
-            // if (options.showColumnLabels) {
-            //     translate += (+columnLabelHeight - firstCellHeight) + ")";
-            // } else {
-            //     translate += "-30)";
-            // }
             topLevelGroup.selectAll("g.group").remove();
             var g = topLevelGroup.selectAll("g.group").data([matrixColumnNames])
                 .enter()
@@ -267,7 +249,6 @@ export default function featureMatrixD3() {
             topLevelGroup.selectAll("g.y.axis .tick")
                 .append("g")
                 .attr("class", "up faded")
-                //.attr("transform", "translate(" + rowLabelWidth + ", -13)")
                 .attr("transform", "translate(" + (+rowLabelWidth - 60) + ", -24)")
                 .append("use")
                 .attr("id", "arrow-up")
@@ -308,7 +289,6 @@ export default function featureMatrixD3() {
             topLevelGroup.selectAll("g.y.axis .tick")
                 .append("g")
                 .attr("class", "down faded")
-                //.attr("transform", "translate(" + (+rowLabelWidth + 17) + ", 9 )")
                 .attr("transform", "translate(" + (+rowLabelWidth - 40) + ", -24)")
                 .append("use")
                 .attr("id", "arrow-down")
@@ -360,8 +340,6 @@ export default function featureMatrixD3() {
 
             // Hide the ticks and the path of the x-axis, we are just interested
             // in the text
-            //svg.selectAll("g.x.axis .tick line").classed("hide", true);
-            //svg.selectAll("g.x.axis path").classed("hide", true);
             topLevelGroup.selectAll("g.y.axis .tick line").classed("hide", true);
             topLevelGroup.selectAll("g.y.axis path").classed("hide", true);
 
@@ -385,7 +363,6 @@ export default function featureMatrixD3() {
                     return "row row_" + d.id;
                 })
                 .attr('transform', function (d, i) {
-                    // return "translate(" + ((cellWidth != null ? cellWidth : cellSize) * (i)) + ",0)";
                     return "translate(" + "0," + ((cellHeight != null ? cellHeight : cellSize) * (i)) + ")";
                 });
 
@@ -408,7 +385,6 @@ export default function featureMatrixD3() {
                     } else {
                         xPos = x(matrixColumnNames[i]) - (2 * i);
                     }
-                    debugger;
                     return 'translate(' + xPos + ',0)';
                 });
 
@@ -430,6 +406,7 @@ export default function featureMatrixD3() {
                 })
                 .attr('y', 0)
                 .attr('width', (cellWidth != null ? cellWidth : cellSize) - 1);
+
 
 
             cells.append("text")
@@ -477,53 +454,49 @@ export default function featureMatrixD3() {
             });
 
             rows.append('rect')
-                .attr('class', 'colbox')
-                .attr('x', function (d, i) {
-                    return 0;
+                .attr('class', 'rowbox')
+                .attr('x', function () {
+                    return 1;
                 })
-                .attr('height', function (d, i) {
-                    return matrixHeight - 1;
+                .attr('height', function () {
+                    return (cellHeight != null ? cellHeight : cellSize) - 1;
                 })
-                .attr('y', function (d, i) {
-                    if (cellHeights && cellHeights.length > 0) {
-                        return firstCellHeight;
-                    } else {
-                        return y(data[0].id) + y.rangeBand();
-                    }
-                })
-                .attr('width', (cellWidth != null ? cellWidth : cellSize) - 1);
+                .attr('width', function() {
+                    return ((matrixColumnNames.length * (cellWidth != null ? cellWidth : cellSize)) - 1);
+                });
 
             // Draw color scale legend (sourced from http://bl.ocks.org/tjdecke/5558084)
-            // transpose TODO: fix me!
-            // var legend = svg.selectAll(".legend")
-            //     .data([0].concat(colorScale.quantiles()), function(d) { return d; });
-            //
-            // const legendBuffer = firstCellHeight * 2;
-            //
-            // legend.enter().append("g")
-            //     .attr("class", "legend");
-            //
-            // legend.append("rect")
-            //     .attr("x", function(d, i) { return rowLabelWidth + (cellSize * 3 * i); })
-            //     .attr("y", matrixHeight + legendBuffer)
-            //     .attr("width", cellSize * 3)
-            //     .attr("height", firstCellHeight)
-            //     .style("fill", function(d, i) { return colors[i]; });
-            //
-            // legend.append("text")
-            //     .text(function(d, i) { return '≥ ' + Math.round(100/colors.length * i) + '%'; })
-            //     .attr("x", function(d, i) { return rowLabelWidth + (cellSize * 3 * i); })
-            //     .attr("y", matrixHeight + (legendBuffer + (firstCellHeight * 1.55)))
-            //     .attr('class', columnLabelClass);
-            //
-            // legend.exit().remove();
-            //
-            // // Just draw label for first legend element
-            // d3.select(".legend")
-            //     .append("text")
-            //     .text("AF Scale")
-            //     .attr("y", matrixHeight + legendBuffer + firstCellHeight)
-            //     .attr("class", columnLabelClass);
+            var legend = svg.selectAll(".legend")
+                .data([0].concat(colorScale.quantiles()), function(d) { return d; });
+
+            const legendBuffer = firstCellHeight * 2;
+
+            legend.enter().append("g")
+                .attr("class", "legend");
+
+            let legendCellScale = 2;
+            legend.append("rect")
+                .attr("x", function(d, i) { return rowLabelWidth + (cellSize * legendCellScale * i); })
+                .attr("y", matrixHeight + legendBuffer + columnLabelHeight)
+                .attr("width", cellSize * legendCellScale)
+                .attr("height", firstCellHeight)
+                .style("fill", function(d, i) { return colors[i]; });
+
+            legend.append("text")
+                .text(function(d, i) { return '≥ ' + Math.round(100/colors.length * i) + '%'; })
+                .attr("x", function(d, i) { return rowLabelWidth + (cellSize * legendCellScale * i); })
+                .attr("y", matrixHeight + columnLabelHeight + (legendBuffer + (firstCellHeight * 1.55)))
+                .attr('class', columnLabelClass);
+
+            legend.exit().remove();
+
+            // Just draw label for first legend element
+            d3.select(".legend")
+                .append("text")
+                .text("AF Scale")
+                .attr("x", rowLabelWidth)
+                .attr("y", matrixHeight + legendBuffer + columnLabelHeight - 2)
+                .attr("class", columnLabelClass);
 
             g.selectAll('rect.cellbox')
                 .on("mouseover", function (d) {
@@ -567,10 +540,10 @@ export default function featureMatrixD3() {
                     }
 
                     var colIndex = Math.floor(i / matrixColumnNames.length);
-                    var on = !(d3.select(this.parentNode.parentNode).select(".colbox").attr("class").indexOf("current") > -1);
-                    d3.select(this.parentNode.parentNode.parentNode).select(".colbox.current").classed("current", false);
+                    var on = !(d3.select(this.parentNode.parentNode).select(".rowbox").attr("class").indexOf("current") > -1);
+                    d3.select(this.parentNode.parentNode.parentNode).select(".rowbox.current").classed("current", false);
                     if (on) {
-                        d3.select(this.parentNode.parentNode).select(".colbox").classed("current", on);
+                        d3.select(this.parentNode.parentNode).select(".rowbox").classed("current", on);
                         dispatch.d3click(colObject);
                     } else {
                         dispatch.d3click();

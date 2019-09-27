@@ -16,6 +16,11 @@
         height: calc(100% - 10px)
         overflow-y: scroll
 
+        #nav-bar-tabs
+            .tabs__wrapper--show-arrows
+                margin-left: 5px
+                margin-right: 30px
+
     #flagged-variants-card
         flex-grow: 1
 
@@ -188,12 +193,12 @@
                 :hide-overlay="true"
                 v-model="leftDrawer"
                 :stateless="true"
-                width=380>
+                width=300>
             <div id="side-panel-container">
-                <v-tabs
+                <v-tabs id="nav-bar-tabs"
                         v-model="activeLeftDrawerTab"
                         light
-                        :class="{'basic': isBasicMode}">
+                        :class="{'basic': isBasicMode, 'margin-left': 0}">
                     <v-tab href="#matrix-tab">
                         Ranked Variants
                     </v-tab>
@@ -756,6 +761,14 @@
             },
             toggleLeftDrawer: function(drawerState) {
                 this.leftDrawer = drawerState;
+            },
+            selectVariant: function(variant, clazz) {
+                if (this.$refs.featureMatrixCardRef) {
+                    this.$refs.featureMatrixCardRef.selectVariant(variant, clazz);
+                }
+            },
+            onVariantClick: function (variant) {
+                this.$refs.featureMatrixCardRef.onVariantClick(variant);
             }
         },
         created: function () {

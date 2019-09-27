@@ -7,7 +7,7 @@
             stroke: $cell-border-color
             stroke-width: 1px
 
-        .col
+        .row
             &.danger
                 rect.cellbox
                     fill: rgba(255, 236, 179, 0.54)
@@ -24,7 +24,7 @@
             cursor: pointer
             font-weight: bold
 
-        rect.colbox
+        rect.rowbox
             fill: none
             opacity: 0
             pointer-events: none
@@ -43,9 +43,9 @@
                 pointer-events: none
                 outline-offset: -2px
 
-        .col.active
+        .row.active
 
-            rect.colbox
+            rect.rowbox
                 stroke: $current-frame-color
                 stroke-width: 1.5px
                 opacity: 1
@@ -72,9 +72,9 @@
 
     #feature-matrix
         #feature-matrix-viz.basic
-            .col
+            .row
                 &.flagged
-                    rect.colbox
+                    rect.rowbox
                         width: 157px
 
     #feature-matrix
@@ -106,7 +106,7 @@
 
 
 <template>
-    <div :id="name" style="margin-left: 15px">
+    <div :id="name">
 
     </div>
 </template>

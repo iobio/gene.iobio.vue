@@ -67,7 +67,7 @@
         <v-flex xs12>
             <v-container fluid>
                 <v-layout :style="{'height': '40px'}">
-                        <v-flex d-flex xs2>
+                        <v-flex d-flex xs3>
                             <v-select class="slider-select"
                                       :items="dropDownOptions"
                                       v-model="filterLogic"
@@ -77,7 +77,7 @@
                                       @input="onSliderLogicChanged">
                             </v-select>
                         </v-flex>
-                        <v-flex d-flex xs10 class="slider-top-row">
+                        <v-flex d-flex xs9 class="slider-top-row">
                             <v-slider :min="sliderMinValue" :max="sliderMaxValue" v-model="cutoffValue" color="appColor" class="slider-bar">
                             </v-slider>
                         </v-flex>
