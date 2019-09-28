@@ -102,7 +102,6 @@
                 @show-snackbar="onShowSnackbar"
                 @hide-snackbar="onHideSnackbar"
                 @on-filter-settings-applied="onVariantFilterSettingsApplied"
-                @set-last-click-card="setLastClickCard"
                 @cohort-variant-click="onCohortVariantClick"
                 @cohort-variant-hover="onCohortVariantHover"
                 @cohort-variant-hover-end="onCohortVariantHoverEnd"
@@ -281,7 +280,6 @@
                         @cosmic-variants-viz-change="onCosmicVariantsVizChange"
                         @cosmic-variants-filter-change="onCosmicVariantsFilterChange"
                         @show-coverage-cutoffs="showCoverageCutoffs = true"
-                        @set-last-click-card="setLastClickCard"
                 >
                 </variant-card>
 
@@ -2300,19 +2298,6 @@
                         }
                     })
                 }
-                // if (self.$refs.featureMatrixCardRef.lastActivatedClickTooltip === true) {
-                //     self.$refs.featureMatrixCardRef.onVariantClick(null);
-                // } else {
-                //     self.$refs.variantCardRef.forEach((cardRef) => {
-                //         if (cardRef.lastActivatedClickTooltip === true) {
-                //             cardRef.onVariantClick(null);
-                //         }
-                //     })
-                // }
-            },
-            setLastClickCard: function(cardId) {
-                const self = this;
-                self.lastClickCard = cardId;
             },
             onShowPileupForVariant: function(variant) {
                 let self = this;

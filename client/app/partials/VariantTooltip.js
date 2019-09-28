@@ -193,6 +193,7 @@ export default class VariantTooltip {
                 tooltipPos.arrowClasses.push("chevron-" + key1);
                 tooltipPos.arrowClasses.push("chevron-" + key2);
             }
+            return found;
         };
 
         coord.preferredPositions.forEach(function (preferredPos) {
@@ -211,7 +212,10 @@ export default class VariantTooltip {
             let pp = coord.preferredPositions[0];
             let key1 = Object.keys(pp)[0];
             let key2 = pp[key1][0];
-            assignTooltip(key1, key2, true)
+            found = assignTooltip(key1, key2, true);
+            if (!found) {
+                console.log("Could not find position for tooltip");
+            }
         }
     }
 

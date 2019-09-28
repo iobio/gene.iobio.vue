@@ -227,7 +227,6 @@
                              @cohort-variant-click="cohortVariantClick"
                              @cohort-variant-hover="cohortVariantHover"
                              @cohort-variant-hover-end="cohortVariantHoverEnd"
-                             @set-last-click-card="setLastClickCard"
                              @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj, cohortModel.allSomaticFeaturesLookup, cohortModel.getAllFilterPassingVariants())">
                         </feature-matrix-card>
                     </v-tab-item>
@@ -779,9 +778,6 @@
             },
             cohortVariantHoverEnd: function () {
                 this.$emit('cohort-variant-hover-end', this);
-            },
-            setLastClickCard: function(cardId) {
-                this.$emit('set-last-click-card', cardId);
             }
         },
         created: function () {

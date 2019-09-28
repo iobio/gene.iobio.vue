@@ -198,8 +198,7 @@
                 columnLabelSymbol: this.columnHeaderSymbol,
                 adjustTooltipCoordinates: function (variant) {
                 },
-                showSettings: false,
-                lastActivatedClickTooltip: false
+                showSettings: false
             }
         },
 
@@ -322,9 +321,6 @@
                 this.$refs.featureMatrixVizRef.selectVariant(variant, clazz);
             },
             onVariantClick: function (variant) {
-                // TODO: problem is here - as soon as the emitter for set last click card is called
-                // TODO: we don't call the next emitter of cohort-variant-click
-                // Something weird with timing I think
                 let tipType = "click";
                 if (variant) {
                     // Hide hover tip and show click tip
@@ -332,7 +328,6 @@
                     this.showVariantTooltip(variant, tipType, false);
                 } else {
                     this.hideVariantTooltip(tipType);
-                    // this.$emit('set-last-click-card', null);
                 }
                 this.$emit('cohort-variant-click', variant, this, 'featureMatrix');
             },
@@ -353,7 +348,6 @@
                 if (tipType === "click") {
                     tooltip = d3.select("#click-tooltip");
                     tooltipObj = self.clickTooltip;
-                    self.$emit('set-last-click-card', 'featureMatrix');
                 }
 
                 if (lock) {
@@ -366,15 +360,16 @@
                 let coord = {
                     'x': x,
                     'y': y,
-                    'height': self.$el.offsetHeight,
+                    'height': 15,
+                    //'height': self.$el.offsetHeight,
                     // tooltip can span across width of main window
                     'parentWidth': self.$el.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.offsetWidth,
-                    'preferredPositions': [{right: ['middle', 'top', 'bottom']},
+                    'preferredPositions': [
+                        {right: ['middle', 'top', 'bottom']},
+                        {bottom: ['right', 'left', 'center']},
                         {top: ['center', 'right', 'left']},
-                        {left: ['middle', 'top', 'bottom']},
-                        {bottom: ['right', 'left', 'center']}]
+                        {left: ['middle', 'top', 'bottom']}]
                 };
-
                 tooltipObj.fillAndPositionTooltip(tooltip,
                     variant,
                     self.selectedGene,
