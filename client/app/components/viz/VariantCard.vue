@@ -440,7 +440,6 @@
                 }
             },
             onVariantClick: function (variant) {
-                // tooltip TODO: pass in X, Y coordinates here...
                 if (this.showDepthViz) {
                     if (variant) {
                         this.showCoverageCircle(variant);
@@ -450,15 +449,12 @@
                     let tipType = "click";
                     if (variant) {
                         this.showVariantCircle(variant, true);
-
                         // Hide hover tip and show click tip
                         this.hideVariantTooltip("hover");
-                        // TODO: have to figure out how to lock here so that hover tooltip doesn't pop up
                         this.showVariantTooltip(variant, tipType, false);
                     } else {
                         this.hideVariantTooltip(tipType);
-                        //this.lastActivatedClickTooltip = false;
-                        this.$emit('set-last-click-card', null);
+                        // this.$emit('set-last-click-card', null);
                     }
                 }
                 this.$emit('cohort-variant-click', variant, this, this.sampleModel.id);
@@ -495,7 +491,7 @@
                     // self.lastActivatedClickTooltip = true;
                     tooltip = d3.select("#click-tooltip");
                     tooltipObj = self.clickTooltip;
-                    self.$emit('set-last-click-card', self.sampleModel.id);
+                    // self.$emit('set-last-click-card', self.sampleModel.id);
                 }
 
                 // TODO: will lock work with click tooltip

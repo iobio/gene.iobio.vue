@@ -103,6 +103,9 @@
                 @hide-snackbar="onHideSnackbar"
                 @on-filter-settings-applied="onVariantFilterSettingsApplied"
                 @set-last-click-card="setLastClickCard"
+                @cohort-variant-click="onCohortVariantClick"
+                @cohort-variant-hover="onCohortVariantHover"
+                @cohort-variant-hover-end="onCohortVariantHoverEnd"
         >
         </navigation>
 
@@ -544,7 +547,6 @@
                 self.selectedGene = 'fakeGene1';
                 self.selectedTranscript = 'fakeTranscript1';
             } else {
-                self.cardWidth = self.$el.offsetWidth;
                 self.cardWidth = window.innerWidth;
 
                 self.mainContentWidth = $('main.content .container').outerWidth();
@@ -907,7 +909,9 @@
                 return new Promise(function (resolve, reject) {
 
                     if (self.models && self.models.length > 0) {
-                        self.cardWidth = $('#genes-card').innerWidth();
+                        let cardWidthScale = 1;
+                        if (self.initialLoad) // TODO:
+                        self.cardWidth = $('#genes-card').innerWidth() * 0.85;
                         var options = {'getKnownVariants': self.showKnownVariantsCard};
                         options['getCosmicVariants'] = self.showCosmicVariantsCard;
                         options['loadFromFlag'] = loadingFromFlagEvent;
@@ -1257,6 +1261,7 @@
             onCohortVariantClick: function (variant, sourceComponent, sampleModelId) {
                 const self = this;
                 if (variant) {
+                    self.lastClickCard = sampleModelId;
                     self.calcFeatureMatrixWidthPercent();
                     self.selectedVariant = variant;
                     self.selectedVariantParentSampleId = sampleModelId;
@@ -1265,6 +1270,9 @@
                     self.activeGeneVariantTab = self.isBasicMode ? "feature-matrix-tab" : "var-detail-tab";
                     self.showVariantExtraAnnots(sampleModelId, variant);
 
+                    if (self.$refs.navRef && sourceComponent != self.$refs.navRef) {
+                        self.$refs.navRef.selectVariant(variant, 'current');
+                    }
                     self.$refs.variantCardRef.forEach(function (variantCard) {
                         if (sourceComponent == null || variantCard != sourceComponent) {
                             variantCard.hideVariantCircle(true);
@@ -1304,6 +1312,7 @@
             },
             deselectVariant: function () {
                 const self = this;
+                self.lastClickCard = null;
                 self.selectedVariant = null;
                 self.selectedVariantRelationship = null;
                 self.activeGeneVariantTab = "feature-matrix-tab";

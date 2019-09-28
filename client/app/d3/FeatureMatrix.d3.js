@@ -453,6 +453,7 @@ export default function featureMatrixD3() {
                 }
             });
 
+            // Add row bound so that we can highlight on hovers & clicks
             rows.append('rect')
                 .attr('class', 'rowbox')
                 .attr('x', function () {
@@ -500,31 +501,31 @@ export default function featureMatrixD3() {
 
             g.selectAll('rect.cellbox')
                 .on("mouseover", function (d) {
-                    var colObject = d3.select(this.parentNode.parentNode).datum();
+                    var rowObject = d3.select(this.parentNode.parentNode).datum();
 
-                    var column = d3.select(this.parentNode.parentNode);
-                    column.classed("active", true);
+                    var row = d3.select(this.parentNode.parentNode);
+                    row.classed("active", true);
 
                     // Get screen coordinates of column.  We will use this to position the
                     // tooltip above the column.
-                    var matrix = column.node()
+                    var matrix = row.node()
                         .getScreenCTM()
-                        .translate(+column.node().getAttribute("cx"), +column.node().getAttribute("cy"));
+                        .translate(+row.node().getAttribute("cx"), +row.node().getAttribute("cy"));
 
                     // Firefox doesn't consider the transform (slideout's shift left) with the getScreenCTM() method,
                     // so instead the app will use getBoundingClientRect() method instead which does take into consideration
                     // the transform.
-                    var boundRect = column.node().getBoundingClientRect();
-                    colObject.screenXMatrix = d3.round(boundRect.left + (boundRect.width / 2));
+                    var boundRect = row.node().getBoundingClientRect();
+                    rowObject.screenXMatrix = d3.round(boundRect.left + boundRect.width);
 
                     // Since the body is vertically scrollable, we need to calculate the y by offsetting to a height of the
                     // scroll position in the container.
-                    colObject.screenYMatrix = window.pageYOffset + matrix.f + margin.top;
+                    rowObject.screenYMatrix = window.pageYOffset + matrix.f; //+ margin.top;
 
                     // If tooltip sits outside of the of the feature matrix, so make necessary adjustments
-                    chart.adjustTooltipCoordinates()(colObject);
+                    chart.adjustTooltipCoordinates()(rowObject);
 
-                    dispatch.d3mouseover(colObject);
+                    dispatch.d3mouseover(rowObject);
                 })
                 .on("mouseout", function (d) {
                     var column = d3.select(this.parentNode.parentNode);

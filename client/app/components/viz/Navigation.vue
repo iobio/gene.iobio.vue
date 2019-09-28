@@ -224,10 +224,10 @@
                              :hoverTooltip="hoverTooltip"
                              :clickTooltip="clickTooltip"
                              :width="0"
-                             @cohort-variant-click="$emit('onCohortVariantClick')"
-                             @cohort-variant-hover="$emit('onCohortVariantHover')"
-                             @cohort-variant-hover-end="$emit('onCohortVariantHoverEnd')"
-                             @set-last-click-card="$emit('set-last-click-card')"
+                             @cohort-variant-click="cohortVariantClick"
+                             @cohort-variant-hover="cohortVariantHover"
+                             @cohort-variant-hover-end="cohortVariantHoverEnd"
+                             @set-last-click-card="setLastClickCard"
                              @variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj, cohortModel.allSomaticFeaturesLookup, cohortModel.getAllFilterPassingVariants())">
                         </feature-matrix-card>
                     </v-tab-item>
@@ -769,6 +769,19 @@
             },
             onVariantClick: function (variant) {
                 this.$refs.featureMatrixCardRef.onVariantClick(variant);
+            },
+            cohortVariantClick: function (variant) {
+                let sampleModelId = variant != null ? variant.sampleModelId : '';
+                this.$emit('cohort-variant-click', variant, this, sampleModelId);
+            },
+            cohortVariantHover: function (variant) {
+                this.$emit('cohort-variant-hover', variant, this);
+            },
+            cohortVariantHoverEnd: function () {
+                this.$emit('cohort-variant-hover-end', this);
+            },
+            setLastClickCard: function(cardId) {
+                this.$emit('set-last-click-card', cardId);
             }
         },
         created: function () {

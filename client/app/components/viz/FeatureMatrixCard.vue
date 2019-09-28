@@ -322,19 +322,19 @@
                 this.$refs.featureMatrixVizRef.selectVariant(variant, clazz);
             },
             onVariantClick: function (variant) {
+                // TODO: problem is here - as soon as the emitter for set last click card is called
+                // TODO: we don't call the next emitter of cohort-variant-click
+                // Something weird with timing I think
                 let tipType = "click";
-                if (variant == null) {
-                    // this.lastActivatedClickTooltip = false;
-                    this.hideVariantTooltip(tipType);
-                    this.$emit('set-last-click-card', null);
-                } else {
+                if (variant) {
+                    // Hide hover tip and show click tip
                     this.hideVariantTooltip("hover");
                     this.showVariantTooltip(variant, tipType, false);
-                    this.$emit('set-last-click-card', 'featureMatrix');
-                    // this.lastActivatedClickTooltip = true;
+                } else {
+                    this.hideVariantTooltip(tipType);
+                    // this.$emit('set-last-click-card', null);
                 }
-                let sampleModelId = variant != null ? variant.sampleModelId : '';
-                this.$emit('cohort-variant-click', variant, this, sampleModelId);
+                this.$emit('cohort-variant-click', variant, this, 'featureMatrix');
             },
             onVariantHover: function (variant) {
                 this.showVariantTooltip(variant, 'hover', false);
@@ -353,6 +353,7 @@
                 if (tipType === "click") {
                     tooltip = d3.select("#click-tooltip");
                     tooltipObj = self.clickTooltip;
+                    self.$emit('set-last-click-card', 'featureMatrix');
                 }
 
                 if (lock) {
@@ -367,9 +368,9 @@
                     'y': y,
                     'height': self.$el.offsetHeight,
                     // tooltip can span across width of main window
-                    'parentWidth': self.$el.parentNode.parentNode.offsetWidth,
-                    'preferredPositions': [{top: ['center', 'right', 'left']},
-                        {right: ['middle', 'top', 'bottom']},
+                    'parentWidth': self.$el.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.offsetWidth,
+                    'preferredPositions': [{right: ['middle', 'top', 'bottom']},
+                        {top: ['center', 'right', 'left']},
                         {left: ['middle', 'top', 'bottom']},
                         {bottom: ['right', 'left', 'center']}]
                 };

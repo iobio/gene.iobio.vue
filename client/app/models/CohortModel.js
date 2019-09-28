@@ -656,8 +656,12 @@ class CohortModel {
         // Always add clinvar & cosmic first
         let refModels = [];
         if (addNonCanonical) {
-            refModels.push(map['known-variants'].model);
-            refModels.push(map['cosmic-variants'].model);
+            if (map['known-variants']) {
+                refModels.push(map['known-variants'].model);
+            }
+            if (map['cosmic-variants']) {
+                refModels.push(map['cosmic-variants'].model);
+            }
         }
         return refModels.concat(sortedModels);
     }
