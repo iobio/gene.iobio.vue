@@ -153,9 +153,9 @@ class FilterModel {
 
 
     this.modelFilters = {
-      // 'known-variants': { TODO: this currently breaks clinvar loading
-      //   'clinvar': []
-      // }
+      'known-variants': {
+        'clinvar': []
+      }
     };
 
     /* The current settings to highlight somatic variants */

@@ -205,11 +205,11 @@ export default class EndpointCmd {
     return cmd;
   }
 
-  getClinvarCountsForGene(clinvarUrl, refName, geneObject, binLength, regions) {
+  getCountsForGene(url, refName, geneObject, binLength, regions) {
     var me = this;
     var regionParm = refName + ":" + geneObject.start + "-" + geneObject.end;
 
-    // For the knownVariants service, pass in an argument for the gene region, then pass in eith
+    // For the knownVariants service, pass in an argument for the gene region, then pass in with
     // the length of the bin region or a comma separate string of region parts (e.g. the exons)
     var knownVariantsArgs = [];
     knownVariantsArgs.push("-r");
@@ -232,13 +232,10 @@ export default class EndpointCmd {
     }
     knownVariantsArgs.push("-");
 
-
     // Create an iobio command get get the variants and add any header recs.
-    var tabixArgs = ['-h', clinvarUrl, regionParm];
-
+    var tabixArgs = ['-h', url, regionParm];
     var cmd = new iobio.cmd (me.IOBIO.tabix,         tabixArgs,         {ssl: me.globalApp.useSSL})
                        .pipe(me.IOBIO.knownvariants, knownVariantsArgs, {ssl: false});
-
     return cmd;
   }
 

@@ -353,10 +353,29 @@ class SampleModel {
         var me = this;
         return new Promise(function (resolve, reject) {
             var refName = me._stripRefName(geneObject.chr);
-            me.vcf.promiseGetKnownVariantsHistoData(refName, geneObject, binLength == null ? transcript : null, binLength)
+            me.vcf.promiseGetVariantsHistoData(me.id, refName, geneObject, binLength == null ? transcript : null, binLength)
                 .then(function (results) {
                     if (binLength == null) {
                         var exonBins = me.binKnownVariantsByExons(geneObject, transcript, binLength, results);
+                        resolve(exonBins);
+                    } else {
+                        resolve(results);
+                    }
+                })
+                .catch(function (error) {
+                    reject(error);
+                })
+        })
+    }
+
+    promiseGetCosmicVariantHistoData(geneObject, transcript, binLength) {
+        const me = this;
+        return new Promise(function (resolve, reject) {
+            let refName = me._stripRefName(geneObject.chr);
+            me.vcf.promiseGetVariantsHistoData(me.id, refName, geneObject, binLength == null ? transcript : null, binLength)
+                .then(function (results) {
+                    if (binLength == null) {
+                        let exonBins = me.binKnownVariantsByExons(geneObject, transcript, binLength, results);
                         resolve(exonBins);
                     } else {
                         resolve(results);

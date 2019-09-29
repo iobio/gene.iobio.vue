@@ -275,10 +275,8 @@
                         @cohort-variant-click="onCohortVariantClick"
                         @cohort-variant-hover="onCohortVariantHover"
                         @cohort-variant-hover-end="onCohortVariantHoverEnd"
-                        @known-variants-viz-change="onKnownVariantsVizChange"
-                        @known-variants-filter-change="onKnownVariantsFilterChange"
-                        @cosmic-variants-viz-change="onCosmicVariantsVizChange"
-                        @cosmic-variants-filter-change="onCosmicVariantsFilterChange"
+                        @variants-viz-change="onVariantsVizChange"
+                        @variants-filter-change="onVariantsFilterChange"
                         @show-coverage-cutoffs="showCoverageCutoffs = true"
                 >
                 </variant-card>
@@ -1389,34 +1387,33 @@
                 }
 
             },
-            onKnownVariantsVizChange: function (viz) {
+            onVariantsVizChange: function (viz, trackId) {
                 let self = this;
                 if (viz) {
-                    self.cohortModel.knownVariantsViz = viz;
+                    if (trackId === 'known-variants') {
+                        self.cohortModel.knownVariantViz = viz;
+                    } else if (trackId === 'cosmic-variants') {
+                        self.cohortModel.cosmicVariantViz = viz;
+                    }
                 }
-                if (self.showKnownVariantsCard && self.cohortModel && self.cohortModel.isLoaded && Object.keys(self.selectedGene).length > 0) {
+                if (self.showKnownVariantsCard && self.cohortModel && self.cohortModel.isLoaded
+                    && Object.keys(self.selectedGene).length > 0 && trackId === 'known-variants') {
                     self.cohortModel.promiseLoadKnownVariants(self.selectedGene, self.selectedTranscript);
-                }
-            },
-            onCosmicVariantsVizChange: function (viz) {
-                let self = this;
-                if (viz) {
-                    self.cohortModel.cosmicVariantsViz = viz;
-                }
-                if (self.showCosmicVariantsCard && self.cohortModel && self.cohortModel.isLoaded && Object.keys(self.selectedGene).length > 0) {
+                } else if (self.showCosmicVariantsCard && self.cohortModel && self.cohortModel.isLoaded
+                    && Object.keys(self.selectedGene).length > 0 && trackId === 'cosmic-variants') {
                     self.cohortModel.promiseLoadCosmicVariants(self.selectedGene, self.selectedTranscript);
                 }
-            },
-            onKnownVariantsFilterChange: function (selectedCategories) {
-                let self = this;
-                self.filterModel.setModelFilter('known-variants', 'clinvar', selectedCategories);
 
-                self.cohortModel.setLoadedVariants(self.selectedGene, 'known-variants');
             },
-            onCosmicVariantsFilterChange: function (selectedCategories) {
+            onVariantsFilterChange: function (selectedCategories, trackId) {
                 let self = this;
-                self.filterModel.setModelFilter('cosmic-variants', 'vepImpact', selectedCategories);
-                self.cohortModel.setLoadedVariants(self.selectedGene, 'cosmic-variants');
+                if (trackId === 'known-variants') {
+                    self.filterModel.setModelFilter('known-variants', 'clinvar', selectedCategories);
+                    self.cohortModel.setLoadedVariants(self.selectedGene, 'known-variants');
+                } else if (trackId === 'cosmic-variants') {
+                    // self.filterModel.setModelFilter('cosmic-variants', 'vep', selectedCategories);
+                    self.cohortModel.setLoadedVariants(self.selectedGene, 'cosmic-variants');
+                }
             },
             onRemoveGene: function (geneName) {
                 let self = this;

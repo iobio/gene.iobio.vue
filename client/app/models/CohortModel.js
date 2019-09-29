@@ -626,6 +626,7 @@ class CohortModel {
                 vm.setDisplayName('COSMIC');
 
                 // Version updated 23Sept2019 to v90 release
+                // TODO: pull these in from global
                 let cosmicUrl = "https://s3.amazonaws.com/iobio/samples/vcf/COSMIC_data/v90_05Sept2019/cosmic_all_grch37_v90.vcf.gz";
                 let cosmicTbi = "https://s3.amazonaws.com/iobio/samples/vcf/COSMIC_data/v90_05Sept2019/cosmic_all_grch37_v90.vcf.gz.tbi";
                 if (self.genomeBuildHelper.currentBuild === 'GRCh38') {
@@ -1065,7 +1066,10 @@ class CohortModel {
                 }
 
                 // Note: this is TDS existing framework, can use later on if desired
-                let passesModelFilter = self.filterModel.passesModelFilter(model.id, feature);
+                let passesModelFilter = true;
+                if (model.id !== 'known-variants' && model.id !== 'cosmic-variants') {
+                    passesModelFilter = self.filterModel.passesModelFilter(model.id, feature);
+                }
 
                 // Don't want to filter by front end filters here! Otherwise zooming with active filters will not work b/c variants never get drawn
                 return isTarget && !isHomRef && inRegion && passesModelFilter;

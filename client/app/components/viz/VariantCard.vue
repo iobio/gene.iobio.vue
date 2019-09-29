@@ -138,9 +138,9 @@
     <v-expansion-panel expand class="app-card" id="variant-card" v-model="openState">
         <v-expansion-panel-content :value="openState">
             <div slot="header">
-                <v-avatar v-if="sampleModel.id === 'known-variants' || sampleModel.id === 'cosmic-variants'" class="sample-avatar" size="20">
-                    <span>C</span>
-                </v-avatar>
+                <v-chip v-if="sampleModel.id === 'known-variants' || sampleModel.id === 'cosmic-variants'" color="appColor" small outline>
+                    C
+                </v-chip>
                 <v-avatar v-else-if="sampleModel.isTumor" class="sample-avatar" size="20">
                     <span>T</span>
                 </v-avatar>
@@ -171,27 +171,26 @@
                 <div style="float:left" id="loh-ideo"></div>
             </div>
             <v-card :style="{padding: '5px 10px'}" id="card-viz">
-                <!--TODO: put counts back in eventually-->
-                <!--<known-variants-toolbar-->
-                        <!--v-if="sampleModel.id === 'known-variants'"-->
-                        <!--@knownVariantsVizChange="onKnownVariantsVizChange"-->
-                        <!--@knownVariantsFilterChange="onKnownVariantsFilterChange"-->
-                <!--&gt;-->
-                <!--</known-variants-toolbar>-->
-                <!--<stacked-bar-chart-viz-->
-                        <!--id="known-variants-chart"-->
-                        <!--style="width:100%"-->
-                        <!--v-if="sampleModel.id === 'known-variants' && knownVariantsViz !== 'variants'"-->
-                        <!--:data="sampleModel.variantHistoData"-->
-                        <!--:width="width"-->
-                        <!--:xStart="selectedGene.start"-->
-                        <!--:xEnd="selectedGene.end"-->
-                        <!--:regionStart="regionStart"-->
-                        <!--:regionEnd="regionEnd"-->
-                        <!--:categories="['unknown', 'other', 'benign', 'path']"-->
-                <!--&gt;-->
-                <!--</stacked-bar-chart-viz>-->
-
+                <known-variants-toolbar
+                        v-if="sampleModel.id === 'known-variants' || sampleModel.id === 'cosmic-variants'"
+                        :id="sampleModel.id"
+                        @variantsVizChange="onVariantsVizChange"
+                        @variantsFilterChange="onVariantsFilterChange"
+                >
+                </known-variants-toolbar>
+                <stacked-bar-chart-viz
+                        id="known-variants-chart"
+                        style="width:100%"
+                        v-if="sampleModel.id === 'known-variants' && knownVariantsViz !== 'variants'"
+                        :data="sampleModel.variantHistoData"
+                        :width="width"
+                        :xStart="selectedGene.start"
+                        :xEnd="selectedGene.end"
+                        :regionStart="regionStart"
+                        :regionEnd="regionEnd"
+                        :categories="['unknown', 'other', 'benign', 'path']"
+                >
+                </stacked-bar-chart-viz>
                 <div style="width:100%">
                     <div style="text-align: center; clear: both">
                         <div class="loader vcfloader" v-bind:class="{ hide: !sampleModel.inProgress.loadingVariants }"
@@ -628,12 +627,12 @@
 
 
             },
-            onKnownVariantsVizChange: function (viz) {
+            onVariantsVizChange: function (viz, trackId) {
                 this.knownVariantsViz = viz;
-                this.$emit("known-variants-viz-change", viz);
+                this.$emit("variants-viz-change", viz, trackId);
             },
-            onKnownVariantsFilterChange: function (selectedCategories) {
-                this.$emit("known-variants-filter-change", selectedCategories);
+            onVariantsFilterChange: function (selectedCategories, trackId) {
+                this.$emit("variants-filter-change", selectedCategories, trackId);
             },
             showFlaggedVariant: function (variant) {
                 if (this.showVariantViz) {

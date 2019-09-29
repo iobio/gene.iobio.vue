@@ -87,7 +87,7 @@ class GlobalApp {
   }
 
     getClinvarUrl(build) {
-        var clinvarUrls = {
+        let clinvarUrls = {
             'GRCh37': "ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/archive_2.0/2018/clinvar_20181202.vcf.gz",
             'GRCh38': "ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/archive_2.0/2018/clinvar_20181202.vcf.gz",
 
@@ -98,6 +98,15 @@ class GlobalApp {
         return clinvarUrls[build];
 
     }
+    /* Updated 05Sept2019 to v90 */
+    getCosmicUrl(build) {
+        let cosmicUrls = {
+            'GRCh37': "https://s3.amazonaws.com/iobio/samples/vcf/COSMIC_data/v90_05Sept2019/cosmic_all_grch37_v90.vcf.gz",
+            'GRCh38': "https://s3.amazonaws.com/iobio/samples/vcf/COSMIC_data/v90_05Sept2019/cosmic_all_grch39_v90.vcf.gz"
+        };
+        return cosmicUrls[build];
+    }
+
 }
 
 export default GlobalApp

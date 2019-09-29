@@ -805,27 +805,19 @@ var effectCategories = [
 
   };
 
-
-
-
-
-  exports.promiseGetKnownVariantsHistoData = function(refName, geneObject, transcript, binLength) {
-    var me = this;
-
-
-    return new Promise( function(resolve, reject) {
-
-      me._getKnownVariantsHistoDataImpl(refName, geneObject, transcript, binLength,
-        function(data) {
-          if (data) {
-            resolve(data);
-          } else {
-            reject();
-          }
+    exports.promiseGetVariantsHistoData = function(trackId, refName, geneObject, transcript, binLength) {
+        var me = this;
+        return new Promise( function(resolve, reject) {
+            me._getVariantsHistoDataImpl(trackId, refName, geneObject, transcript, binLength,
+                function(data) {
+                    if (data) {
+                        resolve(data);
+                    } else {
+                        reject();
+                    }
+                });
         });
-
-    });
-  }
+    }
 
   exports._getExonRegions = function(transcript) {
 
@@ -847,13 +839,21 @@ var effectCategories = [
       })
   }
 
-  exports._getKnownVariantsHistoDataImpl = function(refName, geneObject, transcript, binLength, callback) {
+  exports._getVariantsHistoDataImpl = function(trackId, refName, geneObject, transcript, binLength, callback) {
+    const me = this;
 
-    var me = this;
+    let clinvarUrl = globalApp.getClinvarUrl(me.getGenomeBuildHelper().getCurrentBuildName());
+    // let clinvarUrl = me.getGenomeBuildHelper().getBuildResource(me.getGenomeBuildHelper().RESOURCE_CLINVAR_VCF_S3);
+    let cosmicUrl = globalApp.getCosmicUrl(me.getGenomeBuildHelper().getCurrentBuildName());
 
-    var clinvarUrl = me.getGenomeBuildHelper().getBuildResource(me.getGenomeBuildHelper().RESOURCE_CLINVAR_VCF_S3);
+    let url = null;
+    if (trackId == 'cosmic-variants') {
+      url = cosmicUrl;
+    } else if (trackId == 'known-variants') {
+      url = clinvarUrl;
+    }
 
-    var cmd = me.getEndpoint().getClinvarCountsForGene(clinvarUrl, refName, geneObject, binLength, (binLength == null ? me._getExonRegions(transcript) : null));
+    var cmd = me.getEndpoint().getCountsForGene(url, refName, geneObject, binLength, (binLength == null ? me._getExonRegions(transcript) : null));
 
     var summaryData = "";
     // Get the results from the iobio command
@@ -878,16 +878,14 @@ var effectCategories = [
           if (record.trim().length > 0) {
             var fields = record.split('\t');
             var resultRec = {};
-
             var i = 0;
             fieldNames.forEach(function(fieldName) {
               // All fields are numeric
               resultRec[fieldName] = +fields[i];
               i++;
-            })
+            });
             // Find the mid-point of the interval (binned region)
             resultRec.point = resultRec.start + ((resultRec.end - resultRec.start) / 2);
-
             results.push(resultRec);
           }
         }
@@ -895,13 +893,10 @@ var effectCategories = [
       });
       callback(results);
     });
-
     cmd.on('error', function(error) {
        console.log(error);
     });
-
     cmd.run();
-
   }
 
 

@@ -90,7 +90,7 @@
     <div id="known-variants-toolbar">
       <div style="width:285px;padding-top:10px;margin-top:0px;margin-right:10px;float:left">
         <v-radio-group v-model="viz" row>
-            <v-radio label="Variants" value="variants"></v-radio>
+            <v-radio v-if="id != 'cosmic-variants'" label="Variants" value="variants"></v-radio>
             <v-radio label="Counts" value="histo"></v-radio>
             <v-radio style="min-width: 120px" label="Counts in Exons" value="histoExon"></v-radio>
         </v-radio-group>
@@ -98,7 +98,7 @@
 
 
       <div id="clinvar-filter-box" style="margin-left:10px;width:400px;float:left"
-       v-if="viz == 'variants'">
+       v-if="viz === 'variants'">
         <v-select
                 label="Filter by clinical significance..."
                 v-bind:items="categories"
@@ -118,6 +118,7 @@ export default {
   components: {
   },
   props: {
+      id: null
   },
   data () {
     return {
@@ -141,18 +142,22 @@ export default {
   },
   watch: {
     viz: function() {
-      this.$emit("knownVariantsVizChange", this.viz);
+      this.$emit("variantsVizChange", this.viz, this.id);
     },
     selectedCategories: function() {
-      this.$emit("knownVariantsFilterChange", this.selectedCategories);
+      this.$emit("variantsFilterChange", this.selectedCategories, this.id);
     }
 
   },
   methods: {
   },
   mounted: function() {
-    this.viz = 'variants';
-    this.$emit("knownVariantsFilterChange", this.selectedCategories);
+    if (this.id == 'cosmic-variants') {
+        this.viz = 'histo';
+    } else {
+        this.viz = 'variants';
+        this.$emit("variantsFilterChange", this.selectedCategories, this.id);
+    }
   }
 }
 
