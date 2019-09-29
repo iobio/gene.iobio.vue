@@ -162,11 +162,10 @@ class SampleModel {
     }
 
     getAnnotationScheme() {
-
         // If this is the refseq gene model, set the annotation
         // scheme on the filter card to 'VEP' since snpEff will
         // be bypassed at this time.
-        if (this.getGeneModel().geneSource == 'refseq') {
+        if (this.getGeneModel().geneSource === 'refseq') {
             return "VEP";
         } else {
             return this.cohort.annotationScheme;
@@ -970,7 +969,6 @@ class SampleModel {
                     me.lastVcfAlertify.dismiss();
                 }
                 if (success) {
-
                     me.vcfUrlEntered = true;
                     me.vcfFileOpened = false;
                     me.getVcfRefName = null;
@@ -987,9 +985,7 @@ class SampleModel {
                     callback(success);
                 }
             });
-
         }
-
     }
 
 
@@ -1565,7 +1561,7 @@ class SampleModel {
                                         null,   // regions
                                         isMultiSample, // is multi-sample
                                         samplesInFile,
-                                        me.getId() === 'known-variants' ? 'none' : me.getAnnotationScheme().toLowerCase(),
+                                        me.getAnnotationScheme().toLowerCase(),
                                         me.getTranslator().clinvarMap,
                                         me.getGeneModel().geneSource === 'refseq',
                                         me.isBasicMode || me.globalApp.getVariantIdsForGene,  // hgvs notation
@@ -2272,9 +2268,8 @@ class SampleModel {
 
         // Load the clinvar info for the variants loaded from the vcf
         var sortedFeatures = theVcfData.features.sort(SampleModel.orderVariantsByPosition);
-        var sortedClinvarVariants = clinvarVariants.sort(SampleModel.orderVariantsByPosition)
+        var sortedClinvarVariants = clinvarVariants.sort(SampleModel.orderVariantsByPosition);
         loadClinvarProperties(sortedFeatures, sortedClinvarVariants);
-
     }
 
 

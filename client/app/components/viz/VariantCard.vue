@@ -9,12 +9,10 @@
 
     #variant-card
         .sample-avatar
-            margin: 0px 4px
-            background-color: $app-color
             span
-                color: white
+                color: $app-color
                 font-weight: 600
-                font-size: 12px
+                font-size: 16px
 
 
         #sample-label
@@ -140,10 +138,13 @@
     <v-expansion-panel expand class="app-card" id="variant-card" v-model="openState">
         <v-expansion-panel-content :value="openState">
             <div slot="header">
-                <v-avatar v-if="sampleModel.isTumor" class="sample-avatar" size="18">
+                <v-avatar v-if="sampleModel.id === 'known-variants' || sampleModel.id === 'cosmic-variants'" class="sample-avatar" size="20">
+                    <span>C</span>
+                </v-avatar>
+                <v-avatar v-else-if="sampleModel.isTumor" class="sample-avatar" size="20">
                     <span>T</span>
                 </v-avatar>
-                <v-avatar v-if="!sampleModel.isTumor" class="sample-avatar" size="18">
+                <v-avatar v-else-if="!sampleModel.isTumor" class="sample-avatar" size="20">
                     <span>N</span>
                 </v-avatar>
                 <span id="sample-label">
@@ -170,25 +171,26 @@
                 <div style="float:left" id="loh-ideo"></div>
             </div>
             <v-card :style="{padding: '5px 10px'}" id="card-viz">
-                <known-variants-toolbar
-                        v-if="sampleModel.id === 'known-variants'"
-                        @knownVariantsVizChange="onKnownVariantsVizChange"
-                        @knownVariantsFilterChange="onKnownVariantsFilterChange"
-                >
-                </known-variants-toolbar>
-                <stacked-bar-chart-viz
-                        id="known-variants-chart"
-                        style="width:100%"
-                        v-if="sampleModel.id === 'known-variants' && knownVariantsViz !== 'variants'"
-                        :data="sampleModel.variantHistoData"
-                        :width="width"
-                        :xStart="selectedGene.start"
-                        :xEnd="selectedGene.end"
-                        :regionStart="regionStart"
-                        :regionEnd="regionEnd"
-                        :categories="['unknown', 'other', 'benign', 'path']"
-                >
-                </stacked-bar-chart-viz>
+                <!--TODO: put counts back in eventually-->
+                <!--<known-variants-toolbar-->
+                        <!--v-if="sampleModel.id === 'known-variants'"-->
+                        <!--@knownVariantsVizChange="onKnownVariantsVizChange"-->
+                        <!--@knownVariantsFilterChange="onKnownVariantsFilterChange"-->
+                <!--&gt;-->
+                <!--</known-variants-toolbar>-->
+                <!--<stacked-bar-chart-viz-->
+                        <!--id="known-variants-chart"-->
+                        <!--style="width:100%"-->
+                        <!--v-if="sampleModel.id === 'known-variants' && knownVariantsViz !== 'variants'"-->
+                        <!--:data="sampleModel.variantHistoData"-->
+                        <!--:width="width"-->
+                        <!--:xStart="selectedGene.start"-->
+                        <!--:xEnd="selectedGene.end"-->
+                        <!--:regionStart="regionStart"-->
+                        <!--:regionEnd="regionEnd"-->
+                        <!--:categories="['unknown', 'other', 'benign', 'path']"-->
+                <!--&gt;-->
+                <!--</stacked-bar-chart-viz>-->
 
                 <div style="width:100%">
                     <div style="text-align: center; clear: both">
@@ -838,11 +840,7 @@
             },
             isKnownOrCosmicTrack: function () {
                 let self = this;
-                if (self.sampleModel.id === 'known-variants' || self.sampleModel.id === 'cosmic-variants') {
-                    return true;
-                } else {
-                    return false;
-                }
+                return self.sampleModel.id === 'known-variants' || self.sampleModel.id === 'cosmic-variants';
             },
             trackColor: function () {
                 let self = this;

@@ -259,7 +259,7 @@
                         :isBasicMode="isBasicMode"
                         :sampleModel="model"
                         :canonicalSampleIds="canonicalSampleIds"
-                        :classifyVariantSymbolFunc="model.id === 'known-variants' ? model.classifyByClinvar : model.classifyByImpact"
+                        :classifyVariantSymbolFunc="model.classifyByImpact"
                         :hoverTooltip="hoverTooltip"
                         :clickTooltip="clickTooltip"
                         :selectedGene="selectedGene"
@@ -2251,15 +2251,21 @@
                     if (self.$refs.variantCardRef && filterInfo.tumorOnly) {
                         self.$refs.variantCardRef.forEach((cardRef) => {
                             if (cardRef.sampleModel.isTumor === true) {
-                                let filtPromise = cardRef.promiseFilterVariants(filterInfo, self.selectedTrackId, selectedVarId);
-                                promises.push(filtPromise);
+                                // TODO: allow filtering on cosmic/clinvar tracks...
+                                if (cardRef.sampleModel.id !== 'cosmic-variants' && cardRef.sampleModel.id !== 'known-variants') {
+                                    let filtPromise = cardRef.promiseFilterVariants(filterInfo, self.selectedTrackId, selectedVarId);
+                                    promises.push(filtPromise);
+                                }
                             }
                         });
                         // Otherwise apply to all tracks
                     } else if (self.$refs.variantCardRef) {
-                        self.$refs.variantCardRef.forEach((cardRef) => {
-                            let filtPromise = cardRef.promiseFilterVariants(filterInfo, self.selectedTrackId, selectedVarId);
-                            promises.push(filtPromise);
+                        self.$refs.variantCardRef.forEach((cardRef) => {                                // TODO: allow filtering on cosmic/clinvar tracks...
+                            // TODO: allow filtering on cosmic/clinvar tracks...
+                            if (cardRef.sampleModel.id !== 'cosmic-variants' && cardRef.sampleModel.id !== 'known-variants') {
+                                let filtPromise = cardRef.promiseFilterVariants(filterInfo, self.selectedTrackId, selectedVarId);
+                                promises.push(filtPromise);
+                            }
                         });
                     }
                 }

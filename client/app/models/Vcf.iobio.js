@@ -1122,7 +1122,7 @@ var effectCategories = [
         var end = start + batchSize;
         var batchOfVariants = theVcfData.features.slice(start, end <= theVcfData.features.length ? end : theVcfData.features.length);
 
-        if (globalApp.isClinvarOffline || globalApp.clinvarSource == 'vcf') {
+        if (globalApp.isClinvarOffline || globalApp.clinvarSource === 'vcf') {
           var promise = me.promiseGetClinvarVCFImpl(batchOfVariants, refName, geneObject, clinvarGenes, clinvarLoadVariantsFunction)
           .then(  function() {
 
@@ -1191,7 +1191,8 @@ var effectCategories = [
       if (globalApp.isOffline) {
         clinvarUrl = OFFLINE_CLINVAR_VCF_BASE_URL + me.getGenomeBuildHelper().getBuildResource(me.getGenomeBuildHelper().RESOURCE_CLINVAR_VCF_OFFLINE)
       } else {
-        clinvarUrl = me.getGenomeBuildHelper().getBuildResource(me.getGenomeBuildHelper().RESOURCE_CLINVAR_VCF_S3);
+        // clinvarUrl = me.getGenomeBuildHelper().getBuildResource(me.getGenomeBuildHelper().RESOURCE_CLINVAR_VCF_S3);
+          clinvarUrl = globalApp.getClinvarUrl(me.getGenomeBuildHelper().getCurrentBuildName());
       }
 
       var regions = me._getClinvarVariantRegions(refName, geneObject, variants, clinvarGenes);
@@ -1213,7 +1214,7 @@ var effectCategories = [
         var vcfObjects = [];
 
         clinvarRecs.forEach(function(record) {
-          if (record.charAt(0) == "#" || record == "") {
+          if (record.charAt(0) === "#" || record === "") {
 
           } else {
 
@@ -1241,18 +1242,13 @@ var effectCategories = [
 
           }
         });
-
-
         clinvarLoadVariantsFunction(vcfObjects);
-
         resolve();
-
       });
 
       cmd.on('error', function(error) {
         console.log(error);
       });
-
       cmd.run();
     });
 
@@ -2092,11 +2088,11 @@ var effectCategories = [
                   var entry = {clinsig: "", phenotype: "", accession: ""};
                   clinvarSubmissions.push(entry);
               }
-          }
+          };
 
           info.split(";").forEach(function (annotToken) {
 
-              if (annotToken.indexOf("CLNSIG=") == 0) {
+              if (annotToken.indexOf("CLNSIG=") === 0) {
                   var clinvarCode = annotToken.substring(7, annotToken.length);
 
                   initClinvarSubmissions(result.clinvarSubmissions, clinvarCode.split("|").length);
@@ -2125,7 +2121,7 @@ var effectCategories = [
 
                       idx++;
                   })
-              } else if (annotToken.indexOf("CLNDBN=") == 0) {
+              } else if (annotToken.indexOf("CLNDBN=") === 0) {
                   var phenotypesStr = annotToken.substring(7, annotToken.length);
                   var idx = 0;
                   phenotypesStr.split("|").forEach(function (pheno) {
@@ -2136,7 +2132,7 @@ var effectCategories = [
                       result.clinVarPhenotype[pheno] = idx.toString();
                       idx++;
                   })
-              } else if (annotToken.indexOf("CLNACC=") == 0) {
+              } else if (annotToken.indexOf("CLNACC=") === 0) {
                   var accessionIds = annotToken.substring(7, annotToken.length);
                   var idx = 0;
                   accessionIds.split("|").forEach(function (accessionId) {

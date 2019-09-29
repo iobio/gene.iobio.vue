@@ -646,9 +646,9 @@ export default {
 
     clinvar: function(variant) {
       if (variant.isProxy) {
-        if (variant.clinvarClinSig == "pathogenic") {
+        if (variant.clinvarClinSig === "pathogenic") {
           return "clinvar_path";
-        } else if (variant.clinvarClinSig == "likely pathogenic") {
+        } else if (variant.clinvarClinSig === "likely pathogenic") {
           return "clinvar_lpath";
         } else {
           return "";

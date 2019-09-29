@@ -788,7 +788,7 @@
             // Prevent enter from submitting form
             document.querySelector('#search-gene-name')
                 .addEventListener('keypress', function (e) {
-                    var key = e.which || e.keyCode;
+                    let key = e.which || e.keyCode;
                     if (key === 13) { // Return key
                         e.preventDefault();
                     }

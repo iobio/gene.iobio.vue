@@ -26,7 +26,7 @@ class GlobalApp {
     this.serverInstance        = "@hostname@/";  // this will be replace with the name of the server used for this deployement
     this.serverCacheDir        = "local_cache/"; // this is the directory from the server instance where resource files (like clinvar vcf) will be served
     this.serverDataDir         = "local_cache/"; // this is the directory from the server instance where data files will be served
-    this.offlineUrlTag         = "site:"         // this is the first part if the vcf/bam URL that indicates that a special URL should be constructed to get to files served from the local isntance
+    this.offlineUrlTag         = "site:";        // this is the first part if the vcf/bam URL that indicates that a special URL should be constructed to get to files served from the local isntance
 
     this.useSSL                = true;
     this.useServerCache        = false;
@@ -85,6 +85,19 @@ class GlobalApp {
     this.impactFieldToFilter         = 'highestImpactVep';
     this.impactFieldToColor          = 'vepImpact';
   }
+
+    getClinvarUrl(build) {
+        var clinvarUrls = {
+            'GRCh37': "ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/archive_2.0/2018/clinvar_20181202.vcf.gz",
+            'GRCh38': "ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/archive_2.0/2018/clinvar_20181202.vcf.gz",
+
+            // Do not work as of Oct2019
+            // 'GRCh37': 'https://iobio.s3.amazonaws.com/gene/clinvar/clinvar.GRCh37.vcf.gz',
+            // 'GRCh38': 'https://iobio.s3.amazonaws.com/gene/clinvar/clinvar.GRCh38.vcf.gz'
+        };
+        return clinvarUrls[build];
+
+    }
 }
 
 export default GlobalApp

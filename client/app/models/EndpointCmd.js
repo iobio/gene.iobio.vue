@@ -119,8 +119,6 @@ export default class EndpointCmd {
     // Skip snpEff if RefSeq transcript set or we are just annotating with the vep engine
     if (annotationEngine === 'none') {
       // skip annotation if annotationEngine set to  'none'
-
-
     } else if (isRefSeq || annotationEngine === 'vep') {
       // VEP
       var vepArgs = [];
@@ -167,7 +165,7 @@ export default class EndpointCmd {
           cmd = cmd.pipe(me.IOBIO.vep, vepArgs, {ssl: me.globalApp.useSSL, urlparams: urlParameters});
       }
 
-    } else if (annotationEngine == 'snpeff') {
+    } else if (annotationEngine === 'snpeff') {
         cmd = cmd.pipe(me.IOBIO.snpEff, [], {ssl: me.globalApp.useSSL});
     }
     return cmd;
@@ -500,7 +498,8 @@ export default class EndpointCmd {
     // Create an iobio command get get the variants from clinvar for the region of the gene
     var regionParm = refName + ":" + regionStart + "-" + regionEnd;
 
-    var clinvarUrl = me.genomeBuildHelper.getBuildResource(me.genomeBuildHelper.RESOURCE_CLINVAR_VCF_S3);
+    // var clinvarUrl = me.genomeBuildHelper.getBuildResource(me.genomeBuildHelper.RESOURCE_CLINVAR_VCF_S3);
+      var clinvarUrl = me.globalApp.getClinvarUrl(me.genomeBuildHelper.getCurrentBuildName());
 
     var tabixArgs = ['-h', clinvarUrl, regionParm];
     var cmd = new iobio.cmd (me.IOBIO.tabix, tabixArgs, {ssl: me.globalApp.useSSL});
