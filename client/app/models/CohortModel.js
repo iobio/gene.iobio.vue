@@ -50,7 +50,7 @@ class CohortModel {
         this.flaggedVariants = [];
 
         this.knownVariantViz = 'variants';     // variants, histo, histoExon
-        this.cosmicVariantViz = 'variants';
+        this.cosmicVariantViz = 'counts';
         this.demoCmmlFiles = false;             // If true, loads demo CMML data - ONLY LOCAL
         this.demoVcfs = this.getDemoVcfs();
         this.demoBams = this.getDemoBams();
@@ -360,7 +360,7 @@ class CohortModel {
 
             let promises = [];
             promises.push(self.promiseAddClinvarSample());
-            promises.push(self.promiseAddCosmicSample());
+            // promises.push(self.promiseAddCosmicSample()); TODO: once we have cosmic coming back in, do this again
             modelInfos.forEach(function (modelInfo) {
                 promises.push(self.promiseAddSample(modelInfo));
             });
@@ -625,14 +625,8 @@ class CohortModel {
                 vm.setId('cosmic-variants');
                 vm.setDisplayName('COSMIC');
 
-                // Version updated 23Sept2019 to v90 release
-                // TODO: pull these in from global
-                let cosmicUrl = "https://s3.amazonaws.com/iobio/samples/vcf/COSMIC_data/v90_05Sept2019/cosmic_all_grch37_v90.vcf.gz";
-                let cosmicTbi = "https://s3.amazonaws.com/iobio/samples/vcf/COSMIC_data/v90_05Sept2019/cosmic_all_grch37_v90.vcf.gz.tbi";
-                if (self.genomeBuildHelper.currentBuild === 'GRCh38') {
-                    cosmicUrl = "https://s3.amazonaws.com/iobio/samples/vcf/COSMIC_data/v90_05Sept2019/cosmic_all_grch38_v90.vcf.gz";
-                    cosmicTbi = "https://s3.amazonaws.com/iobio/samples/vcf/COSMIC_data/v90_05Sept2019/cosmic_all_grch38_v90.vcf.gz.tbi";
-                }
+                let cosmicUrl = self.globalApp.getCosmicUrl(self.genomeBuildHelper.getCurrentBuild());
+                let cosmicTbi = cosmicUrl + ".tbi";
                 vm.onVcfUrlEntered(cosmicUrl, cosmicTbi, function () {
                         self.sampleModels.push(vm);
                         let sample = {'id': 'cosmic-variants', 'model': vm, 'order': 1};
@@ -907,6 +901,22 @@ class CohortModel {
                     self.getModel('known-variants').inProgress.loadingVariants = false;
                     self.setVariantHistoData('known-variants', data);
                     resolve(data);
+                })
+        })
+    }
+
+    promiseGetCosmicVariantIds(theGene, theTranscript) {
+        let self = this;
+        return new Promise(function(resolve, reject) {
+            self.getModel('cosmic-variants').inProgress.loadingVariants = true;
+            self.sampleMap['cosmic-variants'].model.promiseGetVariantIds(theGene, theTranscript, [self.sampleMap['cosmic-variants'].model])
+                .then(function(resultMap) {
+                    self.getModel('cosmic-variants').inProgress.loadingVariants = false;
+                    self.setCosmicVariantIds(theGene, 'cosmic-variants');
+                    resolve(resultMap);
+                })
+                .catch((error) => {
+                    reject('Problem loading cosmic variants: ' + error);
                 })
         })
     }
@@ -1227,12 +1237,10 @@ class CohortModel {
 
             // Always annotate COSMIC so we can put status in feature matrix
             // OPTIMIZATION TODO: load cosmic annotation upon app launch (non-blocking)
-            let p = self.promiseLoadCosmicVariants(theGene, theTranscript)
+            let p = self.promiseGetCosmicVariantIds(theGene, theTranscript)
                 .then(function (resultMap) {
-                    if (self.cosmicVariantViz === 'variants') {
-                        for (let id in resultMap) {
-                            theResultMap[id] = resultMap[id];
-                        }
+                    for (let id in resultMap) {
+                        theResultMap[id] = resultMap[id];
                     }
                 });
             annotatePromises.push(p);
@@ -1259,7 +1267,7 @@ class CohortModel {
 
     /* Assigns bool to each variant telling if in COSMIC or not.
     NOTE: this is double annotating COSMIC vars (2nd for track)
-    TODO: think of a smarter way to store this */
+    TODO: instead, just stream back IDs and put them into hash */
     promiseAnnotateWithCosmic(resultMap) {
         return new Promise((resolve, reject) => {
             let cosmicVcfData = resultMap['cosmic-variants'];

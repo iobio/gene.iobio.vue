@@ -1879,14 +1879,14 @@
                 let self = this;
                 self.showKnownVariantsCard = showIt;
                 if (self.showKnownVariantsCard) {
-                    self.onKnownVariantsVizChange();
+                    self.onVariantsVizChange();
                 }
             },
             onShowCosmicVariantsCard: function (showIt) {
                 let self = this;
                 self.showCosmicVariantsCard = showIt;
                 if (self.showCosmicVariantsCard) {
-                    self.onCosmicVariantsVizChange();
+                    self.onVariantsVizChange();
                 }
             },
             onFilterSettingsApplied: function () {
@@ -2257,7 +2257,7 @@
                         });
                         // Otherwise apply to all tracks
                     } else if (self.$refs.variantCardRef) {
-                        self.$refs.variantCardRef.forEach((cardRef) => {                                // TODO: allow filtering on cosmic/clinvar tracks...
+                        self.$refs.variantCardRef.forEach((cardRef) => {
                             // TODO: allow filtering on cosmic/clinvar tracks...
                             if (cardRef.sampleModel.id !== 'cosmic-variants' && cardRef.sampleModel.id !== 'known-variants') {
                                 let filtPromise = cardRef.promiseFilterVariants(filterInfo, self.selectedTrackId, selectedVarId);

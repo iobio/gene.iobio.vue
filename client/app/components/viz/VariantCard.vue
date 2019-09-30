@@ -153,8 +153,8 @@
                 <v-badge id="loaded-count"
                          v-if="sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]"
                          class="ml-4 mr-4 mt-1 loaded">
-                    <span slot="badge"> {{ sampleModel.id !== 'known-variants' || knownVariantsViz === 'variants' ? sampleModel.loadedVariants.features.length : sampleModel.variantHistoCount  }} </span>
-                    {{ isBasicMode || sampleModel.id === 'known-variants' ? 'Count' : 'Loaded' }}
+                    <span slot="badge"> {{ displayVariantCount ? sampleModel.loadedVariants.features.length : sampleModel.variantHistoCount }} </span>
+                    {{ sampleModel.id === 'known-variants' || sampleModel.id === 'cosmic-variants' ? 'Count' : 'Loaded' }}
                 </v-badge>
                 <v-badge id="called-count"
                          v-if="sampleModel.id !== 'known-variants' && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name] && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name].CALLED "
@@ -412,6 +412,7 @@
                 id: null,
                 selectedExon: null,
                 knownVariantsViz: null,
+                cosmicVariantsViz: null,
                 openState: [true],      // Array which controls expansion panel open/close - want open on load
             }
         },
@@ -865,6 +866,18 @@
                 } else {
                     return 'gray';
                 }
+            },
+            displayVariantCount: function() {
+                const self = this;
+                let displayCts = false;
+                if (self.sampleModel.id !== 'known-variants' && self.sampleModel.id !== 'cosmic-variants') {
+                    displayCts = true;
+                } else if (self.sampleModel.id === 'known-variants' && self.knownVariantViz === 'variants') {
+                    displayCts = true;
+                } else if (self.sampleModel.id === 'cosmic-variants' && self.cosmicVariantsViz === 'variants') {
+                    displayCts = true;
+                }
+                return displayCts;
             }
         },
         watch: {},

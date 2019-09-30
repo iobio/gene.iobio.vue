@@ -625,6 +625,58 @@ var effectCategories = [
       });
   }
 
+  exports.promiseGetVariantIds = function(refName, geneObject, selectedTranscript, regions) {
+    return new Promise(function(resolve, reject) {
+        if (sourceType === SOURCE_TYPE_URL) {
+            const me = this;
+            if (regions == null || regions.length === 0) {
+                regions = [];
+                regions.push({'name': refName, 'start': geneObject.start, 'end': geneObject.end});
+            }
+
+            let cmd = me.getEndpoint().getVariantIds({'vcfUrl': vcfURL, 'tbiUrl': tbiUrl}, refName, regions);
+            let annotatedData = "";
+            // Get the results from the iobio command
+            cmd.on('data', function(data) {
+                if (data == null) {
+                    return;
+                }
+                annotatedData += data;
+            });
+            cmd.on('end', function(data) {
+                let annotatedRecs = annotatedData.split("\n");
+                let varIds = [];
+                annotatedRecs.forEach(function(record) {
+                    if (record.charAt(0) !== "#") {
+                        // Parse the vcf record into its fields
+                        let fields = record.split('\t');
+                        let refName      = fields[0];
+                        let pos      = fields[1];
+                        let ref      = fields[2];
+                        let alt      = fields[3];
+                        let strand   = fields[4];
+
+                        alt = getCssSafeAlt(alt);
+                        strand = strand === '+' ? 'plus' : 'minus';
+                        let chr = refName.indexOf("chr") === 0 ? refName.slice(3) : refName;
+
+                        // Parse ids and return as array
+                        let id = 'var_' + pos + '_' + chr + '_' + strand + '_' + ref + '_' + alt;
+                        varIds.push(id);
+                    }
+                });
+                resolve(varIds);
+            });
+            cmd.on('error', function(error) {
+                console.log(error);
+            });
+            cmd.run();
+        } else {
+            reject('Getting variant IDs for a local file not yet supported.');
+        }
+    });
+  };
+
 
   exports.promiseGetVariants = function(refName, geneObject, selectedTranscript, regions, isMultiSample, samplesToRetrieve, annotationEngine, clinvarMap, isRefSeq, hgvsNotation, getRsId, vepAF, cache, sampleModelId) {
     var me = this;
@@ -897,13 +949,13 @@ var effectCategories = [
        console.log(error);
     });
     cmd.run();
-  }
+  };
 
 
 
   exports.clearVepInfoFields = function() {
     this.infoFields.VEP = null;
-  }
+  };
 
   exports._parseHeaderForInfoFields = function(record) {
     var me = this;

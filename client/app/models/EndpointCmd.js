@@ -61,6 +61,44 @@ export default class EndpointCmd {
     return cmd;
   }
 
+  getVariantIds(vcfSource, refName, regions) {
+    const me = this;
+
+    // Format region
+    let regionParm = "";
+    if (regions && regions.length > 0) {
+        regions.forEach(function (region) {
+            if (regionParm.length > 0) {
+                regionParm += " ";
+            }
+            regionParm += region.name + ":" + region.start + "-" + region.end;
+        })
+    }
+
+    // Form iobio command based on type of vcf input
+    let cmd = null;
+    let query_args = '%CHROM %POS %REF %ALT %INFO/STRAND\n';
+    if (vcfSource.hasOwnProperty('vcfUrl')) {
+        //  If we have a vcf URL, use tabix to get the variants for the region
+        let tabix_args = ['-h', '"' +vcfSource.vcfUrl + '"', regionParm];
+
+        if (vcfSource.tbiUrl) {
+            tabix_args.push('"' + vcfSource.tbiUrl + '"');
+        }
+        cmd = new iobio.cmd(me.IOBIO.tabix, tabix_args, {ssl: me.globalApp.useSSL})
+            .pipe(me.IOBIO.bcftools, ['query', '-f', query_args, '-'], {ssl: me.globalApp.useSSL})
+    } else if (vcfSource.hasOwnProperty('writeStream')) {
+        // If we have a local vcf file, use the writeStream function to stream in the vcf records
+        cmd = new iobio.cmd(me.IOBIO.bcftools, ['query', '-f', query_args, vcfSource.writeStream], {ssl: me.globalApp.useSSL})
+    } else {
+        console.log("EndpointCmd.annotateVariants() vcfSource arg is not invalid.");
+        return null;
+    }
+
+    // Return command
+    return cmd;
+  }
+
   annotateVariants(vcfSource, refName, regions, vcfSampleNames, annotationEngine, isRefSeq, hgvsNotation, getRsId, vepAF, useServerCache, serverCacheKey) {
     var me = this;
 
@@ -78,9 +116,9 @@ export default class EndpointCmd {
     var contigStr = "";
     me.getHumanRefNames(refName).split(" ").forEach(function(ref) {
         contigStr += "##contig=<ID=" + ref + ">\n";
-    })
-    var contigNameFile = new Blob([contigStr])
+    });
 
+    var contigNameFile = new Blob([contigStr]);
 
     // Create an iobio command get get the variants and add any header recs.
     var args = [];
@@ -104,14 +142,13 @@ export default class EndpointCmd {
 
 
     if (vcfSampleNames && vcfSampleNames.length > 0) {
-      var sampleNameFile = new Blob([vcfSampleNames.split(",").join("\n")])
-      cmd = cmd.pipe(me.IOBIO.vt, ["subset", "-s", sampleNameFile, '-'], {ssl: me.globalApp.useSSL})
+      var sampleNameFile = new Blob([vcfSampleNames.split(",").join("\n")]);
+      cmd = cmd.pipe(me.IOBIO.vt, ["subset", "-s", sampleNameFile, '-'], {ssl: me.globalApp.useSSL});
     }
 
     // normalize variants
-
     var refFastaFile = me.genomeBuildHelper.getFastaPath(refName);
-    cmd = cmd.pipe(me.IOBIO.vt, ["normalize", "-n", "-r", refFastaFile, '-'], {ssl: me.globalApp.useSSL})
+    cmd = cmd.pipe(me.IOBIO.vt, ["normalize", "-n", "-r", refFastaFile, '-'], {ssl: me.globalApp.useSSL});
 
     // if af not retreived from vep, get allele frequencies from 1000G and ExAC in af service
     cmd = cmd.pipe(me.IOBIO.af, ["-b", me.genomeBuildHelper.getCurrentBuildName()], {ssl: me.globalApp.useSSL});
