@@ -1026,7 +1026,6 @@ class SampleModel {
                     var foundRef = false;
                     refData.forEach(function (refObject) {
                         var refName = refObject.name;
-
                         if (refName == theRef) {
                             me.getVcfRefName = me._getRefName;
                             foundRef = true;
@@ -1046,9 +1045,8 @@ class SampleModel {
                         });
                         resolve();
                     } else {
-
                         // If we didn't find the matching ref name, show a warning.
-                        reject();
+                        reject('Could not find matching ref in _promiseVcfRefName');
                     }
 
                 });
@@ -1531,46 +1529,49 @@ class SampleModel {
 
     }
 
-    promiseGetVariantIds(theGene, theTranscript, cosmicModel) {
+    promiseGetVariantIds(theGene, theTranscript, sampleModel) {
         const self = this;
-        let resultMap = {};
-        let inCache = false;
 
-        // Check to see if we've stored the IDs in the cache
-        cosmicModel._promiseGetData(CacheHelper.VCF_DATA, theGene.gene_name, theTranscript)
-            .then(function(ids) {
-                if (ids != null && ids !== '') {
-                    resultMap[cosmicModel.id + '-ids'] = ids;
-                    inCache = true;
-                }
-            });
-        // If not, pull them in from the vcf file
-        if (inCache) {
-            resolve(resultMap);
-        } else {
-            self._promiseVcfRefName(theGene.chr)
-                .then(function () {
-                    return self.vcf.promiseGetVariantIds(
-                        self.getVcfRefName(theGene.chr),
-                        theGene,
-                        theTranscript,
-                        null   // regions
-                    );
-                }).then(function(data) {
+        return new Promise((resolve, reject) => {
+            let resultMap = {};
+            let inCache = false;
+
+            // Check to see if we've stored the IDs in the cache
+            sampleModel._promiseGetData(CacheHelper.VCF_DATA, theGene.gene_name, theTranscript)
+                .then(function(ids) {
+                    if (ids != null && ids !== '') {
+                        resultMap[sampleModel.id + '-ids'] = ids;
+                        inCache = true;
+                    }
+                });
+            // If not, pull them in from the vcf file
+            if (inCache) {
+                resolve(resultMap);
+            } else {
+                self._promiseVcfRefName(theGene.chr)
+                    .then(function () {
+                        return self.vcf.promiseGetVariantIds(
+                            self.getVcfRefName(theGene.chr),
+                            theGene,
+                            theTranscript,
+                            null   // regions
+                        );
+                    }).then(function(data) {
                     if (data) {
                         if (data.length === 0) {
                             console.log('Warning: no cosmic variants found for this gene.');
                         }
                         // TODO: cache this once we know its working
-                        resultMap[cosmicModel.id + '-ids'] = data;
+                        resultMap[sampleModel.id + '-ids'] = data;
                         resolve(resultMap);
                     } else {
                         reject('Warning: no result obtained from getting variant ids for ' + self.id);
                     }
-                }).error(function(err) {
+                }).catch(function(err) {
                     reject('Could not obtain variant ids for ' + self.id + ' because: ' + err);
                 })
-        }
+            }
+        });
     }
 
 

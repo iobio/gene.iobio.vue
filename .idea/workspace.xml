@@ -45,11 +45,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CohortModel.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="CohortModel.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="243">
-              <caret line="1305" column="55" lean-forward="true" selection-start-line="1305" selection-start-column="55" selection-end-line="1305" selection-end-column="55" />
+            <state relative-caret-position="388">
+              <caret line="1279" column="20" lean-forward="true" selection-start-line="1279" selection-start-column="20" selection-end-line="1279" selection-end-column="20" />
               <folding>
                 <element signature="e#0#42#0" expanded="true" />
               </folding>
@@ -57,11 +57,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SampleModel.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="SampleModel.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/models/SampleModel.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="679">
-              <caret line="1563" column="68" selection-start-line="1563" selection-start-column="68" selection-end-line="1563" selection-end-column="68" />
+            <state relative-caret-position="321">
+              <caret line="1732" column="20" selection-start-line="1732" selection-start-column="20" selection-end-line="1732" selection-end-column="20" />
               <folding>
                 <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
@@ -69,18 +69,6 @@
                 <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CacheHelper.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/app/models/CacheHelper.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="311">
-              <caret line="879" selection-start-line="879" selection-end-line="879" />
-              <folding>
-                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -89,8 +77,8 @@
       <file leaf-file-name="Vcf.iobio.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/models/Vcf.iobio.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="579">
-              <caret line="662" column="56" selection-start-line="662" selection-start-column="56" selection-end-line="662" selection-end-column="56" />
+            <state relative-caret-position="494">
+              <caret line="641" column="35" lean-forward="true" selection-start-line="641" selection-start-column="35" selection-end-line="641" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -98,8 +86,8 @@
       <file leaf-file-name="EndpointCmd.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/models/EndpointCmd.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="458">
-              <caret line="77" column="52" selection-start-line="77" selection-start-column="52" selection-end-line="77" selection-end-column="52" />
+            <state relative-caret-position="347">
+              <caret line="85" column="57" lean-forward="true" selection-start-line="85" selection-start-column="57" selection-end-line="85" selection-end-column="57" />
             </state>
           </provider>
         </entry>
@@ -128,36 +116,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>globalapp</find>
-      <find>clinvarurl</find>
-      <find>onknown</find>
-      <find>onvariantsvi</find>
-      <find>knownVariantsViz</find>
-      <find>displayVariantCount</find>
-      <find>could not annotat</find>
-      <find>onVariantsVizChange</find>
-      <find>promiseAnnotateWithCosmic</find>
-      <find>cosmicVariantViz</find>
-      <find>promiseaddcosmic</find>
-      <find>promiseAddCosmicSample</find>
-      <find>could not</find>
-      <find>cosmic</find>
-      <find>annotatecosmic</find>
-      <find>annotate</find>
-      <find>promiseloadcosmic</find>
-      <find>promisegetvariantids</find>
-      <find>sourceType</find>
-      <find>id'</find>
-      <find>getvariantids</find>
-      <find>todo</find>
-      <find>parsevc</find>
-      <find>todo: new</find>
-      <find>chr</find>
-      <find>promiseGetVariantIds</find>
-      <find>todo:</find>
       <find>CacheHelper</find>
       <find>_promiseCacheData</find>
       <find>promisegetdata</find>
+      <find>.error</find>
+      <find>could not obta</find>
+      <find>promisevcfref</find>
+      <find>problem loading</find>
+      <find>vcfURL</find>
+      <find>promisegetcos</find>
+      <find>onVcfUrlEntered</find>
+      <find>promiseAddCosmicSample</find>
+      <find>openvcf</find>
+      <find>getcosmicurl</find>
+      <find>openvcfurl</find>
+      <find>getendpoint</find>
+      <find>endpoint =</find>
+      <find>variantids</find>
+      <find>setEndpoint</find>
+      <find>promiseget</find>
+      <find>setcosmicvari</find>
+      <find>promise loading</find>
+      <find>params.jo</find>
+      <find>params</find>
+      <find>getvariantids</find>
+      <find>promiseannotatewithcosmi</find>
+      <find>could not annotate</find>
+      <find>promiseAnnotateWithCosmic</find>
+      <find>cosmicVariantIdHash</find>
+      <find>setCosmicVariantIds</find>
+      <find>promiseGetCosmicVariantIds</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -223,10 +211,10 @@
         <option value="$PROJECT_DIR$/client/app/components/partials/CosmicConfirmationDialog.vue" />
         <option value="$PROJECT_DIR$/client/app/components/viz/VariantCard.vue" />
         <option value="$PROJECT_DIR$/client/app/components/pages/GeneHome.vue" />
-        <option value="$PROJECT_DIR$/client/app/models/CohortModel.js" />
+        <option value="$PROJECT_DIR$/client/app/models/SampleModel.js" />
         <option value="$PROJECT_DIR$/client/app/models/EndpointCmd.js" />
         <option value="$PROJECT_DIR$/client/app/models/Vcf.iobio.js" />
-        <option value="$PROJECT_DIR$/client/app/models/SampleModel.js" />
+        <option value="$PROJECT_DIR$/client/app/models/CohortModel.js" />
       </list>
     </option>
   </component>
@@ -247,10 +235,9 @@
     </packageJsonPaths>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1440" />
-    <option name="y" value="-277" />
-    <option name="width" value="1920" />
-    <option name="height" value="1057" />
+    <option name="y" value="23" />
+    <option name="width" value="1440" />
+    <option name="height" value="877" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -432,22 +419,22 @@
       <workItem from="1566088066342" duration="28788000" />
       <workItem from="1566582771809" duration="173364000" />
       <workItem from="1569342712617" duration="45623000" />
-      <workItem from="1569861545890" duration="10756000" />
+      <workItem from="1569861545890" duration="18807000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1270036000" />
+    <option name="totallyTimeSpent" value="1278087000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1440" y="-277" width="1920" height="1057" extended-state="6" />
+    <frame x="0" y="23" width="1440" height="877" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="3" visible="true" weight="0.13541667" />
+      <window_info content_ui="combo" id="Project" order="3" visible="true" weight="0.18055555" />
       <window_info anchor="bottom" id="TODO" order="10" />
       <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" weight="0.32971016" />
-      <window_info anchor="bottom" id="Find" order="5" weight="0.32555556" />
+      <window_info anchor="bottom" id="Find" order="5" weight="0.32435897" />
       <window_info anchor="bottom" id="Version Control" order="3" show_stripe_button="false" />
       <window_info id="npm" order="0" side_tool="true" />
       <window_info anchor="bottom" id="Run" order="6" weight="0.32916668" />
@@ -476,7 +463,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="6" />
+      <option name="time" value="7" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -850,20 +837,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/EndpointCmd.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="458">
-          <caret line="77" column="52" selection-start-line="77" selection-start-column="52" selection-end-line="77" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/Vcf.iobio.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="579">
-          <caret line="662" column="56" selection-start-line="662" selection-start-column="56" selection-end-line="662" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/models/CacheHelper.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="311">
@@ -874,27 +847,41 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
+    <entry file="file://$PROJECT_DIR$/client/app/models/SampleModel.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="1305" column="55" lean-forward="true" selection-start-line="1305" selection-start-column="55" selection-end-line="1305" selection-end-column="55" />
+        <state relative-caret-position="321">
+          <caret line="1732" column="20" selection-start-line="1732" selection-start-column="20" selection-end-line="1732" selection-end-column="20" />
           <folding>
-            <element signature="e#0#42#0" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/SampleModel.js">
+    <entry file="file://$PROJECT_DIR$/client/app/models/EndpointCmd.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="679">
-          <caret line="1563" column="68" selection-start-line="1563" selection-start-column="68" selection-end-line="1563" selection-end-column="68" />
+        <state relative-caret-position="347">
+          <caret line="85" column="57" lean-forward="true" selection-start-line="85" selection-start-column="57" selection-end-line="85" selection-end-column="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/models/Vcf.iobio.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="494">
+          <caret line="641" column="35" lean-forward="true" selection-start-line="641" selection-start-column="35" selection-end-line="641" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="388">
+          <caret line="1279" column="20" lean-forward="true" selection-start-line="1279" selection-start-column="20" selection-end-line="1279" selection-end-column="20" />
           <folding>
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
+            <element signature="e#0#42#0" expanded="true" />
           </folding>
         </state>
       </provider>

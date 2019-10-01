@@ -65,13 +65,13 @@ export default class EndpointCmd {
     const me = this;
 
     // Format region
-    let regionParm = "";
+    let regionParam = "";
     if (regions && regions.length > 0) {
         regions.forEach(function (region) {
-            if (regionParm.length > 0) {
-                regionParm += " ";
+            if (regionParam.length > 0) {
+                regionParam += " ";
             }
-            regionParm += region.name + ":" + region.start + "-" + region.end;
+            regionParam += region.name + ":" + region.start + "-" + region.end;
         })
     }
 
@@ -80,16 +80,12 @@ export default class EndpointCmd {
     let query_args = '%CHROM %POS %REF %ALT %INFO/STRAND\n';
     if (vcfSource.hasOwnProperty('vcfUrl')) {
         //  If we have a vcf URL, use tabix to get the variants for the region
-        let tabix_args = ['-h', '"' +vcfSource.vcfUrl + '"', regionParm];
-
-        if (vcfSource.tbiUrl) {
-            tabix_args.push('"' + vcfSource.tbiUrl + '"');
-        }
-        cmd = new iobio.cmd(me.IOBIO.tabix, tabix_args, {ssl: me.globalApp.useSSL})
-            .pipe(me.IOBIO.bcftools, ['query', '-f', query_args, '-'], {ssl: me.globalApp.useSSL})
+        let view_args = ['view', '-r', regionParam, '"' +vcfSource.vcfUrl + '"'];
+        cmd = new iobio.cmd(me.IOBIO.bcftools, view_args, {ssl: me.globalApp.useSSL});
+            // .pipe(me.IOBIO.bcftools, ['query', '-f', query_args, '-'], {ssl: me.globalApp.useSSL})
     } else if (vcfSource.hasOwnProperty('writeStream')) {
         // If we have a local vcf file, use the writeStream function to stream in the vcf records
-        cmd = new iobio.cmd(me.IOBIO.bcftools, ['query', '-f', query_args, vcfSource.writeStream], {ssl: me.globalApp.useSSL})
+        cmd = new iobio.cmd(me.IOBIO.bcftools, ['view', '-r', regionParam, vcfSource.writeStream], {ssl: me.globalApp.useSSL})
     } else {
         console.log("EndpointCmd.annotateVariants() vcfSource arg is not invalid.");
         return null;

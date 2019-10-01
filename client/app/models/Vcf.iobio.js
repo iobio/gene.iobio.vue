@@ -455,7 +455,7 @@ var effectCategories = [
 
 
   exports.getReferenceLengths = function(callback) {
-    if (sourceType.toLowerCase() == SOURCE_TYPE_URL.toLowerCase()) {
+    if (sourceType.toLowerCase() === SOURCE_TYPE_URL.toLowerCase()) {
       this._getRemoteReferenceLengths(callback);
     } else {
       this._getLocalReferenceLengths(callback);
@@ -623,12 +623,13 @@ var effectCategories = [
           }
 
       });
-  }
+  };
 
   exports.promiseGetVariantIds = function(refName, geneObject, selectedTranscript, regions) {
-    return new Promise(function(resolve, reject) {
+      const me = this;
+
+      return new Promise(function(resolve, reject) {
         if (sourceType === SOURCE_TYPE_URL) {
-            const me = this;
             if (regions == null || regions.length === 0) {
                 regions = [];
                 regions.push({'name': refName, 'start': geneObject.start, 'end': geneObject.end});
@@ -652,10 +653,22 @@ var effectCategories = [
                         let fields = record.split('\t');
                         let refName      = fields[0];
                         let pos      = fields[1];
-                        let ref      = fields[2];
-                        let alt      = fields[3];
-                        let strand   = fields[4];
+                        let ref      = fields[3];
+                        let alt      = fields[4];
+                        let info     = fields[7];
 
+                        let strand = '';
+                        if (info && info !== '') {
+                          let infoFields = info.split(';');
+                          for (var field in infoFields) {
+                            if (field.startsWith('STRAND')) {
+                              strand = field.split('=')[1];
+                            }
+                          }
+                        }
+                        if (strand === '') {
+                          console.log("Could not find strand from promiseGetVariantIds");
+                        }
                         alt = getCssSafeAlt(alt);
                         strand = strand === '+' ? 'plus' : 'minus';
                         let chr = refName.indexOf("chr") === 0 ? refName.slice(3) : refName;
