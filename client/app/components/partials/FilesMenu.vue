@@ -185,7 +185,7 @@
                 </v-btn>
             </v-flex>
             <v-flex xs6 class="mt-2 text-xs-right">
-                <div class="loader" v-show="inProgress">
+                <div v-show="inProgress">
                     <img src="../../../assets/images/wheel.gif">
                 </div>
                 <v-btn
@@ -290,9 +290,6 @@
                             }
                             if (scrollToSample) {
                                 self.scrollToEnd();
-                                // let idVal = parseInt(newId.substring(1));
-                                // let lastIdVal = idVal - 1;
-                                // self.$vuetify.goTo('#s' + lastIdVal);
                             }
                             resolve();
                         })
@@ -558,6 +555,7 @@
                                 console.log('loading demo data');
                                 self.debugOrder();
                             }
+                            self.scrollToEnd();
                             resolve();
                         }).catch((error) => {
                             reject('Problem in autoloading in files menu: ' + error);
