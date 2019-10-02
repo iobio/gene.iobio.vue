@@ -601,7 +601,7 @@ class CohortModel {
                 vm.init(self);
                 vm.setId('known-variants');
                 vm.setDisplayName('ClinVar');
-                let clinvarUrl = self.globalApp.getClinvarUrl(self.genomeBuildHelper.getCurrentBuildName());
+                let clinvarUrl = self.globalApp.getClinvarUrl(self.genomeBuildHelper.getCurrentBuildName(), true);
                 vm.onVcfUrlEntered(clinvarUrl, null, function () {
                         self.sampleModels.push(vm);
                         let sample = {'id': 'known-variants', 'model': vm, 'order': 0};
@@ -1330,7 +1330,7 @@ class CohortModel {
             for (var id in resultMap) {
                 var vcfData = resultMap[id];
                 if (vcfData) {
-                    if (!vcfData.loadState['clinvar'] && id !== 'known-variants') {
+                    if (!vcfData.loadState['clinvar'] && id !== 'known-variants' && id !== 'cosmic-variants') {
                         vcfData.features.forEach(function (feature) {
                             uniqueVariants[formatClinvarKey(feature)] = true;
                         })
@@ -1340,11 +1340,9 @@ class CohortModel {
             if (Object.keys(uniqueVariants).length === 0) {
                 resolve(resultMap);
             } else {
-
                 for (var varKey in uniqueVariants) {
                     unionVcfData.features.push(formatClinvarThinVariant(varKey));
                 }
-
                 var refreshVariantsFunction = self.globalApp.isClinvarOffline || self.globalApp.clinvarSource === 'vcf'
                     ? self.getNormalModel()._refreshVariantsWithClinvarVCFRecs.bind(self.getNormalModel(), unionVcfData)
                     : self.getNormalModel()._refreshVariantsWithClinvarEutils.bind(self.getNormalModel(), unionVcfData);
@@ -2832,8 +2830,6 @@ class CohortModel {
                 }
             });
         }
-
-        // TODO: add 0 -> 0 links for those that go >0 -> 0 or 0 -> >0 in outside intervals
 
         // Find max node height
         if (scaleIntervals) {

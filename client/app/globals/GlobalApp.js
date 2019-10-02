@@ -86,18 +86,21 @@ class GlobalApp {
     this.impactFieldToColor          = 'vepImpact';
   }
 
-    getClinvarUrl(build) {
-        let clinvarUrls = {
+    getClinvarUrl(build, forVizTrack = false) {
+        let clinvarVizUrls = {
             'GRCh37': "ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/archive_2.0/2018/clinvar_20181202.vcf.gz",
-            'GRCh38': "ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/archive_2.0/2018/clinvar_20181202.vcf.gz",
-
-            // Do not work as of Oct2019
-            // 'GRCh37': 'https://iobio.s3.amazonaws.com/gene/clinvar/clinvar.GRCh37.vcf.gz',
-            // 'GRCh38': 'https://iobio.s3.amazonaws.com/gene/clinvar/clinvar.GRCh38.vcf.gz'
+            'GRCh38': "ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/archive_2.0/2018/clinvar_20181202.vcf.gz"
         };
-        return clinvarUrls[build];
-
-    }
+        let clinvarAnnotationUrls = {
+            'GRCh37': 'https://iobio.s3.amazonaws.com/gene/clinvar/clinvar.GRCh37.vcf.gz',
+            'GRCh38': 'https://iobio.s3.amazonaws.com/gene/clinvar/clinvar.GRCh38.vcf.gz'
+        };
+        if (forVizTrack) {
+          return clinvarVizUrls[build];
+        } else {
+          return clinvarAnnotationUrls[build];
+        }
+      }
     /* Updated 05Sept2019 to v90 */
     getCosmicUrl(build) {
         let cosmicUrls = {
