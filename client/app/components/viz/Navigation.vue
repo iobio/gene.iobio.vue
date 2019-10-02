@@ -200,7 +200,7 @@
                 :hide-overlay="true"
                 v-model="leftDrawer"
                 :stateless="true"
-                width=300>
+                width=380>
             <div id="side-panel-container">
                 <v-tabs id="nav-bar-tabs"
                         v-model="activeLeftDrawerTab"

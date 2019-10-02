@@ -78,12 +78,13 @@
             offset-y
             :close-on-content-click="false"
             :nudge-width="500"
+            :max-height="500"
             v-model="showFilesMenu">
         <v-btn flat outline slot="activator">
             Files
         </v-btn>
-        <v-form id="files-form">
-            <v-layout row wrap class="mt-2">
+        <v-form id="files-form" style="padding: 10px; max-height: 420px; overflow-y: scroll; margin-left: 20px; margin-right: 20px">
+            <v-layout wrap class="mt-2">
                 <v-flex xs6 class="mt-2">
                     <v-container>
                         <v-switch label="Time Series" hide-details v-model="timeSeriesMode">
@@ -174,27 +175,29 @@
                         </sample-data>
                     </v-flex>
                 </draggable>
-                <v-flex xs6 class="mt-2 text-xs-left">
-                    <v-btn small outline fab color="appColor"
-                           @click="promiseAddSample(true, true)">
-                        <v-icon>add</v-icon>
-                    </v-btn>
-                </v-flex>
-                <v-flex xs6 class="mt-2 text-xs-right">
-                    <div class="loader" v-show="inProgress">
-                        <img src="../../../assets/images/wheel.gif">
-                    </div>
-                    <v-btn
-                            @click="onLoad"
-                            :disabled="!isValid">
-                        Load
-                    </v-btn>
-                    <v-btn @click="onCancel">
-                        Cancel
-                    </v-btn>
-                </v-flex>
             </v-layout>
         </v-form>
+        <v-layout style="padding:0 20px 5px 20px">
+            <v-flex xs6 class="mt-2 text-xs-left">
+                <v-btn small outline fab color="appColor"
+                       @click="promiseAddSample(true, true, true)">
+                    <v-icon>add</v-icon>
+                </v-btn>
+            </v-flex>
+            <v-flex xs6 class="mt-2 text-xs-right">
+                <div class="loader" v-show="inProgress">
+                    <img src="../../../assets/images/wheel.gif">
+                </div>
+                <v-btn
+                        @click="onLoad"
+                        :disabled="!isValid">
+                    Load
+                </v-btn>
+                <v-btn @click="onCancel">
+                    Cancel
+                </v-btn>
+            </v-flex>
+        </v-layout>
     </v-menu>
 </template>
 <script>
@@ -248,7 +251,7 @@
             }
         },
         methods: {
-            promiseAddSample: function (isTumor = true, stateChanged = true) {
+            promiseAddSample: function (isTumor = true, stateChanged = true, scrollToSample = false) {
                 let self = this;
                 if (stateChanged) {
                     self.stateUnchanged = false;
@@ -285,11 +288,23 @@
                                 console.log('adding new sample');
                                 self.debugOrder();
                             }
+                            if (scrollToSample) {
+                                self.scrollToEnd();
+                                // let idVal = parseInt(newId.substring(1));
+                                // let lastIdVal = idVal - 1;
+                                // self.$vuetify.goTo('#s' + lastIdVal);
+                            }
                             resolve();
                         })
                         .catch((error) => {
                             reject('There was a problem adding sample: ' + error);
                         });
+                });
+            },
+            scrollToEnd: function() {
+                this.$nextTick(() => {
+                    let container = document.querySelector('#files-form');
+                    container.scrollTop = container.scrollHeight;
                 });
             },
             findNextAvailableId: function () {
@@ -517,7 +532,7 @@
                         let currModel = self.cohortModel.getModel(currKey);
                         if (currModel == null) {
                             let corrInfo = self.modelInfoMap[currKey];
-                            let p = self.cohortModel.promiseAddSample(corrInfo, i); // Don't need to assign to map, done in promiseSetModel below
+                            let p = self.cohortModel.promiseAddSample(corrInfo, i, true); // Don't need to assign to map, done in promiseSetModel below
                             addPromises.push(p);
                         } else {
                             self.cohortModel.sampleModels[i] = currModel;
@@ -644,9 +659,9 @@
                 if (self.cohortModel && self.cohortModel.getCanonicalModels().length > 0 && !self.loadDemoFromWelcome) {
                     self.initModelInfo();
                 } else {
-                    self.promiseAddSample(false, false)
+                    self.promiseAddSample(false, false, false)
                         .then(() => {
-                            self.promiseAddSample(true, false)
+                            self.promiseAddSample(true, false, false)
                                 .then(() => {
                                     // If we've clicked run w/ demo data on welcome screen, want to get that process going
                                     if (self.loadDemoFromWelcome) {
