@@ -185,7 +185,7 @@
                 </v-btn>
             </v-flex>
             <v-flex xs6 class="mt-2 text-xs-right">
-                <div v-show="inProgress">
+                <div v-show="inProgress" style="display: inline-block; width: 50px">
                     <img src="../../../assets/images/wheel.gif">
                 </div>
                 <v-btn
@@ -529,7 +529,12 @@
                         let currModel = self.cohortModel.getModel(currKey);
                         if (currModel == null) {
                             let corrInfo = self.modelInfoMap[currKey];
-                            let p = self.cohortModel.promiseAddSample(corrInfo, i, true); // Don't need to assign to map, done in promiseSetModel below
+                            let start = Date.now();
+                            let p = self.cohortModel.promiseAddSample(corrInfo, i, true)
+                                .then(() => {
+                                    let end = Date.now();
+                                    console.log('Took ' + (end-start) + ' ms to add sample to cohort model');
+                                });
                             addPromises.push(p);
                         } else {
                             self.cohortModel.sampleModels[i] = currModel;
