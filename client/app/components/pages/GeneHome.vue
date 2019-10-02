@@ -1408,10 +1408,10 @@
             onVariantsFilterChange: function (selectedCategories, trackId) {
                 let self = this;
                 if (trackId === 'known-variants') {
-                    self.filterModel.setModelFilter('known-variants', 'clinvar', selectedCategories);
+                    self.filterModel.setModelFilter('known-variants', 'vepImpact', selectedCategories);
                     self.cohortModel.setLoadedVariants(self.selectedGene, 'known-variants');
                 } else if (trackId === 'cosmic-variants') {
-                    // self.filterModel.setModelFilter('cosmic-variants', 'vep', selectedCategories);
+                    self.filterModel.setModelFilter('cosmic-variants', 'vepImpact', selectedCategories);
                     self.cohortModel.setLoadedVariants(self.selectedGene, 'cosmic-variants');
                 }
             },
@@ -1879,14 +1879,14 @@
                 let self = this;
                 self.showKnownVariantsCard = showIt;
                 if (self.showKnownVariantsCard) {
-                    self.onVariantsVizChange();
+                    self.onVariantsVizChange(null, 'known-variants');
                 }
             },
             onShowCosmicVariantsCard: function (showIt) {
                 let self = this;
                 self.showCosmicVariantsCard = showIt;
                 if (self.showCosmicVariantsCard) {
-                    self.onVariantsVizChange();
+                    self.onVariantsVizChange(null, 'cosmic-variants');
                 }
             },
             onFilterSettingsApplied: function () {

@@ -1087,10 +1087,7 @@ class CohortModel {
                 }
 
                 // Note: this is TDS existing framework, can use later on if desired
-                let passesModelFilter = true;
-                if (model.id !== 'known-variants' && model.id !== 'cosmic-variants') {
-                    passesModelFilter = self.filterModel.passesModelFilter(model.id, feature);
-                }
+                let passesModelFilter = self.filterModel.passesModelFilter(model.id, feature);
 
                 // Don't want to filter by front end filters here! Otherwise zooming with active filters will not work b/c variants never get drawn
                 return isTarget && !isHomRef && inRegion && passesModelFilter;

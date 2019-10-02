@@ -8,20 +8,14 @@
         margin-top: -5px
 
     #variant-card
-        .sample-avatar
-            span
-                color: $app-color
-                font-weight: 600
-                font-size: 16px
-
 
         #sample-label
             vertical-align: top
             display: inline-block
             max-width: 200px
-            padding-top: 2px
-            margin-left: -3px
             color: $text-color
+            margin-top: -1px
+            font-size: 16px
             &.known-variants
                 min-width: 100px
                 max-width: 100px
@@ -59,22 +53,31 @@
                 fill: rgba(159, 159, 159, 0.63)
                 stroke: rgb(159, 159, 159)
         .badge
-            padding: 0px 5px 0px 0px
-            padding: 3px 7px
             background-color: white !important
             color: $text-color !important
             font-weight: normal
-            &.called
+            &.sample
                 vertical-align: top
                 padding-top: 4px
+                padding-left: 0 !important
+                .badge__badge
+                    background-color: $app-color-light !important
+                    span
+                        font-weight: 500
+                        font-size: 14px
+
+            &.called
+                padding: 4px 7px
+                vertical-align: top
                 .badge__badge
                     background-color: $light-badge-color !important
             &.loaded
+                padding: 4px 7px
                 vertical-align: top
-                padding-top: 4px
                 .badge__badge
                     background-color: $light-badge-color !important
             &.coverage-problem
+                padding: 3px 7px
                 vertical-align: top
                 .badge__badge
                     background-color: $coverage-problem-color !important
@@ -138,15 +141,15 @@
     <v-expansion-panel expand class="app-card" id="variant-card" v-model="openState">
         <v-expansion-panel-content :value="openState">
             <div slot="header">
-                <v-chip v-if="sampleModel.id === 'known-variants' || sampleModel.id === 'cosmic-variants'" color="appColor" small outline>
-                    C
-                </v-chip>
-                <v-avatar v-else-if="sampleModel.isTumor" class="sample-avatar" size="20">
-                    <span>T</span>
-                </v-avatar>
-                <v-avatar v-else-if="!sampleModel.isTumor" class="sample-avatar" size="20">
-                    <span>N</span>
-                </v-avatar>
+                <v-badge v-if="sampleModel.id === 'known-variants' || sampleModel.id === 'cosmic-variants'" class="sample mr-4 mt-1">
+                    <span slot="badge">C</span>
+                </v-badge>
+                <v-badge v-else-if="sampleModel.isTumor" class="sample mr-4 mt-1">
+                    <span slot="badge">T</span>
+                </v-badge>
+                <v-badge v-else-if="!sampleModel.isTumor" class="sample mr-4 mt-1">
+                    <span slot="badge">N</span>
+                </v-badge>
                 <span id="sample-label">
                         {{ sampleLabel }}
                     </span>
@@ -174,6 +177,7 @@
                 <known-variants-toolbar
                         v-if="sampleModel.id === 'known-variants' || sampleModel.id === 'cosmic-variants'"
                         :id="sampleModel.id"
+                        :annotationType="'vep'"
                         @variantsVizChange="onVariantsVizChange"
                         @variantsFilterChange="onVariantsFilterChange"
                 >
@@ -629,7 +633,11 @@
 
             },
             onVariantsVizChange: function (viz, trackId) {
-                this.knownVariantsViz = viz;
+                if (trackId === 'known-variants') {
+                    this.knownVariantsViz = viz;
+                } else if (trackId === 'cosmic-variants') {
+                    this.cosmicVariantsViz = viz;
+                }
                 this.$emit("variants-viz-change", viz, trackId);
             },
             onVariantsFilterChange: function (selectedCategories, trackId) {
@@ -872,11 +880,12 @@
                 let displayCts = false;
                 if (self.sampleModel.id !== 'known-variants' && self.sampleModel.id !== 'cosmic-variants') {
                     displayCts = true;
-                } else if (self.sampleModel.id === 'known-variants' && self.knownVariantViz === 'variants') {
+                } else if (self.sampleModel.id === 'known-variants' && self.knownVariantsViz === 'variants') {
                     displayCts = true;
                 } else if (self.sampleModel.id === 'cosmic-variants' && self.cosmicVariantsViz === 'variants') {
                     displayCts = true;
                 }
+                debugger;
                 return displayCts;
             }
         },

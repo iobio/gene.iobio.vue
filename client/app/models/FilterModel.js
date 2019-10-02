@@ -154,7 +154,10 @@ class FilterModel {
 
     this.modelFilters = {
       'known-variants': {
-        'clinvar': []
+        'vepImpact': []
+      },
+      'cosmic-variants': {
+        'vepImpact': []
       }
     };
 
@@ -500,14 +503,24 @@ class FilterModel {
 
   passesModelFilter(sampleId, variant) {
     let self = this;
+
     let theFilters = self.modelFilters[sampleId];
     if (theFilters) {
       let passCount = 0;
       for (var key in theFilters) {
         let filterEntries = theFilters[key];
         if (filterEntries && filterEntries.length > 0) {
-          if (filterEntries.indexOf(variant[key]) >= 0) {
-            passCount++;
+          // Unwrap if we're dealing with an object
+          if (typeof variant[key] == 'object') {
+              let vals = Object.values(variant[key]);
+              let firstVal = vals[0];
+              if (filterEntries.indexOf(firstVal) >= 0) {
+                  passCount++;
+              }
+          } else {
+              if (filterEntries.indexOf(variant[key]) >= 0) {
+                  passCount++;
+              }
           }
         } else {
           passCount++;
@@ -522,8 +535,6 @@ class FilterModel {
   setModelFilter(relationship, key, entries) {
     this.modelFilters[relationship][key] = entries;
   }
-
-
 
   whichLowCoverage(gc) {
     var fields = {};
