@@ -34,7 +34,7 @@ export default function featureMatrixD3() {
         showTransition = true,
         matrixColumns = null,
         matrixColumnNames = null,
-        cellSize = 15,
+        cellSize = 20,
         cellWidth = null,
         cellHeight = null,
         cellWidths = null,

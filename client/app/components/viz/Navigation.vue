@@ -212,9 +212,9 @@
                     <v-tab href="#filter-tab">
                         Filters
                     </v-tab>
-                    <v-tab href="#flagged-vars-tab">
-                        Flagged Variants
-                    </v-tab>
+                    <!--<v-tab href="#flagged-vars-tab">-->
+                        <!--Flagged Variants-->
+                    <!--</v-tab>-->
                     <v-tab-item
                         :key="'matrix-tab'"
                         :id="'matrix-tab'">
@@ -257,23 +257,23 @@
                             </filter-panel-menu>
                         </v-container>
                     </v-tab-item>
-                    <v-tab-item
-                            :key="'flaggedVarsTab'"
-                            :id="'flagged-vars-tab'">
-                        <flagged-variants-card
-                                v-if="leftDrawerContents === 'flagged-variants'"
-                                ref="flaggedVariantsRef"
-                                :isEduMode="isEduMode"
-                                :isBasicMode="isBasicMode"
-                                :cohortModel="cohortModel"
-                                :launchedFromClin="launchedFromClin"
-                                @flagged-variants-imported="onFlaggedVariantsImported"
-                                @flagged-variant-selected="onFlaggedVariantSelected"
-                                @close-left-drawer="leftDrawer = false"
-                                @send-flagged-variants-to-clin="onSendFlaggedVariantsToClin"
-                        >
-                        </flagged-variants-card>
-                    </v-tab-item>
+                    <!--<v-tab-item-->
+                            <!--:key="'flaggedVarsTab'"-->
+                            <!--:id="'flagged-vars-tab'">-->
+                        <!--<flagged-variants-card-->
+                                <!--v-if="leftDrawerContents === 'flagged-variants'"-->
+                                <!--ref="flaggedVariantsRef"-->
+                                <!--:isEduMode="isEduMode"-->
+                                <!--:isBasicMode="isBasicMode"-->
+                                <!--:cohortModel="cohortModel"-->
+                                <!--:launchedFromClin="launchedFromClin"-->
+                                <!--@flagged-variants-imported="onFlaggedVariantsImported"-->
+                                <!--@flagged-variant-selected="onFlaggedVariantSelected"-->
+                                <!--@close-left-drawer="leftDrawer = false"-->
+                                <!--@send-flagged-variants-to-clin="onSendFlaggedVariantsToClin"-->
+                        <!--&gt;-->
+                        <!--</flagged-variants-card>-->
+                    <!--</v-tab-item>-->
                 </v-tabs>
                 <v-card id="legend-card" v-if="isBasicMode">
                     <legend-panel :isBasicMode="isBasicMode">
