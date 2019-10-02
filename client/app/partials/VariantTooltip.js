@@ -783,18 +783,6 @@ export default class VariantTooltip {
         const me = this;
 
         let info = me.globalApp.utility.formatDisplay(variant, me.translator, me.isEduMode);
-
-        // TODO: to finish tooltip:
-        // 1) put into matrix: DONE
-        // 2) lock out hover tooltip when click one is displayed: Not doing...
-        // 3) add AF to count viz: DONE
-        // 4) Add flag variant button and flagged chip
-        // 5) insert glyphs: DONE
-        // 6) Add pileup: DONE
-        // 7) Add links
-        // 8) Fix AF down: DONE
-        // 9) Add X-out functionality: DONE
-
         let positionInfo = (geneObject ? geneObject.gene_name : "") + " " + info.coord;
         let clinvarInfo = me.globalApp.utility.capitalizeFirstLetter(info.clinvarSig);
         let labelClasses = 'click-label col-xs-5';
@@ -807,8 +795,8 @@ export default class VariantTooltip {
                 + me._tooltipLabeledRow('Base \u0394', info.refalt, labelClasses, valueClasses, 'clickTipDelta')
                 + me._tooltipLabeledRow('Impact', me.globalApp.utility.capitalizeFirstLetter(info.vepImpact), labelClasses, valueClasses, 'clickTipImpact')
                 + me._tooltipLabeledRow('Is Somatic', variant.isInherited == null ? 'Undetermined' : variant.isInherited === true ? 'No' : 'Yes', labelClasses, valueClasses, 'clickTipSomatic')
-                + me._tooltipLabeledRow('In COSMIC', variant.inCosmic === true ? 'Yes' : 'No', labelClasses, valueClasses, 'clickTipCosmic')
-                + me._tooltipLabeledRow('ClinVar', clinvarInfo === "" ? "N/A" : clinvarInfo, labelClasses, valueClasses, 'clickTipClinvar'))
+                + me._tooltipLabeledRowWithLink('In COSMIC', variant.inCosmic === true ? 'Yes' : 'No', labelClasses, valueClasses, 'clickTipCosmic') // TODO: add cosmic link
+                + me._tooltipLabeledRowWithLink('ClinVar', clinvarInfo === "" ? "N/A" : clinvarInfo, labelClasses, valueClasses, 'clickTipClinvar', info.clinvarUrl))
             + me._formatRightHalf(me._tooltipClickRow(me._getAfDiv(), svgValueClasses) + me._tooltipButtonRow(variant, true, true))
         );
 
@@ -926,6 +914,15 @@ export default class VariantTooltip {
             + '<div class="' + valueClazz + '" style="text-align:left;word-break:normal" id="' + valueId + '">' + value + '</div>'
             + '</div>';
     }
+
+    _tooltipLabeledRowWithLink(label, value, labelClazz, valueClazz, valueId, link) {
+        return '<div style="padding: 2px 0px">'
+            + '<div class="' + labelClazz + '" style="text-align:left;word-break:none"><u>' + label + '</u>:</div>'
+            + '<div class="' + valueClazz + '" style="text-align:left;word-break:normal" id="' + valueId + '">' + value
+            + '<a href="' + link + '" target="' + label + '" style="padding-left: 4px;"><i class="icon link-icon material-icons">open_in_new</i></a>' + '</div>'
+        + '</div>';
+    }
+
 
     _tooltipButtonRow(variant, showFlagBtn, showPileupBtn) {
         let buttons = '';
