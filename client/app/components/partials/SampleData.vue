@@ -79,11 +79,11 @@
                                   @change="onNicknameEntered"
                     ></v-text-field>
                 </v-flex>
-                <v-flex d-flex xs8 v-if="!isStaticSlot && !timeSeriesMode">
+                <v-flex d-flex xs8 v-if="!isStaticSlot && !freezeSampleSwitch">
                     <v-switch label="Tumor" class="pt-1" hide-details @change="onIsAffected"
                               v-model="isTumor"></v-switch>
                 </v-flex>
-                <v-flex d-flex xs8 v-else-if="timeSeriesMode === true">
+                <v-flex d-flex xs8 v-else-if="freezeSampleSwitch === true">
                     <v-container>
                         <div>
                             <v-chip small outline color="appColor">
@@ -228,7 +228,8 @@
                 checkingBam: false,
                 vcfError: false,
                 bamError: false,
-                selectedTrackId: null
+                selectedTrackId: null,
+                freezeSampleSwitch: true    // Prev timeSeriesMode prop used for this logic
             }
         },
         watch: {

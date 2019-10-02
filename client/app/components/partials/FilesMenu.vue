@@ -281,12 +281,10 @@
                     self.cohortModel.promiseAddSample(newInfo)
                         .then((model) => {
                             newInfo.model = model;
-
                             if (self.debugMe) {
                                 console.log('adding new sample');
                                 self.debugOrder();
                             }
-
                             resolve();
                         })
                         .catch((error) => {
