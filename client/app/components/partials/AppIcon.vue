@@ -392,6 +392,10 @@
         check_circle
       </v-icon>
 
+      <v-icon v-if="icon == 'undetermined'" style="font-size: 15px; vertical-align: top">
+          help
+      </v-icon>
+
   </div>
 
 </template>

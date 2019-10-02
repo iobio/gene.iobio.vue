@@ -885,7 +885,6 @@
                 } else if (self.sampleModel.id === 'cosmic-variants' && self.cosmicVariantsViz === 'variants') {
                     displayCts = true;
                 }
-                debugger;
                 return displayCts;
             }
         },

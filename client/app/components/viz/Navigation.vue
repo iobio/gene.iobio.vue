@@ -126,10 +126,17 @@
                     Legend
                 </v-btn>
 
-                <legend-panel
-                        :isBasicMode="isBasicMode"
-                        style="max-width:400px">
-                </legend-panel>
+                <v-card>
+                    <v-card-title>
+                        <span style="font-size: 18px !important">Legend</span>
+                    </v-card-title>
+                    <hr style="margin-top: 5px; margin-bottom: 10px"/>
+                    <legend-panel
+                            :isBasicMode="isBasicMode"
+                            style="max-width:400px">
+                    </legend-panel>
+                    <hr style="margin-top: 5px; margin-bottom: 15px"/>
+                </v-card>
             </v-menu>
 
 

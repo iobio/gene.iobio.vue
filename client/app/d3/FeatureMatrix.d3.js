@@ -466,38 +466,38 @@ export default function featureMatrixD3() {
                     return ((matrixColumnNames.length * (cellWidth != null ? cellWidth : cellSize)) - 1);
                 });
 
-            // Draw color scale legend (sourced from http://bl.ocks.org/tjdecke/5558084)
-            var legend = svg.selectAll(".legend")
-                .data([0].concat(colorScale.quantiles()), function(d) { return d; });
-
-            const legendBuffer = firstCellHeight * 2;
-
-            legend.enter().append("g")
-                .attr("class", "legend");
-
-            let legendCellScale = 2;
-            legend.append("rect")
-                .attr("x", function(d, i) { return rowLabelWidth + (cellSize * legendCellScale * i); })
-                .attr("y", matrixHeight + legendBuffer + columnLabelHeight)
-                .attr("width", cellSize * legendCellScale)
-                .attr("height", firstCellHeight)
-                .style("fill", function(d, i) { return colors[i]; });
-
-            legend.append("text")
-                .text(function(d, i) { return '≥ ' + Math.round(100/colors.length * i) + '%'; })
-                .attr("x", function(d, i) { return rowLabelWidth + (cellSize * legendCellScale * i); })
-                .attr("y", matrixHeight + columnLabelHeight + (legendBuffer + (firstCellHeight * 1.55)))
-                .attr('class', columnLabelClass);
-
-            legend.exit().remove();
-
-            // Just draw label for first legend element
-            d3.select(".legend")
-                .append("text")
-                .text("AF Scale")
-                .attr("x", rowLabelWidth)
-                .attr("y", matrixHeight + legendBuffer + columnLabelHeight - 2)
-                .attr("class", columnLabelClass);
+            // // Draw color scale legend (sourced from http://bl.ocks.org/tjdecke/5558084)
+            // var legend = svg.selectAll(".legend")
+            //     .data([0].concat(colorScale.quantiles()), function(d) { return d; });
+            //
+            // const legendBuffer = firstCellHeight * 2;
+            //
+            // legend.enter().append("g")
+            //     .attr("class", "legend");
+            //
+            // let legendCellScale = 2;
+            // legend.append("rect")
+            //     .attr("x", function(d, i) { return rowLabelWidth + (cellSize * legendCellScale * i); })
+            //     .attr("y", matrixHeight + legendBuffer + columnLabelHeight)
+            //     .attr("width", cellSize * legendCellScale)
+            //     .attr("height", firstCellHeight)
+            //     .style("fill", function(d, i) { return colors[i]; });
+            //
+            // legend.append("text")
+            //     .text(function(d, i) { return '≥ ' + Math.round(100/colors.length * i) + '%'; })
+            //     .attr("x", function(d, i) { return rowLabelWidth + (cellSize * legendCellScale * i); })
+            //     .attr("y", matrixHeight + columnLabelHeight + (legendBuffer + (firstCellHeight * 1.55)))
+            //     .attr('class', columnLabelClass);
+            //
+            // legend.exit().remove();
+            //
+            // // Just draw label for first legend element
+            // d3.select(".legend")
+            //     .append("text")
+            //     .text("AF Scale")
+            //     .attr("x", rowLabelWidth)
+            //     .attr("y", matrixHeight + legendBuffer + columnLabelHeight - 2)
+            //     .attr("class", columnLabelClass);
 
             g.selectAll('rect.cellbox')
                 .on("mouseover", function (d) {

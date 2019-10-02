@@ -16,7 +16,7 @@
      :style="iconStyle">
     </app-icon>
     <span :class="wrapLabel ? 'legend-wrap-text legend-text' : 'legend-text'"
-      :style="wrapLabel ? 'width:' + (wrapWidth ? wrapWidth : '60') + 'px' : ''"
+      :style="labelStyle"
     >{{ label }}</span>
   </div>
 </template>
@@ -45,6 +45,27 @@ export default {
   data () {
     return {
     }
+  },
+  computed: {
+      labelStyle: function() {
+          const self = this;
+          let compStyle = '';
+
+          let widthStyle = 'width: 60px;';
+          if (self.wrapLabel && self.wrapWidth) {
+              widthStyle = 'width: ' + self.wrapWidth + 'px;';
+          }
+          compStyle += widthStyle;
+
+
+          if (self.icon === 'clinvar') {
+              compStyle += ' padding-top: 5px';
+          } else if (self.icon === 'coverage' || self.icon === 'somatic-variant' || self.icon === 'undetermined') {
+              compStyle += ' padding-top: 2px';
+          }
+
+          return compStyle;
+      }
   }
 }
 </script>
