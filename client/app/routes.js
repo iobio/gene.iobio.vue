@@ -16,7 +16,7 @@ import ExhibitCases from './components/pages/ExhibitCases.vue'
 import ExhibitCaseComplete from './components/pages/ExhibitCaseComplete.vue'
 import ExhibitCasesComplete from './components/pages/ExhibitCaseComplete.vue'
 
-// import VueAnalytics from 'vue-analytics'
+import VueAnalytics from 'vue-analytics'
 
 import bootstrap from 'bootstrap/dist/css/bootstrap.css'
 import {Typeahead} from 'uiv'
@@ -170,11 +170,10 @@ const router = new VueRouter({
 })
 
 // Google analytics
-// TODO: update this with oncogene ID
-// Vue.use(VueAnalytics, {
-//     id: 'UA-47481907-5',
-//     router
-// })
+Vue.use(VueAnalytics, {
+    id: 'UA-47481907-10',
+    router
+})
 
 // define a globals mixin object
 Vue.mixin({
