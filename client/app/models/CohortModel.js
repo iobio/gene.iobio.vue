@@ -913,7 +913,8 @@ class CohortModel {
             self.sampleMap['cosmic-variants'].model.promiseGetVariantIds(theGene, theTranscript, self.sampleMap['cosmic-variants'].model)
                 .then(function(resultMap) {
                     self.getModel('cosmic-variants').inProgress.loadingVariants = false;
-                    self.setCosmicVariantIds(resultMap);
+                    self.cosmicVariantIdHash = resultMap['cosmic-variants-ids'];
+                    delete resultMap['cosmic-variants-ids'];
                     resolve();
                 })
                 .catch((error) => {
@@ -922,15 +923,16 @@ class CohortModel {
         })
     }
 
-    setCosmicVariantIds(resultMap) {
-        const self = this;
-        let idArr = resultMap['cosmic-variants-ids'];
-        let idHash = {};
-        idArr.forEach((id) => {
-            idHash[id] = true;
-        });
-        self.cosmicVariantIdHash = idHash;
-    }
+    // TODO: get rid of if dict works
+    // setCosmicVariantIds(resultMap) {
+    //     const self = this;
+    //     let idArr = resultMap['cosmic-variants-ids'];
+    //     let idHash = {};
+    //     idArr.forEach((id) => {
+    //         idHash[id] = true;
+    //     });
+    //     self.cosmicVariantIdHash = idHash;
+    // }
 
     promiseLoadCosmicVariants(theGene, theTranscript) {
         let self = this;
@@ -1280,8 +1282,9 @@ class CohortModel {
                     if (id !== 'known-variants' && id !=='cosmic-variants') {
                         let currSample = resultMap[id];
                         currSample.features.forEach((feat) => {
-                            if (cosmicHash[feat.id] === true) {
+                            if (cosmicHash[feat.id]) {
                                 feat.inCosmic = true;
+                                feat.cosmicLegacyId = cosmicHash[feat.id];
                             }
                         })
                     }

@@ -795,7 +795,7 @@ export default class VariantTooltip {
                 + me._tooltipLabeledRow('Base \u0394', info.refalt, labelClasses, valueClasses, 'clickTipDelta')
                 + me._tooltipLabeledRow('Impact', me.globalApp.utility.capitalizeFirstLetter(info.vepImpact), labelClasses, valueClasses, 'clickTipImpact')
                 + me._tooltipLabeledRow('Is Somatic', variant.isInherited == null ? 'Undetermined' : variant.isInherited === true ? 'No' : 'Yes', labelClasses, valueClasses, 'clickTipSomatic')
-                + me._tooltipLabeledRowWithLink('In COSMIC', variant.inCosmic === true ? 'Yes' : 'No', labelClasses, valueClasses, 'clickTipCosmic') // TODO: add cosmic link
+                + me._tooltipLabeledRowWithLink('In COSMIC', variant.inCosmic === true ? 'Yes' : 'No', labelClasses, valueClasses, 'clickTipCosmic', info.cosmicUrl)
                 + me._tooltipLabeledRowWithLink('ClinVar', clinvarInfo === "" ? "N/A" : clinvarInfo, labelClasses, valueClasses, 'clickTipClinvar', info.clinvarUrl))
             + me._formatRightHalf(me._tooltipClickRow(me._getAfDiv(), svgValueClasses) + me._tooltipButtonRow(variant, true, true))
         );
@@ -916,11 +916,14 @@ export default class VariantTooltip {
     }
 
     _tooltipLabeledRowWithLink(label, value, labelClazz, valueClazz, valueId, link) {
-        return '<div style="padding: 2px 0px">'
+        let row = '<div style="padding: 2px 0px">'
             + '<div class="' + labelClazz + '" style="text-align:left;word-break:none"><u>' + label + '</u>:</div>'
-            + '<div class="' + valueClazz + '" style="text-align:left;word-break:normal" id="' + valueId + '">' + value
-            + '<a href="' + link + '" target="' + label + '" style="padding-left: 4px;"><i class="icon link-icon material-icons">open_in_new</i></a>' + '</div>'
-        + '</div>';
+            + '<div class="' + valueClazz + '" style="text-align:left;word-break:normal" id="' + valueId + '">' + value;
+            if (link) {
+                row += '<a href="' + link + '" target="' + label + '" style="padding-left: 4px;"><i class="icon link-icon material-icons">open_in_new</i></a>';
+            }
+            row += '</div></div>';
+        return row;
     }
 
 

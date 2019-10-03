@@ -1554,11 +1554,12 @@ class SampleModel {
                             self.getVcfRefName(theGene.chr),
                             theGene,
                             theTranscript,
-                            null   // regions
+                            null,   // regions
+                            'LEGACY_ID'
                         );
                     }).then(function(data) {
                     if (data) {
-                        if (data.length === 0) {
+                        if (Object.keys(data).length === 0) {
                             console.log('Warning: no cosmic variants found for this gene.');
                         }
                         // TODO: cache this once we know its working
@@ -2172,7 +2173,6 @@ class SampleModel {
     }
 
     _refreshVariantsWithVariantIds(theVcfData, annotatedVcfData) {
-
         var me = this;
         if (theVcfData == null) {
             return;

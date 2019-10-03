@@ -77,12 +77,9 @@ export default class EndpointCmd {
 
     // Form iobio command based on type of vcf input
     let cmd = null;
-    let query_args = '%CHROM %POS %REF %ALT %INFO/STRAND\n';
     if (vcfSource.hasOwnProperty('vcfUrl')) {
-        //  If we have a vcf URL, use tabix to get the variants for the region
         let view_args = ['view', '-r', regionParam, '"' +vcfSource.vcfUrl + '"'];
         cmd = new iobio.cmd(me.IOBIO.bcftools, view_args, {ssl: me.globalApp.useSSL});
-            // .pipe(me.IOBIO.bcftools, ['query', '-f', query_args, '-'], {ssl: me.globalApp.useSSL})
     } else if (vcfSource.hasOwnProperty('writeStream')) {
         // If we have a local vcf file, use the writeStream function to stream in the vcf records
         cmd = new iobio.cmd(me.IOBIO.bcftools, ['view', '-r', regionParam, vcfSource.writeStream], {ssl: me.globalApp.useSSL})

@@ -679,8 +679,8 @@ class Util {
       dbSnpUrl: "",
       dbSnpLink: "",
       filtersPassed: "",
+      cosmicUrl: null
     };
-
 
     info.coord = variant.chrom + ":" + variant.start;
     info.refalt = variant.ref + "->" + variant.alt;
@@ -923,6 +923,10 @@ class Util {
     }
 
     info.filtersPassed = variant.filtersPassed ? variant.filtersPassed.join(",") : "";
+
+    if (variant.cosmicLegacyId) {
+      info.cosmicUrl = 'https://cancer.sanger.ac.uk/cosmic/search?q=' + variant.cosmicLegacyId;
+    }
 
     return info;
   }

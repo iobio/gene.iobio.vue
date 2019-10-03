@@ -625,7 +625,8 @@ var effectCategories = [
       });
   };
 
-  exports.promiseGetVariantIds = function(refName, geneObject, selectedTranscript, regions) {
+  /* Returns dictionary with IDs as keys and values from INFO column according to infoValueField if provided. Else true as value. */
+  exports.promiseGetVariantIds = function(refName, geneObject, selectedTranscript, regions, infoValueField = null) {
       const me = this;
 
       return new Promise(function(resolve, reject) {
@@ -646,7 +647,7 @@ var effectCategories = [
             });
             cmd.on('end', function(data) {
                 let annotatedRecs = annotatedData.split("\n");
-                let varIds = [];
+                let idLookup = {};
                 annotatedRecs.forEach(function(record) {
                     if (record.charAt(0) !== "#") {
                         // Parse the vcf record into its fields
@@ -658,13 +659,17 @@ var effectCategories = [
                         let info     = fields[7];
 
                         let strand = '';
+                        let infoVal = '';
                         if (info && info !== '') {
                           let infoFields = info.split(';');
-                          for (var field in infoFields) {
+                          infoFields.forEach((field) => {
                             if (field.startsWith('STRAND')) {
                               strand = field.split('=')[1];
                             }
-                          }
+                            if (infoValueField && field.startsWith(infoValueField.toUpperCase())) {
+                              infoVal = field.split('=')[1];
+                            }
+                          })
                         }
                         if (strand === '') {
                           console.log("Could not find strand from promiseGetVariantIds");
@@ -675,10 +680,10 @@ var effectCategories = [
 
                         // Parse ids and return as array
                         let id = 'var_' + pos + '_' + chr + '_' + strand + '_' + ref + '_' + alt;
-                        varIds.push(id);
+                        idLookup[id] = infoVal === '' ? true : infoVal;
                     }
                 });
-                resolve(varIds);
+                resolve(idLookup);
             });
             cmd.on('error', function(error) {
                 console.log(error);
@@ -1676,6 +1681,7 @@ var effectCategories = [
                                     'isInherited': null,              // Null = undetermined, True = inherited, False = somatic
                                     'passesFilters': true,            // Used for somatic calling when other filters applied
                                     'inCosmic': false,
+                                    'cosmicLegacyId': null,           // Used for cosmic links in variant detail tooltip
                                     'sampleModelId': sampleModelId   // Used for feature matrix tracking
                                 };
 
