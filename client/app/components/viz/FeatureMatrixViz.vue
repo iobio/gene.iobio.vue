@@ -194,6 +194,8 @@
                     return;
                 }
             },
+            global: null,
+            translator: null
         },
         data() {
             return {
@@ -222,6 +224,8 @@
                     .columnLabelClass(this.columnLabelClass)
                     .columnLabelSymbol(this.columnLabelSymbol)
                     .rowLabelWidth(this.rowLabelWidth)
+                    .global(this.global)
+                    .translator(this.translator)
                     .adjustTooltipCoordinates(this.adjustTooltipCoordinates)
                     .on('d3click', function (variant) {
                         self.$emit("variantClick", variant);

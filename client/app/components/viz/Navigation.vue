@@ -231,6 +231,8 @@
                              :hoverTooltip="hoverTooltip"
                              :clickTooltip="clickTooltip"
                              :width="0"
+                             :translator="translator"
+                             :global="global"
                              @cohort-variant-click="cohortVariantClick"
                              @cohort-variant-hover="cohortVariantHover"
                              @cohort-variant-hover-end="cohortVariantHoverEnd"
@@ -562,7 +564,9 @@
             selectedBuild: '',
             applyFilters: false,
             clickTooltip: null,
-            hoverTooltip: null
+            hoverTooltip: null,
+            translator: null,
+            global: null
         },
         data() {
             let self = this;

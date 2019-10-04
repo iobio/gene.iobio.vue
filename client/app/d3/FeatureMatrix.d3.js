@@ -39,11 +39,13 @@ export default function featureMatrixD3() {
         cellHeight = null,
         cellWidths = null,
         cellHeights = null,
-        rowLabelWidth = 20,
+        rowLabelWidth = 300,
         columnLabelHeight = 100,
         columnLabelShift = 80;
     //  options
     var defaults = {};
+    var global = null;
+    var translator = null;
 
     var selectVariant = function (variant, clazz) {
         if (variant != null) {
@@ -71,7 +73,22 @@ export default function featureMatrixD3() {
                 }
             }
         }
-    }
+    };
+
+    var getVarRowLabel = function(feature) {
+        let info = global.utility.formatDisplay(feature, translator, false);
+
+        let varLabel = '';
+        // varLabel += global.utility.translateVariantType(feature.type, true); this is already in the matrix...
+        varLabel += global.utility.translateExonInfo(info.exon, true);
+        varLabel += '.' + info.refalt;
+
+        if (varLabel.length > 9) {
+            varLabel = varLabel.substring(0, 8) + '...';
+        }
+        return varLabel;
+
+    };
 
 
     function chart(selection, options) {
@@ -127,9 +144,9 @@ export default function featureMatrixD3() {
             var innerWidth = width - margin.left - margin.right - rowLabelWidth;
 
             y.domain(data.map(function (d, i) {
-                return i + 1;
+                return (i+1) + '. ' + getVarRowLabel(d);
             }));
-            y.rangeRoundBands([0, innerHeight], 0, 0);
+            y.rangeRoundBands([0, innerHeight], 0);
 
             x.domain(matrixColumnNames);
             x.rangeRoundBands([0, innerWidth], 0, 0);
@@ -157,7 +174,9 @@ export default function featureMatrixD3() {
                 .attr("width", parseInt(width))
                 .attr("height", heightPercent)
                 .attr('viewBox', "0 0 " + parseInt(width) + " " + parseInt(height))
-                .attr("preserveAspectRatio", "none");
+                .attr("preserveAspectRatio", "none")
+                .style("display", "block")
+                .style("margin", "auto");
 
             // The chart dimensions could change after instantiation, so update viewbox dimensions
             // every time we draw the chart.
@@ -220,7 +239,6 @@ export default function featureMatrixD3() {
                     })
                     .text(function(d) { return d; })
                     .attr('class', columnLabelClass);
-
             }
 
             topLevelGroup.selectAll("g.group").remove();
@@ -231,18 +249,17 @@ export default function featureMatrixD3() {
                 .attr("transform", "translate(" + (parseInt(rowLabelWidth) + 10) + "," + columnLabelHeight + ")");
 
 
-            // Create the y-axis at the top.  This will show the labels for the cols
+            // Create the y-axis - shows labels for rows
             topLevelGroup.selectAll(".y.axis").remove();
-            topLevelGroup.selectAll("g.y").data([matrixColumnNames]).enter()
+            topLevelGroup.selectAll("g.y").data([data]).enter()
                 .append("g")
                 .attr("class", "y axis")
-                .attr("transform", "translate(" + rowLabelWidth + "," + (options.showColumnLabels ? columnLabelShift : "0") + ")")
+                .attr("transform", "translate(" + (rowLabelWidth - 10) + "," + (options.showColumnLabels ? columnLabelShift : "0") + ")")
                 .call(yAxis)
                 .selectAll("text")
                 .style("text-anchor", "start")
-                .attr("x", "-28")
-                .attr("dx", ".8em")
-                .attr("dy", ".15em");
+                .style("text-overflow", "ellipsis")
+                .attr("x", "-75");
 
             // Add the up and down arrows to the x-axis
             topLevelGroup.selectAll("g.y.axis .tick .up").remove();
@@ -466,38 +483,38 @@ export default function featureMatrixD3() {
                     return ((matrixColumnNames.length * (cellWidth != null ? cellWidth : cellSize)) - 1);
                 });
 
-            // // Draw color scale legend (sourced from http://bl.ocks.org/tjdecke/5558084)
-            // var legend = svg.selectAll(".legend")
-            //     .data([0].concat(colorScale.quantiles()), function(d) { return d; });
-            //
-            // const legendBuffer = firstCellHeight * 2;
-            //
-            // legend.enter().append("g")
-            //     .attr("class", "legend");
-            //
-            // let legendCellScale = 2;
-            // legend.append("rect")
-            //     .attr("x", function(d, i) { return rowLabelWidth + (cellSize * legendCellScale * i); })
-            //     .attr("y", matrixHeight + legendBuffer + columnLabelHeight)
-            //     .attr("width", cellSize * legendCellScale)
-            //     .attr("height", firstCellHeight)
-            //     .style("fill", function(d, i) { return colors[i]; });
-            //
-            // legend.append("text")
-            //     .text(function(d, i) { return '≥ ' + Math.round(100/colors.length * i) + '%'; })
-            //     .attr("x", function(d, i) { return rowLabelWidth + (cellSize * legendCellScale * i); })
-            //     .attr("y", matrixHeight + columnLabelHeight + (legendBuffer + (firstCellHeight * 1.55)))
-            //     .attr('class', columnLabelClass);
-            //
-            // legend.exit().remove();
-            //
-            // // Just draw label for first legend element
-            // d3.select(".legend")
-            //     .append("text")
-            //     .text("AF Scale")
-            //     .attr("x", rowLabelWidth)
-            //     .attr("y", matrixHeight + legendBuffer + columnLabelHeight - 2)
-            //     .attr("class", columnLabelClass);
+            // Draw color scale legend (sourced from http://bl.ocks.org/tjdecke/5558084)
+            var legend = svg.selectAll(".legend")
+                .data([0].concat(colorScale.quantiles()), function(d) { return d; });
+
+            const legendBuffer = firstCellHeight * 2;
+
+            legend.enter().append("g")
+                .attr("class", "legend");
+
+            let legendCellScale = 3;
+            legend.append("rect")
+                .attr("x", function(d, i) { return (rowLabelWidth - 90) + (cellSize * legendCellScale * i); })
+                .attr("y", matrixHeight + legendBuffer + columnLabelHeight)
+                .attr("width", cellSize * legendCellScale)
+                .attr("height", firstCellHeight)
+                .style("fill", function(d, i) { return colors[i]; });
+
+            legend.append("text")
+                .text(function(d, i) { return '≥ ' + Math.round(100/colors.length * i) + '%'; })
+                .attr("x", function(d, i) { return (rowLabelWidth - 80) + (cellSize * legendCellScale * i); })
+                .attr("y", matrixHeight + columnLabelHeight + (legendBuffer + (firstCellHeight * 1.55)))
+                .attr('class', columnLabelClass);
+
+            legend.exit().remove();
+
+            // Just draw label for first legend element
+            d3.select(".legend")
+                .append("text")
+                .text("AF Scale")
+                .attr("x", rowLabelWidth)
+                .attr("y", matrixHeight + legendBuffer + columnLabelHeight - 2)
+                .attr("class", columnLabelClass);
 
             g.selectAll('rect.cellbox')
                 .on("mouseover", function (d) {
@@ -757,6 +774,24 @@ export default function featureMatrixD3() {
             return highlightVariant;
         } else {
             highlightVariant = _;
+            return chart;
+        }
+    }
+
+    chart.global = function (_) {
+        if (!arguments.length) {
+            return global;
+        } else {
+            global = _;
+            return chart;
+        }
+    }
+
+    chart.translator = function (_) {
+        if (!arguments.length) {
+            return translator;
+        } else {
+            translator = _;
             return chart;
         }
     }

@@ -942,30 +942,30 @@ class Util {
     }
   }
 
-    translateVariantType(type) {
+    translateVariantType(type, shorthand = false) {
       switch (type) {
         case "del": {
-          return "Deletion";
+          return shorthand ? "DEL" : "Deletion";
         }
         case "ins": {
-          return "Insertion";
+          return shorthand ? "INS" : "Insertion";
         }
         case "snp": {
           return "SNP";
         }
         case "complex": {
-          return "Complex";
+          return shorthand ? "CX" : "Complex";
         }
         default:
             return "";
       }
     }
 
-    translateExonInfo(exonString) {
+    translateExonInfo(exonString, shorthand = false) {
       if (exonString !== '') {
-        return exonString;
+        return shorthand ? 'EX' : exonString;
       } else {
-        return 'Intronic';
+        return shorthand ? 'INT' : 'Intronic';
       }
     }
 

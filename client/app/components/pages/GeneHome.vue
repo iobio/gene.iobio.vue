@@ -86,6 +86,8 @@
                 :hoverTooltip="hoverTooltip"
                 :clickTooltip="clickTooltip"
                 :applyFilters="applyFilters"
+                :translator="cohortModel.translator"
+                :global="globalApp"
                 @update-samples="onUpdateSamples"
                 @input="onGeneNameEntered"
                 @load-demo-data="onLoadDemoData"

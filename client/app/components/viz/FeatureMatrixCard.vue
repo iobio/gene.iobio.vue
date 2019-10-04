@@ -95,6 +95,8 @@
                                         :columnLabelSymbol="columnLabelSymbol"
                                         :rowLabelWidth="rowLabelWidth"
                                         :adjustTooltipCoordinates="adjustTooltipCoordinates"
+                                        :global="global"
+                                        :translator="translator"
                                         @featureMatrixRowUp="onFeatureMatrixRowUp"
                                         @featureMatrixRowDown="onFeatureMatrixRowDown"
                                         @variantClick="onVariantClick"
@@ -173,7 +175,9 @@
             id: null,
             hoverTooltip: null,
             clickTooltip: null,
-            width: 0
+            width: 0,
+            translator: null,
+            global: null
         },
         data() {
             return {
@@ -183,12 +187,12 @@
                 CELL_WIDTH_BASIC: 160,
                 COLUMN_LABEL_HEIGHT: 80,
                 COLUMN_LABEL_HEIGHT_BASIC: 28,
-                ROW_LABEL_WIDTH: 20,  // Note: prev 165
+                ROW_LABEL_WIDTH: 105,  // Note: prev 165
                 ROW_LABEL_WIDTH_BASIC: 165,
                 ROW_LABEL_WIDTH_EDU: 130,
                 CELL_SIZE: null,
 
-                margin: {top: 10, right: 40, bottom: 7, left: 20},
+                margin: {top: 10, right: 40, bottom: 7, left: 0},
                 cellSize: null,
                 cellWidth: null,
                 columnLabelHeight: null,
