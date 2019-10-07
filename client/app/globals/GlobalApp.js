@@ -103,9 +103,10 @@ class GlobalApp {
       }
     /* Updated 05Sept2019 to v90 */
     getCosmicUrl(build) {
+        // These have VEP impact assigned
         let cosmicUrls = {
-            'GRCh37': "https://s3.amazonaws.com/iobio/samples/vcf/COSMIC_data/v90_05Sept2019/cosmic_all_grch37_v90.vcf.gz",
-            'GRCh38': "https://s3.amazonaws.com/iobio/samples/vcf/COSMIC_data/v90_05Sept2019/cosmic_all_grch39_v90.vcf.gz"
+            'GRCh37': "https://iobio.s3.amazonaws.com/samples/vcf/COSMIC_data/v90_05Sept2019/CosmicAllVariantsGRCh37.vcf.gz",
+            'GRCh38': "https://iobio.s3.amazonaws.com/samples/vcf/COSMIC_data/v90_05Sept2019/CosmicAllVariantsGRCh38.vcf.gz"
         };
         return cosmicUrls[build];
     }

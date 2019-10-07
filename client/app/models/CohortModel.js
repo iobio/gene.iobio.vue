@@ -1245,7 +1245,7 @@ class CohortModel {
                 annotatePromises.push(p);
             }
 
-            // Always annotate COSMIC so we can put status in feature matrix
+            // Always get COSMIC IDs so we can put status in feature matrix
             let p = self.promiseGetCosmicVariantIds(theGene, theTranscript);
             annotatePromises.push(p);
 
@@ -1268,8 +1268,7 @@ class CohortModel {
         })
     }
 
-    /* Assigns bool to each variant telling if in COSMIC or not.
-    NOTE: this is double annotating COSMIC vars (2nd for track) */
+    /* Assigns bool to each variant telling if in COSMIC or not */
     promiseAnnotateWithCosmic(resultMap) {
         const self = this;
         return new Promise((resolve, reject) => {

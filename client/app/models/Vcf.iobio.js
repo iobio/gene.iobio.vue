@@ -515,7 +515,7 @@ var effectCategories = [
     var buffer = "";
     var refName;
 
-    var cmd = me.getEndpoint().getVcfDepth(vcfURL, tbiUrl)
+    var cmd = me.getEndpoint().getVcfDepth(vcfURL, tbiUrl);
 
     cmd.on('data', function(data) {
 

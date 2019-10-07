@@ -170,8 +170,8 @@
                     <span slot="badge"> {{ coverageDangerRegions.length }} </span>
                     Exons with insufficient coverage
                 </v-badge>
-                <div style="float:left" id="cnv-ideo"></div>
-                <div style="float:left" id="loh-ideo"></div>
+                <div style="float: right;" id="cnv-ideo"></div>
+                <div style="float: right;" id="loh-ideo"></div>
             </div>
             <v-card :style="{padding: '5px 10px'}" id="card-viz">
                 <known-variants-toolbar
@@ -774,14 +774,14 @@
                 let cnvConfig = {
                     organism: 'human',
                     container: '#cnv-ideo',
-                    chromosome: this.ncbiSummary.chromosome,
-                    chrHeight: 700,
+                    chromosome: this.selectedGene.chr,
+                    chrHeight: 500,
                     orientation: 'horizontal',
                     annotations: [{
-                        name: this.gene,
-                        chr: this.ncbiSummary.chromosome,
-                        start: this.ncbiSummary.genomicinfo[0].chrstart,
-                        stop: this.ncbiSummary.genomicinfo[0].chrstop
+                        name: this.selectedGene.gene_name,
+                        chr: this.selectedGene.chr, // TODO: what are field names here
+                        start: this.selectedGene.start,
+                        stop: this.selectedGene.end
                     }]
                 };
                 let cnvIdeogram = new Ideogram(cnvConfig);
@@ -790,7 +790,7 @@
                     organism: 'human',
                     container: '#loh-ideo',
                     chromosome: this.ncbiSummary.chromosome,
-                    chrHeight: 700,
+                    chrHeight: 500,
                     orientation: 'horizontal',
                     annotations: [{
                         name: this.gene,
