@@ -187,7 +187,7 @@
                 CELL_WIDTH_BASIC: 160,
                 COLUMN_LABEL_HEIGHT: 80,
                 COLUMN_LABEL_HEIGHT_BASIC: 28,
-                ROW_LABEL_WIDTH: 105,  // Note: prev 165
+                ROW_LABEL_WIDTH: 115,  // Note: prev 165
                 ROW_LABEL_WIDTH_BASIC: 165,
                 ROW_LABEL_WIDTH_EDU: 130,
                 CELL_SIZE: null,

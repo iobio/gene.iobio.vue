@@ -83,8 +83,8 @@ export default function featureMatrixD3() {
         varLabel += global.utility.translateExonInfo(info.exon, true);
         varLabel += '.' + info.refalt;
 
-        if (varLabel.length > 9) {
-            varLabel = varLabel.substring(0, 8) + '...';
+        if (varLabel.length > 12) {
+            varLabel = varLabel.substring(0, 11) + '...';
         }
         return varLabel;
 
@@ -254,7 +254,7 @@ export default function featureMatrixD3() {
             topLevelGroup.selectAll("g.y").data([data]).enter()
                 .append("g")
                 .attr("class", "y axis")
-                .attr("transform", "translate(" + (rowLabelWidth - 10) + "," + (options.showColumnLabels ? columnLabelShift : "0") + ")")
+                .attr("transform", "translate(" + (rowLabelWidth - 20) + "," + (options.showColumnLabels ? columnLabelShift : "0") + ")")
                 .call(yAxis)
                 .selectAll("text")
                 .style("text-anchor", "start")

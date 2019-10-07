@@ -152,6 +152,8 @@
                         </v-list>
                     </v-menu>
                 </v-flex>
+            </v-layout>
+            <v-layout style="overflow-y: scroll;">
                 <draggable
                         :options="{handle: '.drag-handle'}"
                         @end="onDragEnd">

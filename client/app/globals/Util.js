@@ -963,9 +963,9 @@ class Util {
 
     translateExonInfo(exonString, shorthand = false) {
       if (exonString !== '') {
-        return shorthand ? 'EX' : exonString;
+        return shorthand ? 'EXON' : exonString;
       } else {
-        return shorthand ? 'INT' : 'Intronic';
+        return shorthand ? 'INTRON' : 'Intronic';
       }
     }
 
