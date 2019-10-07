@@ -93,7 +93,6 @@
                         </v-switch>
                     </v-container>
                 </v-flex>
-
                 <v-flex xs3 class="pl-2 pr-0">
                     <v-select
                             label="Genome Build"
@@ -152,8 +151,6 @@
                         </v-list>
                     </v-menu>
                 </v-flex>
-            </v-layout>
-            <v-layout style="overflow-y: scroll;">
                 <draggable
                         :options="{handle: '.drag-handle'}"
                         @end="onDragEnd">
