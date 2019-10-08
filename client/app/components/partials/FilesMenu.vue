@@ -83,76 +83,78 @@
         <v-btn flat outline slot="activator">
             Files
         </v-btn>
-        <v-form id="files-form" style="padding: 10px; max-height: 420px; overflow-y: scroll; margin-left: 20px; margin-right: 20px">
-            <v-layout wrap class="mt-2">
-                <v-flex xs6 class="mt-2">
-                    <v-container>
-                        <v-switch label="Time Series" hide-details v-model="timeSeriesMode">
-                        </v-switch>
-                        <v-switch label="Separate index URL" hide-details v-model="separateUrlForIndex">
-                        </v-switch>
-                    </v-container>
-                </v-flex>
-                <v-flex xs3 class="pl-2 pr-0">
-                    <v-select
-                            label="Genome Build"
-                            hide-details
-                            v-model="buildName"
-                            :disabled="launchedFromHub"
-                            :items="buildList"
-                            color="appColor"
-                            @change="updateBuildAndValidate"
-                    ></v-select>
-                </v-flex>
+        <v-layout wrap class="mt-2 ml-4">
+            <v-flex xs6 class="mt-2">
+                <v-container>
+                    <v-switch label="Time Series" hide-details v-model="timeSeriesMode">
+                    </v-switch>
+                    <v-switch label="Separate index URL" hide-details v-model="separateUrlForIndex">
+                    </v-switch>
+                </v-container>
+            </v-flex>
+            <v-flex xs3 class="pl-2 pr-0">
+                <v-select
+                        label="Genome Build"
+                        hide-details
+                        v-model="buildName"
+                        :disabled="launchedFromHub"
+                        :items="buildList"
+                        color="appColor"
+                        @change="updateBuildAndValidate"
+                ></v-select>
+            </v-flex>
 
-                <v-flex xs3 class="pr-0 pt-2">
-                    <v-menu>
-                        <v-btn outline
-                               color="appColor"
-                               slot="activator">
-                            Auto-Fill
-                            <v-icon small>keyboard_arrow_down</v-icon>
-                        </v-btn>
-                        <v-list>
-                            <v-list-tile>
-                                <v-list-tile-action>
-                                    <v-btn flat color="appGray"
-                                           @click="loadDuoDemo">
-                                        {{ dualAutofill.display }}
-                                    </v-btn>
-                                </v-list-tile-action>
-                            </v-list-tile>
-                            <v-list-tile>
-                                <v-list-tile-action>
-                                    <v-btn flat color="appGray"
-                                           @click="loadTimeDemo">
-                                        {{ timeAutofill.display }}
-                                    </v-btn>
-                                </v-list-tile-action>
-                            </v-list-tile>
-                            <v-list-tile>
-                                <label class="file-select">
-                                    <!-- We can't use a normal button element here, it would become t he target of the label. -->
-                                    <div id="uploadButton" class="select-button">
-                                        <span style="color: #888888">Upload Config</span>
-                                    </div>
-                                    <!-- Hidden file input -->
-                                    <input type="file" @change="onUploadCustomFile"/>
-                                </label>
-                            </v-list-tile>
-                            <v-list-tile>
-                                <v-list-tile-action>
-                                    <v-btn flat color="appGray" :disabled="!isValid"
-                                           @click="onDownloadCustomFile">
-                                        Download Config
-                                    </v-btn>
-                                </v-list-tile-action>
-                            </v-list-tile>
-                        </v-list>
-                    </v-menu>
-                </v-flex>
+            <v-flex xs3 class="pr-0 pt-2">
+                <v-menu>
+                    <v-btn outline
+                           color="appColor"
+                           slot="activator">
+                        Auto-Fill
+                        <v-icon small>keyboard_arrow_down</v-icon>
+                    </v-btn>
+                    <v-list>
+                        <v-list-tile>
+                            <v-list-tile-action>
+                                <v-btn flat color="appGray"
+                                       @click="loadDuoDemo">
+                                    {{ dualAutofill.display }}
+                                </v-btn>
+                            </v-list-tile-action>
+                        </v-list-tile>
+                        <v-list-tile>
+                            <v-list-tile-action>
+                                <v-btn flat color="appGray"
+                                       @click="loadTimeDemo">
+                                    {{ timeAutofill.display }}
+                                </v-btn>
+                            </v-list-tile-action>
+                        </v-list-tile>
+                        <v-list-tile>
+                            <label class="file-select">
+                                <!-- We can't use a normal button element here, it would become t he target of the label. -->
+                                <div id="uploadButton" class="select-button">
+                                    <span style="color: #888888">Upload Config</span>
+                                </div>
+                                <!-- Hidden file input -->
+                                <input type="file" @change="onUploadCustomFile"/>
+                            </label>
+                        </v-list-tile>
+                        <v-list-tile>
+                            <v-list-tile-action>
+                                <v-btn flat color="appGray" :disabled="!isValid"
+                                       @click="onDownloadCustomFile">
+                                    Download Config
+                                </v-btn>
+                            </v-list-tile-action>
+                        </v-list-tile>
+                    </v-list>
+                </v-menu>
+            </v-flex>
+        </v-layout>
+        <v-form id="files-form" style="padding: 10px; overflow-y: scroll; max-height: 350px; margin-left: 15px; margin-right: 15px; border: dotted #965757 2px">
+            <v-layout wrap class="mt-2">
                 <draggable
-                        :options="{handle: '.drag-handle'}"
+                        :options="{handle: 'drag-handle'}"
                         @end="onDragEnd">
                     <v-flex xs12
                             v-for="sample in sampleIds"
@@ -189,7 +191,8 @@
                 </div>
                 <v-btn
                         @click="onLoad"
-                        :disabled="!isValid">
+                        :disabled="!isValid"
+                        :class="clazzAttention">
                     Load
                 </v-btn>
                 <v-btn @click="onCancel">
@@ -236,7 +239,8 @@
                 debugMe: false,
                 inputClass: 'fileSelect',
                 loadDemoFromWelcome: false,
-                loadDemoFromDropdown: false
+                loadDemoFromDropdown: false,
+                bringAttention: null
             }
         },
         watch: {
@@ -322,6 +326,7 @@
             },
             onLoad: function () {
                 let self = this;
+                self.bringAttention = null;
                 self.inProgress = true;
                 self.cohortModel.genomeBuildHelper.setCurrentBuild(self.buildName);
                 self.cohortModel.promiseAddClinvarSample()
@@ -562,6 +567,7 @@
                             self.scrollToEnd();
                             resolve();
                         }).catch((error) => {
+                            self.bringAttention = null;
                             reject('Problem in autoloading in files menu: ' + error);
                     })
                 });
@@ -628,6 +634,7 @@
                     let currKey = keyList[i];
                     this.isValid &= (this.modelInfoMap[currKey] != null && this.modelInfoMap[currKey].model.isReadyToLoad());
                 }
+                this.bringAttention = this.isValid ? 'load' : null;
             },
             onSamplesAvailable: function (id, samples) {
 
@@ -841,7 +848,14 @@
                 } else {
                     return [];
                 }
-            }
+            },
+            clazzAttention: function () {
+                if (this.bringAttention && this.bringAttention === 'load') {
+                    return 'attention';
+                } else {
+                    return '';
+                }
+            },
         },
         created: function () {
         },

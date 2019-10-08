@@ -70,7 +70,7 @@
         <v-flex d-flex xs11
                 :style="{'margin-left': '-17px'}">
             <v-layout row wrap class="vert-border">
-                <v-flex d-flex xs2 class="sample-label">
+                <v-flex d-flex xs4 class="sample-label">
                     <v-text-field class="pt-1 track-name"
                                   color="appColor"
                                   placeholder="Enter Track Name"
@@ -79,11 +79,11 @@
                                   @change="onNicknameEntered"
                     ></v-text-field>
                 </v-flex>
-                <v-flex d-flex xs8 v-if="!isStaticSlot && !freezeSampleSwitch">
+                <v-flex d-flex xs6 v-if="!isStaticSlot && !freezeSampleSwitch">
                     <v-switch label="Tumor" class="pt-1" hide-details @change="onIsAffected"
                               v-model="isTumor"></v-switch>
                 </v-flex>
-                <v-flex d-flex xs8 v-else-if="freezeSampleSwitch === true">
+                <v-flex d-flex xs6 v-else-if="freezeSampleSwitch === true">
                     <v-container>
                         <div>
                             <v-chip small outline color="appColor">
@@ -92,7 +92,7 @@
                         </div>
                     </v-container>
                 </v-flex>
-                <v-flex d-flex xs8 v-else>
+                <v-flex d-flex xs6 v-else>
                     <!--space holder-->
                 </v-flex>
                 <v-flex d-flex xs2 v-if="!isStaticSlot && !timeSeriesMode" style="padding-left: 30px">
