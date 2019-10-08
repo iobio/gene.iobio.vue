@@ -349,14 +349,14 @@ class SampleModel {
         return theFbData;
     }
 
-    promiseGetKnownVariantHistoData(geneObject, transcript, binLength) {
+    promiseGetKnownVariantHistoData(geneObject, transcript, binLength, annotationMode) {
         var me = this;
         return new Promise(function (resolve, reject) {
             var refName = me._stripRefName(geneObject.chr);
             me.vcf.promiseGetVariantsHistoData(me.id, refName, geneObject, binLength == null ? transcript : null, binLength)
                 .then(function (results) {
                     if (binLength == null) {
-                        var exonBins = me.binKnownVariantsByExons(geneObject, transcript, binLength, results);
+                        var exonBins = me.binKnownVariantsByExons(geneObject, transcript, binLength, results, annotationMode);
                         resolve(exonBins);
                     } else {
                         resolve(results);
@@ -368,14 +368,14 @@ class SampleModel {
         })
     }
 
-    promiseGetCosmicVariantHistoData(geneObject, transcript, binLength) {
+    promiseGetCosmicVariantHistoData(geneObject, transcript, binLength, annotationMode) {
         const me = this;
         return new Promise(function (resolve, reject) {
             let refName = me._stripRefName(geneObject.chr);
             me.vcf.promiseGetVariantsHistoData(me.id, refName, geneObject, binLength == null ? transcript : null, binLength)
                 .then(function (results) {
                     if (binLength == null) {
-                        let exonBins = me.binKnownVariantsByExons(geneObject, transcript, binLength, results);
+                        let exonBins = me.binKnownVariantsByExons(geneObject, transcript, binLength, results, annotationMode);
                         resolve(exonBins);
                     } else {
                         resolve(results);
@@ -387,32 +387,50 @@ class SampleModel {
         })
     }
 
-    binKnownVariantsByExons(geneObject, transcript, binLength, results) {
+    binKnownVariantsByExons(geneObject, transcript, binLength, results, annotationMode) {
         var exonBins = [];
         transcript.features.filter(function (feature) {
-            return feature.feature_type.toUpperCase() == 'CDS' || feature.feature_type.toUpperCase() == 'CDS';
+            return feature.feature_type.toUpperCase() === 'CDS' || feature.feature_type.toUpperCase() === 'CDS';
         }).forEach(function (exon) {
-            var exonBin = {
-                point: (+exon.start + ((+exon.end - +exon.start) / 2)),
-                start: exon.start,
-                end: exon.end,
-                total: +0,
-                path: +0,
-                benign: +0,
-                unknown: +0,
-                other: +0
-            };
+            let exonBin = {};
+            if (annotationMode === 'vep') {
+                exonBin['point'] = (+exon.start + ((+exon.end - +exon.start) / 2));
+                exonBin['start'] = exon.start;
+                exonBin['end'] = exon.end;
+                exonBin['total'] = +0;
+                exonBin['high'] = +0;
+                exonBin['moderate'] = +0;
+                exonBin['modifier'] = +0;
+                exonBin['low'] = +0;
+            } else {
+                exonBin['point'] = (+exon.start + ((+exon.end - +exon.start) / 2));
+                exonBin['start'] = exon.start;
+                exonBin['end'] = exon.end;
+                exonBin['total'] = +0;
+                exonBin['path'] = +0;
+                exonBin['benign'] = +0;
+                exonBin['unknown'] = +0;
+                exonBin['other'] = +0;
+            }
             results.forEach(function (rec) {
                 if (+rec.start >= +exon.start && +rec.end <= +exon.end) {
-                    exonBin.total += +rec.total;
-                    exonBin.path += +rec.path;
-                    exonBin.benign += +rec.benign;
-                    exonBin.other += +rec.other;
-                    exonBin.unknown += +rec.unknown;
+                    if (annotationMode === 'vep') {
+                        exonBin.total += +rec.total;
+                        exonBin.high += +rec.high;
+                        exonBin.moderate += +rec.moderate;
+                        exonBin.modifier += +rec.modifier;
+                        exonBin.low += +rec.low;
+                    } else {
+                        exonBin.total += +rec.total;
+                        exonBin.path += +rec.path;
+                        exonBin.benign += +rec.benign;
+                        exonBin.other += +rec.other;
+                        exonBin.unknown += +rec.unknown;
+                    }
                 }
-            })
+            });
             exonBins.push(exonBin);
-        })
+        });
         return exonBins;
     }
 

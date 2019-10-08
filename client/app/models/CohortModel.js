@@ -897,7 +897,8 @@ class CohortModel {
             if (self.knownVariantViz === 'histo') {
                 binLength = Math.floor(((+theGene.end - +theGene.start) / $('#gene-viz').innerWidth()) * 8);
             }
-            self.sampleMap['known-variants'].model.promiseGetKnownVariantHistoData(theGene, theTranscript, binLength)
+            let annotationMode = 'vep';
+            self.sampleMap['known-variants'].model.promiseGetKnownVariantHistoData(theGene, theTranscript, binLength, annotationMode)
                 .then(function (data) {
                     self.getModel('known-variants').inProgress.loadingVariants = false;
                     self.setVariantHistoData('known-variants', data);
@@ -922,17 +923,6 @@ class CohortModel {
                 })
         })
     }
-
-    // TODO: get rid of if dict works
-    // setCosmicVariantIds(resultMap) {
-    //     const self = this;
-    //     let idArr = resultMap['cosmic-variants-ids'];
-    //     let idHash = {};
-    //     idArr.forEach((id) => {
-    //         idHash[id] = true;
-    //     });
-    //     self.cosmicVariantIdHash = idHash;
-    // }
 
     promiseLoadCosmicVariants(theGene, theTranscript) {
         let self = this;
@@ -967,7 +957,8 @@ class CohortModel {
             if (self.cosmicVariantViz === 'histo') {
                 binLength = Math.floor( ((+theGene.end - +theGene.start) / $('#gene-viz').innerWidth()) * 8);
             }
-            self.sampleMap['cosmic-variants'].model.promiseGetCosmicVariantHistoData(theGene, theTranscript, binLength)
+            let annotationMode = 'vep';
+            self.sampleMap['cosmic-variants'].model.promiseGetCosmicVariantHistoData(theGene, theTranscript, binLength, annotationMode)
                 .then(function(data) {
                     self.getModel('cosmic-variants').inProgress.loadingVariants = false;
                     self.setVariantHistoData('cosmic-variants', data);

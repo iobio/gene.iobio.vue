@@ -913,17 +913,21 @@ var effectCategories = [
     const me = this;
 
     let clinvarUrl = globalApp.getClinvarUrl(me.getGenomeBuildHelper().getCurrentBuildName(), true);
-    // let clinvarUrl = me.getGenomeBuildHelper().getBuildResource(me.getGenomeBuildHelper().RESOURCE_CLINVAR_VCF_S3);
     let cosmicUrl = globalApp.getCosmicUrl(me.getGenomeBuildHelper().getCurrentBuildName());
 
     let url = null;
-    if (trackId == 'cosmic-variants') {
+    let mode = '';
+    let requireVepService = false;
+    if (trackId === 'cosmic-variants') {
       url = cosmicUrl;
-    } else if (trackId == 'known-variants') {
+      mode = 'vep';
+    } else if (trackId === 'known-variants') {
       url = clinvarUrl;
+      mode = 'clinvar';
+      requireVepService = true;
     }
 
-    var cmd = me.getEndpoint().getCountsForGene(url, refName, geneObject, binLength, (binLength == null ? me._getExonRegions(transcript) : null));
+    var cmd = me.getEndpoint().getCountsForGene(url, refName, geneObject, binLength, (binLength == null ? me._getExonRegions(transcript) : null), mode, requireVepService);
 
     var summaryData = "";
     // Get the results from the iobio command

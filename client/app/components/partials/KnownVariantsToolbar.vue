@@ -16,6 +16,14 @@
             left: 24px
             font-size: 12px
 
+        .input-group__input
+            i
+                pointer-events: auto
+
+        .input-group.input-group--selection-controls:not(.input-group--disabled)
+            label
+                pointer-events: none
+
         .input-group.radio-group
             padding-top: 0px
 
@@ -51,6 +59,13 @@
         svg.known-variants-clinvar
             margin-right: 10px
 
+        .radio-wrapper
+            padding-top: 10px
+            margin-top: 0
+            margin-right: 10px
+            margin-left: 0
+            width: 185px
+
     #select-known-variants-filter-box
         min-width: 200px
         max-width: 500px
@@ -82,15 +97,13 @@
 
 <template>
     <div id="known-variants-toolbar">
-        <div style="width:285px;padding-top:10px;margin-top:0px;margin-right:10px;float:left">
-            <v-radio-group v-model="viz" row>
-                <v-radio v-if="id != 'cosmic-variants'" label="Variants" value="variants"></v-radio>
+        <div style="width:205px;padding-top:10px;margin-top:0px;margin-right:10px;float:left">
+            <v-radio-group row v-model="viz">
                 <v-radio label="Counts" value="histo"></v-radio>
-                <v-radio style="min-width: 120px" label="Counts in Exons" value="histoExon"></v-radio>
+                <v-radio style="min-width: 120px" label="Variants" value="variants"></v-radio>
+                <!--<v-radio style="min-width: 120px" label="Counts in Exons" value="histoExon"></v-radio>-->
             </v-radio-group>
         </div>
-
-
         <div id="clinvar-filter-box" style="margin-left:10px;width:400px;float:left"
              v-if="viz === 'variants'">
             <v-select
@@ -101,7 +114,6 @@
             >
             </v-select>
         </div>
-
     </div>
 </template>
 
@@ -149,10 +161,11 @@
                 this.$emit("variantsFilterChange", this.selectedCategories, this.id);
             }
         },
-        methods: {},
+        methods: {
+        },
         mounted: function () {
             // Set filtering
-            if (this.annotationType == 'vep') {
+            if (this.annotationType === 'vep') {
                 this.categories = this.vepCategories;
                 this.selectedCategories = this.selectedVepCategories;
                 this.filterLabel = 'Filter by VEP impact...';
@@ -162,12 +175,8 @@
                 this.filterLabel = 'Filter by clinical significance...';
             }
 
-            // Set type of display
-            if (this.id == 'cosmic-variants') {
-                this.viz = 'histo';
-            } else {
-                this.viz = 'variants';
-            }
+            // Start out showing counts
+            this.viz = 'histo';
             this.$emit("variantsFilterChange", this.selectedCategories, this.id);
         }
     }

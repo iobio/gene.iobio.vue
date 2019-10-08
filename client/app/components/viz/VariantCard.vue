@@ -124,6 +124,27 @@
                         fill: rgb(189, 189, 189)
                         stroke: $text-color
                         stroke-width: .5px
+                .layer.low
+                    .stacked-element
+                        fill: $low-impact-color
+                        stroke: $text-color
+                        stroke-width: .5px
+                .layer.modifier
+                    .stacked-element
+                        fill: $modifier-impact-color
+                        stroke: $text-color
+                        stroke-width: .5px
+                .layer.moderate
+                    .stacked-element
+                        fill: $moderate-impact-color
+                        stroke: $text-color
+                        stroke-width: .5px
+                .layer.high
+                    .stacked-element
+                        fill: $high-impact-color
+                        stroke: $text-color
+                        stroke-width: .5px
+
 
         .expansion-panel__header
             padding: 10px 10px !important
@@ -170,10 +191,6 @@
                     <span slot="badge"> {{ coverageDangerRegions.length }} </span>
                     Exons with insufficient coverage
                 </v-badge>
-                <div style="float: right;" id="cnv-ideo"></div>
-                <div style="float: right;" id="loh-ideo"></div>
-            </div>
-            <v-card :style="{padding: '5px 10px'}" id="card-viz">
                 <known-variants-toolbar
                         v-if="sampleModel.id === 'known-variants' || sampleModel.id === 'cosmic-variants'"
                         :id="sampleModel.id"
@@ -182,17 +199,21 @@
                         @variantsFilterChange="onVariantsFilterChange"
                 >
                 </known-variants-toolbar>
+                <div style="float: right;" id="cnv-ideo"></div>
+                <div style="float: right;" id="loh-ideo"></div>
+            </div>
+            <v-card :style="{padding: '5px 10px'}" id="card-viz">
                 <stacked-bar-chart-viz
                         id="known-variants-chart"
                         style="width:100%"
-                        v-if="sampleModel.id === 'known-variants' && knownVariantsViz !== 'variants'"
+                        v-if="(sampleModel.id === 'known-variants' && knownVariantsViz !== 'variants') || (sampleModel.id === 'cosmic-variants' && cosmicVariantsViz !== 'variants')"
                         :data="sampleModel.variantHistoData"
                         :width="width"
                         :xStart="selectedGene.start"
                         :xEnd="selectedGene.end"
                         :regionStart="regionStart"
                         :regionEnd="regionEnd"
-                        :categories="['unknown', 'other', 'benign', 'path']"
+                        :categories="getCategories(sampleModel.id)"
                 >
                 </stacked-bar-chart-viz>
                 <div style="width:100%">
@@ -633,6 +654,9 @@
 
             },
             onVariantsVizChange: function (viz, trackId) {
+                this.$nextTick(() => {
+                    this.openState = [true];
+                });
                 if (trackId === 'known-variants') {
                     this.knownVariantsViz = viz;
                 } else if (trackId === 'cosmic-variants') {
@@ -641,6 +665,9 @@
                 this.$emit("variants-viz-change", viz, trackId);
             },
             onVariantsFilterChange: function (selectedCategories, trackId) {
+                this.$nextTick(() => {
+                    this.openState = [true];
+                });
                 this.$emit("variants-filter-change", selectedCategories, trackId);
             },
             showFlaggedVariant: function (variant) {
@@ -801,10 +828,15 @@
                 };
                 let lohIdeogram = newIdeogram(lohConfig);
 
+            },
+            getCategories: function(sampleModelId) {
+                if (sampleModelId === 'known-variants') {
+                    return ['unknown', 'other', 'benign', 'path']
+                } else if (sampleModelId === 'cosmic-variants') {
+                    return ['other', 'low', 'modifier', 'moderate', 'high']
+                }
             }
         },
-
-
         filters: {},
 
         computed: {

@@ -24,7 +24,8 @@ export default class EndpointCmd {
     this.IOBIO.freebayes               = this.globalApp.IOBIO_SERVICES  + "freebayes/";
     this.IOBIO.vcflib                  = this.globalApp.IOBIO_SERVICES  + "vcflib/";
     this.IOBIO.geneCoverage            = this.globalApp.IOBIO_SERVICES  + "genecoverage/";
-    this.IOBIO.knownvariants           = this.globalApp.IOBIO_SERVICES  + "knownvariants/";
+    //this.IOBIO.knownvariants           = this.globalApp.IOBIO_SERVICES  + "knownvariants/";
+    this.IOBIO.knownvariants           = this.globalApp.DEV_IOBIO + "knownvariants/";
   }
 
 
@@ -235,7 +236,7 @@ export default class EndpointCmd {
     return cmd;
   }
 
-  getCountsForGene(url, refName, geneObject, binLength, regions) {
+  getCountsForGene(url, refName, geneObject, binLength, regions, annotationMode, requiresVepService) {
     var me = this;
     var regionParm = refName + ":" + geneObject.start + "-" + geneObject.end;
 
@@ -254,18 +255,33 @@ export default class EndpointCmd {
           regionParts += ",";
         }
         regionParts += region.start + "-" + region.end;
-      })
+      });
       if (regionParts.length > 0) {
         knownVariantsArgs.push("-p");
         knownVariantsArgs.push(regionParts);
       }
     }
+    if (annotationMode === 'vep') {
+        knownVariantsArgs.push("-m vep");
+    } else {
+      knownVariantsArgs.push("-m clinvar");
+    }
     knownVariantsArgs.push("-");
 
     // Create an iobio command get get the variants and add any header recs.
     var tabixArgs = ['-h', url, regionParm];
-    var cmd = new iobio.cmd (me.IOBIO.tabix,         tabixArgs,         {ssl: me.globalApp.useSSL})
-                       .pipe(me.IOBIO.knownvariants, knownVariantsArgs, {ssl: false});
+    var cmd = new iobio.cmd (me.IOBIO.tabix, tabixArgs, {ssl: me.globalApp.useSSL});
+
+    if (requiresVepService) {
+        var vepArgs = [];
+        vepArgs.push(" --assembly");
+        vepArgs.push(me.genomeBuildHelper.getCurrentBuildName());
+        vepArgs.push(" --format vcf");
+        vepArgs.push(" --allele_number");
+      cmd = cmd.pipe(me.IOBIO.vep, vepArgs, {ssl: me.globalApp.useSSL});
+    }
+    cmd = cmd.pipe(me.IOBIO.knownvariants, knownVariantsArgs, {ssl: false});
+
     return cmd;
   }
 
