@@ -59,7 +59,7 @@ class FeatureMatrixModel {
                 map: this.getTranslator().clinvarMap
             },
             {
-                name: 'Impact',
+                name: 'Type/Impact',
                 id: 'impact',
                 order: 4,
                 index: 4,
