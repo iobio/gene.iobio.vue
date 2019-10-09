@@ -499,6 +499,9 @@ class FeatureMatrixModel {
                         // }
                         let sampleSpecVar = self.cohort.sampleMap[matrixRow.id].model.getFeature(variant.id);
                         if (parseInt(sampleSpecVar.genotypeDepth) > 0) {
+                            if (sampleSpecVar.id === 'var_31002352_20_plus_T_A') {
+                                debugger;
+                            }
                             rawValue = parseInt(sampleSpecVar.genotypeAltCount) / parseInt(sampleSpecVar.genotypeDepth);
                         } else {
                             rawValue = 0;

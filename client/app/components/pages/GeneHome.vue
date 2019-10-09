@@ -907,7 +907,7 @@
                 return new Promise(function (resolve, reject) {
 
                     if (self.models && self.models.length > 0) {
-                        let cardWidthScale = self.isLeftDrawerOpen ? 1 : 0.75;
+                        let cardWidthScale = self.isLeftDrawerOpen ? 1 : 0.65;
                         self.cardWidth = $('#genes-card').innerWidth() * cardWidthScale;
                         var options = {'getKnownVariants': self.showKnownVariantsCard};
                         options['getCosmicVariants'] = self.showCosmicVariantsCard;

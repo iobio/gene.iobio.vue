@@ -762,6 +762,17 @@ export default class VariantTooltip {
                 + cosmicRow
                 + me._linksRow(variant, pinMessage)
             );
+        } else if (trackId === 'cosmic-variants' || trackId === 'known-variants') {
+            return (
+                me._tooltipMainHeaderRow(geneObject ? geneObject.gene_name : "", variant.type ? variant.type.toUpperCase() : "", info.refalt + " " + info.coord, info.dbSnpLink, 'ref-alt')
+                + calledVariantRow
+                + me._tooltipMainHeaderRow(info.vepImpact, info.vepConsequence, '', '', 'impact-badge')
+                + vepHighestImpactRowSimple
+                + (trackId === 'known-variants' ? me._tooltipRow('&nbsp;', info.clinvarLinkKnownVariants, '6px') : clinvarSimpleRow1)
+                + clinvarSimpleRow2
+                + cosmicRow
+                + me._linksRow(variant, pinMessage)
+            );
         } else {
             return (
                 me._tooltipMainHeaderRow(geneObject ? geneObject.gene_name : "", variant.type ? variant.type.toUpperCase() : "", info.refalt + " " + info.coord, info.dbSnpLink, 'ref-alt')

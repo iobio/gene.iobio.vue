@@ -151,7 +151,7 @@
                 </v-menu>
             </v-flex>
         </v-layout>
-        <v-form id="files-form" style="padding: 10px; overflow-y: scroll; max-height: 350px; margin-left: 15px; margin-right: 15px; border: dotted #965757 2px">
+        <v-form id="files-form" style="padding: 10px; overflow-y: scroll; max-height: 350px; margin-left: 15px; margin-right: 15px; border: dotted #888888 1px">
             <v-layout wrap class="mt-2">
                 <draggable
                         :options="{handle: 'drag-handle'}"

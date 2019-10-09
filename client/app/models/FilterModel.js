@@ -166,7 +166,7 @@ class FilterModel {
         'normalAltFreq': 0.01,      // Must be between 0-1
         'normalAltCount': 2,
         'tumorAltFreq': 0.10,       // Must be between 0-1
-        'tumorAltCount': 8
+        'tumorAltCount': 4
     };
 
     this.DEFAULT_SOMATIC_LOGIC = {
