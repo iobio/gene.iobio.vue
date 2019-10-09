@@ -153,34 +153,61 @@ export default class Glyph {
   showCosmicSymbol(selection, options) {
       options = options || {};
 
+      // var attrs = {
+      //     transform: "translate(1,17)",
+      //     styles: "font-size: 16px"
+      // };
+      // if (options && options.styles) {
+      //     attrs.styles = options.styles;
+      // }
+      // if (options && options.transform) {
+      //     attrs.transform = options.transform;
+      // }
+      //
+      // var datumAttrs = selection.datum() || {};
+      //
+      // var cellSizeAttrs = {};
+      // if (options.cellSize > 18) {
+      //     cellSizeAttrs.width = "17",
+      //     cellSizeAttrs.height = "17",
+      //     cellSizeAttrs.transform = "translate(2,2)"
+      // }
+      //
+      // $.extend(attrs, datumAttrs, cellSizeAttrs, options);
+
+      // selection.append("text")
+      //     .attr('font-family', 'Material Icons')
+      //     .attr('style', attrs.styles)
+      //     .attr("transform", attrs.transform)
+      //     .style("fill", "#28446F")
+      //     .text('copyright');
+
       var attrs = {
-          transform: "translate(1,17)",
-          styles: "font-size: 16px"
+          width: "14",
+          height: "14",
+          transform: "translate(2,1)",
+          clazz: ""
       };
-      if (options && options.styles) {
-          attrs.styles = options.styles;
-      }
-      if (options && options.transform) {
-          attrs.transform = options.transform;
-      }
 
       var datumAttrs = selection.datum() || {};
 
       var cellSizeAttrs = {};
       if (options.cellSize > 18) {
           cellSizeAttrs.width = "17",
-          cellSizeAttrs.height = "17",
-          cellSizeAttrs.transform = "translate(2,2)"
+              cellSizeAttrs.height = "17",
+              cellSizeAttrs.transform = "translate(2,2)"
       }
 
       $.extend(attrs, datumAttrs, cellSizeAttrs, options);
 
-      selection.append("text")
-          .attr('font-family', 'Material Icons')
-          .attr('style', attrs.styles)
+      selection.append("g")
           .attr("transform", attrs.transform)
-          .style("fill", "#28446F")
-          .text('copyright');
+          .append("use")
+          .attr("xlink:href", "#somatic-glyph")
+          .attr("width", attrs.width)
+          .attr("height", attrs.height)
+          .style("pointer-events", "none")
+          .style("fill", "#28446F");
   }
 
   shadeCell(selection, options) {
