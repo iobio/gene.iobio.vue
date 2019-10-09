@@ -310,8 +310,8 @@
 
                         // Re-apply active filters in case of multiple filters
                         let checkOnP = self.variantChart.promiseFilterVariants()(self.excludeFilters, self.cutoffFilters, svg)
-                            .then((passingVarStatus) => {
-                                noPassingVars = passingVarStatus;
+                            .then((passingVarCount) => {
+                                noPassingVars = passingVarCount > 0;
                             }).catch((err) => {
                                 console.log('Problem applying filter at DOM level: ' + err);
                                 reject();
@@ -324,8 +324,8 @@
                         let filterClass = '.' + filterInfo.name;
                         self.excludeFilters.push(filterClass);
                         let checkOffP = self.variantChart.promiseFilterVariants()(self.excludeFilters, self.cutoffFilters, svg)
-                            .then((passingVarStatus) => {
-                                noPassingVars = passingVarStatus;
+                            .then((passingVarCount) => {
+                                noPassingVars = passingVarCount > 0;
 
                                 // Check to make sure we haven't hidden the selected variant
                                 if (checkForSelectedVar) {
@@ -354,8 +354,8 @@
 
                         // Hide variants that do not meet given condition
                         let filtOnP = self.variantChart.promiseFilterVariants()(self.excludeFilters, self.cutoffFilters, svg)
-                            .then((passingVarStatus) => {
-                                noPassingVars = passingVarStatus;
+                            .then((passingVarCount) => {
+                                noPassingVars = passingVarCount > 0;
                             }).catch((err) => {
                                 console.log('Problem applying filter at DOM level: ' + err);
                                 reject();
@@ -370,8 +370,8 @@
 
                         // Re-apply active filters in case of multiple filters
                         let filtOffP = self.variantChart.promiseFilterVariants()(self.excludeFilters, self.cutoffFilters, svg)
-                            .then((passingVarStatus) => {
-                                noPassingVars = passingVarStatus;
+                            .then((passingVarCount) => {
+                                noPassingVars = passingVarCount > 0;
 
                                 if (checkForSelectedVar) {
                                     let selectedVarStillVisible = self.variantChart.checkForSelectedVar()(selectedVarId, svg);

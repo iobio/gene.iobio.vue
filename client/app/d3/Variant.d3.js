@@ -263,9 +263,9 @@ export default function variantD3() {
 
             // Return whether any variants are still visible
             if (filteredVars && filteredVars[0]) {
-                resolve(filteredVars[0].length === 0);
+                resolve(filteredVars[0].length);
             } else {
-                resolve(false);
+                resolve(0);
             }
         });
     };

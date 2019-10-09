@@ -178,14 +178,15 @@
                          v-if="sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]"
                          class="ml-4 mr-4 mt-1 loaded">
                     <span slot="badge"> {{ displayVariantCount ? sampleModel.loadedVariants.features.length : sampleModel.variantHistoCount }} </span>
-                    {{ sampleModel.id === 'known-variants' || sampleModel.id === 'cosmic-variants' ? 'Count' : 'Loaded' }}
+                    Variants
                 </v-badge>
-                <v-badge id="called-count"
-                         v-if="sampleModel.id !== 'known-variants' && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name] && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name].CALLED "
-                         class="mr-4 mt-1 called">
-                    <span v-if="sampleModel.loadedVariants" slot="badge"> {{ sampleModel.calledVariants.features.length }} </span>
-                    Called
-                </v-badge>
+                <!--TODO: when we put freebayes calling in, incorporate this back in-->
+                <!--<v-badge id="called-count"-->
+                         <!--v-if="sampleModel.id !== 'known-variants' && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name] && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name].CALLED "-->
+                         <!--class="mr-4 mt-1 called">-->
+                    <!--<span v-if="sampleModel.loadedVariants" slot="badge"> {{ sampleModel.calledVariants.features.length }} </span>-->
+                    <!--Called-->
+                <!--</v-badge>-->
                 <v-badge v-if="sampleModel.loadedVariants && coverageDangerRegions.length > 0"
                          class="ml-4 mr-4 mt-1 coverage-problem">
                     <span slot="badge"> {{ coverageDangerRegions.length }} </span>
