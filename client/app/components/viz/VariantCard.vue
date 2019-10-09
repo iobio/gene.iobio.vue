@@ -9,6 +9,11 @@
 
     #variant-card
 
+        .variant-chip
+            font-size: 12px
+            margin-top: 0
+            margin-left: 10px
+
         #sample-label
             vertical-align: top
             display: inline-block
@@ -174,12 +179,16 @@
                 <span id="sample-label">
                         {{ sampleLabel }}
                     </span>
-                <v-badge id="loaded-count"
-                         v-if="sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]"
-                         class="ml-4 mr-4 mt-1 loaded">
-                    <span slot="badge"> {{ displayVariantCount ? sampleModel.loadedVariants.features.length : sampleModel.variantHistoCount }} </span>
-                    Variants
-                </v-badge>
+                <!--<v-badge id="loaded-count"-->
+                         <!--v-if="sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]"-->
+                         <!--class="ml-4 mr-4 mt-1 loaded">-->
+                    <!--<span slot="badge"> {{ displayVariantCount ? sampleModel.loadedVariants.features.length : sampleModel.variantHistoCount }} </span>-->
+                    <!--Variants-->
+                <!--</v-badge>-->
+                <v-chip v-if="annotationComplete" small outline color="appColor" class="variant-chip">
+                    {{ numFilteredVariants + ' Variants' }}
+                </v-chip>
+
                 <!--TODO: when we put freebayes calling in, incorporate this back in-->
                 <!--<v-badge id="called-count"-->
                          <!--v-if="sampleModel.id !== 'known-variants' && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name] && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name].CALLED "-->
@@ -391,7 +400,8 @@
             showVariantViz: true,
             showGeneViz: true,
             showDepthViz: true,
-            geneVizShowXAxis: null
+            geneVizShowXAxis: null,
+            annotationComplete: false
         },
         data() {
             let self = this;
@@ -440,6 +450,7 @@
                 knownVariantsViz: null,
                 cosmicVariantsViz: null,
                 openState: [true],      // Array which controls expansion panel open/close - want open on load
+                numFilteredVariants: 0
             }
         },
         methods: {
@@ -779,8 +790,15 @@
                 }
                 // NOTE: this only filters loaded variants, not called
                 if (self.$refs.variantVizRef) {
-                    return self.$refs.variantVizRef.promiseFilterVariants(filterInfo, self.getTrackSVG(self.$refs.variantVizRef.id), checkForSelectedVariant, selectedVariantId,
-                        parentFilterName, parentFilterState);
+                    self.$refs.variantVizRef.promiseFilterVariants(filterInfo, self.getTrackSVG(self.$refs.variantVizRef.id), checkForSelectedVariant, selectedVariantId,
+                        parentFilterName, parentFilterState)
+                        .then((numPassingVars) => {
+                            self.numFilteredVariants = numPassingVars;
+                            return Promise.resolve();
+                        })
+                        .catch((error) => {
+                            return Promise.reject('Problem filtering variants: ' + error);
+                        })
                 } else {
                     return Promise.resolve();
                 }
@@ -921,7 +939,9 @@
                 return displayCts;
             }
         },
-        watch: {},
+        watch: {
+            // TODO: do I need to put a watcher on loaded variants here
+        },
         mounted: function () {
             this.id = this.sampleModel.id;
         },

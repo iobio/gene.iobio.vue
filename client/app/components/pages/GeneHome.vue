@@ -274,6 +274,7 @@
                         :showDepthViz="model.id !== 'known-variants' && model.id !== 'cosmic-variants'"
                         :showVariantViz="showVarViz && ((model.id !== 'known-variants' || showKnownVariantsCard) || (model.id !== 'cosmic-variants' || showCosmicVariantsCard))"
                         :geneVizShowXAxis="model.id === 's0' || model.id === 'known-variants' || model.id === 'cosmic-variants'"
+                        :annotationComplete="annotationComplete"
                         @cohort-variant-click="onCohortVariantClick"
                         @cohort-variant-hover="onCohortVariantHover"
                         @cohort-variant-hover-end="onCohortVariantHoverEnd"
