@@ -456,6 +456,13 @@ export default class VariantTooltip {
             .attr("width", 28)
             .attr("class", "ref-count");
 
+        container.append('img')
+            .attr('id', 'af-svg-loader')
+            .attr('width', '20px')
+            .attr('height', '20px')
+            .attr('src', '../../../assets/images/wheel.gif')
+            .style('margin-left', '150px');
+
         // Add body
         me._injectAlleleCountBody(container, variant, trackId, affectedInfo, 'time', maxAlleleCount, barWidth);
     }
@@ -479,42 +486,75 @@ export default class VariantTooltip {
             }
         });
 
+        // Make sure we have coverage info for each sample at the variant location
+        let genotypeInfo = [];
+        let depthPromises = [];
         affectedInfo.forEach(function (info) {
             let matchingVar = info.model.variantIdHash[variant.id];
             let sampleName = info.model.getSelectedSample();
             let genotype = matchingVar && matchingVar.genotypes ? matchingVar.genotypes[sampleName] : null;
 
-            // We always want to show this bar, even if the variant isn't in a track
-            let selectedClazz = info.model.id === id ? 'selected' : '';
-            let displayName = info.model.displayName ? info.model.displayName : sampleName;
-            let row = container.append("div")
-                .attr("class", "ped-info");
-
-            // Add sample name column
-            row.append("div")
-                .attr("class", "click-value col-xs-2")
-                .html("<span class='sample-type-symbol'></span>"
-                    + "<span class='ped-label "
-                    + selectedClazz + "'>"
-                    + (" " + displayName)
-                    + "</span>");
-
-            // Add AF column
-            let formattedAf = 0;
-            let afText = '0%';
-            if (matchingVar) {
-                formattedAf = parseInt(matchingVar.genotypeAltCount) / parseInt(matchingVar.genotypeDepth);
-                afText = formattedAf > 0 ? me.globalApp.utility.percentage(formattedAf) : '0%';
+            // If we don't have a matching variant to pull a genotype from, we have to look at coverage in BAM
+            if (genotype == null) {
+                // TODO: shouldn't have to do this - coverage field in sample model should have info
+                let p = info.model.promiseGetBamDepthForVariant(variant.chrom, variant.start, variant.end)
+                    .then((depth) => {
+                        // We know there are no alt counts for this site
+                        genotype = {'altCount': '0'};
+                        genotype['refCount'] = (depth + '');
+                        genotype['genotypeDepth'] = (depth + '');
+                        genotypeInfo.push({ 'modelOrder': info.model.order, 'genotype': genotype });
+                    });
+                depthPromises.push(p);
+            } else {
+                genotypeInfo.push({ 'modelOrder': info.model.order, 'genotype': genotype });
             }
-            row.append("div")
-                .attr("class", "click-af-field col-xs-2")
-                .append('text')
-                .text(afText);
+        });
 
-            // Add bar viz of counts
-            let barContainer = row.append("div")
-                .attr("class", "allele-count-bar col-xs-8");
-            if (genotype) {
+        // Then do actual drawing
+        Promise.all(depthPromises).then(() => {
+            // Hide loader glyph
+            d3.select('#af-svg-loader').style('display', 'none');
+
+            // Sort in model order to sync with affectedInfo order
+            genotypeInfo.sort((a, b) => {
+                return (a.modelOrder < b.modelOrder) ? -1 : 1
+            });
+
+           for (let i = 0; i < affectedInfo.length; i++) {
+                let info = affectedInfo[i];
+                let genotype = genotypeInfo[i].genotype;
+
+                // We always want to show this bar, even if the variant isn't in a track
+                let selectedClazz = info.model.id === id ? 'selected' : '';
+                let displayName = info.model.displayName ? info.model.displayName : sampleName;
+                let row = container.append("div")
+                    .attr("class", "ped-info");
+
+                // Add sample name column
+                row.append("div")
+                    .attr("class", "click-value col-xs-2")
+                    .html("<span class='sample-type-symbol'></span>"
+                        + "<span class='ped-label "
+                        + selectedClazz + "'>"
+                        + (" " + displayName)
+                        + "</span>");
+
+                // Add AF column
+                let formattedAf = 0;
+                let afText = '0%';
+                if (genotype) {
+                    formattedAf = parseInt(genotype['altCount']) / parseInt(genotype['genotypeDepth']);
+                    afText = formattedAf > 0 ? me.globalApp.utility.percentage(formattedAf) : '0%';
+                }
+                row.append("div")
+                    .attr("class", "click-af-field col-xs-2")
+                    .append('text')
+                    .text(afText);
+
+                // Add bar viz of counts
+                let barContainer = row.append("div")
+                    .attr("class", "allele-count-bar col-xs-8");
                 me._appendAlleleCountSVG(barContainer,
                     genotype.altCount,
                     genotype.refCount,
@@ -523,7 +563,7 @@ export default class VariantTooltip {
                     barWidth,
                     adjustedMaxAlleleCount);
             }
-        });
+        })
     }
 
     _appendAlleleCountSVG(container, genotypeAltCount, genotypeRefCount, genotypeDepth, bamDepth, barWidth, maxAlleleCount) {
@@ -848,7 +888,7 @@ export default class VariantTooltip {
     }
 
     _formatRightHalf(html) {
-        return '<div class="col-xs-8" style="padding:5px">' + html + '</div>';``
+        return '<div class="col-xs-8" style="padding:5px">' + html + '</div>';
     }
 
     _getAfDiv() {

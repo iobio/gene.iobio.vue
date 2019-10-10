@@ -575,6 +575,7 @@ export default function variantD3() {
                     });
 
 
+                // TODO: what is bounding box here - only hovering on top border correctly
                 g.selectAll('.variant')
                     .on("click", function (d) {
                         dispatch.d3click(d);
@@ -685,8 +686,6 @@ export default function variantD3() {
                             var tx = "translate(" + xCoord + "," + yCoord + ")";
                             return tx;
                         });
-
-
                 }
 
 

@@ -179,23 +179,9 @@
                 <span id="sample-label">
                         {{ sampleLabel }}
                     </span>
-                <!--<v-badge id="loaded-count"-->
-                         <!--v-if="sampleModel.loadedVariants && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name]"-->
-                         <!--class="ml-4 mr-4 mt-1 loaded">-->
-                    <!--<span slot="badge"> {{ displayVariantCount ? sampleModel.loadedVariants.features.length : sampleModel.variantHistoCount }} </span>-->
-                    <!--Variants-->
-                <!--</v-badge>-->
                 <v-chip v-if="annotationComplete" small outline color="appColor" class="variant-chip">
                     {{ numFilteredVariants + ' Variants' }}
                 </v-chip>
-
-                <!--TODO: when we put freebayes calling in, incorporate this back in-->
-                <!--<v-badge id="called-count"-->
-                         <!--v-if="sampleModel.id !== 'known-variants' && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name] && sampleModel.cohort.geneModel.geneDangerSummaries[selectedGene.gene_name].CALLED "-->
-                         <!--class="mr-4 mt-1 called">-->
-                    <!--<span v-if="sampleModel.loadedVariants" slot="badge"> {{ sampleModel.calledVariants.features.length }} </span>-->
-                    <!--Called-->
-                <!--</v-badge>-->
                 <v-badge v-if="sampleModel.loadedVariants && coverageDangerRegions.length > 0"
                          class="ml-4 mr-4 mt-1 coverage-problem">
                     <span slot="badge"> {{ coverageDangerRegions.length }} </span>
@@ -418,7 +404,7 @@
                     bottom: 5,
                     left: self.isBasicMode || self.isEduMode ? 9 : 4
                 },
-                variantSymbolHeight: self.isEduMode || self.isBasicMode ? self.globalAppProp.eduModeVariantSize : 8,
+                variantSymbolHeight: self.isEduMode || self.isBasicMode ? self.globalAppProp.eduModeVariantSize : 10,
                 variantSymbolPadding: 2,
 
                 geneVizMargin: {

@@ -438,7 +438,7 @@
 
                 PROBAND: 'proband',
                 activeGeneVariantTab: 'feature-matrix-tab',
-                isLeftDrawerOpen: null,
+                isLeftDrawerOpen: true,
                 showWelcome: false,
 
                 cardWidth: 0,
@@ -680,7 +680,7 @@
                                                             })
                                                     } else {
                                                         self.onShowSnackbar({
-                                                            message: 'Enter a gene name or enter a phenotype term.',
+                                                            message: 'Enter a gene name',
                                                             timeout: 5000
                                                         });
                                                         self.bringAttention = 'gene';
@@ -697,7 +697,7 @@
                                     } else {
                                         if (self.launchedWithUrlParms && self.geneModel.sortedGeneNames.length === 0) {
                                             self.onShowSnackbar({
-                                                message: 'Enter a gene name or enter a phenotype term.',
+                                                message: 'Enter a gene name',
                                                 timeout: 5000
                                             });
                                             self.bringAttention = 'gene';
@@ -908,7 +908,7 @@
                 return new Promise(function (resolve, reject) {
 
                     if (self.models && self.models.length > 0) {
-                        let cardWidthScale = self.isLeftDrawerOpen ? 1 : 0.65;
+                        let cardWidthScale = self.isLeftDrawerOpen ? 1.0 : 0.65;    // TODO: this breaks circling if too big
                         self.cardWidth = $('#genes-card').innerWidth() * cardWidthScale;
                         var options = {'getKnownVariants': self.showKnownVariantsCard};
                         options['getCosmicVariants'] = self.showCosmicVariantsCard;
@@ -1000,7 +1000,7 @@
                         } else if (self.geneModel.sortedGeneNames && self.geneModel.sortedGeneNames.length > 0) {
                             self.onGeneSelected(self.geneModel.sortedGeneNames[0]);
                         } else {
-                            self.onShowSnackbar({message: 'Enter a gene name or a phenotype term.', timeout: 5000});
+                            self.onShowSnackbar({message: 'Enter a gene name', timeout: 5000});
                             self.bringAttention = 'gene';
                         }
                     });

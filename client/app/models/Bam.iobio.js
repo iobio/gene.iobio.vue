@@ -349,7 +349,7 @@ export default class Bam {
           found = true;
           callback(seq.name);
         }
-      })
+      });
       if (!found) callback(refName); // not found
     })
   }
@@ -382,12 +382,12 @@ export default class Bam {
   *  , for example, to obtain the coverage for each variant.
   */
   getCoverageForRegion(refName, regionStart, regionEnd, regions, maxPoints, useServerCache, callback, callbackError) {
-    var me = this;
+    const me = this;
 
     this.transformRefName(refName, function(trRefName){
 
-      var bamSource = {};
-      if (me.sourceType == 'url') {
+      let bamSource = {};
+      if (me.sourceType === 'url') {
         bamSource.bamUrl = me.bamUri;
         bamSource.baiUrl = me.baiUri;
       } else {
@@ -401,40 +401,38 @@ export default class Bam {
         }
       }
 
-      var serverCacheKey = me._getServerCacheKey("coverage", trRefName, regionStart, regionEnd, {maxPoints: maxPoints});
+      let serverCacheKey = me._getServerCacheKey("coverage", trRefName, regionStart, regionEnd, {maxPoints: maxPoints});
 
-      var cmd = me.endpoint.getBamCoverage(bamSource, trRefName, regionStart, regionEnd, regions, maxPoints, useServerCache, serverCacheKey);
+      let cmd = me.endpoint.getBamCoverage(bamSource, trRefName, regionStart, regionEnd, regions, maxPoints, useServerCache, serverCacheKey);
 
-      var samData = "";
+      let samData = "";
       cmd.on('data', function(data) {
-        if (data == undefined) {
+        if (data == null) {
           return;
         }
-
         samData += data;
       });
 
       cmd.on('end', function() {
-
-        if (samData != "") {
-          var coverage = null;
-          var coverageForPoints = [];
-          var coverageForRegion = [];
-          var lines = samData.split('\n');
+        if (samData !== "") {
+          let coverage = null;
+          let coverageForPoints = [];
+          let coverageForRegion = [];
+          let lines = samData.split('\n');
           lines.forEach(function(line) {
-            if (line.indexOf("#specific_points") == 0) {
+            if (line.indexOf("#specific_points") === 0) {
               coverage = coverageForPoints;
-            } else if (line.indexOf("#reduced_points") == 0 ) {
+            } else if (line.indexOf("#reduced_points") === 0 ) {
               coverage = coverageForRegion;
             } else {
-              var fields = line.split('\t');
-              var pos = -1;
-              var depth = -1;
-              if (fields[0] != null && fields[0] != '') {
-                var pos   = +fields[0];
+              let fields = line.split('\t');
+              let pos = -1;
+              let depth = -1;
+              if (fields[0] != null && fields[0] !== '') {
+                pos = +fields[0];
               }
-              if (fields[1] != null && fields[1] != '') {
-                var depth = +fields[1];
+              if (fields[1] != null && fields[1] !== '') {
+                depth = +fields[1];
               }
               if (coverage){
                 if (pos > -1  && depth > -1) {
@@ -443,8 +441,8 @@ export default class Bam {
               }
             }
           });
+            callback(coverageForRegion, coverageForPoints);
         }
-        callback(coverageForRegion, coverageForPoints);
       });
 
       cmd.on('error', function(error) {

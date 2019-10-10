@@ -189,18 +189,18 @@ class FilterModel {
 
     /* Marks variants as somatic, or non-inherited, if they fulfill the following:
      *
-     *  The normal track exhibits the following logic: A || (B && C)
+     *  The normal track exhibits the following logic: A || (B && C) - TODO: this should be (A || B) && C
      *     where
      *      A) does not contain the variant in question
      *      B) does contain the variant but at a threshold meeting slider-set criteria
-     *      C) is visible/ not filtered out by other non-somatic filters
+     *      C) is visible/ not filtered out by other non-somatic filters (including quality)
      *
      *  AND
      *
      *  the tumor track exhibits the following logic: A && B
      *     where
      *      A) contains the variant at a threshold meeting slider-set criteria
-     *      B) is visible/ not filtered out by other non-somatic filters
+     *      B) is visible/ not filtered out by other non-somatic filters (including quality)
      *
      *  Marks variants as inherited, if they fulfill the following:
      *
@@ -221,10 +221,11 @@ class FilterModel {
         for (i = 0; i < Object.keys(resultMap).length; i++) {
             let sampleId = Object.keys(resultMap)[i];
             let currData = $.extend({}, Object.values(resultMap)[i].model.vcfData);
+            let sampleObj = { 'currData': currData, 'model': Object.values(resultMap)[i].model };
             if (!(resultMap[sampleId].isTumor) && sampleId !== 'known-variants' && sampleId !== 'cosmic-variants') {
-                normalSamples.push(currData);
+                normalSamples.push(sampleObj);
             } else if (sampleId !== 'known-variants' && sampleId !== 'cosmic-variants') {
-                tumorSamples.push(currData);
+                tumorSamples.push(currData);    // Don't need reference to model for tumor
                 tumorSampleModelIds.push(sampleId);
             }
         }
@@ -234,8 +235,8 @@ class FilterModel {
         let normalContainsLookup = {};        // Hash of all variants in normal sample
         let passesOtherFiltersLookup = {};    // Hash of variants in normal track ONLY that pass any active filters except somatic related (this includes quality)
         normalSamples.forEach((currNorm) => {
-            if (currNorm && currNorm.features.length > 0) {
-                let normFeatures = currNorm.features;
+            if (currNorm && currNorm.currData && currNorm.currData.features.length > 0) {
+                let normFeatures = currNorm.currData.features;
                 let filteredNormFeatures = [];
                 normFeatures.forEach((feature) => {
                     feature.isInherited = true;   // Need to mark all normal variants as inherited from null
@@ -272,10 +273,23 @@ class FilterModel {
                     let currAltFreq = Math.round(feature.genotypeAltCount / feature.genotypeDepth * 100) / 100;
                     let passesTumorCount = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltCount'], feature.genotypeAltCount, self.currentSomaticCutoffs['tumorAltCount']);
                     let passesTumorAf = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltFreq'], currAltFreq, self.currentSomaticCutoffs['tumorAltFreq']);
-                    if ((passesNormalFiltersLookup[feature.id] || (normalContainsLookup[feature.id] == null)) && passesTumorAf && passesTumorCount) {
+                    if (passesNormalFiltersLookup[feature.id] && passesTumorAf && passesTumorCount) {
                         feature.isInherited = false;
                         somaticVarLookup[feature.id] = true;
                         inheritedVarLookup[feature.id] = false;
+                    } else if (normalContainsLookup[feature.id] == null && passesTumorAf && passesTumorCount) {
+                        // Check to make sure there's enough coverage in normal to actually call somatic
+                        let sufficientCoverage = false;
+                        normalSamples.forEach((currNorm) => {
+                            if (currNorm.model && currNorm.model.coverage) {
+                                debugger; // TODO: what format is coverage in
+                            }
+                        });
+                        if (sufficientCoverage) {
+                            feature.isInherited = false;
+                            somaticVarLookup[feature.id] = true;
+                            inheritedVarLookup[feature.id] = false;
+                        }
                     } else if (passesOtherFiltersLookup[feature.id]) {
                         feature.isInherited = true;
                         inheritedVarLookup[feature.id] = true;

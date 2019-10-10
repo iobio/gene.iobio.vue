@@ -1133,6 +1133,24 @@ class SampleModel {
         this.bamData = null;
     }
 
+    /* Gets coverage depth at a specific site. */
+    promiseGetBamDepthForVariant(refName, variantStart, variantEnd) {
+        const self = this;
+
+        return new Promise((resolve, reject) => {
+            let regions = [{name: refName, start: variantStart - 1, end: variantEnd}];
+
+            self.bam.getCoverageForRegion(refName, variantStart, variantEnd, regions, 5, null,
+                function (coverageForRegion, coverageForPoints) {
+                    if (coverageForPoints != null) {
+                        resolve(coverageForPoints[0][1]);
+                    } else {
+                        reject("Could not get coverage info for provided variant");
+                    }
+                });
+        });
+    }
+
 
     getBamDepth(gene, selectedTranscript, callbackDataLoaded) {
         var me = this;

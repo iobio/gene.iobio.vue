@@ -308,7 +308,7 @@ export default class EndpointCmd {
     regions.forEach( function(region) {
       region.name = refName;
       if (region.name && region.start && region.end) {
-        if (regionsArg.length == 0) {
+        if (regionsArg.length === 0) {
           regionsArg += " -p ";
         } else {
           regionsArg += ",";
