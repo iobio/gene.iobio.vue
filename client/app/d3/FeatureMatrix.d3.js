@@ -456,7 +456,6 @@ export default function featureMatrixD3() {
             cells.each(function (d, i) {
                 if (d.symbolFunction === 'sampleRow') {
                     let afColor = colorScale(d.value);
-                    // TODO: small values are coming in as null and pulling first val
                     d3.select(this).select('.cellbox')
                         .style("fill", afColor);
                 } else {

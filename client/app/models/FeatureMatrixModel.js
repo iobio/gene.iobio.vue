@@ -491,12 +491,8 @@ class FeatureMatrixModel {
 
 
                     // Only show that we have the variant in the matrix if it passes filters and is visible in current track (MUST pull from hash for this)
-                    if (varIdHash[variant.id] != null && (varIdHash[variant.id]).passesFilters) {
-                        // if (matchingModel.isTumor) {
-                        //     rawValue = 'tumorSample';
-                        // } else {
-                        //     rawValue = 'normalSample';
-                        // }
+                    // if (varIdHash[variant.id] != null && (varIdHash[variant.id]).passesFilters) {
+                    if (varIdHash[variant.id] != null) {
                         let sampleSpecVar = self.cohort.sampleMap[matrixRow.id].model.getFeature(variant.id);
                         if (parseInt(sampleSpecVar.genotypeDepth) > 0) {
                             rawValue = parseInt(sampleSpecVar.genotypeAltCount) / parseInt(sampleSpecVar.genotypeDepth);
@@ -504,6 +500,8 @@ class FeatureMatrixModel {
                             rawValue = 0;
                         }
                     } else {
+                        // TODO: this is where we're going wrong for heatmap
+                        // Don't necessarily want to it pass filters - just want to show real frequency
                         rawValue = '';
                     }
 
