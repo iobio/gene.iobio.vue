@@ -490,8 +490,8 @@ class FeatureMatrixModel {
                     let varIdHash = matchingModel.variantIdHash;
 
 
-                    // Only show that we have the variant in the matrix if it passes filters and is visible in current track (MUST pull from hash for this)
-                    // if (varIdHash[variant.id] != null && (varIdHash[variant.id]).passesFilters) {
+                    // NOTE: removed passing filters here b/c doesn't match AF listed in variant detail card
+                    // Only show that we have the variant in the matrix if it is visible in current track (MUST pull from hash for this)
                     if (varIdHash[variant.id] != null) {
                         let sampleSpecVar = self.cohort.sampleMap[matrixRow.id].model.getFeature(variant.id);
                         if (parseInt(sampleSpecVar.genotypeDepth) > 0) {
@@ -500,8 +500,6 @@ class FeatureMatrixModel {
                             rawValue = 0;
                         }
                     } else {
-                        // TODO: this is where we're going wrong for heatmap
-                        // Don't necessarily want to it pass filters - just want to show real frequency
                         rawValue = '';
                     }
 

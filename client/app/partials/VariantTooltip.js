@@ -308,8 +308,8 @@ export default class VariantTooltip {
 
             let svg = outerDiv.select('svg.cosmic-badge');
             let selection = svg.data([{
-                width: 10,
-                height: 10,
+                width: 12,
+                height: 12,
                 transform: (translate ? translate : 'translate(0,1)')
             }]);
 
@@ -369,7 +369,7 @@ export default class VariantTooltip {
 
         if (me.tipType === 'click') {
             injectClickSomaticBadge(variant.isInherited, 'clickTipSomatic', 'translate(0,5)');
-            injectCosmicBadge(variant.inCosmic, 'clickTipCosmic', 'translate(0,18)');
+            injectCosmicBadge(variant.inCosmic, 'clickTipCosmic', 'translate(0,5)');
             injectImpactBadge(variant, info.vepImpact.toUpperCase(), 'clickTipImpact', 'translate(1,5)', 'translate(5, 8)');
         }
     }
