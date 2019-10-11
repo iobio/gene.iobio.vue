@@ -1022,6 +1022,7 @@ class CohortModel {
                 model.calledVariants = {loadState: {}, features: [], maxLevel: 1, featureWidth: 0};
                 model.variantHistoData = [];
                 model.coverage = [[]];
+                model.somaticVarCoverage = [[]];
                 model.noMatchingSamples = false;
             }
         });

@@ -52,6 +52,7 @@ class SampleModel {
         this.loadedVariants = null;
         this.variantHistoData = null;
         this.coverage = [[]];
+        this.somaticVarCoverage = [[]]; // List of [start site, read depth] corresponding to sites in tumor samples but not in normal samples - aka this is only used in normal SampleModel
 
         this.inProgress = {
             'loadingVariants': false,

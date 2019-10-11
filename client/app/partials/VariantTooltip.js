@@ -494,18 +494,36 @@ export default class VariantTooltip {
             let sampleName = info.model.getSelectedSample();
             let genotype = matchingVar && matchingVar.genotypes ? matchingVar.genotypes[sampleName] : null;
 
-            // TODO: should we pull this from a stored place instead of repeating I/O bound fxn
-            // If we don't have a matching variant to pull a genotype from, we have to look at coverage in BAM
+            // If we don't have a matching variant to pull a genotype from, check cached BAM sites (normal only)
             if (genotype == null) {
-                let p = info.model.promiseGetBamDepthForVariants([{'chrom': variant.chrom, 'start': variant.start, 'end': variant.end}])
-                    .then((depth) => {
-                        // We know there are no alt counts for this site
+                if (info.model.somaticVarCoverage) {
+                    let matchingDepth = info.model.somaticVarCoverage.filter((coverageArr) => {
+                        return coverageArr[0] == variant.start;
+                    });
+                    if (matchingDepth.length > 0) {
+                        let depth = matchingDepth[0][1];
                         genotype = {'altCount': '0'};
                         genotype['refCount'] = (depth + '');
                         genotype['genotypeDepth'] = (depth + '');
-                        genotypeInfo.push({ 'modelOrder': info.model.order, 'genotype': genotype });
-                    });
-                depthPromises.push(p);
+                        genotypeInfo.push({ 'modelOrder': info.model.order, 'genotype': genotype });                    }
+                }
+
+                // If genotype is still null, have to check actual BAM
+                if (genotype == null) {
+                    let p = info.model.promiseGetBamDepthForVariants([{'chrom': variant.chrom, 'start': variant.start, 'end': variant.end}])
+                        .then((depthArr) => {
+                            let depth = depthArr[0][1];
+                            // We know there are no alt counts for this site
+                            genotype = {'altCount': '0'};
+                            genotype['refCount'] = (depth + '');
+                            genotype['genotypeDepth'] = (depth + '');
+                            genotypeInfo.push({ 'modelOrder': info.model.order, 'genotype': genotype });
+
+                            // Cache info for potential next click
+                            info.model.somaticVarCoverage.push(depthArr);
+                        });
+                    depthPromises.push(p);
+                }
             } else {
                 genotypeInfo.push({ 'modelOrder': info.model.order, 'genotype': genotype });
             }

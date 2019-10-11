@@ -28,11 +28,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FilterModel.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="FilterModel.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/models/FilterModel.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="307">
-              <caret line="299" column="107" selection-start-line="299" selection-start-column="107" selection-end-line="299" selection-end-column="107" />
+            <state relative-caret-position="262">
+              <caret line="298" selection-start-line="298" selection-end-line="298" />
             </state>
           </provider>
         </entry>
@@ -40,8 +40,8 @@
       <file leaf-file-name="CohortModel.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="574">
-              <caret line="2463" column="11" selection-start-line="2463" selection-start-column="11" selection-end-line="2463" selection-end-column="11" />
+            <state relative-caret-position="453">
+              <caret line="1028" column="28" lean-forward="true" selection-start-line="1028" selection-start-column="28" selection-end-line="1028" selection-end-column="28" />
               <folding>
                 <element signature="e#0#42#0" expanded="true" />
               </folding>
@@ -52,8 +52,8 @@
       <file leaf-file-name="SampleModel.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client/app/models/SampleModel.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="436">
-              <caret line="1148" column="49" lean-forward="true" selection-start-line="1148" selection-start-column="49" selection-end-line="1148" selection-end-column="49" />
+            <state relative-caret-position="244">
+              <caret line="1137" column="4" selection-start-line="1137" selection-start-column="4" selection-end-line="1137" selection-end-column="4" />
               <folding>
                 <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
@@ -78,11 +78,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="VariantTooltip.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="VariantTooltip.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client/app/partials/VariantTooltip.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="257">
-              <caret line="496" column="95" selection-start-line="496" selection-start-column="95" selection-end-line="496" selection-end-column="95" />
+            <state relative-caret-position="546">
+              <caret line="522" column="73" selection-start-line="522" selection-start-column="73" selection-end-line="522" selection-end-column="73" />
               <folding>
                 <element signature="n#style#0;n#svg#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#i#0;n#!!top" expanded="true" />
@@ -139,9 +139,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>getBamDepthForVariant</find>
-      <find>onvariantho</find>
-      <find>img</find>
       <find>formatclick</find>
       <find>injectAlleleCountSvg</find>
       <find>hover</find>
@@ -162,13 +159,16 @@
       <find>samplemap</find>
       <find>currTumor</find>
       <find>currNorm</find>
-      <find>coverage</find>
       <find>annotatevariantih</find>
       <find>setfeaturesfor</find>
       <find>setfeature</find>
       <find>setfeatures</find>
       <find>maxPoints</find>
       <find>coverageCheckFeatures</find>
+      <find>coverage</find>
+      <find>clear</find>
+      <find>normal</find>
+      <find>inject</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -233,11 +233,11 @@
         <option value="$PROJECT_DIR$/client/app/models/EndpointCmd.js" />
         <option value="$PROJECT_DIR$/client/app/models/Bam.iobio.js" />
         <option value="$PROJECT_DIR$/client/app/components/viz/VariantCard.vue" />
-        <option value="$PROJECT_DIR$/client/app/models/CohortModel.js" />
         <option value="$PROJECT_DIR$/client/app/components/pages/GeneHome.vue" />
-        <option value="$PROJECT_DIR$/client/app/partials/VariantTooltip.js" />
         <option value="$PROJECT_DIR$/client/app/models/SampleModel.js" />
+        <option value="$PROJECT_DIR$/client/app/models/CohortModel.js" />
         <option value="$PROJECT_DIR$/client/app/models/FilterModel.js" />
+        <option value="$PROJECT_DIR$/client/app/partials/VariantTooltip.js" />
       </list>
     </option>
   </component>
@@ -453,12 +453,12 @@
       <workItem from="1566088066342" duration="28788000" />
       <workItem from="1566582771809" duration="173364000" />
       <workItem from="1569342712617" duration="45623000" />
-      <workItem from="1569861545890" duration="116006000" />
+      <workItem from="1569861545890" duration="117984000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1375286000" />
+    <option name="totallyTimeSpent" value="1377264000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="877" extended-state="6" />
@@ -906,10 +906,49 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/components/pages/GeneHome.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="381">
+          <caret line="2276" column="51" lean-forward="true" selection-start-line="2276" selection-start-column="51" selection-end-line="2276" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/models/FilterModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="298" selection-start-line="298" selection-end-line="298" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="453">
+          <caret line="1028" column="28" lean-forward="true" selection-start-line="1028" selection-start-column="28" selection-end-line="1028" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#42#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/app/models/SampleModel.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="244">
+          <caret line="1137" column="4" selection-start-line="1137" selection-start-column="4" selection-end-line="1137" selection-end-column="4" />
+          <folding>
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client/app/partials/VariantTooltip.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="257">
-          <caret line="496" column="95" selection-start-line="496" selection-start-column="95" selection-end-line="496" selection-end-column="95" />
+        <state relative-caret-position="546">
+          <caret line="522" column="73" selection-start-line="522" selection-start-column="73" selection-end-line="522" selection-end-column="73" />
           <folding>
             <element signature="n#style#0;n#svg#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#i#0;n#!!top" expanded="true" />
@@ -941,45 +980,6 @@
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/SampleModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="436">
-          <caret line="1148" column="49" lean-forward="true" selection-start-line="1148" selection-start-column="49" selection-end-line="1148" selection-end-column="49" />
-          <folding>
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#1;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/components/pages/GeneHome.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="381">
-          <caret line="2276" column="51" lean-forward="true" selection-start-line="2276" selection-start-column="51" selection-end-line="2276" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/CohortModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="574">
-          <caret line="2463" column="11" selection-start-line="2463" selection-start-column="11" selection-end-line="2463" selection-end-column="11" />
-          <folding>
-            <element signature="e#0#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/models/FilterModel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="307">
-          <caret line="299" column="107" selection-start-line="299" selection-start-column="107" selection-end-line="299" selection-end-column="107" />
         </state>
       </provider>
     </entry>

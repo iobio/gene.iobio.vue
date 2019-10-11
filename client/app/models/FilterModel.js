@@ -296,8 +296,6 @@ class FilterModel {
             //  Check to make sure there's enough coverage in normal to actually call somatic
             normalSamples[0].model.promiseGetBamDepthForVariants(coverageCheckFeatures)
                 .then((depthList) => {
-                    // TODO: this needs to be returned as array of depths with variant positions
-                    // TODO: ensure returns in the same order as coverageCheckFeatures so can use IDs below
                     for (let i = 0; i < depthList.length; i++) {
                         let depth = depthList[i][1];
                         let feature = coverageCheckFeatures[i];
@@ -308,6 +306,8 @@ class FilterModel {
                         } else {
                             feature.isInherited = null;
                         }
+                        // Save the read count in the normal model for tooltip use so we don't have to access BAM again
+                        normalSamples[0].model.somaticVarCoverage.push(depthList[i]);
                     }
                     resolve({'somaticLookup': somaticVarLookup, 'inheritedLookup': inheritedVarLookup});
                 }).catch((error) => {
