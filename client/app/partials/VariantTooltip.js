@@ -494,10 +494,10 @@ export default class VariantTooltip {
             let sampleName = info.model.getSelectedSample();
             let genotype = matchingVar && matchingVar.genotypes ? matchingVar.genotypes[sampleName] : null;
 
+            // TODO: should we pull this from a stored place instead of repeating I/O bound fxn
             // If we don't have a matching variant to pull a genotype from, we have to look at coverage in BAM
             if (genotype == null) {
-                // TODO: shouldn't have to do this - coverage field in sample model should have info
-                let p = info.model.promiseGetBamDepthForVariant(variant.chrom, variant.start, variant.end)
+                let p = info.model.promiseGetBamDepthForVariants([{'chrom': variant.chrom, 'start': variant.start, 'end': variant.end}])
                     .then((depth) => {
                         // We know there are no alt counts for this site
                         genotype = {'altCount': '0'};

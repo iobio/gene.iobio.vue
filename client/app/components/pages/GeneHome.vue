@@ -2273,21 +2273,23 @@
                 Promise.all(promises).then(() => {
                     // Regardless of what filter applied, we need to re-annotate somatic variants (b/c respective normal may be hidden!)
                     let allVariantsPassingFilters = self.cohortModel.getAllFilterPassingVariants();
-                    let inheritanceObj = self.filterModel.annotateVariantInheritance(self.cohortModel.sampleMap);
-                    self.cohortModel.allSomaticFeaturesLookup = inheritanceObj.somaticLookup;
-                    self.cohortModel.allInheritedFeaturesLookup = inheritanceObj.inheritedLookup;
+                    self.filterModel.promiseAnnotateVariantInheritance(self.cohortModel.sampleMap)
+                        .then((inheritanceObj) => {
+                            self.cohortModel.allSomaticFeaturesLookup = inheritanceObj.somaticLookup;
+                            self.cohortModel.allInheritedFeaturesLookup = inheritanceObj.inheritedLookup;
 
-                    // Draw feature matrix after somatic field filled
-                    self.featureMatrixModel.promiseRankVariants(self.cohortModel.allUniqueFeaturesObj, self.cohortModel.allSomaticFeaturesLookup, self.cohortModel.allInheritedFeaturesLookup, allVariantsPassingFilters);
+                            // Draw feature matrix after somatic field filled
+                            self.featureMatrixModel.promiseRankVariants(self.cohortModel.allUniqueFeaturesObj, self.cohortModel.allSomaticFeaturesLookup, self.cohortModel.allInheritedFeaturesLookup, allVariantsPassingFilters);
 
-                    // Then we need to update coloring for tumor tracks only
-                    if (self.$refs.variantCardRef) {
-                        self.$refs.variantCardRef.forEach((cardRef) => {
-                            if (cardRef.sampleModel.isTumor === true) {
-                                cardRef.updateVariantClasses();
+                            // Then we need to update coloring for tumor tracks only
+                            if (self.$refs.variantCardRef) {
+                                self.$refs.variantCardRef.forEach((cardRef) => {
+                                    if (cardRef.sampleModel.isTumor === true) {
+                                        cardRef.updateVariantClasses();
+                                    }
+                                });
                             }
                         });
-                    }
                 }).catch((err) => {
                     console.log('There was a problem applying variant filter: ' + err);
                 });

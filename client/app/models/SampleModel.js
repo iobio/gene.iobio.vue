@@ -1134,16 +1134,19 @@ class SampleModel {
     }
 
     /* Gets coverage depth at a specific site. */
-    promiseGetBamDepthForVariant(refName, variantStart, variantEnd) {
+    promiseGetBamDepthForVariants(featureList) {
         const self = this;
 
         return new Promise((resolve, reject) => {
-            let regions = [{name: refName, start: variantStart - 1, end: variantEnd}];
+            let regions = [];
+            featureList.forEach((feature) => {
+                regions.push({name: feature.refName, start: feature['start'] - 1, end: feature['end']});
+            });
 
-            self.bam.getCoverageForRegion(refName, variantStart, variantEnd, regions, 5, null,
+            self.bam.getCoverageForRegion(featureList[0]['chrom'], featureList[0]['start'], featureList[featureList.length-1]['end'], regions, null, null,
                 function (coverageForRegion, coverageForPoints) {
                     if (coverageForPoints != null) {
-                        resolve(coverageForPoints[0][1]);
+                        resolve(coverageForPoints);
                     } else {
                         reject("Could not get coverage info for provided variant");
                     }
@@ -3054,7 +3057,6 @@ class SampleModel {
         }
         return sampleNames;
     }
-
 }
 
 

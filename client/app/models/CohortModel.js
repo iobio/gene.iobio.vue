@@ -2461,7 +2461,7 @@ class CohortModel {
 
         let sortedFilters = filters.sort(function(filterObject1, filterObject2) {
             return filterObject1.filter.order > filterObject2.filter.order;
-        })
+        });
 
         sortedFilters.forEach(function(filterObject) {
             filterObject.variantCount = 0;
