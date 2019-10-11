@@ -276,8 +276,8 @@ export default function variantD3() {
 
         // REPLACE classes here (except filter status - this is guaranteed by classifyByImpact)
         allVariants.attr('class', function (d) {
-                return chart.clazz()(d);
-            });
+            return chart.clazz()(d);
+        });
     };
 
     function chart(selection, options) {

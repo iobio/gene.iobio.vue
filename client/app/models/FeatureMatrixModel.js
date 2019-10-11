@@ -470,7 +470,7 @@ class FeatureMatrixModel {
                 // but whether any of the track's instance of the variant qualifies as somatic
                 if (matrixRow.attribute === 'isInherited' && allSomaticFeaturesLookup[variant.id]) {
                     rawValue = 'isSomatic';
-                } else if (matrixRow.attribute === 'isInherited' && filteredInheritedFeaturesLookup[variant.id]) {
+                } else if (matrixRow.attribute === 'isInherited' && filteredInheritedFeaturesLookup[variant.id] === true) {
                     rawValue = 'isInherited';
                 } else if  (matrixRow.attribute === 'isInherited') {
                     rawValue = 'undetermined';

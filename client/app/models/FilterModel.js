@@ -227,7 +227,7 @@ class FilterModel {
                 if (!(resultMap[sampleId].isTumor) && sampleId !== 'known-variants' && sampleId !== 'cosmic-variants') {
                     normalSamples.push(sampleObj);
                 } else if (sampleId !== 'known-variants' && sampleId !== 'cosmic-variants') {
-                    tumorSamples.push(currData);    // Don't need reference to model for tumor
+                    tumorSamples.push(sampleObj);    // Don't need reference to model for tumor
                     tumorSampleModelIds.push(sampleId);
                 }
             }
@@ -265,8 +265,8 @@ class FilterModel {
             let coverageCheckFeatures = [];
             for (i = 0; i < tumorSamples.length; i++) {
                 let currTumor = tumorSamples[i];
-                if (currTumor.features && currTumor.features.length > 0) {
-                    let tumorFeatures = currTumor.features;
+                if (currTumor.currData && currTumor.currData.features && currTumor.currData.features.length > 0) {
+                    let tumorFeatures = currTumor.currData.features;
 
                     // Don't need to look at tumor features that don't pass other filters
                     let filteredTumorFeatures = tumorFeatures.filter((feature) => {
@@ -282,13 +282,16 @@ class FilterModel {
                             inheritedVarLookup[feature.id] = false;
                         } else if (normalContainsLookup[feature.id] == null && passesTumorAf && passesTumorCount) {
                             // Add this position to checklist
-                            coverageCheckFeatures.push({'chrom': feature.chrom, 'start': feature.start, 'end': feature.end, 'id': feature.id });
+                            coverageCheckFeatures.push({'chrom': feature.chrom, 'start': feature.start, 'end': feature.end, 'id': feature.id});
                         } else if (passesOtherFiltersLookup[feature.id]) {
                             feature.isInherited = true;
                             inheritedVarLookup[feature.id] = true;
                         } else {
                             feature.isInherited = null;
                             inheritedVarLookup[feature.id] = false;
+
+                            // Have to mark actual variant in normal sample as null b/c that's what feature matrix tooltips look at
+                            normalSamples[0].model.variantIdHash[feature.id].isInherited = null;
                         }
                     })
                 }
@@ -300,11 +303,19 @@ class FilterModel {
                         let depth = depthList[i][1];
                         let feature = coverageCheckFeatures[i];
                         if (depth >= self.DEFAULT_QUALITY_FILTERING_CRITERIA['totalCountCutoff']) {
-                            feature.isInherited = false;
+                            // Have to check to see if all of the tumor samples have this variant
+                            tumorSamples.forEach((sample) => {
+                                let tumorModel = sample.model;
+                                let matchingFeature = tumorModel.variantIdHash[feature.id];
+                                if (matchingFeature) {
+                                    matchingFeature.isInherited = false;
+                                }
+                            });
                             somaticVarLookup[feature.id] = true;
                             inheritedVarLookup[feature.id] = false;
                         } else {
                             feature.isInherited = null;
+                            inheritedVarLookup[feature.id] = false;  // Still need to mark this as false to display as undetermined in feature matrix
                         }
                         // Save the read count in the normal model for tooltip use so we don't have to access BAM again
                         normalSamples[0].model.somaticVarCoverage.push(depthList[i]);

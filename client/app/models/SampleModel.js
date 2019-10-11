@@ -2900,7 +2900,7 @@ class SampleModel {
             impacts += " " + key;
         }
 
-        if (d.isInherited != null && !d.isInherited && inTumorTrack && !inKnownTrack) {
+        if (d.isInherited != null && d.isInherited === false && inTumorTrack && !inKnownTrack) {
             colorimpacts += " " + "impact_SOMATIC";
         } else {
         var colorImpactList = (annotationScheme == null || annotationScheme.toLowerCase() === 'snpeff' ? d.impact : d[self.globalApp.impactFieldToColor]);
