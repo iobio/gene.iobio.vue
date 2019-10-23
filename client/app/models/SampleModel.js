@@ -1139,6 +1139,9 @@ class SampleModel {
         const self = this;
 
         return new Promise((resolve, reject) => {
+            if (featureList.length === 0) {
+                reject('No features to return depth for');
+            }
             let regions = [];
             featureList.forEach((feature) => {
                 regions.push({name: feature.refName, start: feature['start'] - 1, end: feature['end']});

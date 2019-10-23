@@ -273,6 +273,9 @@ class FilterModel {
                         return feature.passesFilters === true;
                     });
                     filteredTumorFeatures.forEach((feature) => {
+                        if (feature.chrom == null) {
+                            debugger;
+                        }
                         let currAltFreq = Math.round(feature.genotypeAltCount / feature.genotypeDepth * 100) / 100;
                         let passesTumorCount = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltCount'], feature.genotypeAltCount, self.currentSomaticCutoffs['tumorAltCount']);
                         let passesTumorAf = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltFreq'], currAltFreq, self.currentSomaticCutoffs['tumorAltFreq']);
@@ -297,33 +300,37 @@ class FilterModel {
                 }
             }
             //  Check to make sure there's enough coverage in normal to actually call somatic
-            normalSamples[0].model.promiseGetBamDepthForVariants(coverageCheckFeatures)
-                .then((depthList) => {
-                    for (let i = 0; i < depthList.length; i++) {
-                        let depth = depthList[i][1];
-                        let feature = coverageCheckFeatures[i];
-                        if (depth >= self.DEFAULT_QUALITY_FILTERING_CRITERIA['totalCountCutoff']) {
-                            // Have to check to see if all of the tumor samples have this variant
-                            tumorSamples.forEach((sample) => {
-                                let tumorModel = sample.model;
-                                let matchingFeature = tumorModel.variantIdHash[feature.id];
-                                if (matchingFeature) {
-                                    matchingFeature.isInherited = false;
-                                }
-                            });
-                            somaticVarLookup[feature.id] = true;
-                            inheritedVarLookup[feature.id] = false;
-                        } else {
-                            feature.isInherited = null;
-                            inheritedVarLookup[feature.id] = false;  // Still need to mark this as false to display as undetermined in feature matrix
+            if (coverageCheckFeatures.length > 0) {
+                normalSamples[0].model.promiseGetBamDepthForVariants(coverageCheckFeatures)
+                    .then((depthList) => {
+                        for (let i = 0; i < depthList.length; i++) {
+                            let depth = depthList[i][1];
+                            let feature = coverageCheckFeatures[i];
+                            if (depth >= self.DEFAULT_QUALITY_FILTERING_CRITERIA['totalCountCutoff']) {
+                                // Have to check to see if all of the tumor samples have this variant
+                                tumorSamples.forEach((sample) => {
+                                    let tumorModel = sample.model;
+                                    let matchingFeature = tumorModel.variantIdHash[feature.id];
+                                    if (matchingFeature) {
+                                        matchingFeature.isInherited = false;
+                                    }
+                                });
+                                somaticVarLookup[feature.id] = true;
+                                inheritedVarLookup[feature.id] = false;
+                            } else {
+                                feature.isInherited = null;
+                                inheritedVarLookup[feature.id] = false;  // Still need to mark this as false to display as undetermined in feature matrix
+                            }
+                            // Save the read count in the normal model for tooltip use so we don't have to access BAM again
+                            normalSamples[0].model.somaticVarCoverage.push(depthList[i]);
                         }
-                        // Save the read count in the normal model for tooltip use so we don't have to access BAM again
-                        normalSamples[0].model.somaticVarCoverage.push(depthList[i]);
-                    }
-                    resolve({'somaticLookup': somaticVarLookup, 'inheritedLookup': inheritedVarLookup});
-                }).catch((error) => {
+                        resolve({'somaticLookup': somaticVarLookup, 'inheritedLookup': inheritedVarLookup});
+                    }).catch((error) => {
                     reject('Something went wrong in promiseAnnotateVariantInheritance: ' + error);
                 })
+            } else {
+                resolve({'somaticLookup': somaticVarLookup, 'inheritedLookup': inheritedVarLookup});
+            }
         })
     }
 
