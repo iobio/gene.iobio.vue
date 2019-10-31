@@ -273,9 +273,9 @@ class FilterModel {
                         return feature.passesFilters === true;
                     });
                     filteredTumorFeatures.forEach((feature) => {
-                        if (feature.chrom == null) {
-                            debugger;
-                        }
+                        // if (feature.chrom == null) {
+                        //     debugger;
+                        // }
                         let currAltFreq = Math.round(feature.genotypeAltCount / feature.genotypeDepth * 100) / 100;
                         let passesTumorCount = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltCount'], feature.genotypeAltCount, self.currentSomaticCutoffs['tumorAltCount']);
                         let passesTumorAf = self.matchAndPassFilter(self.currentSomaticLogic['tumorAltFreq'], currAltFreq, self.currentSomaticCutoffs['tumorAltFreq']);
@@ -301,6 +301,7 @@ class FilterModel {
             }
             //  Check to make sure there's enough coverage in normal to actually call somatic
             if (coverageCheckFeatures.length > 0) {
+                // TODO: think this is getting called per normal and tumor comparison - can consolidate into a single call grouped by sample ID?
                 normalSamples[0].model.promiseGetBamDepthForVariants(coverageCheckFeatures)
                     .then((depthList) => {
                         for (let i = 0; i < depthList.length; i++) {

@@ -1144,7 +1144,7 @@ class SampleModel {
             }
             let regions = [];
             featureList.forEach((feature) => {
-                regions.push({name: feature.refName, start: feature['start'] - 1, end: feature['end']});
+                regions.push({name: feature.chrom, start: feature['start'] - 1, end: feature['end']});
             });
 
             self.bam.getCoverageForRegion(featureList[0]['chrom'], featureList[0]['start'], featureList[featureList.length-1]['end'], regions, null, null,

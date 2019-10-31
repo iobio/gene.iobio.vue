@@ -51,7 +51,6 @@
 
 <template>
     <div>
-
         <edu-tour-banner
                 v-if="isEduMode"
                 :tourNumber="tourNumber"

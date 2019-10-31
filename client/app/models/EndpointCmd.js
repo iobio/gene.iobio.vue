@@ -10,8 +10,9 @@ export default class EndpointCmd {
         this.getHumanRefNames = getHumanRefNamesFunc;
 
         // talk to gru
-        this.api = new Client('backend.iobio.io', {secure: true});
-        this.gruBackend = false;
+        this.api = new Client('dev.backend.iobio.io:9002', {secure: false});
+        this.gruBackend = true;
+        this.newEndpointTest = true;
 
         // iobio services
         this.IOBIO = {};
@@ -36,7 +37,7 @@ export default class EndpointCmd {
 
     getVcfHeader(vcfUrl, tbiUrl) {
         if (this.gruBackend) {
-            return this.api.streamVariantHeader(vcfUrl, tbiUrl);
+            return this.api.streamCommand('variantHeader', {url: vcfUrl, indexUrl: tbiUrl});
         }
         else {
             const me = this;
@@ -58,7 +59,7 @@ export default class EndpointCmd {
             if (!tbiUrl) {
                 tbiUrl = vcfUrl + '.tbi';
             }
-            return this.api.streamVcfReadDepth(tbiUrl);
+            return this.api.streamCommand('vcfReadDepth', { url: tbiUrl });
         }
         else {
             const me = this;
@@ -78,32 +79,36 @@ export default class EndpointCmd {
         }
     }
 
-    // TODO: refactor this to use GRU - need to add a client obj endpoint?
     getVariantIds(vcfSource, refName, regions) {
         const me = this;
 
-        // Format region
-        let regionParam = "";
-        if (regions && regions.length > 0) {
-            regions.forEach(function (region) {
-                if (regionParam.length > 0) {
-                    regionParam += " ";
-                }
-                regionParam += region.name + ":" + region.start + "-" + region.end;
-            })
-        }
-
-        // Form iobio command based on type of vcf input
         let cmd = null;
-        if (vcfSource.hasOwnProperty('vcfUrl')) {
-            let view_args = ['view', '-r', regionParam, '"' + vcfSource.vcfUrl + '"'];
-            cmd = new iobio.cmd(me.IOBIO.bcftools, view_args, {ssl: me.globalApp.useSSL});
-        } else if (vcfSource.hasOwnProperty('writeStream')) {
-            // If we have a local vcf file, use the writeStream function to stream in the vcf records
-            cmd = new iobio.cmd(me.IOBIO.bcftools, ['view', '-r', regionParam, vcfSource.writeStream], {ssl: me.globalApp.useSSL})
+
+        if (me.newEndpointTest) {
+            cmd = me.api.streamCommand('getIdColumns', {vcfUrl: vcfSource.vcfUrl, regions});
         } else {
-            console.log("EndpointCmd.annotateVariants() vcfSource arg is not invalid.");
-            return null;
+            // Format region
+            let regionParam = "";
+            if (regions && regions.length > 0) {
+                regions.forEach(function (region) {
+                    if (regionParam.length > 0) {
+                        regionParam += " ";
+                    }
+                    regionParam += region.name + ":" + region.start + "-" + region.end;
+                })
+            }
+
+            // Form iobio command based on type of vcf input
+            if (vcfSource.hasOwnProperty('vcfUrl')) {
+                let view_args = ['view', '-r', regionParam, '"' + vcfSource.vcfUrl + '"'];
+                cmd = new iobio.cmd(me.IOBIO.bcftools, view_args, {ssl: me.globalApp.useSSL});
+            } else if (vcfSource.hasOwnProperty('writeStream')) {
+                // If we have a local vcf file, use the writeStream function to stream in the vcf records
+                cmd = new iobio.cmd(me.IOBIO.bcftools, ['view', '-r', regionParam, vcfSource.writeStream], {ssl: me.globalApp.useSSL})
+            } else {
+                console.log("EndpointCmd.annotateVariants() vcfSource arg is not invalid.");
+                return null;
+            }
         }
 
         // Return command
@@ -116,7 +121,7 @@ export default class EndpointCmd {
             const genomeBuildName = this.genomeBuildHelper.getCurrentBuildName();
             const refFastaFile = this.genomeBuildHelper.getFastaPath(refName);
 
-            const ncmd = this.api.streamAnnotateVariants({
+            const ncmd = this.api.streamCommand('annotateVariants', {
                 vcfUrl: vcfSource.vcfUrl,
                 tbiUrl: vcfSource.tbiUrl,
                 refNames,
@@ -257,14 +262,13 @@ export default class EndpointCmd {
 
             var me = this;
             var refFastaFile = me.genomeBuildHelper.getFastaPath(refName);
-            // TODO: send the array rather than building the file string, like we
             // do with annotateVariants
             var contigStr = "";
             me.getHumanRefNames(refName).split(" ").forEach(function(ref) {
                 contigStr += "##contig=<ID=" + ref + ">\n";
             })
 
-            const cmd = this.api.streamNormalizeVariants(vcfUrl, tbiUrl, refName, regions, contigStr, refFastaFile);
+            const cmd = this.api.streamCommand('normalizeVariants', { vcfUrl, tbiUrl, refName, regions, contigStr, refFastaFile });
             return cmd;
         } else {
             var me = this;
@@ -301,8 +305,15 @@ export default class EndpointCmd {
 
     getCountsForGene(url, refName, geneObject, binLength, regions, annotationMode, requiresVepService) {
         if (this.gruBackend) {
-            return this.api.streamClinvarCountsForGene({
-                clinvarUrl,
+            let vepArgs = '';
+            if (requiresVepService) {
+                vepArgs += " --assembly " + this.genomeBuildHelper.getCurrentBuildName();
+                vepArgs += " --format vcf";
+                vepArgs += " --allele_number";
+            }
+
+            return this.api.streamCommand('clinvarCountsForGene', {
+                clinvarUrl: url,
                 region: {
                     refName,
                     start: geneObject.start,
@@ -310,6 +321,9 @@ export default class EndpointCmd {
                 },
                 binLength,
                 regions,
+                annotationMode: 'vep',
+                requiresVepService: requiresVepService,
+                vepArgs: vepArgs
             });
         } else {
             var me = this;
@@ -363,7 +377,7 @@ export default class EndpointCmd {
 
     getBamHeader(bamUrl, baiUrl) {
         if (this.gruBackend) {
-            return this.api.streamAlignmentHeader(bamUrl);
+            return this.api.streamCommand('alignmentHeader', { url: bamUrl });
         }
         else {
             var me = this;
@@ -382,16 +396,18 @@ export default class EndpointCmd {
 
     getBamCoverage(bamSource, refName, regionStart, regionEnd, regions, maxPoints, useServerCache, serverCacheKey) {
         if (this.gruBackend) {
+            // TODO: gru version of this is broken with multiple regions...
             const url = bamSource.bamUrl;
             const samtoolsRegion = { refName, start: regionStart, end: regionEnd };
             const indexUrl = bamSource.baiUrl;
             maxPoints = maxPoints ? maxPoints : 0;
-            const coverageRegions = regions;
 
-            return this.api.streamAlignmentCoverage(url, indexUrl, samtoolsRegion, maxPoints, coverageRegions);
+            return this.api.streamCommand('alignmentCoverage', { url, indexUrl, samtoolsRegion, maxPoints, coverageRegions: regions });
         } else {
             const me = this;
             let samtools = bamSource.bamUrl != null ? me.IOBIO.samtoolsOnDemand : me.IOBIO.samtools;
+
+            // Format all regions into string param
             let regionsArg = "";
             regions.forEach(function (region) {
                 region.name = refName;
@@ -472,7 +488,8 @@ export default class EndpointCmd {
             const genomeBuildName = this.genomeBuildHelper.getCurrentBuildName();
             const clinvarUrl  = this.globalApp.getClinvarUrl(genomeBuildName);
 
-            return this.api.streamFreebayesJointCall({
+            // TODO: test w/ gene
+            return this.api.streamCommand('freebayesJointCall', {
                 alignmentSources: bamSources,
                 refFastaFile,
                 region: {
@@ -599,7 +616,7 @@ export default class EndpointCmd {
         if (this.gruBackend) {
             const url = bamSources[0].bamUrl;
             const indexUrl = bamSources[0].baiUrl;
-            return this.api.streamGeneCoverage(url, indexUrl, refName, geneName, regionStart, regionEnd, regions);
+            return this.api.streamCommand('geneCoverage', { url, indexUrl, refName, geneName, regionStart, regionEnd, regions });
         } else {
             var me = this;
             var bamCmds = me._getBamRegions(bamSources, refName, regionStart, regionEnd);
@@ -629,9 +646,8 @@ export default class EndpointCmd {
     _getBamRegions(bamSources, refName, regionStart, regionEnd) {
         var me = this;
 
+        // TODO: do we not have a gru endpoint setup for this?
         var regionArg =  refName + ":" + regionStart + "-" + regionEnd;
-
-
         var bamCmds = [];
         bamSources.forEach(function(bamSource) {
             var samtools = bamSource.bamUrl != null ?  me.IOBIO.samtoolsOnDemand : me.IOBIO.samtools;
@@ -657,6 +673,7 @@ export default class EndpointCmd {
     _getSuggestedVariants(refName, regionStart, regionEnd) {
         var me = this;
 
+        // TODO: do we not have a gru endpoint setup for this?
         // Create an iobio command get get the variants from clinvar for the region of the gene
         var regionParm = refName + ":" + regionStart + "-" + regionEnd;
 

@@ -16,7 +16,7 @@
     "express": "^4.15.3",
     "ideogram": "^1.12.0",
     "igv": "^2.2.13",
-    "iobio-api-client": "^0.5.0",
+    "iobio-api-client": "^0.6.0",
     "jquery": "^3.3.1",
     "lodash": "^4.17.10",
     "serve-favicon": "^2.4.3",
