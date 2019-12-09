@@ -195,6 +195,7 @@
                 this.setVariantChart();
             },
             update: function () {
+
                 const self = this;
                 if (self.data) {
 

@@ -569,7 +569,6 @@
             global: null
         },
         data() {
-            let self = this;
             return {
                 title: 'gene.iobio',    // onco portion is prepended via symbol
                 betaTitle: 'beta',

@@ -1,18 +1,24 @@
 export default function variantD3() {
+    // TODO: enter in all static params
+    // TODO: enter in version of d3 we want to pass here
+
     var dispatch = d3.dispatch("d3brush", "d3rendered", "d3outsideclick", "d3click", "d3mouseover", "d3mouseout", "d3glyphmouseover", "d3glyphmouseout");
 
     // dimensions
     var margin = {top: 30, right: 0, bottom: 20, left: 110},
         width = 800,
         height = 100;
+
     // scales
     var x = d3.scale.linear(),
         y = d3.scale.linear();
+
     // axis
     var xAxis = d3.svg.axis()
         .scale(x)
         .orient("top")
         .tickFormat(tickFormatter);
+
     // variables
     var borderRadius = 1,
         variantHeight = 10,
