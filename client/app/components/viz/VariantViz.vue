@@ -121,8 +121,8 @@
             },
             xTickFormat: {
                 type: Function,
-                default: function (d, i) {
-                    return "";
+                default: function () {
+                    return [];
                 }
             },
             tooltipHTML: {
@@ -160,72 +160,67 @@
         methods: {
             draw: function () {
                 const self = this;
+                const variantVizOptions = {
+                  margin: this.margin,
+                  showXAxis: this.showXAxis,
+                  xTickFormat: this.xTickFormat,
+                  variantHeight: this.variantHeight,
+                  verticalPadding: this.verticalPadding,
+                  showBrush: this.showBrush,
+                  showTransition: this.showTransition,
+                  clazz: function(variant) {
+                      return self.classifySymbolFunc(variant, self.annotationScheme, self.isTumorTrack, self.isKnownOrCosmicTrack);
+                  }
+                };
 
-                this.variantChart = variantD3()
-                    .width(this.width)
-                    .clazz(function (variant) {
-                        return self.classifySymbolFunc(variant, self.annotationScheme, self.isTumorTrack, self.isKnownOrCosmicTrack);
-                    })
-                    .margin(this.margin)
-                    .showXAxis(this.showXAxis)
-                    .xTickFormat(this.xTickFormat)
-                    .variantHeight(this.variantHeight)
-                    .verticalPadding(this.variantPadding)
-                    .showBrush(this.showBrush)
-                    .showTransition(this.showTransition)
-                    .tooltipHTML(this.tooltipHTML)
-                    .regionStart(this.regionStart)
-                    .regionEnd(this.regionEnd)
-                    .on("d3rendered", function () {
-                        self.$emit("apply-active-filters");
-                    })
-                    .on('d3outsideclick', function () {
-                        self.onVariantClick(null);
-                    })
-                    .on('d3click', function (variant) {
-                        self.onVariantClick(variant);
-                    })
-                    .on('d3mouseover', function (variant) {
-                        self.onVariantHover(variant);
-                    })
-                    .on('d3mouseout', function () {
-                        self.onVariantHoverEnd();
-                    });
+                // Instantiate d3 object
+                this.variantChart = variantD3(d3v5, variantVizOptions);
+
+                // Register listeners
+                let dispatch = this.variantChart.getDispatch();
+                dispatch.on('d3rendered', function() {
+                    self.$emit('apply-active-filters');
+                });
+                dispatch.on('d3click', function(variant) {
+                    self.onVariantClick(variant);
+                });
+                dispatch.on('d3outsideclick', function() {
+                    self.onVariantClick(null);
+                });
+                dispatch.on('d3mouseover', function(variant) {
+                    self.onVariantHover(variant);
+                });
+                dispatch.on('d3mouseout', function() {
+                    self.onVariantHoverEnd();
+                });
 
                 this.setVariantChart();
             },
             update: function () {
-
                 const self = this;
                 if (self.data) {
-
                     // Set the vertical layer count so that the height of the chart can be recalculated
                     if (self.data.maxLevel == null) {
                         self.data.maxLevel = d3.max(self.data.features, function (d) {
                             return d.level;
                         });
                     }
-                    self.variantChart.verticalLayers(self.data.maxLevel);
-                    self.variantChart.lowestWidth(self.data.featureWidth);
-                    if (self.data.features == null || self.data.features.length === 0) {
-                        self.variantChart.showXAxis(false);
-                    } else {
-                        self.variantChart.showXAxis(self.showXAxis);
-                    }
-
-                    self.variantChart.regionStart(self.regionStart);
-                    self.variantChart.regionEnd(self.regionEnd);
-
-                    self.variantChart.width(self.width);
-
-
                     let selection = d3.select(self.$el).datum([self.data]);
-                    self.variantChart(selection);
+
+                    const chartData = {
+                      selection: selection,
+                      regionStart: self.regionStart,
+                      regionEnd: self.regionEnd,
+                      verticalLayers: self.data.maxLevel,
+                      lowestWidth: self.data.featureWidth,
+                      width: self.width
+                    };
+                    self.variantChart(chartData);
                 }
             },
             updateVariantClasses: function(container) {
                 const self = this;
-                self.variantChart.updateVariantClasses()(container);
+                self.variantChart.updateVariantClasses(container);
             },
             onVariantClick: function (variant) {
                 let self = this;
@@ -244,17 +239,17 @@
                     this.hideVariantCircle(container, pinned);
                 } else {
                     if (pinned) {
-                        this.variantChart.hideCircle()(container, pinned);
+                        this.variantChart.hideCircle(container, pinned);
                     }
                     // Note: SJG not sure if logic here is correct for highlighting when vars are called...
-                    this.variantChart.showCircle()(variant,
+                    this.variantChart.showCircle(variant,
                         container,
                         (variant.fbCalled == null || variant.fbCalled !== 'Y'),
                         pinned);
                 }
             },
             hideVariantCircle: function (container, pinned) {
-                this.variantChart.hideCircle()(container, pinned);
+                this.variantChart.hideCircle(container, pinned);
             },
             setVariantChart: function () {
                 this.$emit('updateVariantChart', this.variantChart);
@@ -311,7 +306,7 @@
                         self.excludeFilters.splice(self.excludeFilters.indexOf('.' + filterInfo.name), 1);
 
                         // Re-apply active filters in case of multiple filters
-                        let checkOnP = self.variantChart.promiseFilterVariants()(self.excludeFilters, self.cutoffFilters, svg)
+                        let checkOnP = self.variantChart.promiseFilterVariants(self.excludeFilters, self.cutoffFilters, svg)
                             .then((passingVarCount) => {
                                 // noPassingVars = passingVarCount > 0;
                                 numPassingVars = passingVarCount;
@@ -326,14 +321,14 @@
                         // Hide variants with that class
                         let filterClass = '.' + filterInfo.name;
                         self.excludeFilters.push(filterClass);
-                        let checkOffP = self.variantChart.promiseFilterVariants()(self.excludeFilters, self.cutoffFilters, svg)
+                        let checkOffP = self.variantChart.promiseFilterVariants(self.excludeFilters, self.cutoffFilters, svg)
                             .then((passingVarCount) => {
                                 // noPassingVars = passingVarCount > 0;
                                 numPassingVars = passingVarCount;
 
                                 // Check to make sure we haven't hidden the selected variant
                                 if (checkForSelectedVar) {
-                                    let selectedVarStillVisible = self.variantChart.checkForSelectedVar()(selectedVarId, svg);
+                                    let selectedVarStillVisible = self.variantChart.checkForSelectedVar(selectedVarId, svg);
                                     // If we have, send deselect message
                                     if (!selectedVarStillVisible) {
                                         self.$emit("variantClick", null, null);
@@ -357,9 +352,8 @@
                         self.cutoffFilters[filterInfo.name] = [filterInfo.name, filterInfo.state, filterInfo.cutoffValue];
 
                         // Hide variants that do not meet given condition
-                        let filtOnP = self.variantChart.promiseFilterVariants()(self.excludeFilters, self.cutoffFilters, svg)
+                        let filtOnP = self.variantChart.promiseFilterVariants(self.excludeFilters, self.cutoffFilters, svg)
                             .then((passingVarCount) => {
-                                // noPassingVars = passingVarCount > 0; TODO: get rid of all of these if working
                                 numPassingVars = passingVarCount;
                             }).catch((err) => {
                                 console.log('Problem applying filter at DOM level: ' + err);
@@ -374,13 +368,13 @@
                         delete self.cutoffFilters[filterInfo.name];
 
                         // Re-apply active filters in case of multiple filters
-                        let filtOffP = self.variantChart.promiseFilterVariants()(self.excludeFilters, self.cutoffFilters, svg)
+                        let filtOffP = self.variantChart.promiseFilterVariants(self.excludeFilters, self.cutoffFilters, svg)
                             .then((passingVarCount) => {
                                 // noPassingVars = passingVarCount > 0;
                                 numPassingVars = passingVarCount;
 
                                 if (checkForSelectedVar) {
-                                    let selectedVarStillVisible = self.variantChart.checkForSelectedVar()(selectedVarId, svg);
+                                    let selectedVarStillVisible = self.variantChart.checkForSelectedVar(selectedVarId, svg);
                                     // If we have, send deselect message
                                     if (!selectedVarStillVisible) {
                                         self.$emit("variantClick", null, null);
@@ -401,7 +395,7 @@
             },
             applyActiveFilters: function(svg) {
                 const self = this;
-                self.variantChart.promiseFilterVariants()(self.excludeFilters, self.cutoffFilters, svg);
+                self.variantChart.promiseFilterVariants(self.excludeFilters, self.cutoffFilters, svg);
             }
 
         },
