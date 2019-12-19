@@ -180,7 +180,7 @@
                 // Register listeners
                 let dispatch = this.variantChart.getDispatch();
                 dispatch.on('d3rendered', function() {
-                    self.$emit('apply-active-filters');
+                    // self.$emit('apply-active-filters');
                 });
                 dispatch.on('d3click', function(variant) {
                     self.onVariantClick(variant);

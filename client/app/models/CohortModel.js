@@ -838,16 +838,16 @@ class CohortModel {
                         });
 
                         // Now summarize the danger for the selected gene
-                        self.promiseSummarizeDanger(theGene, theTranscript, resultMap.s0, null)
-                            .then(function () {
-                                let geneChanged = options.loadFromFlag;
+                        // self.promiseSummarizeDanger(theGene, theTranscript, resultMap.s0, null)
+                        //     .then(function () {
+                            let geneChanged = options.loadFromFlag;
 
                                 // TODO: think I can call promiseApplyFilters here?
 
-                                self.setLoadedVariants(theGene, null, geneChanged, options.loadFeatureMatrix);
-                                self.endGeneProgress(theGene.gene_name);
-                                resolve(resultMap);
-                            })
+                            self.setLoadedVariants(theGene, null, geneChanged, options.loadFeatureMatrix);
+                            self.endGeneProgress(theGene.gene_name);
+                            resolve(resultMap);
+                            // })
                     })
                     .catch(function (error) {
                         self.endGeneProgress(theGene.gene_name);
@@ -1531,10 +1531,10 @@ class CohortModel {
                                 }
 
 
-                                theOptions = $.extend({}, options);
-                                if ((dangerSummary && dangerSummary.CALLED) || (filteredFbData && filteredFbData.features.length > 0)) {
-                                    theOptions.CALLED = true;
-                                }
+                                // theOptions = $.extend({}, options);
+                                // if ((dangerSummary && dangerSummary.CALLED) || (filteredFbData && filteredFbData.features.length > 0)) {
+                                //     theOptions.CALLED = true;
+                                // }
                             }
 
                             // TODO: write new method to determine compound hets using filteredFbData
@@ -1669,7 +1669,7 @@ class CohortModel {
                                 if (matchingFeatureCoverage.length > 0) {
                                     let gc = matchingFeatureCoverage[0];
                                     feature.geneCoverage[model.getId()] = gc;
-                                    feature.danger[model.getId()] = self.filterModel.isLowCoverage(gc);
+                                    // feature.danger[model.getId()] = self.filterModel.isLowCoverage(gc);
                                 } else {
                                     feature.danger[model.getId()] = false;
                                 }
@@ -1894,7 +1894,7 @@ class CohortModel {
                                                 .then(function () {
                                                     me.getCanonicalModels().forEach(function (model) {
                                                         model.loadCalledTrioGenotypes(trioVcfData[model.getRelationship()], trioFbData[model.getRelationship()]);
-                                                    })
+                                                    });
                                                     // Summarize danger for gene
                                                     return me.promiseSummarizeDanger(geneObject, theTranscript, trioVcfData.proband, {'CALLED': true});
                                                 })
