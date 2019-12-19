@@ -489,7 +489,7 @@
                 }
                 if (this.showVariantViz) {
                     this.showVariantCircle(variant);
-                    let tipType = "hover";
+                    const tipType = "hover";
                     this.showVariantTooltip(variant, tipType, false);
                 }
                 this.$emit('cohort-variant-hover', variant, this);
@@ -500,14 +500,14 @@
                 }
                 if (this.showVariantViz) {
                     this.hideVariantCircle(false);
-                    let tipType = "hover";
+                    const tipType = "hover";
                     this.hideVariantTooltip(tipType);
                 }
                 this.$emit('cohort-variant-hover-end');
 
             },
             showVariantTooltip: function (variant, tipType, lock) {
-                let self = this;
+                const self = this;
 
                 let tooltip = d3.select("#main-tooltip");
                 let tooltipObj = self.hoverTooltip;

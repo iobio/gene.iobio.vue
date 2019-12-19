@@ -249,13 +249,8 @@
                                     :filterModel="filterModel"
                                     :showCoverageCutoffs="showCoverageCutoffs"
                                     :annotationComplete="annotationComplete"
-                                    :somaticFilterSettings="somaticFilterSettings"
-                                    :qualityFilterSettings="qualityFilterSettings"
                                     :applyFilters="applyFilters"
-                                    @filter-box-toggled="filterBoxToggled"
-                                    @filter-slider-moved="filterSliderMoved"
-                                    @filter-cutoff-applied="filterCutoffApplied"
-                                    @filter-cutoff-cleared="filterCutoffCleared">
+                                    @filter-change="onFilterChange">
                             </filter-panel-menu>
                         </v-container>
                     </v-tab-item>
@@ -704,70 +699,60 @@
             onUpdateSamples: function () {
                 this.$emit('update-samples');
             },
-            filterBoxToggled: function(filterName, filterState, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
+            // TODO: cleanup
+            onFilterChange: function() {
                 const self = this;
-                let filterInfo = {
-                    name: filterName,
-                    displayName: filterDisplayName,
-                    tumorOnly: tumorOnlyFilter,
-                    type: 'checkbox',
-                    state: filterState,
-                    cutoffValue: null,
-                    parentFilterName: parentFilterName,
-                    parentFilterState: parentFilterState
-                };
-                self.onFilterSettingsApplied(filterInfo);
+                // let translatedFilterName = self.cohortModel.translator.getTranslatedFilterName(filterObj.filterName);
+                self.$emit('filter-change');
             },
-            filterSliderMoved: function(filterName, sliderLogic, sliderValue, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
-                const self = this;
-                let filterInfo = {
-                    name: filterName,
-                    displayName: filterDisplayName,
-                    tumorOnly: tumorOnlyFilter,
-                    type: 'slider',
-                    state: sliderLogic,
-                    cutoffValue: sliderValue,
-                    parentFilterName: parentFilterName,
-                    parentFilterState: parentFilterState
-                };
-                self.onFilterSettingsApplied(filterInfo);
-            },
-            filterCutoffApplied: function(filterName, filterLogic, cutoffValue, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
-                const self = this;
-                let translatedFilterName = self.cohortModel.translator.getTranslatedFilterName(filterName);
-                let filterInfo = {
-                    name: translatedFilterName,
-                    displayName: filterDisplayName,
-                    tumorOnly: tumorOnlyFilter,
-                    type: 'cutoff',
-                    state: filterLogic,
-                    cutoffValue: cutoffValue,
-                    turnOff: false,
-                    parentFilterName: parentFilterName,
-                    parentFilterState: parentFilterState
-                };
-                self.onFilterSettingsApplied(filterInfo);
-            },
-            filterCutoffCleared: function(filterName, cohortOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
-                let self = this;
-                let translatedFilterName = self.cohortModel.translator.getTranslatedFilterName(filterName);
-                let filterInfo = {
-                    name: translatedFilterName,
-                    displayName: filterDisplayName,
-                    cohortOnly: cohortOnlyFilter,
-                    type: 'cutoff',
-                    state: null,
-                    cutoffValue: null,
-                    turnOff: true,
-                    parentFilterName: parentFilterName,
-                    parentFilterState: parentFilterState
-                };
-                self.onFilterSettingsApplied(filterInfo);
-            },
-            onFilterSettingsApplied: function (filterInfo) {
-                const self = this;
-                self.$emit('on-filter-settings-applied', filterInfo);
-            },
+            // filterBoxToggled: function(filterName, filterState, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
+            //     const self = this;
+            //     let filterInfo = {
+            //         name: filterName,
+            //         displayName: filterDisplayName,
+            //         tumorOnly: tumorOnlyFilter,
+            //         type: 'checkbox',
+            //         state: filterState,
+            //         cutoffValue: null,
+            //         parentFilterName: parentFilterName,
+            //         parentFilterState: parentFilterState
+            //     };
+            //     self.onFilterSettingsApplied(filterInfo);
+            // },
+            // filterSliderMoved: function(filterName, sliderLogic, sliderValue, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
+            //     const self = this;
+            //     let filterInfo = {
+            //         name: filterName,
+            //         displayName: filterDisplayName,
+            //         tumorOnly: tumorOnlyFilter,
+            //         type: 'slider',
+            //         state: sliderLogic,
+            //         cutoffValue: sliderValue,
+            //         parentFilterName: parentFilterName,
+            //         parentFilterState: parentFilterState
+            //     };
+            //     self.onFilterSettingsApplied(filterInfo);
+            // },
+            // filterCutoffCleared: function(filterName, cohortOnlyFilter, parentFilterName, parentFilterState, filterDisplayName) {
+            //     let self = this;
+            //     let translatedFilterName = self.cohortModel.translator.getTranslatedFilterName(filterName);
+            //     let filterInfo = {
+            //         name: translatedFilterName,
+            //         displayName: filterDisplayName,
+            //         cohortOnly: cohortOnlyFilter,
+            //         type: 'cutoff',
+            //         state: null,
+            //         cutoffValue: null,
+            //         turnOff: true,
+            //         parentFilterName: parentFilterName,
+            //         parentFilterState: parentFilterState
+            //     };
+            //     self.onFilterSettingsApplied(filterInfo);
+            // },
+            // onFilterSettingsApplied: function (filterInfo) {
+            //     const self = this;
+            //     self.$emit('on-filter-settings-applied', filterInfo);
+            // },
             toggleLeftDrawer: function(drawerState) {
                 this.leftDrawer = drawerState;
             },
@@ -814,24 +799,6 @@
             },
             selectedGeneDisplay: function () {
                 return this.selectedGeneName + " " + this.selectedChr;
-            },
-            somaticFilterSettings: function() {
-                const self = this;
-                return {
-                    // Note: have to translate frequencies to percentages here to accommodate
-                    // slider component ambivalence for non-percentage values
-                    'tumorAltFreq': self.cohortModel.filterModel.DEFAULT_SOMATIC_CUTOFFS.tumorAltFreq * 100,
-                    'tumorAltCount': self.cohortModel.filterModel.DEFAULT_SOMATIC_CUTOFFS.tumorAltCount,
-                    'normalAltFreq': self.cohortModel.filterModel.DEFAULT_SOMATIC_CUTOFFS.normalAltFreq * 100,
-                    'normalAltCount': self.cohortModel.filterModel.DEFAULT_SOMATIC_CUTOFFS.normalAltCount
-                };
-            },
-            qualityFilterSettings: function() {
-                const self = this;
-                return {
-                    'genotypeDepth': self.cohortModel.filterModel.DEFAULT_QUALITY_FILTERING_CRITERIA.totalCountCutoff,
-                    'qual': self.cohortModel.filterModel.DEFAULT_QUALITY_FILTERING_CRITERIA.qualScoreCutoff
-                };
             }
         }
     }

@@ -25,31 +25,26 @@
 <template>
     <v-flex xs12 style="padding-top: 10px">
         <v-card
-                v-for="filter in filters"
-                :ref="filter.name + 'ExpansionRef'"
-                :key="filter.name"
-                :value="filter.custom">
+                v-for="category in filterModel.filterCategories"
+                :ref="category.name + 'ExpansionRef'"
+                :key="category.name"
+                :value="category.custom">
             <v-card-title class="filter-settings-form">
                 <v-icon small style="padding-left: 5px; padding-right: 5px">
-                    {{filter.icon}}
+                    {{category.icon}}
                 </v-icon>
-                {{ filter.display }}
+                {{ category.display }}
             </v-card-title>
-            <v-card-text><i>{{filter.description}}</i></v-card-text>
+            <v-card-text><i>{{category.description}}</i></v-card-text>
             <filter-panel
-                    v-if="filter.name !== 'coverage'"
+                    v-if="category.name !== 'coverage'"
                     ref="filterSettingsRef"
-                    :filterName="filter.name"
+                    :filterName="category.name"
                     :filterModel="filterModel"
-                    :filter="filter"
+                    :filter="category"
                     :annotationComplete="annotationComplete"
-                    :somaticFilterSettings="somaticFilterSettings"
-                    :qualityFilterSettings="qualityFilterSettings"
                     :applyFilters="applyFilters"
-                    @filter-toggled="filterBoxToggled"
-                    @filter-slider-changed="filterSliderChanged"
-                    @filter-applied="filterCutoffApplied"
-                    @cutoff-filter-cleared="filterCutoffCleared">
+                    @filter-change="onFilterChange">
             </filter-panel>
         </v-card>
     </v-flex>
@@ -74,121 +69,42 @@
             filterModel: null,
             showCoverageCutoffs: null,
             annotationComplete: false,
-            somaticFilterSettings: null,
-            qualityFilterSettings: null,
             applyFilters: false
         },
         data() {
             return {
-                showMenu: true,
-                filters: [
-                    {
-                        name: 'annotation',
-                        display: 'ANNOTATION FILTERS',
-                        active: false,
-                        custom: false,
-                        description: 'Filter by variant effect, impact, or type',
-                        icon: 'category'
-                    },
-                    {
-                        name: 'somatic',
-                        display: 'SOMATIC FILTERS',
-                        active: false,
-                        custom: false,
-                        description: 'Select a threshold for allele frequencies and observation counts by which to identify somatic variants',
-                        icon: 'flash_on'
-                    },
-                    {
-                        name: 'quality',
-                        display: 'QUALITY FILTERS',
-                        active: false,
-                        custom: false,
-                        description: 'Filter variants by observation counts',
-                        icon: 'star'
-                    },
-                    {
-                        name: 'frequencies',
-                        display: 'FREQUENCY FILTERS',
-                        active: false,
-                        custom: false,
-                        description: 'Filter by variant frequency within population databases',
-                        icon: 'people_outline'
-                    }
-                ]
+                showMenu: true
             }
         },
-        watch: {},
         methods: {
             // TODO: incorporate reset to default params from cohort
             // TODO: incorporate gold or other highlight color for filtering
-
-            filterBoxToggled: function(filterName, filterState, parentFilterName, parentFilterState, tumorOnlyFilter, filterDisplayName) {
+            onFilterChange: function() {
                 const self = this;
-                let filterObj = self.filters.filter((filt) => {
-                    return filt.name === parentFilterName;
-                });
-                if (filterObj.length > 0) {
-                    filterObj[0].active = parentFilterState;
-                }
-                self.$emit('filter-box-toggled', filterName, filterState, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName);
+                // self.filterModel.setCategoryState(filterObj.categoryName, filterObj.categoryState);
+                self.$emit('filter-change');
             },
-            filterSliderChanged: function(filterName, sliderLogic, sliderValue, parentFilterName, parentFilterState, tumorOnlyFilter, filterDisplayName) {
-                const self = this;
-                let filterObj = self.filters.filter((filt) => {
-                    return filt.name === parentFilterName;
-                });
-                if (filterObj.length > 0) {
-                    filterObj[0].active = parentFilterState;
-                }
-                self.$emit('filter-slider-moved', filterName, sliderLogic, sliderValue, tumorOnlyFilter, parentFilterName, parentFilterState, filterDisplayName);
-            },
-            filterCutoffApplied: function(filterName, filterLogic, cutoffValue, currParentFiltName, currParFilterState, tumorOnlyFilter, filterDisplayName) {
-                const self = this;
-                let filterObj = self.filters.filter((filt) => {
-                    return filt.name === currParentFiltName;
-                });
-                if (filterObj.length > 0) {
-                    filterObj[0].active = currParFilterState;
-                }
-                self.$emit('filter-cutoff-applied', filterName, filterLogic, cutoffValue, tumorOnlyFilter, currParentFiltName, currParFilterState, filterDisplayName);
-            },
-            filterCutoffCleared: function(filterName, currParentFiltName, currParFilterState, tumorOnlyFilter, filterDisplayName) {
-                const self = this;
-                let filterObj = self.filters.filter((filt) => {
-                    return filt.name === currParentFiltName;
-                });
-                if (filterObj.length > 0) {
-                    filterObj[0].active = currParFilterState;
-                }
-                self.$emit('filter-cutoff-cleared', filterName, tumorOnlyFilter, currParentFiltName, currParFilterState, filterDisplayName);
-            },
-            clearFilters: function() {
-                const self = this;
-                self.filters.forEach((filter) => {
-                    filter.active = false;
-                });
-                if (self.$refs.filterSettingsRef) {
-                    self.$refs.filterSettingsRef.forEach((filtRef) => {
-                        filtRef.clearFilters();
-                    });
-                }
-            },
-            applyActiveFilters: function() {
-                const self = this;
-                self.$refs.filterSettingsRef.forEach((filtRef) => {
-                    let matchingFilter = self.filters.filter((filt) => {
-                        return filt.name === filtRef.filterName;
-                    });
-                    if (matchingFilter.length > 0 && matchingFilter[0].active === true) {
-                        filtRef.applyActiveFilters();
-                    }
-                });
-            }
+            // clearFilters: function() {
+            //     const self = this;
+            //     self.filterModel.clearAllFilters();
+            //
+            //     if (self.$refs.filterSettingsRef) {
+            //         self.$refs.filterSettingsRef.forEach((filtRef) => {
+            //             filtRef.clearFilters();
+            //         });
+            //     }
+            // },
+            // applyActiveFilters: function() {
+            //     const self = this;
+            //     self.$refs.filterSettingsRef.forEach((filtRef) => {
+            //         let matchingFilter = self.filterModel.filterCategories.filter((filt) => {
+            //             return filt.name === filtRef.filterName;
+            //         });
+            //         if (matchingFilter.length > 0 && matchingFilter[0].active === true) {
+            //             filtRef.applyActiveFilters();
+            //         }
+            //     });
+            // }
         },
-        computed: {},
-        created: function () {
-        },
-        mounted: function () {
-        }
     }
 </script>

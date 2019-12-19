@@ -70,15 +70,14 @@
                         <v-flex d-flex xs3>
                             <v-select class="slider-select"
                                       :items="dropDownOptions"
-                                      v-model="filterLogic"
+                                      v-model="currLogic"
                                       single-line
                                       color="appColor"
-                                      :disabled="disableLogicDropdown"
-                                      @input="onSliderLogicChanged">
+                                      :disabled="disableLogicDropdown">
                             </v-select>
                         </v-flex>
                         <v-flex d-flex xs9 class="slider-top-row">
-                            <v-slider :min="sliderMinValue" :max="sliderMaxValue" v-model="cutoffValue" color="appColor" class="slider-bar">
+                            <v-slider :min="logicObj.minValue" :max="logicObj.maxValue" v-model="logicObj.currVal" color="appColor" class="slider-bar" @input="onSliderChange">
                             </v-slider>
                         </v-flex>
                 </v-layout>
@@ -87,7 +86,7 @@
                         <!--Spacing-->
                     </v-flex>
                     <v-flex xs3 class="slider-bottom-row">
-                        <v-text-field v-model="cutoffValue" class="slider-bar-input" color="appColor" :suffix="sliderDisplaySuffix" type="number"></v-text-field>
+                        <v-text-field v-model="logicObj.currVal" class="slider-bar-input" color="appColor" :suffix="logicObj.labelSuffix" type="number" @input="onSliderChange"></v-text-field>
                     </v-flex>
                 </v-layout>
             </v-container>
@@ -100,39 +99,11 @@
         name: 'filter-panel-slider',
         components: {},
         props: {
-            filterName: {
-                default: null,
-                type: String
-            },
-            parentFilterName: {
-                default: null,
-                type: String
+            logicObj: {
+              default: null,
+              type: Object
             },
             annotationComplete: {
-                default: false,
-                type: Boolean
-            },
-            sliderMinValue: {
-                default: 0,
-                type: Number
-            },
-            sliderMaxValue: {
-                default: 100,
-                type: Number
-            },
-            sliderDisplaySuffix: {
-                default: '',
-                type: String
-            },
-            initLogic: {
-                default: null,
-                type: String
-            },
-            initValue: {
-                default: 0,
-                type: Number
-            },
-            applyFilters: {
                 default: false,
                 type: Boolean
             }
@@ -146,72 +117,40 @@
                     { text: '>=' },
                     { text: '>' }
                 ],
-                filterLogic: null,
-                cutoffValue: null,
                 disableLogicDropdown: false,
-
-                // List of filter names that require conversion b/w frequency and percentage
-                filtersNeedAdjusting: {
-                    'tumorAltFreq': true,
-                    'normalAltFreq': true
-                }
+                currLogic: null,    // Note: have to use local prop and not model-backed one here because needs to be in dropDownOptions list
             }
         },
         watch: {
-            cutoffValue: function(newVal, oldVal) {
+            currLogic: function(newVal, oldVal) {
                 const self = this;
-                if (newVal !== oldVal && oldVal != null) {
-                    self.onSliderMoved();
-                }
-            },
-            applyFilters: {
-                handler: function() {
-                    // Used to initialize filters on app load after variants annotated
-                    const self = this;
-                    if (self.applyFilters === true) {
-                        self.onSliderMoved();
-                    }
+                if (newVal && oldVal && newVal.text !== oldVal.text) {
+                    self.logicObj.active = true;
+                    self.$emit('update-slider-logic', self.logicObj.name, newVal.text);
+                } else if (newVal == null) {
+                    self.logicObj.active = false;
                 }
             }
         },
         methods: {
-            clearFilters: function() {
+            onSliderChange: function() {
                 const self = this;
-                self.filterLogic = null;
-                self.cutoffValue = null;
-                self.readyToApply = false;
-                self.$emit('cutoff-filter-cleared', self.filterName, self.parentFilterName);
+                self.logicObj.active = self.logicObj.currVal > 0;
+                self.$emit('filter-slider-changed')
             },
-            // TODO: add debounce here to get rid of lag
-            onSliderMoved: function() {
+            // TODO: incorporate this into clear all (and add reset to default)
+            clearLogic: function() {
                 const self = this;
-                self.$emit('filter-slider-changed', self.filterName, self.filterLogic.text, self.getAdjustedCutoff(self.cutoffValue, self.filterName), self.parentFilterName);
-            },
-            onSliderLogicChanged: function() {
-                const self = this;
-                self.$emit('filter-slider-changed', self.filterName, self.filterLogic.text, self.getAdjustedCutoff(self.cutoffValue, self.filterName), self.parentFilterName);
-            },
-            /* If we're dealing with a percentage, turn it back to a frequency. */
-            getAdjustedCutoff: function(cutoffValue, filterName) {
-                const self = this;
-                if (self.filtersNeedAdjusting[filterName]) {
-                    return cutoffValue / 100;
-                } else {
-                    return cutoffValue;
-                }
+                self.currLogic = null;
             }
         },
         mounted: function() {
             const self = this;
-            if (self.initLogic != null) {
+            if (self.logicObj && self.logicObj.initLogic) {
                 const matchingLogic = self.dropDownOptions.filter((option) => {
-                    return option.text === self.initLogic;
+                    return option.text === self.logicObj.initLogic;
                 });
-                self.filterLogic = matchingLogic[0];
-            }
-
-            if (self.initValue != null) {
-                self.cutoffValue = self.initValue;
+                self.currLogic = matchingLogic[0];
             }
         }
     }

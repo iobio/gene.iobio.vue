@@ -160,6 +160,7 @@
         methods: {
             draw: function () {
                 const self = this;
+
                 const variantVizOptions = {
                   margin: this.margin,
                   showXAxis: this.showXAxis,
@@ -212,7 +213,7 @@
                       regionStart: self.regionStart,
                       regionEnd: self.regionEnd,
                       verticalLayers: self.data.maxLevel,
-                      lowestWidth: self.data.featureWidth,
+                      lowestWidth: self.data.featureWidth + 1,
                       width: self.width
                     };
                     self.variantChart(chartData);

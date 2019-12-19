@@ -21,7 +21,7 @@ class CohortModel {
         this.cacheHelper = cacheHelper;
         this.genomeBuildHelper = genomeBuildHelper;
         this.freebayesSettings = freebayesSettings;
-        this.filterModel = null;
+        this.filterModel = null;    // 1:1 filter model to patient
         this.featureMatrixModel = null;
         this.varAfNodes = null;
         this.varAfLinks = null;
@@ -708,6 +708,11 @@ class CohortModel {
         return models;
     }
 
+    /* Returns all normal and tumor models AND non-canonical (ClinVar/COSMIC) models. */
+    getAllSampleModels() {
+        return this.sampleModels;
+    }
+
     /* Returns all sample models where isTumor = true, in order of track display */
     getOrderedTumorModels() {
         let self = this;
@@ -836,7 +841,9 @@ class CohortModel {
                         self.promiseSummarizeDanger(theGene, theTranscript, resultMap.s0, null)
                             .then(function () {
                                 let geneChanged = options.loadFromFlag;
-                                
+
+                                // TODO: think I can call promiseApplyFilters here?
+
                                 self.setLoadedVariants(theGene, null, geneChanged, options.loadFeatureMatrix);
                                 self.endGeneProgress(theGene.gene_name);
                                 resolve(resultMap);
@@ -1080,8 +1087,9 @@ class CohortModel {
                     inRegion = feature.start >= self.filterModel.regionStart && feature.start <= self.filterModel.regionEnd;
                 }
 
-                // Note: this is TDS existing framework, can use later on if desired
-                let passesModelFilter = self.filterModel.passesModelFilter(model.id, feature);
+                // TODO: might be omitting some functionality here... double check
+                // let passesModelFilter = self.filterModel.passesModelFilter(model.id, feature);
+                let passesModelFilter = feature.passesFilters === true;
 
                 // Don't want to filter by front end filters here! Otherwise zooming with active filters will not work b/c variants never get drawn
                 return isTarget && !isHomRef && inRegion && passesModelFilter;
@@ -1106,11 +1114,8 @@ class CohortModel {
                     let start = self.filterModel.regionStart ? self.filterModel.regionStart : gene.start;
                     let end = self.filterModel.regionEnd ? self.filterModel.regionEnd : gene.end;
 
-                    let loadedVariants = filterAndPileupVariants(model, start, end, 'loaded');
-                    model.loadedVariants = loadedVariants;
-
-                    let calledVariants = filterAndPileupVariants(model, start, end, 'called');
-                    model.calledVariants = calledVariants;
+                    model.loadedVariants = filterAndPileupVariants(model, start, end, 'loaded');
+                    model.calledVariants = filterAndPileupVariants(model, start, end, 'called');
 
                     // Don't add known variants to our feature matrix
                     if (model.id !== 'cosmic-variants' && model.id !== 'known-variants') {
@@ -1151,6 +1156,22 @@ class CohortModel {
         } else if (!drawFeatureMatrix) {
             self.allUniqueFeaturesObj = allVariants;
         }
+    }
+
+    /* Asks filter model to mark whether a variant meets all filter criteria.
+     * Then triggers redraw by new pileup and loadedVariant assignment call. */
+    promiseFilterVariants(selectedGene, filterInfo) {
+        const self = this;
+        return new Promise((resolve, reject) => {
+            self.getCanonicalModels().forEach((sampleModel) => {
+                if (!sampleModel.vcfData) {
+                    reject('No vcf data to fetch variants from for filtering');
+                }
+                self.filterModel.markFilteredVariants(sampleModel.vcfData.features);
+            });
+            self.setLoadedVariants(selectedGene);   // TODO: make sure optional args correct here
+            resolve();
+        });
     }
 
     setCoverage(regionStart, regionEnd) {
@@ -2910,6 +2931,7 @@ class CohortModel {
     }
 
     /* Returns IDs of all variants, in any track, that passes filters. Used to populate feature matrix. */
+    // TODO: can I get rid of this now?
     getAllFilterPassingVariants() {
         const self = this;
         let passingFeatureLookup = {};

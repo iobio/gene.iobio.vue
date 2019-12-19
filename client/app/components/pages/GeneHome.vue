@@ -60,7 +60,7 @@
         </edu-tour-banner>
 
         <navigation
-                v-if="geneModel"
+                v-if="geneModel && filterModel"
                 ref="navRef"
                 :isEduMode="isEduMode"
                 :isBasicMode="isBasicMode"
@@ -102,7 +102,7 @@
                 @send-flagged-variants-to-clin="onSendFlaggedVariantsToClin"
                 @show-snackbar="onShowSnackbar"
                 @hide-snackbar="onHideSnackbar"
-                @on-filter-settings-applied="onVariantFilterSettingsApplied"
+                @filter-change="onVariantFilterChange"
                 @cohort-variant-click="onCohortVariantClick"
                 @cohort-variant-hover="onCohortVariantHover"
                 @cohort-variant-hover-end="onCohortVariantHoverEnd"
@@ -652,7 +652,7 @@
                             self);
 
 
-                        self.filterModel = new FilterModel(self.globalApp, self.cohortModel.affectedInfo, self.isBasicMode);
+                        self.filterModel = new FilterModel(self.globalApp);
                         self.cohortModel.filterModel = self.filterModel;
 
                         self.promiseInitFromUrl()
@@ -907,8 +907,8 @@
                 return new Promise(function (resolve, reject) {
 
                     if (self.models && self.models.length > 0) {
-                        let cardWidthScale = self.isLeftDrawerOpen ? 1.0 : 0.65;    // TODO: this breaks circling if too big
-                        self.cardWidth = $('#genes-card').innerWidth() * cardWidthScale;
+                        // let cardWidthScale = self.isLeftDrawerOpen ? 1.0 : 0.65;    // TODO: this breaks circling if too big
+                        self.cardWidth = $('#genes-card').innerWidth();
                         var options = {'getKnownVariants': self.showKnownVariantsCard};
                         options['getCosmicVariants'] = self.showCosmicVariantsCard;
                         options['loadFromFlag'] = loadingFromFlagEvent;
@@ -922,8 +922,9 @@
 
                                 self.calcFeatureMatrixWidthPercent();
 
-                                self.filterModel.populateEffectFilters(resultMap);
-                                self.filterModel.populateRecFilters(resultMap);
+                                // TODO: should I populate somatic filters here?
+                                // self.filterModel.populateEffectFilters(resultMap);
+                                // self.filterModel.populateRecFilters(resultMap);
 
                                 // TODO: doesn't work w/ intervals not even in 1
                                 const nodeRange = 0.10;
@@ -1284,7 +1285,9 @@
                     self.deselectVariant();
                 }
             },
+            // TODO: maybe pass in source component id here?
             onCohortVariantHover: function (variant, sourceComponent) {
+                console.log('Hovering in home from source cmpnt: ' + sourceComponent.id);
                 const self = this;
                 self.$refs.variantCardRef.forEach(function (variantCard) {
                     if (variantCard != sourceComponent) {
@@ -1406,6 +1409,7 @@
                 }
 
             },
+            // FILTER TODO: I don't think this is ever used currently...
             onVariantsFilterChange: function (selectedCategories, trackId) {
                 let self = this;
                 if (trackId === 'known-variants') {
@@ -2226,72 +2230,42 @@
                 self.models.push('foo');
                 self.models.pop();
             },
-            onVariantFilterSettingsApplied: function (filterInfo) {
+            /* Called upon a change to the variant-level filters in left drawer */
+            onVariantFilterChange: function() {
                 const self = this;
-                const somaticFilterList = {
-                    'tumorAltFreq': true,
-                    'tumorAltCount': true,
-                    'normalAltFreq': true,
-                    'normalAltCount': true
-                };
 
-                let promises = [];
-                if (somaticFilterList[filterInfo.name]) {
-                    // Update somatic filter criteria in model
-                    self.filterModel.currentSomaticCutoffs[filterInfo.name] = filterInfo.cutoffValue;
-                    self.filterModel.currentSomaticLogic[filterInfo.name] = filterInfo.state;
-                } else {
-                    let selectedVarId = null;
-                    if (self.selectedVariant) {
-                        selectedVarId = self.selectedVariant.id;
-                    }
-                    // Apply tumor only filters to tumor tracks only
-                    if (self.$refs.variantCardRef && filterInfo.tumorOnly) {
-                        self.$refs.variantCardRef.forEach((cardRef) => {
-                            if (cardRef.sampleModel.isTumor === true) {
-                                // TODO: allow filtering on cosmic/clinvar tracks...
-                                if (cardRef.sampleModel.id !== 'cosmic-variants' && cardRef.sampleModel.id !== 'known-variants') {
-                                    let filtPromise = cardRef.promiseFilterVariants(filterInfo, self.selectedTrackId, selectedVarId);
-                                    promises.push(filtPromise);
-                                }
-                            }
-                        });
-                        // Otherwise apply to all tracks
-                    } else if (self.$refs.variantCardRef) {
-                        self.$refs.variantCardRef.forEach((cardRef) => {
-                            // TODO: allow filtering on cosmic/clinvar tracks...
-                            if (cardRef.sampleModel.id !== 'cosmic-variants' && cardRef.sampleModel.id !== 'known-variants') {
-                                let filtPromise = cardRef.promiseFilterVariants(filterInfo, self.selectedTrackId, selectedVarId);
-                                promises.push(filtPromise);
-                            }
-                        });
-                    }
-                }
+                // Once we get here, model criteria has already been updated, just need to re-check and re-draw
+
+                // Some filter names need a bit of translating
+                // filterInfo.filterName = self.cohortModel.translator.getTranslatedFilterName(filterInfo.filterName);
+
 
                 // Only annotate once we are guaranteed that our DOM update is done for all tracks
-                Promise.all(promises).then(() => {
-                    // Regardless of what filter applied, we need to re-annotate somatic variants (b/c respective normal may be hidden!)
-                    let allVariantsPassingFilters = self.cohortModel.getAllFilterPassingVariants();
-                    self.filterModel.promiseAnnotateVariantInheritance(self.cohortModel.sampleMap)
-                        .then((inheritanceObj) => {
-                            self.cohortModel.allSomaticFeaturesLookup = inheritanceObj.somaticLookup;
-                            self.cohortModel.allInheritedFeaturesLookup = inheritanceObj.inheritedLookup;
+                self.cohortModel.promiseFilterVariants(self.selectedGene)
+                    .then(() => {
+                        let allVariantsPassingFilters = self.cohortModel.getAllFilterPassingVariants();
 
-                            // Draw feature matrix after somatic field filled
-                            self.featureMatrixModel.promiseRankVariants(self.cohortModel.allUniqueFeaturesObj, self.cohortModel.allSomaticFeaturesLookup, self.cohortModel.allInheritedFeaturesLookup, allVariantsPassingFilters);
+                        self.filterModel.promiseAnnotateVariantInheritance(self.cohortModel.sampleMap)
+                            .then((inheritanceObj) => {
+                                self.cohortModel.allSomaticFeaturesLookup = inheritanceObj.somaticLookup;
+                                self.cohortModel.allInheritedFeaturesLookup = inheritanceObj.inheritedLookup;
 
-                            // Then we need to update coloring for tumor tracks only
-                            if (self.$refs.variantCardRef) {
-                                self.$refs.variantCardRef.forEach((cardRef) => {
-                                    if (cardRef.sampleModel.isTumor === true) {
-                                        cardRef.updateVariantClasses();
-                                    }
-                                });
-                            }
-                        });
-                }).catch((err) => {
-                    console.log('There was a problem applying variant filter: ' + err);
-                });
+                                // Draw feature matrix after somatic field filled
+                                self.featureMatrixModel.promiseRankVariants(self.cohortModel.allUniqueFeaturesObj,
+                                    self.cohortModel.allSomaticFeaturesLookup, self.cohortModel.allInheritedFeaturesLookup, allVariantsPassingFilters);
+
+                                // Then we need to update coloring for tumor tracks only
+                                if (self.$refs.variantCardRef) {
+                                    self.$refs.variantCardRef.forEach((cardRef) => {
+                                        if (cardRef.sampleModel.isTumor === true) {
+                                            cardRef.updateVariantClasses();
+                                        }
+                                    });
+                                }
+                            });
+                    }).catch((err) => {
+                        console.log('There was a problem applying variant filter: ' + err);
+                    });
             },
             onExitClickTooltip: function() {
                 const self = this;

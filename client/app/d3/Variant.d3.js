@@ -17,7 +17,7 @@ export default function variantD3(d3, vizSettings) {
 
     // Glyph-level sizing
     var variantHeight = vizSettings.variantHeight ? vizSettings.variantHeight : 10,
-        borderRadius = vizSettings.borderRadius ? vizSettings.borderRadius : 1,
+        borderRadius = vizSettings.borderRadius ? vizSettings.borderRadius : 2,
         verticalLayers = vizSettings.verticalLayers ? vizSettings.verticalLayers : 1,
         verticalPadding = vizSettings.verticalPadding ? vizSettings.verticalPadding : 4,
         lowestWidth = vizSettings.lowestWidth ? vizSettings.lowestWidth : 3;
@@ -159,17 +159,18 @@ export default function variantD3(d3, vizSettings) {
                 // minWidth = Math.max(minWidth, lowestWidth);
 
                 // TODO:  Need to review this code!!!  Added for exhibit
-                minWidth = variantHeight;
+                // var minWidth = variantHeight;
 
+                var circleSymbolAdjust = variantHeight >=16 ? 0 : variantHeight <= 8 ? 1 : 2;
                 var symbolScaleCircle = d3.scaleOrdinal()
                     .domain([3, 4, 5, 6, 7, 8, 10, 12, 14, 16])
                     .range([9, 15, 25, 38, 54, 58, 70, 100, 130, 260]);
-                var symbolSizeCircle = symbolScaleCircle(minWidth + 2);
+                var symbolSizeCircle = symbolScaleCircle(variantHeight + circleSymbolAdjust);
 
                 var symbolScale = d3.scaleOrdinal()
                     .domain([3, 4, 5, 6, 7, 8, 10, 12, 14, 16])
                     .range([9, 15, 20, 25, 32, 58, 70, 100, 130, 160]);
-                var symbolSize = symbolScale(minWidth);
+                var symbolSize = symbolScale(variantHeight);
 
                 // Brush
                 var brush = x.call(d3.brushX().on('end', function() { dispatch.call('d3brush', brush)}));
@@ -279,6 +280,16 @@ export default function variantD3(d3, vizSettings) {
                 track.selectAll('.variant').remove();
                 trackindel.selectAll('.variant').remove();
 
+                // precompute y-coord for SNPs and INDELs to use same for w/ and w/o transition
+                var computedSnpY = function(d) {
+                    return height - ((d.level + 1) * (variantHeight + verticalPadding));
+                };
+                var indelOffset = (variantHeight >= 16 ? 0 : variantHeight <= 8 ? 1 : 2) * 2;
+                var computedIndelY = function(d) {
+                    return height - ((d.level + 1) * (variantHeight + verticalPadding) - indelOffset);
+                };
+
+
                 // snps
                 track.selectAll('.variant')
                     .data(function (d) {
@@ -295,18 +306,18 @@ export default function variantD3(d3, vizSettings) {
                     .attr('rx', borderRadius)
                     .attr('ry', borderRadius)
                     .attr('x', function (d) {
-                        return Math.round(x(d.start) - (minWidth / 2) + (minWidth / 4));
+                        return Math.round(x(d.start) - (variantHeight / 2) + (variantHeight / 4));
                     })
                     .attr('width', function () {
                         return showTransition ? 0 : variantHeight;
                     })
                     .attr('y', function (d) {
-                        return showTransition ? 0 : height - ((d.level + 1) * (variantHeight + verticalPadding));
+                        return showTransition ? 0 : computedSnpY(d);
                     })
                     .attr('height', variantHeight);
 
 
-                // insertions and deletions
+                // insertions, deletions, complex
                 trackindel.selectAll('.variant').data(function (d) {
                     var indels = d['features'].filter(function (d) {
                         return d.type.toUpperCase() === 'DEL'
@@ -328,25 +339,10 @@ export default function variantD3(d3, vizSettings) {
                     })
                     .attr("transform", function (d) {
                         var xCoord = x(d.start) + 2;
-                        var yCoord = showTransition ? 0 : height - ((d.level + 1) * (variantHeight + verticalPadding) + 3);
+                        var yCoord = showTransition ? 0 : computedIndelY(d);
                         var tx = "translate(" + xCoord + "," + yCoord + ")";
                         return tx;
                     });
-
-
-                // TODO: what is bounding box here - only hovering on top border correctly
-                g.selectAll('.variant')
-                    .on("click", function (d) {
-                        dispatch.call('d3click', this, d);
-                        d3.event.stopPropagation(); // TODO: is this my problem
-                    })
-                    .on("mouseover", function (d) {
-                        dispatch.call('d3mouseover', this, d);
-                    })
-                    .on("mouseout", function () {
-                        dispatch.call('d3mouseout');
-                    });
-
 
                 // exit
                 track.exit().remove();
@@ -362,7 +358,6 @@ export default function variantD3(d3, vizSettings) {
                             return "translate(0," + y(i + 1) + ")"
                         });
 
-
                     track.selectAll('.variant.snp, .variant.mnp').sort(function (a, b) {
                         return parseInt(a.start) - parseInt(b.start)
                     })
@@ -373,13 +368,13 @@ export default function variantD3(d3, vizSettings) {
                         })
                         .ease(d3.easeBounce)
                         .attr('x', function (d) {
-                            return Math.round(x(d.start) - (minWidth / 2) + (minWidth / 4));
+                            return Math.round(x(d.start) - (variantHeight / 2) + (variantHeight / 4));
                         })
                         .attr('width', function () {
                             return variantHeight;
                         })
                         .attr('y', function (d) {
-                            return height - ((d.level + 1) * (variantHeight + verticalPadding));
+                            return computedSnpY(d);
                         })
                         .attr('height', function () {
                             return variantHeight;
@@ -399,7 +394,7 @@ export default function variantD3(d3, vizSettings) {
                         })
                         .attr("transform", function (d) {
                             var xCoord = x(d.start) + 2;
-                            var yCoord = height - ((d.level + 1) * (variantHeight + verticalPadding) - (variantHeight/2));
+                            var yCoord = computedIndelY(d);
                             var tx = "translate(" + xCoord + "," + yCoord + ")";
                             return tx;
                         });
@@ -418,7 +413,7 @@ export default function variantD3(d3, vizSettings) {
                         })
                         .attr("transform", function (d) {
                             var xCoord = x(d.start) + 2;
-                            var yCoord = height - ((d.level + 1) * (variantHeight + verticalPadding) - (variantHeight/2));
+                            var yCoord = computedIndelY(d);
                             var tx = "translate(" + xCoord + "," + yCoord + ")";
                             return tx;
                         });
@@ -436,11 +431,24 @@ export default function variantD3(d3, vizSettings) {
                         })
                         .attr("transform", function (d) {
                             var xCoord = x(d.start) + 2;
-                            var yCoord = height - ((d.level + 1) * (variantHeight + verticalPadding));
+                            var yCoord = computedIndelY(d);
                             var tx = "translate(" + xCoord + "," + yCoord + ")";
                             return tx;
                         });
                 }
+
+                // TODO: trying to move this to filtering
+                // // Add listeners after adjusting symbol width, etc
+                // g.selectAll('.variant')
+                //     .on("click", function (d) {
+                //         dispatch.call('d3click', this, d);
+                //     })
+                //     .on("mouseover", function (d) {
+                //         dispatch.call('d3mouseover', this, d);
+                //     })
+                //     .on("mouseout", function () {
+                //         dispatch.call('d3mouseout');
+                //     });
 
                 // Generate the x axis
                 if (showXAxis) {
@@ -562,7 +570,7 @@ export default function variantD3(d3, vizSettings) {
         var matchingVariant = null;
 
         // Only matching if visible
-        svgContainer.selectAll(".variant.filtered").each(function (variant, i) {
+        svgContainer.selectAll(".variant").each(function (variant, i) {
             if (d.start === variant.start
                 && d.end === variant.end
                 && d.ref === variant.ref
@@ -736,17 +744,27 @@ export default function variantD3(d3, vizSettings) {
             // Re-check for all filtered variants
             filteredVars = svgContainer.selectAll('.filtered');
 
-
-            // Hide all variants
-            allVariants.style("opacity", 0)
+            // Hide all variants and remove listeners
+            allVariants.on("click", null)
+                .on("mouseover", null)
+                .on("mouseout", null)
+                .style("opacity", 0)
                 .style("pointer-events", "none")
                 .transition()
                 .duration(1000);
 
-            // Reveal variants that pass filter
-            filteredVars.style("opacity", 1)
+            // Reveal variants that pass filter and add listeners
+            filteredVars.on("click", function (d) {
+                    dispatch.call('d3click', this, d);
+                })
+                .on("mouseover", function (d) {
+                    dispatch.call('d3mouseover', this, d);
+                })
+                .on("mouseout", function () {
+                    dispatch.call('d3mouseout');
+                })
+                .style("opacity", 1)
                 .style("pointer-events", "auto");
-
 
             // Return whether any variants are still visible
             if (filteredVars && filteredVars[0]) {
@@ -768,6 +786,7 @@ export default function variantD3(d3, vizSettings) {
     };
 
     /* Returns true if selected variant passes filter and is visible. */
+    // FILTER TODO: will need to update this to work without filtered field?
     chart.checkForSelectedVar = function(selectedVarId, svgContainer) {
         var stillVisible = false;
         svgContainer.selectAll('.filtered').each(function (d, i) {

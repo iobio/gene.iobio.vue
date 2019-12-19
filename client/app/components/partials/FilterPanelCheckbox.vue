@@ -37,60 +37,43 @@
         components: {},
         props: {
             parentFilterName: null,
-            grandparentFilterName: null,
-            annotationComplete: true
+            annotationComplete: true,
+            checkboxLists: null
         },
-        data() {
-            return {
-                checkboxLists: {
-                    // Annotation categories
-                    impact: [
-                        {name: 'HIGH', displayName: 'HIGH', model: true},
-                        {name: 'MODERATE', displayName: 'MODERATE', model: true},
-                        {name: 'MODIFIER', displayName: 'MODIFIER', model: true},
-                        {name: 'LOW', displayName: 'LOW', model: true}
-                    ],
-                    type: [
-                        {name: 'del', displayName: 'DELETION', model: true},
-                        {name: 'ins', displayName: 'INSERTION', model: true},
-                        {name: 'mnp', displayName: 'MNP', model: true},
-                        {name: 'snp', displayName: 'SNP', model: true}
-                    ],
-                    zygosities: [
-                        {name: 'hom', displayName: 'HOMOZYGOUS', model: true},
-                        {name: 'het', displayName: 'HETEROZYGOUS', model: true}
-                    ]
-                }
-            }
-        },
-        watch: {},
         methods: {
             boxChecked: function(filterObj) {
                 let self = this;
+
                 filterObj.model = !filterObj.model;
-                let updatedState = filterObj.model;
-                let filterName = filterObj.name;
-                if (self.parentFilterName === 'impact') {
-                    filterName = filterObj.name;
-                }
-                let anyFilterInParentActive = false;
-                self.checkboxLists[self.parentFilterName].forEach((filter) => {
-                    anyFilterInParentActive |= !filter.model;
-                });
-                self.$emit('filter-toggled', filterName, updatedState, self.parentFilterName, self.grandparentFilterName, anyFilterInParentActive, filterObj.displayName);
+
+
+                // TODO: cleanup
+                // let updatedState = filterObj.model;
+                // let filterName = filterObj.name;
+                // if (self.parentFilterName === 'impact') {
+                //     filterName = filterObj.name;
+                // }
+                // let anyFilterInParentActive = false;
+                // self.checkboxLists[self.parentFilterName].forEach((filter) => {
+                //     anyFilterInParentActive |= !filter.model;
+                // });
+                // self.$emit('filter-toggled', filterName, updatedState, self.parentFilterName, self.grandparentFilterName, anyFilterInParentActive, filterObj.displayName);
+                self.$emit('filter-toggled');
             },
-            clearFilters: function() {
-                let self = this;
-                (Object.values(self.checkboxLists)).forEach((checkList) => {
-                    checkList.forEach((filt) => {
-                        filt.model = true;
-                    });
-                })
-            }
-        },
-        computed: {
-        },
-        created: function () {},
-        mounted: function () {}
+            // clearFilters: function() {
+            //     const self = this;
+            //     for (var listName in self.checkboxLists) {
+            //         let currList = self.checkboxLists[listName];
+            //         currList.forEach((filt) => {
+            //             filt.model = true;
+            //         })
+            //     }
+            //     // (Object.values(self.checkboxLists)).forEach((checkList) => {
+            //     //     checkList.forEach((filt) => {
+            //     //         filt.model = true;
+            //     //     });
+            //     // })
+            // }
+        }
     }
 </script>

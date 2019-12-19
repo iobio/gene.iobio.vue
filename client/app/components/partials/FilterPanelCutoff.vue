@@ -38,16 +38,6 @@
                                 :style="'padding-left: 5px'"
                                 @change="checkApplyButtonState">
                         </v-text-field>
-                        <!--<v-text-field-->
-                                <!--v-else-if="isRawPVal"-->
-                                <!--v-model="cutoffValue"-->
-                                <!--single-line-->
-                                <!--label="Value"-->
-                                <!--color="appColor"-->
-                                <!--:rules="[(v) => (v > 0 && v < 1) || 'Value between 0-1']"-->
-                                <!--:style="'padding-left: 5px'"-->
-                                <!--@change="checkApplyButtonState">-->
-                        <!--</v-text-field>-->
                         <v-text-field
                                 v-else
                                 v-model="cutoffValue"
@@ -151,7 +141,6 @@
         },
         computed: {
             isFrequencyField: function() {
-
                 return true;
 
                 // TODO: used to control waiting on filtering - have to make all unavailable until second annotation return for now

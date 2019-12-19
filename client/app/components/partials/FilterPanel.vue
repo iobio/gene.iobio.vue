@@ -18,51 +18,47 @@
         <v-flex id="name" xs12 class="mb-3">
             <v-expansion-panel expand>
                 <v-expansion-panel-content
-                        v-for="category in categories[filterName]"
-                        :ref="category.name + 'ExpansionRef'"
-                        :key="category.name"
-                        :value="category.open">
+                        v-for="filter in filterModel.filters[filterName]"
+                        :ref="filter.name + 'ExpansionRef'"
+                        :key="filter.name"
+                        :value="filter.open">
                     <div slot="header">
-                        <v-avatar v-if="category.active" size="12px" color="appHighlight" style="margin-right: 10px"></v-avatar>
-                        <v-avatar v-else-if="!category.active || !annotationComplete" size="10px" color="white" style="margin-right: 12px"></v-avatar>
+                        <v-avatar v-if="filter.active" size="12px" color="appHighlight" style="margin-right: 10px"></v-avatar>
+                        <v-avatar v-else-if="!filter.active || !annotationComplete" size="10px" color="white" style="margin-right: 12px"></v-avatar>
                         <span v-bind:hidden="annotationComplete" class="filter-loader">
                             <img src="../../../assets/images/wheel.gif">
                         </span>
                         <span class="filter-title">
-                            {{ category.display }}
+                            {{ filter.display }}
                         </span>
                     </div>
                     <v-card>
                         <filter-panel-checkbox
-                                v-if="category.type==='checkbox'"
+                                v-if="filter.type==='checkbox'"
                                 ref="filtCheckRef"
-                                :parentFilterName="category.name"
+                                :parentFilterName="filter.name"
                                 :grandparentFilterName="filterName"
                                 :annotationComplete="annotationComplete"
-                                @filter-toggled="onFilterToggled">
+                                :checkboxLists="filterModel.checkboxLists"
+                                @filter-toggled="onFilterChange">
                         </filter-panel-checkbox>
                         <filter-panel-slider
-                                v-if="category.type==='slider'"
+                                v-if="filter.type==='slider'"
                                 ref="filtSliderRef"
-                                :filterName="category.name"
-                                :parentFilterName="filterName"
+                                :logicObj="filter"
                                 :annotationComplete="annotationComplete"
-                                :sliderMinValue="category.minValue"
-                                :sliderMaxValue="category.maxValue"
-                                :sliderDisplaySuffix="category.labelSuffix"
-                                :initLogic="category.initLogic"
-                                :initValue="category.initVal"
                                 :applyFilters="applyFilters"
-                                @filter-slider-changed="onSliderFilterChanged">
+                                @update-slider-logic="onSliderLogicChange"
+                                @filter-slider-changed="onFilterChange">
                         </filter-panel-slider>
                         <filter-panel-cutoff
-                                v-else-if="category.type==='cutoff'"
+                                v-else-if="filter.type==='cutoff'"
                                 ref="filterCutoffRef"
-                                :filterName="category.name"
+                                :filterName="filter.name"
                                 :parentFilterName="filterName"
                                 :annotationComplete="annotationComplete"
-                                @filter-applied="onFilterApplied"
-                                @cutoff-filter-cleared="onFilterCleared">
+                                @filter-applied="onFilterChange"
+                                @cutoff-filter-cleared="onFilterChange">
                         </filter-panel-cutoff>
                     </v-card>
                 </v-expansion-panel-content>
@@ -88,8 +84,6 @@
             filterModel: null,
             idx: null,
             annotationComplete: false,
-            somaticFilterSettings: null,
-            qualityFilterSettings: null,
             applyFilters: false
         },
         data() {
@@ -102,159 +96,73 @@
                 selectedZygosity: null,
                 selectedInheritanceModes: null,
                 selectedConsequences: null,
-                minGenotypeDepth: null,
-                categories: {
-                    // Note: if filter names match variant object field names, don't have to manually add filter to getVarValue in Variant.d3 class
-                    'annotation': [
-                        {name: 'impact', display: 'Impact', active: false, open: false, type: 'checkbox', tumorOnly: false},
-                        {name: 'type', display: 'Type', active: false, open: false, type: 'checkbox', tumorOnly: false}],
-                        // {name: 'zygosities', display: 'Zygosities', active: false, open: false, type: 'checkbox', tumorOnly: false},],
-                    'somatic': [
-                        {name: 'tumorAltFreq', display: 'Tumor Allele Frequency', active: true, open: false, type: 'slider', tumorOnly: true,
-                            minValue: 0, maxValue: 100, labelSuffix: '%', initLogic: '>=', initVal: this.somaticFilterSettings['tumorAltFreq']},
-                        {name: 'tumorAltCount', display: 'Tumor Alt. Observations', active: true, open: false, type: 'slider', tumorOnly: true,
-                            labelSuffix: '', initLogic: '>=', initVal: this.somaticFilterSettings['tumorAltCount']},
-                        {name: 'normalAltFreq', display: 'Normal Allele Frequency', active: true, open: false, type: 'slider', tumorOnly: false,
-                            minValue: 0, maxValue: 100, labelSuffix: '%', initLogic: '<=', initVal: this.somaticFilterSettings['normalAltFreq']},
-                        {name: 'normalAltCount', display: 'Normal Alt. Observations', active: true, open: false, type: 'slider', tumorOnly: false,
-                            labelSuffix: '', initLogic: '<=', initVal: this.somaticFilterSettings['normalAltCount']}],
-                    'frequencies': [
-                        {name: 'g1000', display: '1000G', active: false, open: false, type: 'cutoff', tumorOnly: false},
-                        {name: 'exac', display: 'ExAC', active: false, open: false, type: 'cutoff', tumorOnly: false},
-                        {name: 'gnomad', display: 'gnomAD', active: false, open: false, type: 'cutoff', tumorOnly: false}],
-                    'quality': [
-                        {name: 'genotypeDepth', display: 'Total Observations', active: true, open: false, type: 'slider', tumorOnly: false,
-                            minValue: 0, maxValue: 100, labelSuffix: '', initLogic: '>=', initVal: this.qualityFilterSettings['genotypeDepth']},
-                        {name: 'qual', display: 'Quality Score', active: true, open: false, type: 'slider', tumorOnly: false,
-                            minValue: 0, maxValue: 500, labelSuffix: '', initLogic: '>=', initVal: this.qualityFilterSettings['qual']}]
-                }
+                minGenotypeDepth: null
             }
         },
-        watch: {},
         methods: {
-            onFilterToggled: function(filterName, filterState, parentFilterName, grandparentFilterName, parentFilterState, filterDisplayName) {
-                let self = this;
-                // Turn on indicator
-                let filterObj = self.categories[grandparentFilterName].filter((cat) => {
-                    return cat.name === parentFilterName;
-                });
-                let tumorOnly = false;
-                if (filterObj.length > 0) {
-                    filterObj[0].active = parentFilterState;
-                    tumorOnly = filterObj[0].tumorOnly;
-                }
-                let grandparentFilterState = false;
-                let parentFilters = self.categories[grandparentFilterName];
-                parentFilters.forEach((filt) => {
-                    grandparentFilterState |= filt.active;
-                });
-                // Format display name
-                if (parentFilterName === 'impact') {
-                    filterDisplayName = filterDisplayName.toLowerCase();
-                    filterDisplayName = filterDisplayName.charAt(0).toUpperCase() + filterDisplayName.slice(1);
-                    filterDisplayName += ' Impact';
-                } else if (parentFilterName === 'type') {
-                    if (filterDisplayName !== 'SNP' && filterDisplayName !== 'MNP') {
-                        filterDisplayName = filterDisplayName.toLowerCase();
-                        filterDisplayName = filterDisplayName.charAt(0).toUpperCase() + filterDisplayName.slice(1);
-                    }
-                    filterDisplayName += 's';
-                } else if (parentFilterName === 'zygosities') {
-                    if (filterName === 'hom') {
-                        filterDisplayName = 'Homozygotes';
-                    } else {
-                        filterDisplayName = 'Heterozygotes';
-                    }
-                }
-                self.$emit('filter-toggled', filterName, filterState, grandparentFilterName, grandparentFilterState, tumorOnly, filterDisplayName);
+            // TODO: cleanup
+
+            onSliderLogicChange: function(filterName, newLogic) {
+                const self = this;
+                self.filterModel.updateFilterLogic(filterName, newLogic);
             },
-            onSliderFilterChanged: function(filterName, filterLogic, cutoffValue, grandparentFilterName) {
-                let self = this;
-                // Turn on indicator
-                let filterObj = self.categories[grandparentFilterName].filter((cat) => {
-                    return cat.name === filterName;
-                });
-                let tumorOnly = false;
-                let displayName = '';
-                if (filterObj.length > 0) {
-                    filterObj[0].active = filterLogic != null;
-                    tumorOnly = filterObj[0].tumorOnly;
-                    displayName = filterObj[0].display;
-                    if (grandparentFilterName === 'frequencies') {
-                        displayName += ' Freq';
-                    }
-                }
-                let grandparentFilterState = false;
-                let parentFilters = self.categories[grandparentFilterName];
-                parentFilters.forEach((filt) => {
-                    grandparentFilterState |= filt.active;
-                    grandparentFilterState = grandparentFilterState === 1;
-                });
-                self.$emit('filter-slider-changed', filterName, filterLogic, cutoffValue, grandparentFilterName, grandparentFilterState, tumorOnly, displayName);
+            onFilterChange: function() {
+                const self = this;
+                self.$emit('filter-change');
+                // self.getAndEmit('checkbox-toggle', parentFilterName, parentFilterState, grandparentFilterName, null, null);
             },
-            onFilterApplied: function(filterName, filterLogic, cutoffValue, grandparentFilterName) {
-                let self = this;
-                // Turn on indicator
-                let filterObj = self.categories[grandparentFilterName].filter((cat) => {
-                    return cat.name === filterName;
-                });
-                let tumorOnly = false;
-                let displayName = '';
-                if (filterObj.length > 0) {
-                    filterObj[0].active = true;
-                    tumorOnly = filterObj[0].tumorOnly;
-                    displayName = filterObj[0].display;
-                    if (grandparentFilterName === 'frequencies') {
-                        displayName += ' Freq';
-                    }
-                }
-                let grandparentFilterState = false;
-                let parentFilters = self.categories[grandparentFilterName];
-                parentFilters.forEach((filt) => {
-                    grandparentFilterState |= filt.active;
-                    grandparentFilterState = grandparentFilterState === 1;
-                });
-                self.$emit('filter-applied', filterName, filterLogic, cutoffValue, grandparentFilterName, grandparentFilterState, tumorOnly, displayName);
-            },
-            onFilterCleared: function(filterName, grandparentFilterName) {
-                let self = this;
-                // Turn on indicator
-                let filterObj = self.categories[grandparentFilterName].filter((cat) => {
-                    return cat.name === filterName;
-                });
-                let tumorOnly = false;
-                let displayName = '';
-                if (filterObj.length > 0) {
-                    filterObj[0].active = false;
-                    tumorOnly = filterObj[0].tumorOnly;
-                    displayName = filterObj[0].display;
-                }
-                let grandparentFilterState = false;
-                let parentFilters = self.categories[grandparentFilterName];
-                parentFilters.forEach((filt) => {
-                    grandparentFilterState |= filt.active;
-                });
-                self.$emit('cutoff-filter-cleared', filterName, grandparentFilterName, grandparentFilterState, tumorOnly, displayName);
-            },
-            clearFilters: function() {
-                let self = this;
-                (Object.values(self.categories)).forEach((catList) => {
-                    catList.forEach((filt) => {
-                        filt.active = false;
-                    })
-                });
-                if (self.$refs.filtCheckRef) {
-                    self.$refs.filtCheckRef.forEach((checkRef) => {
-                        checkRef.clearFilters();
-                    });
-                }
-            }
-        },
-        computed: {
-        },
-        created: function () {
-        },
-        mounted: function () {
+            // onSliderFilterChanged: function(filterName, filterLogic, cutoffValue, grandparentFilterName) {
+            //     const self = this;
+            //     self.getAndEmit('slider-change', filterName, (filterLogic != null), grandparentFilterName, filterLogic, cutoffValue);
+            // },
+            // onFilterApplied: function(filterName, filterLogic, cutoffValue, grandparentFilterName) {
+            //     const self = this;
+            //     self.getAndEmit('cutoff-applied', filterName, true, grandparentFilterName, filterLogic, cutoffValue);
+            // },
+            // onFilterCleared: function(filterName, grandparentFilterName) {
+            //     const self = this;
+            //     self.getAndEmit('cutoff-clear', filterName, false, grandparentFilterName, null, null);
+            // },
+            // clearFilters: function() {
+            //     const self = this;
+            //     (Object.values(self.filterModel.filters)).forEach((catList) => {
+            //         catList.forEach((filt) => {
+            //             filt.active = false;
+            //         })
+            //     });
+            //     if (self.$refs.filtCheckRef) {
+            //         self.$refs.filtCheckRef.forEach((checkRef) => {
+            //             checkRef.clearFilters();
+            //         });
+            //     }
+            // },
+            // getAndEmit: function(filterType, filterName, filterState, parentFilterName, filterLogic, cutoffValue) {
+            //     const self = this;
+            //
+            //     // Update active state in model
+            //     self.filterModel.setFilterState(parentFilterName, filterName, filterState);
+            //
+            //     // Set parent state
+            //     let parentFilterState = false;
+            //     let parentFilters = self.filterModel.filters[parentFilterName];
+            //     parentFilters.forEach((filt) => {
+            //         parentFilterState |= filt.active;
+            //         parentFilterState = parentFilterState === 1;    // TODO: make sure this works with not just slider vals
+            //     });
+            //
+            //     // Compose object and emit
+            //     let evtObj = {
+            //         filterType: filterType,
+            //         filterName: filterName,
+            //         filterState: filterState,
+            //         categoryName: parentFilterName,
+            //         categoryState: parentFilterState,
+            //         filterLogic: filterLogic,
+            //         cutoffValue: cutoffValue
+            //     };
+            //     self.$emit('filter-change', evtObj);
+            // }
+
         }
     }
 </script>
