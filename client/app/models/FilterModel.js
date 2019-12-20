@@ -406,17 +406,21 @@ class FilterModel {
      * if it passes all of the current filter criteria within this model. */
     markFilteredVariants(variants, isTumorSample) {
         const self = this;
+
+        // Get active filters
+        let checkboxFilters = self.getCheckboxFilters();
+        let cutoffFilters = isTumorSample ? self.getTumorCutoffFilters() : self.getNormalCutoffFilters();
+
         for (let variant of variants) {
             // Innocent until proven guilty
             variant.passesFilters = true;
 
             // Checkbox filters
-            let checkboxFilters = self.getCheckboxFilters();
             for (let filter of checkboxFilters) {
                 const field = filter[0];
                 const value = filter[1];
 
-                if (variant[field] === value) {
+                if (self.getVarField(variant, field) === value) {
                     variant.passesFilters = false;
                     break;
                 }
@@ -426,8 +430,7 @@ class FilterModel {
                 continue;
             }
             // Cutoff filters
-            let activeCutoffFilters = isTumorSample ? self.getTumorCutoffFilters() : self.getNormalCutoffFilters();
-            for (let currFilter of activeCutoffFilters) {
+            for (let currFilter of cutoffFilters) {
                 let filterCutoff = currFilter.currVal;
                 let filterLogic = currFilter.currLogic;
 
@@ -577,6 +580,22 @@ class FilterModel {
             }
         }
         return normalFilters;
+    }
+
+    /* Returns the value of the variant according to the field name argument.
+     * Sometimes these need a bit of translating - if not, returns simple value according to key. */
+    getVarField(variant, fieldName) {
+        if (!variant || variant[fieldName] == null) {
+            console.log('Could not retrieve field from variant');
+        } else {
+            if (fieldName === 'impact') {
+                let impactObj = variant['highestImpactVep'];
+                let keys = Object.keys(impactObj);
+                return (impactObj && keys.length > 0) ? keys[0] : null;
+            } else {
+                return variant[fieldName];
+            }
+        }
     }
 //
 //     populateEffectFilters(resultMap) {

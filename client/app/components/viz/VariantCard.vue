@@ -767,28 +767,6 @@
                         .style("opacity", 0);
                 }
             },
-            // promiseFilterVariants: function(filterInfo, selectedTrackId, selectedVariantId, parentFilterName, parentFilterState) {
-            //     let self = this;
-            //
-            //     let checkForSelectedVariant = false;
-            //     if (self.sampleModel.getId() === selectedTrackId && selectedVariantId) {
-            //         checkForSelectedVariant = true;
-            //     }
-            //     // NOTE: this only filters loaded variants, not called
-            //     if (self.$refs.variantVizRef) {
-            //         self.$refs.variantVizRef.promiseFilterVariants(filterInfo, self.getTrackSVG(self.$refs.variantVizRef.id), checkForSelectedVariant, selectedVariantId,
-            //             parentFilterName, parentFilterState)
-            //             .then((numPassingVars) => {
-            //                 self.numFilteredVariants = numPassingVars;
-            //                 return Promise.resolve();
-            //             })
-            //             .catch((error) => {
-            //                 return Promise.reject('Problem filtering variants: ' + error);
-            //             })
-            //     } else {
-            //         return Promise.resolve();
-            //     }
-            // },
             updateVariantClasses: function() {
                 const self = this;
                 let container = self.getTrackSVG(self.sampleModel.id);

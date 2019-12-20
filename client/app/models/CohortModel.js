@@ -1164,14 +1164,15 @@ class CohortModel {
         const self = this;
         return new Promise((resolve, reject) => {
             self.getCanonicalModels().forEach((sampleModel) => {
+                // turn on loaders for tracks
+                sampleModel.inProgress.loadingVariants = true;
+
                 if (!sampleModel.vcfData) {
                     reject('No vcf data to fetch variants from for filtering');
                 }
                 self.filterModel.markFilteredVariants(sampleModel.vcfData.features, sampleModel.isTumor);
                 resolve();
             });
-            // self.setLoadedVariants(selectedGene);   // TODO: make sure optional args correct here
-            // resolve();
         });
     }
 
