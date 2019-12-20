@@ -258,146 +258,146 @@
             showFlaggedVariant: function (variant, container) {
                 this.variantChart.showFlaggedVariant(container, variant);
             },
-            promiseFilterVariants: function (filterInfo, svg, checkForSelectedVar, selectedVarId) {
-                const self = this;
-
-                return new Promise((resolve, reject) => {
-                    // Set chip indicators
-                    let filterLabel = '';
-                    let promises = [];
-
-                    if (filterInfo.type === 'checkbox' && filterInfo.state === false) {
-                        // Turning checkbox ON
-                        filterLabel = 'No ' + filterInfo.displayName;
-                        // if (filterInfo.state === false) {
-                        let filterObj = {name: filterInfo.name, filterLabel: filterLabel};
-                        self.filterChips.push(filterObj);
-                    } else if ((filterInfo.type === 'cutoff' && filterInfo.turnOff === false) || filterInfo.type === 'slider') {
-                        // Turning cutoff ON
-                        filterLabel = filterInfo.displayName + ' ' + filterInfo.state + ' ' + filterInfo.cutoffValue;
-
-                        // Replace label if this filter already active at different value
-                        let matchingFilters = self.filterChips.filter((obj) => {
-                            return obj.name === filterInfo.name
-                        });
-                        if (matchingFilters && matchingFilters[0]) {
-                            matchingFilters[0].filterLabel = filterLabel;
-
-                            // Otherwise add fresh
-                        } else {
-                            let filterObj = {name: filterInfo.name, filterLabel: filterLabel};
-                            self.filterChips.push(filterObj);
-                        }
-                    } else {
-                        // Turning any type OFF
-                        self.filterChips = self.filterChips.filter((obj) => {
-                            return obj.name !== filterInfo.name;
-                        })
-                    }
-
-                    // Reset no vars
-                    let noPassingVars = false;
-                    let numPassingVars = 0;
-                    self.noPassingResults = false;
-
-                    // Apply checkbox filter
-                    if (filterInfo.state === true && filterInfo.type === 'checkbox') {
-
-                        // Remove from active filter state
-                        self.excludeFilters.splice(self.excludeFilters.indexOf('.' + filterInfo.name), 1);
-
-                        // Re-apply active filters in case of multiple filters
-                        let checkOnP = self.variantChart.promiseFilterVariants(self.excludeFilters, self.cutoffFilters, svg)
-                            .then((passingVarCount) => {
-                                // noPassingVars = passingVarCount > 0;
-                                numPassingVars = passingVarCount;
-                            }).catch((err) => {
-                                console.log('Problem applying filter at DOM level: ' + err);
-                                reject();
-                            });
-                        promises.push(checkOnP);
-
-                    // Removing checkbox filter
-                    } else if (filterInfo.state === false && filterInfo.type === 'checkbox') {
-                        // Hide variants with that class
-                        let filterClass = '.' + filterInfo.name;
-                        self.excludeFilters.push(filterClass);
-                        let checkOffP = self.variantChart.promiseFilterVariants(self.excludeFilters, self.cutoffFilters, svg)
-                            .then((passingVarCount) => {
-                                // noPassingVars = passingVarCount > 0;
-                                numPassingVars = passingVarCount;
-
-                                // Check to make sure we haven't hidden the selected variant
-                                if (checkForSelectedVar) {
-                                    let selectedVarStillVisible = self.variantChart.checkForSelectedVar(selectedVarId, svg);
-                                    // If we have, send deselect message
-                                    if (!selectedVarStillVisible) {
-                                        self.$emit("variantClick", null, null);
-                                    }
-                                }
-                            }).catch((err) => {
-                                console.log('Problem applying filter at DOM level: ' + err);
-                                reject();
-                            });
-                        promises.push(checkOffP);
-
-                    // Apply cutoff or slider filter
-                    } else if (filterInfo.state != null && (filterInfo.type === 'cutoff' || filterInfo.type === 'slider')) {
-
-                        // Remove any previous logic for this filter
-                        if (self.cutoffFilters[filterInfo.name]) {
-                            delete self.cutoffFilters[filterInfo.name];
-                        }
-
-                        // Add new logic
-                        self.cutoffFilters[filterInfo.name] = [filterInfo.name, filterInfo.state, filterInfo.cutoffValue];
-
-                        // Hide variants that do not meet given condition
-                        let filtOnP = self.variantChart.promiseFilterVariants(self.excludeFilters, self.cutoffFilters, svg)
-                            .then((passingVarCount) => {
-                                numPassingVars = passingVarCount;
-                            }).catch((err) => {
-                                console.log('Problem applying filter at DOM level: ' + err);
-                                reject();
-                            });
-                        promises.push(filtOnP);
-
-                    } else {
-                        // Remove cutoff or slider filter
-
-                        // Remove from list
-                        delete self.cutoffFilters[filterInfo.name];
-
-                        // Re-apply active filters in case of multiple filters
-                        let filtOffP = self.variantChart.promiseFilterVariants(self.excludeFilters, self.cutoffFilters, svg)
-                            .then((passingVarCount) => {
-                                // noPassingVars = passingVarCount > 0;
-                                numPassingVars = passingVarCount;
-
-                                if (checkForSelectedVar) {
-                                    let selectedVarStillVisible = self.variantChart.checkForSelectedVar(selectedVarId, svg);
-                                    // If we have, send deselect message
-                                    if (!selectedVarStillVisible) {
-                                        self.$emit("variantClick", null, null);
-                                    }
-                                }
-                            }).catch((err) => {
-                                console.log('Problem applying filter at DOM level: ' + err);
-                                reject();
-                            });
-                        promises.push(filtOffP);
-                    }
-
-                    Promise.all(promises).then(() => {
-                        self.noPassingResults = numPassingVars > 0;
-                        resolve(numPassingVars);
-                    });
-                });
-            },
-            applyActiveFilters: function(svg) {
-                const self = this;
-                self.variantChart.promiseFilterVariants(self.excludeFilters, self.cutoffFilters, svg);
-            }
+            // promiseFilterVariants: function (filterInfo, svg, checkForSelectedVar, selectedVarId) {
+            //     const self = this;
+            //
+            //     return new Promise((resolve, reject) => {
+            //         // Set chip indicators
+            //         let filterLabel = '';
+            //         let promises = [];
+            //
+            //         if (filterInfo.type === 'checkbox' && filterInfo.state === false) {
+            //             // Turning checkbox ON
+            //             filterLabel = 'No ' + filterInfo.displayName;
+            //             // if (filterInfo.state === false) {
+            //             let filterObj = {name: filterInfo.name, filterLabel: filterLabel};
+            //             self.filterChips.push(filterObj);
+            //         } else if ((filterInfo.type === 'cutoff' && filterInfo.turnOff === false) || filterInfo.type === 'slider') {
+            //             // Turning cutoff ON
+            //             filterLabel = filterInfo.displayName + ' ' + filterInfo.state + ' ' + filterInfo.cutoffValue;
+            //
+            //             // Replace label if this filter already active at different value
+            //             let matchingFilters = self.filterChips.filter((obj) => {
+            //                 return obj.name === filterInfo.name
+            //             });
+            //             if (matchingFilters && matchingFilters[0]) {
+            //                 matchingFilters[0].filterLabel = filterLabel;
+            //
+            //                 // Otherwise add fresh
+            //             } else {
+            //                 let filterObj = {name: filterInfo.name, filterLabel: filterLabel};
+            //                 self.filterChips.push(filterObj);
+            //             }
+            //         } else {
+            //             // Turning any type OFF
+            //             self.filterChips = self.filterChips.filter((obj) => {
+            //                 return obj.name !== filterInfo.name;
+            //             })
+            //         }
+            //
+            //         // Reset no vars
+            //         let noPassingVars = false;
+            //         let numPassingVars = 0;
+            //         self.noPassingResults = false;
+            //
+            //         // Apply checkbox filter
+            //         if (filterInfo.state === true && filterInfo.type === 'checkbox') {
+            //
+            //             // Remove from active filter state
+            //             self.excludeFilters.splice(self.excludeFilters.indexOf('.' + filterInfo.name), 1);
+            //
+            //             // Re-apply active filters in case of multiple filters
+            //             let checkOnP = self.variantChart.promiseFilterVariants(self.excludeFilters, self.cutoffFilters, svg)
+            //                 .then((passingVarCount) => {
+            //                     // noPassingVars = passingVarCount > 0;
+            //                     numPassingVars = passingVarCount;
+            //                 }).catch((err) => {
+            //                     console.log('Problem applying filter at DOM level: ' + err);
+            //                     reject();
+            //                 });
+            //             promises.push(checkOnP);
+            //
+            //         // Removing checkbox filter
+            //         } else if (filterInfo.state === false && filterInfo.type === 'checkbox') {
+            //             // Hide variants with that class
+            //             let filterClass = '.' + filterInfo.name;
+            //             self.excludeFilters.push(filterClass);
+            //             let checkOffP = self.variantChart.promiseFilterVariants(self.excludeFilters, self.cutoffFilters, svg)
+            //                 .then((passingVarCount) => {
+            //                     // noPassingVars = passingVarCount > 0;
+            //                     numPassingVars = passingVarCount;
+            //
+            //                     // Check to make sure we haven't hidden the selected variant
+            //                     if (checkForSelectedVar) {
+            //                         let selectedVarStillVisible = self.variantChart.checkForSelectedVar(selectedVarId, svg);
+            //                         // If we have, send deselect message
+            //                         if (!selectedVarStillVisible) {
+            //                             self.$emit("variantClick", null, null);
+            //                         }
+            //                     }
+            //                 }).catch((err) => {
+            //                     console.log('Problem applying filter at DOM level: ' + err);
+            //                     reject();
+            //                 });
+            //             promises.push(checkOffP);
+            //
+            //         // Apply cutoff or slider filter
+            //         } else if (filterInfo.state != null && (filterInfo.type === 'cutoff' || filterInfo.type === 'slider')) {
+            //
+            //             // Remove any previous logic for this filter
+            //             if (self.cutoffFilters[filterInfo.name]) {
+            //                 delete self.cutoffFilters[filterInfo.name];
+            //             }
+            //
+            //             // Add new logic
+            //             self.cutoffFilters[filterInfo.name] = [filterInfo.name, filterInfo.state, filterInfo.cutoffValue];
+            //
+            //             // Hide variants that do not meet given condition
+            //             let filtOnP = self.variantChart.promiseFilterVariants(self.excludeFilters, self.cutoffFilters, svg)
+            //                 .then((passingVarCount) => {
+            //                     numPassingVars = passingVarCount;
+            //                 }).catch((err) => {
+            //                     console.log('Problem applying filter at DOM level: ' + err);
+            //                     reject();
+            //                 });
+            //             promises.push(filtOnP);
+            //
+            //         } else {
+            //             // Remove cutoff or slider filter
+            //
+            //             // Remove from list
+            //             delete self.cutoffFilters[filterInfo.name];
+            //
+            //             // Re-apply active filters in case of multiple filters
+            //             let filtOffP = self.variantChart.promiseFilterVariants(self.excludeFilters, self.cutoffFilters, svg)
+            //                 .then((passingVarCount) => {
+            //                     // noPassingVars = passingVarCount > 0;
+            //                     numPassingVars = passingVarCount;
+            //
+            //                     if (checkForSelectedVar) {
+            //                         let selectedVarStillVisible = self.variantChart.checkForSelectedVar(selectedVarId, svg);
+            //                         // If we have, send deselect message
+            //                         if (!selectedVarStillVisible) {
+            //                             self.$emit("variantClick", null, null);
+            //                         }
+            //                     }
+            //                 }).catch((err) => {
+            //                     console.log('Problem applying filter at DOM level: ' + err);
+            //                     reject();
+            //                 });
+            //             promises.push(filtOffP);
+            //         }
+            //
+            //         Promise.all(promises).then(() => {
+            //             self.noPassingResults = numPassingVars > 0;
+            //             resolve(numPassingVars);
+            //         });
+            //     });
+            // },
+            // applyActiveFilters: function(svg) {
+            //     const self = this;
+            //     self.variantChart.promiseFilterVariants(self.excludeFilters, self.cutoffFilters, svg);
+            // }
 
         },
         watch: {

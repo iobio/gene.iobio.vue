@@ -840,14 +840,14 @@ class CohortModel {
                         // Now summarize the danger for the selected gene
                         // self.promiseSummarizeDanger(theGene, theTranscript, resultMap.s0, null)
                         //     .then(function () {
-                            let geneChanged = options.loadFromFlag;
 
-                                // TODO: think I can call promiseApplyFilters here?
-
-                            self.setLoadedVariants(theGene, null, geneChanged, options.loadFeatureMatrix);
-                            self.endGeneProgress(theGene.gene_name);
-                            resolve(resultMap);
-                            // })
+                            self.promiseFilterVariants()
+                                .then(() => {
+                                    let geneChanged = options.loadFromFlag;
+                                    self.setLoadedVariants(theGene, null, geneChanged, options.loadFeatureMatrix);
+                                    self.endGeneProgress(theGene.gene_name);
+                                    resolve(resultMap);
+                                });
                     })
                     .catch(function (error) {
                         self.endGeneProgress(theGene.gene_name);
@@ -981,16 +981,16 @@ class CohortModel {
             //let isMultiSample = self.samplesInSingleVcf();
             let isMultiSample = true;  // TODO: hardcoding to test for now - test with single sample vcf
             self.promiseAnnotateVariants(theGene, theTranscript, isMultiSample, false, options)
-                .then(function (resultMap) {
-                    // Flag bookmarked variants
-                    self.setVariantFlags(resultMap['s0']);
-
-                    // the variants are fully annotated so determine inheritance (if trio).
-                    return self.promiseAnnotateInheritance(theGene, theTranscript, resultMap, {
-                        isBackground: false,
-                        cacheData: true
-                    })
-                })
+                // .then(function (resultMap) {
+                //     // Flag bookmarked variants
+                //     self.setVariantFlags(resultMap['s0']);
+                //
+                //     // the variants are fully annotated so determine inheritance (if trio).
+                //     return self.promiseAnnotateInheritance(theGene, theTranscript, resultMap, {
+                //         isBackground: false,
+                //         cacheData: true
+                //     })
+                // })
                 .then(function (resultMap) {
                     resolve(resultMap);
                 })
@@ -1160,17 +1160,18 @@ class CohortModel {
 
     /* Asks filter model to mark whether a variant meets all filter criteria.
      * Then triggers redraw by new pileup and loadedVariant assignment call. */
-    promiseFilterVariants(selectedGene, filterInfo) {
+    promiseFilterVariants() {
         const self = this;
         return new Promise((resolve, reject) => {
             self.getCanonicalModels().forEach((sampleModel) => {
                 if (!sampleModel.vcfData) {
                     reject('No vcf data to fetch variants from for filtering');
                 }
-                self.filterModel.markFilteredVariants(sampleModel.vcfData.features);
+                self.filterModel.markFilteredVariants(sampleModel.vcfData.features, sampleModel.isTumor);
+                resolve();
             });
-            self.setLoadedVariants(selectedGene);   // TODO: make sure optional args correct here
-            resolve();
+            // self.setLoadedVariants(selectedGene);   // TODO: make sure optional args correct here
+            // resolve();
         });
     }
 

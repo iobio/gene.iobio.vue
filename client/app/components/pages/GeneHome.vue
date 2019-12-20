@@ -159,38 +159,6 @@
                     >
                     </gene-card>
                 </v-card>
-
-                <!--<div v-if="geneModel && Object.keys(selectedGene).length > 0 && (!isBasicMode || selectedVariant != null)"-->
-                        <!--style="height:auto;margin-bottom:5px;"-->
-                        <!--v-bind:class="{hide : showWelcome, 'full-width': true }">-->
-                    <!--<v-card v-if="geneModel && cohortModel.isLoaded && Object.keys(selectedGene).length > 0"-->
-                                   <!--id="gene-and-variant-tabs" slot="right"-->
-                                   <!--class="full-width"-->
-                                   <!--style="margin-bottom:0;padding-top:0;margin-top:10px;">-->
-                        <!--<v-layout>-->
-                            <!--<v-flex xs12>-->
-                                <!--<feature-matrix-card ref="featureMatrixCardRef"-->
-                                                     <!--v-if="featureMatrixModel.filteredMatrixRows.length > 0 && cohortModel.varAfLinks && cohortModel.allUniqueFeaturesObj"-->
-                                                     <!--v-bind:class="{ hide: !cohortModel || !cohortModel.isLoaded || !featureMatrixModel || !featureMatrixModel.rankedVariants }"-->
-                                                     <!--:isEduMode="isEduMode"-->
-                                                     <!--:isBasicMode="isBasicMode"-->
-                                                     <!--:featureMatrixModel="featureMatrixModel"-->
-                                                     <!--:selectedGene="selectedGene"-->
-                                                     <!--:selectedTranscript="analyzedTranscript"-->
-                                                     <!--:selectedVariant="selectedVariant"-->
-                                                     <!--:id="'s0'"-->
-                                                     <!--:hoverTooltip="hoverTooltip"-->
-                                                     <!--:clickTooltip="clickTooltip"-->
-                                                     <!--:width="cardWidth"-->
-                                                     <!--@cohort-variant-click="onCohortVariantClick"-->
-                                                     <!--@cohort-variant-hover="onCohortVariantHover"-->
-                                                     <!--@cohort-variant-hover-end="onCohortVariantHoverEnd"-->
-                                                     <!--@variant-rank-change="featureMatrixModel.promiseRankVariants(cohortModel.allUniqueFeaturesObj, cohortModel.allSomaticFeaturesLookup, cohortModel.getAllFilterPassingVariants())">-->
-                                <!--</feature-matrix-card>-->
-                            <!--</v-flex>-->
-                        <!--</v-layout>-->
-                    <!--</v-card>-->
-                <!--</div>-->
                 <v-flex xs12 v-if="showWelcome">
                     <welcome
                             @load-demo-data="onLoadDemoData"
@@ -652,7 +620,7 @@
                             self);
 
 
-                        self.filterModel = new FilterModel(self.globalApp);
+                        self.filterModel = new FilterModel(translator);
                         self.cohortModel.filterModel = self.filterModel;
 
                         self.promiseInitFromUrl()
@@ -1162,6 +1130,7 @@
                                                 self.clearZoom = false;
                                                 self.showVarViz = true;
                                                 self.applyFilters = true;
+                                                self.onVariantFilterChange();
                                                 resolve();
                                             })
                                             .catch(function (err) {
@@ -2234,23 +2203,18 @@
             onVariantFilterChange: function() {
                 const self = this;
 
-                // Once we get here, model criteria has already been updated, just need to re-check and re-draw
-
-                // Some filter names need a bit of translating
-                // filterInfo.filterName = self.cohortModel.translator.getTranslatedFilterName(filterInfo.filterName);
-
-
                 // Only annotate once we are guaranteed that our DOM update is done for all tracks
                 self.cohortModel.promiseFilterVariants(self.selectedGene)
                     .then(() => {
-                        let allVariantsPassingFilters = self.cohortModel.getAllFilterPassingVariants();
-
                         self.filterModel.promiseAnnotateVariantInheritance(self.cohortModel.sampleMap)
                             .then((inheritanceObj) => {
+                                self.cohortModel.setLoadedVariants(self.selectedGene);
+
                                 self.cohortModel.allSomaticFeaturesLookup = inheritanceObj.somaticLookup;
                                 self.cohortModel.allInheritedFeaturesLookup = inheritanceObj.inheritedLookup;
 
                                 // Draw feature matrix after somatic field filled
+                                let allVariantsPassingFilters = self.cohortModel.getAllFilterPassingVariants();
                                 self.featureMatrixModel.promiseRankVariants(self.cohortModel.allUniqueFeaturesObj,
                                     self.cohortModel.allSomaticFeaturesLookup, self.cohortModel.allInheritedFeaturesLookup, allVariantsPassingFilters);
 

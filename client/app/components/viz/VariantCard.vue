@@ -180,7 +180,7 @@
                         {{ sampleLabel }}
                     </span>
                 <v-chip v-if="annotationComplete" small outline color="appColor" class="variant-chip">
-                    {{ numFilteredVariants + ' Variants' }}
+                    {{ sampleModel.loadedVariants.features.length + ' Variants' }}
                 </v-chip>
                 <v-badge v-if="sampleModel.loadedVariants && coverageDangerRegions.length > 0"
                          class="ml-4 mr-4 mt-1 coverage-problem">
@@ -767,28 +767,28 @@
                         .style("opacity", 0);
                 }
             },
-            promiseFilterVariants: function(filterInfo, selectedTrackId, selectedVariantId, parentFilterName, parentFilterState) {
-                let self = this;
-
-                let checkForSelectedVariant = false;
-                if (self.sampleModel.getId() === selectedTrackId && selectedVariantId) {
-                    checkForSelectedVariant = true;
-                }
-                // NOTE: this only filters loaded variants, not called
-                if (self.$refs.variantVizRef) {
-                    self.$refs.variantVizRef.promiseFilterVariants(filterInfo, self.getTrackSVG(self.$refs.variantVizRef.id), checkForSelectedVariant, selectedVariantId,
-                        parentFilterName, parentFilterState)
-                        .then((numPassingVars) => {
-                            self.numFilteredVariants = numPassingVars;
-                            return Promise.resolve();
-                        })
-                        .catch((error) => {
-                            return Promise.reject('Problem filtering variants: ' + error);
-                        })
-                } else {
-                    return Promise.resolve();
-                }
-            },
+            // promiseFilterVariants: function(filterInfo, selectedTrackId, selectedVariantId, parentFilterName, parentFilterState) {
+            //     let self = this;
+            //
+            //     let checkForSelectedVariant = false;
+            //     if (self.sampleModel.getId() === selectedTrackId && selectedVariantId) {
+            //         checkForSelectedVariant = true;
+            //     }
+            //     // NOTE: this only filters loaded variants, not called
+            //     if (self.$refs.variantVizRef) {
+            //         self.$refs.variantVizRef.promiseFilterVariants(filterInfo, self.getTrackSVG(self.$refs.variantVizRef.id), checkForSelectedVariant, selectedVariantId,
+            //             parentFilterName, parentFilterState)
+            //             .then((numPassingVars) => {
+            //                 self.numFilteredVariants = numPassingVars;
+            //                 return Promise.resolve();
+            //             })
+            //             .catch((error) => {
+            //                 return Promise.reject('Problem filtering variants: ' + error);
+            //             })
+            //     } else {
+            //         return Promise.resolve();
+            //     }
+            // },
             updateVariantClasses: function() {
                 const self = this;
                 let container = self.getTrackSVG(self.sampleModel.id);
