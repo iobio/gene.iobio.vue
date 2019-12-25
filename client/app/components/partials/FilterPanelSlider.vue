@@ -133,12 +133,11 @@
             }
         },
         methods: {
-            onSliderChange: function() {
+            onSliderChange: _.debounce(function() {
                 const self = this;
                 self.logicObj.active = self.logicObj.currVal > 0;
                 self.$emit('filter-slider-changed')
-            },
-            // TODO: incorporate this into clear all (and add reset to default)
+            }, 500),
             clearLogic: function() {
                 const self = this;
                 self.currLogic = null;

@@ -118,17 +118,9 @@
     export default {
         name: 'feature-matrix-viz',
         props: {
-            data: {
-                type: Array,
-                default: function () {
-                    return [];
-                }
-            },
-            matrixColumns: {
-                type: Array,
-                default: function () {
-                    return [];
-                }
+            model: {
+                type: Object,
+                default: null
             },
             width: {
                 type: Number,
@@ -153,18 +145,6 @@
             rowLabelWidth: {
                 type: Number,
                 default: 0
-            },
-            cellHeights: {
-                type: Array,
-                default: function () {
-                    return [];
-                }
-            },
-            cellWidths: {
-                type: Array,
-                default: function () {
-                    return [];
-                }
             },
             columnLabelHeight: {
                 type: Number,
@@ -201,6 +181,21 @@
             return {
                 name: 'feature-matrix-viz',
                 featureMatrixChart: null
+            }
+        },
+        computed: {
+            matrixColumns: function() {
+                if (this.model) {
+                    return this.model.matrixRows;
+                } else {
+                    return [];
+                }
+            },
+            cellHeights: function() {
+                return this.model ? this.model.getCellHeights() : null;
+            },
+            cellWidths: function() {
+                return this.model ? this.model.getCellHeights() : null;
             }
         },
         created: function () {
@@ -248,8 +243,8 @@
                 const self = this;
 
                 let selection = null;
-                if (self.data && self.data.length > 0) {
-                    selection = d3.select(self.$el).data([self.data]);
+                if (self.model.rankedVariants && self.model.rankedVariants.length > 0) {
+                    selection = d3.select(self.$el).data([self.model.rankedVariants]);
                     self.featureMatrixChart(selection, {showColumnLabels: true, simpleColumnLabels: false});
                 } else {
                     d3.select('#' + self.name).selectAll('svg').remove();
@@ -263,7 +258,7 @@
             }
         },
         watch: {
-            data: function () {
+            'model.rankedVariants': function () {
                 this.update();
             }
         }

@@ -405,7 +405,7 @@
 
                 PROBAND: 'proband',
                 activeGeneVariantTab: 'feature-matrix-tab',
-                isLeftDrawerOpen: true,
+                isLeftDrawerOpen: false,
                 showWelcome: false,
 
                 cardWidth: 0,
@@ -875,7 +875,7 @@
                 return new Promise(function (resolve, reject) {
 
                     if (self.models && self.models.length > 0) {
-                        // let cardWidthScale = self.isLeftDrawerOpen ? 1.0 : 0.65;    // TODO: this breaks circling if too big
+                        // let cardWidthScale = self.isLeftDrawerOpen ? 1.0 : 0.65;
                         self.cardWidth = $('#genes-card').innerWidth();
                         var options = {'getKnownVariants': self.showKnownVariantsCard};
                         options['getCosmicVariants'] = self.showCosmicVariantsCard;
@@ -885,10 +885,14 @@
                         self.cohortModel.promiseLoadData(self.selectedGene,
                             self.selectedTranscript,
                             options)
-                            .then(function(resultMap) {
-                                self.onUpdateSamples();
+                            .then(function() {
+                                self.onUpdateSamples(); // TODO: do we still need to call this?
 
+                                // Draw feature matrix after somatic field filled
                                 self.calcFeatureMatrixWidthPercent();
+                                let allVariantsPassingFilters = self.cohortModel.getAllFilterPassingVariants();
+                                self.featureMatrixModel.promiseRankVariants(self.cohortModel.allUniqueFeaturesObj,
+                                    self.cohortModel.allSomaticFeaturesLookup, self.cohortModel.allInheritedFeaturesLookup, allVariantsPassingFilters);
 
                                 // TODO: should I populate somatic filters here?
                                 // self.filterModel.populateEffectFilters(resultMap);
@@ -1130,7 +1134,6 @@
                                                 self.clearZoom = false;
                                                 self.showVarViz = true;
                                                 self.applyFilters = true;
-                                                self.onVariantFilterChange();
                                                 resolve();
                                             })
                                             .catch(function (err) {
@@ -2203,12 +2206,20 @@
             onVariantFilterChange: function() {
                 const self = this;
 
+                // TODO: figure out why this is taking so long to refresh...
+
                 // Only annotate once we are guaranteed that our DOM update is done for all tracks
-                self.cohortModel.promiseFilterVariants(self.selectedGene)
+                self.cohortModel.promiseFilterVariants()
                     .then(() => {
+                        console.log('Done promiseFilterVariants');
                         self.filterModel.promiseAnnotateVariantInheritance(self.cohortModel.sampleMap)
                             .then((inheritanceObj) => {
                                 self.cohortModel.setLoadedVariants(self.selectedGene);
+
+                                // Turn loading flags off
+                                self.cohortModel.getCanonicalModels().forEach((sampleModel) => {
+                                    sampleModel.inProgress.loadingVariants = false;
+                                });
 
                                 self.cohortModel.allSomaticFeaturesLookup = inheritanceObj.somaticLookup;
                                 self.cohortModel.allInheritedFeaturesLookup = inheritanceObj.inheritedLookup;
@@ -2219,6 +2230,7 @@
                                     self.cohortModel.allSomaticFeaturesLookup, self.cohortModel.allInheritedFeaturesLookup, allVariantsPassingFilters);
 
                                 // Then we need to update coloring for tumor tracks only
+                                // TODO: we should be able to get rid of this once they're drawn post inheritance sorting
                                 if (self.$refs.variantCardRef) {
                                     self.$refs.variantCardRef.forEach((cardRef) => {
                                         if (cardRef.sampleModel.isTumor === true) {

@@ -179,7 +179,7 @@
                 <span id="sample-label">
                         {{ sampleLabel }}
                     </span>
-                <v-chip v-if="annotationComplete" small outline color="appColor" class="variant-chip">
+                <v-chip v-if="annotationComplete && sampleModel.loadedVariants" small outline color="appColor" class="variant-chip">
                     {{ sampleModel.loadedVariants.features.length + ' Variants' }}
                 </v-chip>
                 <v-badge v-if="sampleModel.loadedVariants && coverageDangerRegions.length > 0"
@@ -404,7 +404,7 @@
                     bottom: 5,
                     left: self.isBasicMode || self.isEduMode ? 9 : 4
                 },
-                variantSymbolHeight: self.isEduMode || self.isBasicMode ? self.globalAppProp.eduModeVariantSize : 12,
+                variantSymbolHeight: self.isEduMode || self.isBasicMode ? self.globalAppProp.eduModeVariantSize : 10,
                 variantSymbolPadding: 2,
 
                 geneVizMargin: {

@@ -843,17 +843,21 @@ class CohortModel {
 
                             self.promiseFilterVariants()
                                 .then(() => {
-                                    let geneChanged = options.loadFromFlag;
-                                    self.setLoadedVariants(theGene, null, geneChanged, options.loadFeatureMatrix);
-                                    self.endGeneProgress(theGene.gene_name);
-                                    resolve(resultMap);
+                                    self.filterModel.promiseAnnotateVariantInheritance(self.sampleMap)
+                                        .then((inheritanceObj) => {
+                                            let geneChanged = options.loadFromFlag;
+                                            self.setLoadedVariants(theGene, null, geneChanged, options.loadFeatureMatrix);
+                                            self.endGeneProgress(theGene.gene_name);
+                                            self.allSomaticFeaturesLookup = inheritanceObj.somaticLookup;
+                                            self.allInheritedFeaturesLookup = inheritanceObj.inheritedLookup;
+                                            resolve();
+                                    });
                                 });
                     })
                     .catch(function (error) {
                         self.endGeneProgress(theGene.gene_name);
                         reject(error);
                     })
-
             }
 
         })
@@ -1116,6 +1120,9 @@ class CohortModel {
 
                     model.loadedVariants = filterAndPileupVariants(model, start, end, 'loaded');
                     model.calledVariants = filterAndPileupVariants(model, start, end, 'called');
+
+                    // Turn off loaders
+                    model.inProgress.loadingVariants = false;
 
                     // Don't add known variants to our feature matrix
                     if (model.id !== 'cosmic-variants' && model.id !== 'known-variants') {

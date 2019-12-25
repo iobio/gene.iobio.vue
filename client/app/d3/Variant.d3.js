@@ -16,10 +16,10 @@ export default function variantD3(d3, vizSettings) {
         heightPercent = vizSettings.heightPercent ? vizSettings.heightPercent : '100%';
 
     // Glyph-level sizing
-    var variantHeight = vizSettings.variantHeight ? vizSettings.variantHeight : 10,
-        borderRadius = vizSettings.borderRadius ? vizSettings.borderRadius : 2,
+    var variantHeight = vizSettings.variantHeight ? vizSettings.variantHeight : 8,
+        borderRadius = vizSettings.borderRadius ? vizSettings.borderRadius : 1,
         verticalLayers = vizSettings.verticalLayers ? vizSettings.verticalLayers : 1,
-        verticalPadding = vizSettings.verticalPadding ? vizSettings.verticalPadding : 4,
+        verticalPadding = vizSettings.verticalPadding ? vizSettings.verticalPadding : 2,
         lowestWidth = vizSettings.lowestWidth ? vizSettings.lowestWidth : 3;
 
     // Scales, Axes, Deltas
@@ -162,9 +162,10 @@ export default function variantD3(d3, vizSettings) {
                 // var minWidth = variantHeight;
 
                 var circleSymbolAdjust = variantHeight >=16 ? 0 : variantHeight <= 8 ? 1 : 2;
+
                 var symbolScaleCircle = d3.scaleOrdinal()
                     .domain([3, 4, 5, 6, 7, 8, 10, 12, 14, 16])
-                    .range([9, 15, 25, 38, 54, 58, 70, 100, 130, 260]);
+                    .range([9, 15, 25, 38, 54, 58, 64, 70, 100, 130]);
                 var symbolSizeCircle = symbolScaleCircle(variantHeight + circleSymbolAdjust);
 
                 var symbolScale = d3.scaleOrdinal()
@@ -284,7 +285,7 @@ export default function variantD3(d3, vizSettings) {
                 var computedSnpY = function(d) {
                     return height - ((d.level + 1) * (variantHeight + verticalPadding));
                 };
-                var indelOffset = (variantHeight >= 16 ? 0 : variantHeight <= 8 ? 1 : 2) * 2;
+                var indelOffset = (variantHeight >= 16 ? 0 : variantHeight <= 8 ? 2 : 3) * 2;
                 var computedIndelY = function(d) {
                     return height - ((d.level + 1) * (variantHeight + verticalPadding) - indelOffset);
                 };
@@ -437,18 +438,17 @@ export default function variantD3(d3, vizSettings) {
                         });
                 }
 
-                // TODO: trying to move this to filtering
-                // // Add listeners after adjusting symbol width, etc
-                // g.selectAll('.variant')
-                //     .on("click", function (d) {
-                //         dispatch.call('d3click', this, d);
-                //     })
-                //     .on("mouseover", function (d) {
-                //         dispatch.call('d3mouseover', this, d);
-                //     })
-                //     .on("mouseout", function () {
-                //         dispatch.call('d3mouseout');
-                //     });
+                // Add listeners after adjusting symbol width, etc
+                g.selectAll('.variant')
+                    .on("click", function (d) {
+                        dispatch.call('d3click', this, d);
+                    })
+                    .on("mouseover", function (d) {
+                        dispatch.call('d3mouseover', this, d);
+                    })
+                    .on("mouseout", function () {
+                        dispatch.call('d3mouseout');
+                    });
 
                 // Generate the x axis
                 if (showXAxis) {

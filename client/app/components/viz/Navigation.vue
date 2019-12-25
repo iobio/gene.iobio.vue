@@ -219,7 +219,7 @@
                         :key="'matrix-tab'"
                         :id="'matrix-tab'">
                         <feature-matrix-card ref="featureMatrixCardRef"
-                             v-if="featureMatrixModel.filteredMatrixRows.length > 0 && cohortModel.varAfLinks && cohortModel.allUniqueFeaturesObj"
+                             v-if="featureMatrixModel.filteredMatrixRows.length > 0 && cohortModel.allUniqueFeaturesObj"
                              v-bind:class="{ hide: !cohortModel || !cohortModel.isLoaded || !featureMatrixModel || !featureMatrixModel.rankedVariants }"
                              :isEduMode="isEduMode"
                              :isBasicMode="isBasicMode"
@@ -570,7 +570,7 @@
                 lookupGene: {},
                 geneEntered: null,
                 clipped: false,
-                leftDrawer: false,
+                leftDrawer: true,
                 rightDrawer: false,
                 leftDrawerContents: "flagged-variants",
                 showLegendMenu: false,
