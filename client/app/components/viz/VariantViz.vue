@@ -237,9 +237,11 @@
                 if (variant == null) {
                     this.hideVariantCircle(container, pinned);
                 } else {
-                    if (pinned) {
-                        this.variantChart.hideCircle(container, pinned);
-                    }
+                    // If we're pinning a click circle, hide both hover & click circles first
+                    // if (pinned) {
+                    //     this.variantChart.hideCircle(container, true);
+                    //     this.variantChart.hideCircle(container, false);
+                    // }
                     // Note: SJG not sure if logic here is correct for highlighting when vars are called...
                     this.variantChart.showCircle(variant,
                         container,

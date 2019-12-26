@@ -1172,6 +1172,7 @@ class CohortModel {
         return new Promise((resolve, reject) => {
             self.getCanonicalModels().forEach((sampleModel) => {
                 // turn on loaders for tracks
+                sampleModel.loadedVariants = null;
                 sampleModel.inProgress.loadingVariants = true;
 
                 if (!sampleModel.vcfData) {

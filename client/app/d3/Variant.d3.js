@@ -566,10 +566,13 @@ export default function variantD3(d3, vizSettings) {
     };
 
     chart.showCircle = function(d, svgContainer, indicateMissingVariant, pinned) {
+        // Prevent second event from firing and clicking out
+        if (d3.event) {
+            d3.event.stopPropagation();
+        }
+
         // Find the matching variant
         var matchingVariant = null;
-
-        // Only matching if visible
         svgContainer.selectAll(".variant").each(function (variant, i) {
             if (d.start === variant.start
                 && d.end === variant.end
@@ -629,26 +632,30 @@ export default function variantD3(d3, vizSettings) {
                 .duration(200)
                 .style("opacity", 1);
         }
-        return matchingVariant;
+        // return matchingVariant;
     };
 
-    chart.hideCircle = function(svgContainers, pinned) {
+    chart.hideCircle = function(svgContainer, pinned) {
         var circleClazz = pinned ? '.pinned.circle' : '.hover.circle';
         var pinnedArrowClazz = 'g.pinned.arrow';
         var hoverArrowClazz = 'g.hover.arrow';
-        svgContainers.selectAll(circleClazz).transition()
+        svgContainer.selectAll(circleClazz).transition()
             .duration(500)
             .style("opacity", 0);
         if (pinned) {
-            svgContainers.selectAll(pinnedArrowClazz).selectAll(".arrow").transition()
+            svgContainer.selectAll(pinnedArrowClazz).selectAll(".arrow").transition()
                 .duration(500)
                 .style("opacity", 0);
         }
         if (!pinned) {
-            svgContainers.selectAll(hoverArrowClazz).selectAll(".arrow").transition()
+            svgContainer.selectAll(hoverArrowClazz).selectAll(".arrow").transition()
                 .duration(500)
                 .style("opacity", 0);
         }
+    };
+
+    chart.clearVariants = function(svgContainer) {
+
     };
 
     /* Takes in a list of filter classes. If a variant contains any of them, it will be hidden.

@@ -390,7 +390,7 @@
             annotationComplete: false
         },
         data() {
-            let self = this;
+            const self = this;
             return {
                 margin: {
                     top: self.isBasicMode || self.isEduMode ? 0 : 20,
@@ -404,8 +404,8 @@
                     bottom: 5,
                     left: self.isBasicMode || self.isEduMode ? 9 : 4
                 },
-                variantSymbolHeight: self.isEduMode || self.isBasicMode ? self.globalAppProp.eduModeVariantSize : 10,
-                variantSymbolPadding: 2,
+                variantSymbolHeight: self.isEduMode || self.isBasicMode ? self.globalAppProp.eduModeVariantSize : 12,
+                variantSymbolPadding: 4,
 
                 geneVizMargin: {
                     top: 0,
@@ -471,11 +471,12 @@
                     }
                 }
                 if (this.showVariantViz) {
-                    let tipType = "click";
+                    const tipType = "click";
                     if (variant) {
                         this.showVariantCircle(variant, true);
+
                         // Hide hover tip and show click tip
-                        this.hideVariantTooltip("hover");
+                        // this.hideVariantTooltip("hover");
                         this.showVariantTooltip(variant, tipType, false);
                     } else {
                         this.hideVariantTooltip(tipType);
@@ -488,13 +489,14 @@
                     this.showCoverageCircle(variant);
                 }
                 if (this.showVariantViz) {
-                    this.showVariantCircle(variant);
+                    this.showVariantCircle(variant, false);
+
                     const tipType = "hover";
                     this.showVariantTooltip(variant, tipType, false);
                 }
                 this.$emit('cohort-variant-hover', variant, this);
             },
-            onVariantHoverEnd: function (lock) {
+            onVariantHoverEnd: function () {
                 if (this.showDepthViz) {
                     this.hideCoverageCircle();
                 }
@@ -504,7 +506,6 @@
                     this.hideVariantTooltip(tipType);
                 }
                 this.$emit('cohort-variant-hover-end');
-
             },
             showVariantTooltip: function (variant, tipType, lock) {
                 const self = this;
@@ -515,13 +516,6 @@
                     tooltip = d3.select("#click-tooltip");
                     tooltipObj = self.clickTooltip;
                 }
-
-                if (lock) {
-                    tooltip.style("pointer-events", "all");
-                } else {
-                    tooltip.style("pointer-events", "none");
-                }
-
 
                 let x = variant.screenX;
                 let y = variant.screenY;
@@ -539,7 +533,7 @@
                 // If we're displaying a tooltip for a canonical track, want to get variant from THIS track to show correct AF
                 // (the sent in variant is from the s0 track)
                 let trackVariant = variant;
-                if (self.canonicalSampleIds && self.canonicalSampleIds.indexOf(self.sampleModel.id) >= 0) {
+                if (tipType === 'click' && self.canonicalSampleIds && self.canonicalSampleIds.indexOf(self.sampleModel.id) >= 0) {
                     let matchingFeat = null;
                     if (self.sampleModel.vcfData && self.sampleModel.features) {
                         matchingFeat = self.sampleModel.vcfData.features.filter((feat) => {
@@ -598,14 +592,15 @@
             },
             showVariantCircle: function (variant, lock) {
                 if (this.showVariantViz) {
-                    this.getVariantViz(variant).showVariantCircle(variant, this.getVariantSVG(variant), lock);
+                    let container = this.getVariantSVG();
+                    this.getVariantViz(variant).showVariantCircle(variant, container, lock);
                 }
             },
             hideVariantCircle: function (lock) {
                 let self = this;
                 if (self.showVariantViz) {
-                    let containers = d3.select(this.$el).select('.expansion-panel__container').select('.expansion-panel__body').select('#card-viz').selectAll('.variant-viz > svg');
-                    self.$refs.variantVizRef.hideVariantCircle(containers, lock);
+                    let container = this.getVariantSVG();
+                    self.$refs.variantVizRef.hideVariantCircle(container, lock);
                 }
             },
             getVariantViz: function (variant) {
@@ -614,8 +609,8 @@
                     : this.$refs.variantVizRef;
             },
             // Returns all loaded and called variant viz SVGs
-            getVariantSVG: function (variant) {
-                return d3.select(this.$el).select('.expansion-panel__container').select('.expansion-panel__body').select('#card-viz').selectAll('.variant-viz > svg');
+            getVariantSVG: function () {
+                return d3.select(this.$el).select('.expansion-panel__container').select('.expansion-panel__body').select('#card-viz').select('.variant-viz > svg');
             },
             getTrackSVG: function (vizTrackName) {
                 let svg = d3.select(this.$el).select('#' + vizTrackName + ' > svg');

@@ -69,7 +69,6 @@ export default function featureMatrixD3() {
                     container.selectAll("g.group>g.group>.row .rowbox").attr('class', function (d, i) {
                         return "rowbox";
                     });
-
                 }
             }
         }

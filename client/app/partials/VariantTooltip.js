@@ -45,7 +45,7 @@ export default class VariantTooltip {
                 .style("opacity", 1)
                 .style("pointer-events", "all");
         } else {
-            tooltip.style("z-index", 1032);
+            tooltip.style("z-index", 128);
             tooltip.transition()
                 .duration(1000)
                 .style("opacity", .9)
@@ -97,6 +97,8 @@ export default class VariantTooltip {
             arrowClasses: []
         };
 
+        // TODO: left off here - hovering is flickering b/c tooltip is blocking hover and then hoveroff trigger back and forth ad infinitum
+        // TODO: need to always position tooltip such that it's not blocking mouse!
         me.findBestTooltipPosition(tooltipPos, coord, x, y, h, w, yScroll);
         if (tooltipPos.left && tooltipPos.top) {
             tooltipPos.arrowClasses.forEach(function (arrowClass) {
