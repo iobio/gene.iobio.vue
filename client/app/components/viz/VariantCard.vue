@@ -406,7 +406,6 @@
                 },
                 variantSymbolHeight: self.isEduMode || self.isBasicMode ? self.globalAppProp.eduModeVariantSize : 12,
                 variantSymbolPadding: 4,
-
                 geneVizMargin: {
                     top: 0,
                     right: self.isBasicMode || self.isEduMode ? 7 : 2,

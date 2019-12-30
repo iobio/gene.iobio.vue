@@ -164,7 +164,7 @@
                   showXAxis: this.showXAxis,
                   xTickFormat: this.xTickFormat,
                   variantHeight: this.variantHeight,
-                  verticalPadding: this.verticalPadding,
+                  verticalPadding: 4,
                   showBrush: this.showBrush,
                   showTransition: this.showTransition,
                   clazz: function(variant) {
@@ -177,9 +177,6 @@
 
                 // Register listeners
                 let dispatch = this.variantChart.getDispatch();
-                dispatch.on('d3rendered', function() {
-                    // self.$emit('apply-active-filters');
-                });
                 dispatch.on('d3click', function(variant) {
                     self.onVariantClick(variant);
                 });
@@ -237,12 +234,6 @@
                 if (variant == null) {
                     this.hideVariantCircle(container, pinned);
                 } else {
-                    // If we're pinning a click circle, hide both hover & click circles first
-                    // if (pinned) {
-                    //     this.variantChart.hideCircle(container, true);
-                    //     this.variantChart.hideCircle(container, false);
-                    // }
-                    // Note: SJG not sure if logic here is correct for highlighting when vars are called...
                     this.variantChart.showCircle(variant,
                         container,
                         (variant.fbCalled == null || variant.fbCalled !== 'Y'),

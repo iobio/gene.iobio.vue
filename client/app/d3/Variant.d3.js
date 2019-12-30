@@ -6,7 +6,7 @@ export default function variantD3(d3, vizSettings) {
         console.log('WARNING: no vizSettings argument provided to variant.d3.');
         vizSettings = {};
     }
-    var dispatch = d3.dispatch("d3brush", "d3rendered", "d3outsideclick", "d3click", "d3mouseover", "d3mouseout", "d3glyphmouseover", "d3glyphmouseout");
+    var dispatch = d3.dispatch("d3brush", "d3outsideclick", "d3click", "d3mouseover", "d3mouseout", "d3glyphmouseover", "d3glyphmouseout");
 
     // Viz-level sizing
     var margin = vizSettings.margin ? vizSettings.margin : {top: 30, right: 0, bottom: 20, left: 110};
@@ -496,7 +496,6 @@ export default function variantD3(d3, vizSettings) {
                             .style("opacity", 0);
                     }
                 });
-                dispatch.call('d3rendered');
             }
         });
     }
@@ -594,7 +593,6 @@ export default function variantD3(d3, vizSettings) {
             var mousex = x(matchingVariant.start);
             var mousey = height - ((matchingVariant.level + 1) * (variantHeight + verticalPadding));
 
-
             var circleClazz = pinned ? '.pinned.circle' : '.hover.circle';
             var circle = svgContainer.select(circleClazz);
             circle.transition()
@@ -632,7 +630,6 @@ export default function variantD3(d3, vizSettings) {
                 .duration(200)
                 .style("opacity", 1);
         }
-        // return matchingVariant;
     };
 
     chart.hideCircle = function(svgContainer, pinned) {
@@ -655,132 +652,8 @@ export default function variantD3(d3, vizSettings) {
     };
 
     chart.clearVariants = function(svgContainer) {
-
+        // TODO: implement
     };
-
-    /* Takes in a list of filter classes. If a variant contains any of them, it will be hidden.
-     * Takes in a filter cutoff object that a variant must meet or be lower than - if not, it will be hidden. */
-    // chart.promiseFilterVariants = function(filterClasses, filterCutoffs, svgContainer) {
-    //     return new Promise((resolve, reject) => {
-    //         var allVariants = svgContainer.selectAll(".variant");
-    //
-    //         // Add filtered class to all variants on DOM and model object
-    //         allVariants.classed({'filtered': true});
-    //         allVariants.each(function(d,i) {
-    //             d.passesFilters = true;
-    //         });
-    //
-    //         // If we're out of active filters, display all variants
-    //         if (filterClasses.length === 0 && filterCutoffs.length === 0) {
-    //             allVariants.style("opacity", 1);
-    //             allVariants.style("pointer-events", 'auto');
-    //             return false;
-    //         }
-    //
-    //         // Remove filtered class for any variants that contain the given class criteria
-    //         filterClasses.forEach((filterClass) => {
-    //             var nonPassingVars = svgContainer.selectAll(".variant" + filterClass);
-    //             nonPassingVars.classed('filtered', false);
-    //             nonPassingVars.style("pointer-events", 'none');
-    //             nonPassingVars.each(function(d,i) {
-    //                 d.passesFilters = false;
-    //             });
-    //         });
-    //
-    //         // Include previously filtered variants into the equation
-    //         var filteredVars = svgContainer.selectAll('.filtered');
-    //
-    //         // Remove filtered class for any variants that don't meet cutoffs
-    //         var cutoffs = Object.values(filterCutoffs);
-    //         if (cutoffs.length > 0) {
-    //             filteredVars.each(function (d, i) {
-    //                 if (d === 0) {
-    //                     return;
-    //                 }
-    //
-    //                 cutoffs.forEach((cutoff) => {
-    //                     var filterName = cutoff[0];
-    //                     var filterLogic = cutoff[1];
-    //                     var filterCutoffVal = parseFloat(cutoff[2]);
-    //                     var varVal = getVarValue(filterName, d);
-    //                     var passesFilter = true;
-    //
-    //                     switch (filterLogic) {
-    //                         case '<':
-    //                             if (!(varVal < filterCutoffVal)) {
-    //                                 passesFilter = false;
-    //                             }
-    //                             break;
-    //                         case '<=':
-    //                             if (!(varVal <= filterCutoffVal)) {
-    //                                 passesFilter = false;
-    //                             }
-    //                             break;
-    //                         case '=':
-    //                             if (!(varVal === filterCutoffVal)) {
-    //                                 passesFilter = false;
-    //                             }
-    //                             break;
-    //                         case '>=':
-    //                             if (!(varVal >= filterCutoffVal)) {
-    //                                 passesFilter = false;
-    //                             }
-    //                             break;
-    //                         case '>':
-    //                             if (!(varVal > filterCutoffVal)) {
-    //                                 passesFilter = false;
-    //                             }
-    //                             break;
-    //                         default:
-    //                         // Do nothing
-    //                     }
-    //                     // Mark in model if doesn't pass
-    //                     if (!passesFilter) {
-    //                         d.passesFilters = false;
-    //
-    //                         // Do actual hiding
-    //                         var selectionId = '#' + d.id;
-    //                         var domD = svgContainer.selectAll(selectionId);
-    //                         domD.classed({'filtered': false});
-    //                         domD.style('pointer-events', 'none');
-    //                     }
-    //                 })
-    //             });
-    //         }
-    //
-    //         // Re-check for all filtered variants
-    //         filteredVars = svgContainer.selectAll('.filtered');
-    //
-    //         // Hide all variants and remove listeners
-    //         allVariants.on("click", null)
-    //             .on("mouseover", null)
-    //             .on("mouseout", null)
-    //             .style("opacity", 0)
-    //             .style("pointer-events", "none")
-    //             .transition()
-    //             .duration(1000);
-    //
-    //         // Reveal variants that pass filter and add listeners
-    //         filteredVars.on("click", function (d) {
-    //                 dispatch.call('d3click', this, d);
-    //             })
-    //             .on("mouseover", function (d) {
-    //                 dispatch.call('d3mouseover', this, d);
-    //             })
-    //             .on("mouseout", function () {
-    //                 dispatch.call('d3mouseout');
-    //             })
-    //             .style("opacity", 1)
-    //             .style("pointer-events", "auto");
-    //
-    //         // Return whether any variants are still visible
-    //         if (filteredVars && filteredVars[0]) {
-    //             resolve(filteredVars[0].length);
-    //         } else {
-    //             resolve(0);
-    //         }
-    //     });
-    // };
 
     /* Updates styling classes applied to variants. Utilized in somatic filter application. */
     chart.updateVariantClasses = function(svgContainer) {
@@ -793,7 +666,6 @@ export default function variantD3(d3, vizSettings) {
     };
 
     /* Returns true if selected variant passes filter and is visible. */
-    // FILTER TODO: will need to update this to work without filtered field?
     chart.checkForSelectedVar = function(selectedVarId, svgContainer) {
         var stillVisible = false;
         svgContainer.selectAll('.filtered').each(function (d, i) {
