@@ -10,6 +10,7 @@ export default class VariantTooltip {
         this.WIDTH = tipType === "click" ? 750 : 360;
         this.ARROW_OFFSET = 18;
         this.ARROW_WIDTH = 10;
+        this.BOTTOM_TOOLTIP_VERT_OFFSET = 22;
         this.SIDE_TOOLTIP_HORZ_OFFSET = 35;
         this.SIDE_TOOLTIP_VERT_OFFSET = 30;
         this.VALUE_EMPTY = "-";
@@ -66,7 +67,6 @@ export default class VariantTooltip {
 
         // let w = me.WIDTH;
         let h = d3.round(tooltip[0][0].offsetHeight);
-        // TODO: fix height here? Or change Y-coord
 
         // We use css variables to place the tooltip chevron in the middle, center of the tooltip
         let middlePos = (h / 2);
@@ -182,8 +182,11 @@ export default class VariantTooltip {
             found = (tooltipPos.top && tooltipPos.left) || force;
 
             if (found) {
-                if (key1 === 'top' || key1 === 'bottom') {
+                if (key1 === 'top') {
                     tooltipPos.arrowClasses.push('chevron-vertical');
+                } else if (key1 === 'bottom'){
+                    tooltipPos.arrowClasses.push('chevron-vertical');
+                    tooltipPos.top += me.BOTTOM_TOOLTIP_VERT_OFFSET ;
                 } else {
                     tooltipPos.arrowClasses.push('chevron-horizontal');
                     tooltipPos.left += availSpace[key1].sideTooltipHorzOffset;
