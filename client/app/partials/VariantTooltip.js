@@ -8,7 +8,7 @@ export default class VariantTooltip {
         this.annotationScheme = annotationScheme;
         this.genomeBuildHelper = genomeBuildHelper;
         this.WIDTH = tipType === "click" ? 750 : 360;
-        this.ARROW_OFFSET = 10;
+        this.ARROW_OFFSET = 18;
         this.ARROW_WIDTH = 10;
         this.SIDE_TOOLTIP_HORZ_OFFSET = 35;
         this.SIDE_TOOLTIP_VERT_OFFSET = 30;
@@ -37,7 +37,6 @@ export default class VariantTooltip {
         if (lock) {
             return;
         }
-
         if (me.tipType === "click") {
             tooltip.style("z-index", 128);      // Makes tooltip work w/ pileup dialog
             tooltip.transition()
@@ -48,10 +47,9 @@ export default class VariantTooltip {
             tooltip.style("z-index", 128);
             tooltip.transition()
                 .duration(1000)
-                .style("opacity", .9)
-                .style("pointer-events", "all");
+                .style("opacity", 1)
+                .style("pointer-events", "none");
         }
-
         if (html == null) {
             let pinMessage = "click on variant for more details";
             if (me.tipType === "click") {
@@ -66,15 +64,16 @@ export default class VariantTooltip {
             me.injectAlleleCountSvg('af-svg', variant, affectedInfo, maxAlleleCount, trackId, me.AF_BAR_WIDTH);
         }
 
-        let w = me.WIDTH;
+        // let w = me.WIDTH;
         let h = d3.round(tooltip[0][0].offsetHeight);
+        // TODO: fix height here? Or change Y-coord
 
         // We use css variables to place the tooltip chevron in the middle, center of the tooltip
         let middlePos = (h / 2);
         tooltip.style("--tooltip-middle", middlePos + "px");
         tooltip.style("--tooltip-middle-before", (middlePos - 3) + "px");
 
-        let centerPos = (w / 2);
+        let centerPos = (me.WIDTH / 2);
         tooltip.style("--tooltip-center", centerPos + "px");
         tooltip.style("--tooltip-center-before", (centerPos - 3) + "px");
         tooltip.classed("chevron", false);
@@ -97,14 +96,12 @@ export default class VariantTooltip {
             arrowClasses: []
         };
 
-        // TODO: left off here - hovering is flickering b/c tooltip is blocking hover and then hoveroff trigger back and forth ad infinitum
-        // TODO: need to always position tooltip such that it's not blocking mouse!
-        me.findBestTooltipPosition(tooltipPos, coord, x, y, h, w, yScroll);
+        me.findBestTooltipPosition(tooltipPos, coord, x, y, h, me.WIDTH, yScroll);
         if (tooltipPos.left && tooltipPos.top) {
             tooltipPos.arrowClasses.forEach(function (arrowClass) {
                 tooltip.classed(arrowClass, true);
             });
-            tooltip.style("width", w + "px")
+            tooltip.style("width", me.WIDTH + "px")
                 .style("left", tooltipPos.left + "px")
                 .style("text-align", 'left')
                 .style("top", tooltipPos.top + "px");

@@ -524,8 +524,8 @@
                     'y': y,
                     'height': 33,
                     'parentWidth': self.$el.offsetWidth,
-                    'preferredPositions': [{bottom: ['center', 'right', 'left']},
-                        {top: ['center', 'right', 'left']},
+                    'preferredPositions': [{top: ['center', 'right', 'left']},
+                        {bottom: ['center', 'right', 'left']},
                         {right: ['middle', 'top', 'bottom']},
                         {left: ['middle', 'top', 'bottom']}]
                 };
