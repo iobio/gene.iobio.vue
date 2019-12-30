@@ -1245,7 +1245,7 @@
                     }
                     self.$refs.variantCardRef.forEach(function (variantCard) {
                         if (sourceComponent == null || variantCard != sourceComponent) {
-                            // variantCard.hideVariantCircle(true);
+                            variantCard.hideVariantCircle(true);
                             variantCard.showVariantCircle(variant, true);
                             variantCard.showCoverageCircle(variant);
                         }

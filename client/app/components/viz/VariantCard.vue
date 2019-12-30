@@ -472,10 +472,11 @@
                 if (this.showVariantViz) {
                     const tipType = "click";
                     if (variant) {
+                        this.hideVariantCircle(true);
                         this.showVariantCircle(variant, true);
 
                         // Hide hover tip and show click tip
-                        // this.hideVariantTooltip("hover");
+                        this.hideVariantTooltip("hover");
                         this.showVariantTooltip(variant, tipType, false);
                     } else {
                         this.hideVariantTooltip(tipType);
