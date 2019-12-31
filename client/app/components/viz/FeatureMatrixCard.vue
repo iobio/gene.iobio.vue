@@ -360,8 +360,8 @@
                 let coord = {
                     'x': x,
                     'y': y,
-                    'height': 15,
-                    //'height': self.$el.offsetHeight,
+                    'height': 25,   // TODO: need to fix click tooltip on top
+                    // 'height': self.$el.offsetHeight,
                     // tooltip can span across width of main window
                     'parentWidth': self.$el.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.offsetWidth,
                     'preferredPositions': [
