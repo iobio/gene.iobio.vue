@@ -947,6 +947,25 @@
 
                 self.promiseClearCache()
                     .then(function () {
+
+                        // NEW TODO: start somatic identification process
+                        // Once we have all somatic variants ranked and identified, pull up top gene w/ top variant
+                        // Also pull up top 5(?) genes and full list of somatic variants
+
+                        // Questions: can we cache all somatic variant info?
+                        // How will we identify ALL somatic variants? Do I need a new service to do this?
+
+                        // Currently we pull back a single gene at a time and then do somatic calling on the front end
+
+                        // Do vcf subset based on counts first (raw field) to get field cutoffs
+                        // Then calculate AFs and screen sequentially? Would be nice to multithread this...
+                        // Disadvantage: everytime filter changes, have to re-subset and recalculate AFs (unless we store them - vcfanno?)
+                        // This means we're IO bound every time a filter changes
+
+                        // Could just update selected gene first to give immediate feedback, then update entire list
+                        // Put two drawer approaches
+
+
                         self.featureMatrixModel.init(self.cohortModel.getCanonicalModels());
                         Promise.resolve();
 

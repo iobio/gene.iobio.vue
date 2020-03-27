@@ -570,7 +570,7 @@
                 lookupGene: {},
                 geneEntered: null,
                 clipped: false,
-                leftDrawer: true,
+                leftDrawer: false,
                 rightDrawer: false,
                 leftDrawerContents: "flagged-variants",
                 showLegendMenu: false,

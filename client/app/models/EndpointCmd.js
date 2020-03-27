@@ -1,4 +1,3 @@
-import iobiocmd from '../third-party/iobio.js';
 import { Client } from 'iobio-api-client';
 
 export default class EndpointCmd {
@@ -13,7 +12,7 @@ export default class EndpointCmd {
 
         // talk to gru
         this.api = new Client('dev.backend.iobio.io:9002', {secure: false});
-        this.gruBackend = false;
+        this.gruBackend = true;
 
         // iobio services
         this.IOBIO = {};
