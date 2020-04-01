@@ -11,7 +11,7 @@ export default class EndpointCmd {
 
 
         // talk to gru
-        this.api = new Client('dev.backend.iobio.io:9002', {secure: false});
+        this.api = new Client('backend.iobio.io', {secure: false});
         this.gruBackend = true;
 
         // iobio services
