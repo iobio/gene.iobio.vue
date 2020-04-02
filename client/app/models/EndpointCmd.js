@@ -1,4 +1,5 @@
 import { Client } from 'iobio-api-client';
+// todo: may need to pull iobio.js in here
 
 export default class EndpointCmd {
 
