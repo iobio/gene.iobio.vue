@@ -11,10 +11,9 @@ class GlobalApp {
 
     this.version               = "3.0.5";
 
-    this.DEV_IOBIO             = "nv-dev-new.iobio.io/";
-    this.GREEN_IOBIO           = "nv-green.iobio.io/";
-    this.STAGE_IOBIO           = this.GREEN_IOBIO;
-    this.PROD_IOBIO            = "nv-prod.iobio.io/";
+    this.DEV_PORT              = "9000";
+    this.DEV_IOBIO             = "dev.backend.iobio.io:" + this.DEV_PORT + "/";
+    this.PROD_IOBIO            = "backend.iobio.io/";
     this.CURRENT_IOBIO         = this.PROD_IOBIO;
 
 
