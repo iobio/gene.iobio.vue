@@ -394,10 +394,10 @@
                                     <i class="material-icons">local_library</i>
                                     RUN WITH DEMO DATA
                                 </v-btn>
-                                <v-btn class="welcome-button" @click="openMosaic">
-                                    <i class="material-icons">cloud_queue</i>
-                                    LAUNCH FROM MOSAIC
-                                </v-btn>
+<!--                                <v-btn class="welcome-button" @click="openMosaic">-->
+<!--                                    <i class="material-icons">cloud_queue</i>-->
+<!--                                    LAUNCH FROM MOSAIC-->
+<!--                                </v-btn>-->
                                 <v-btn class="welcome-button" @click="openFileSelection">
                                     <i class="material-icons">folder_open</i>
                                     UPLOAD CONFIGURATION
