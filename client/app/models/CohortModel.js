@@ -2834,11 +2834,11 @@ class CohortModel {
       var featuresB = "";
 
 
-      var clinvarA = self.featureMatrixModel.getClinvarRank(a, a.clinvarClinSig) 
-      var clinvarB = self.featureMatrixModel.getClinvarRank(b, b.clinvarClinSig) 
+      var clinvarA = self.featureMatrixModel.getClinvarRank(a, a.clinvarClinSig)
+      var clinvarB = self.featureMatrixModel.getClinvarRank(b, b.clinvarClinSig)
 
-      var impactA = self.featureMatrixModel.getImpactRank(a, a.vepImpact) 
-      var impactB = self.featureMatrixModel.getImpactRank(b, b.vepImpact) 
+      var impactA = self.featureMatrixModel.getImpactRank(a, a.vepImpact)
+      var impactB = self.featureMatrixModel.getImpactRank(b, b.vepImpact)
 
       var inheritanceA = a.inheritance ? (a.inheritance.indexOf('n/a') == -1 ? 1 : 0) : 0;
       var inheritanceB = b.inheritance ? (b.inheritance.indexOf('n/a') == -1 ? 1 : 0) : 0;

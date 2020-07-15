@@ -4,7 +4,7 @@ class GeneModel {
     this.globalApp                 = globalApp;
     this.limitGenes                = limitGenes;
     this.launchedFromHub = launchedFromHub;
-    this.phenolyzerServer          = "https://7z68tjgpw4.execute-api.us-east-1.amazonaws.com/dev/phenolyzer/";
+    this.phenolyzerServer          = "https://services.backend.iobio.io/phenolyzer/";
 
     this.NCBI_GENE_SEARCH_URL      = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gene&usehistory=y&retmode=json";
     this.NCBI_GENE_SUMMARY_URL     = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gene&usehistory=y&retmode=json";
@@ -1045,7 +1045,7 @@ class GeneModel {
 
 
       var defaultGeneSource = me.geneSource ? me.geneSource : 'gencode';
-      
+
 
       if (defaultGeneSource) {
         url += "?source="  + defaultGeneSource;

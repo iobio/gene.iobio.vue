@@ -482,12 +482,61 @@ export default function geneD3() {
       .filter(function(f) { var ft = f.feature_type.toLowerCase(); return ft == 'utr' || ft == 'cds'})
       .sort(function(a,b) { return parseInt(a.start) - parseInt(b.start)});
 
-    for (var i=0; i < sorted.length-1; i++) {
-      var currSpan = parseInt(sorted[i+1].start) - parseInt(sorted[i].end);
-      if (span < currSpan) {
-        span = currSpan;
-        center = parseInt(sorted[i].end) + span/2;
+    sorted = sorted.filter(function(f){
+      return parseInt(f.start) >= geneD3_regionStart && parseInt(f.end) <= geneD3_regionEnd;
+    })
+    let positions = [];
+
+    for(let i = 0; i < sorted.length; i++){
+      positions.push(parseInt(sorted[i].start));
+      positions.push(parseInt(sorted[i].end));
+    }
+    positions = positions.sort();
+
+    let lm = null;
+    let rm = null;
+
+    if(positions.length > 0) {
+      lm = positions[0];
+      rm = positions.slice(-1)[0];
+    }
+
+    let edgeSpan = Math.max(lm - geneD3_regionStart, geneD3_regionEnd -rm);
+    let edgeCenter = null;
+
+    if(lm - geneD3_regionStart > geneD3_regionEnd -rm){
+      edgeCenter = (lm + geneD3_regionStart)/2
+    }
+    else{
+      edgeCenter = (rm + geneD3_regionEnd)/2;
+    }
+
+    if(sorted.length > 1) {
+      for (var i = 0; i < sorted.length - 1; i++) {
+        let currSpan = parseInt(sorted[i + 1].start) - parseInt(sorted[i].end);
+        if (span < currSpan) {
+          span = currSpan;
+          center = parseInt(sorted[i].end) + span / 2;
+        }
       }
+      if(edgeSpan > span){
+        center = edgeCenter;
+      }
+    }
+
+    else if(sorted.length === 1){
+      let s = parseInt(sorted[0].start);
+      let e = parseInt(sorted[0].end);
+
+      if(s - geneD3_regionStart > geneD3_regionEnd - e){
+        center = (s + geneD3_regionStart)/2;
+      }
+      else{
+        center = (geneD3_regionEnd + e)/2;
+      }
+    }
+    else if(sorted.length === 0){
+      center =  geneD3_regionEnd - ((geneD3_regionEnd - geneD3_regionStart)/2);
     }
     d.center = center;
     return [d];

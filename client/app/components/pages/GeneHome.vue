@@ -3838,18 +3838,26 @@ export default {
           })
         })
 
-        if (firstFlaggedVariant) {
+        if (firstFlaggedVariant &&  getGeneName(firstFlaggedVariant) !==  self.selectedGene.gene_name) {
           self.promiseLoadGene(getGeneName(firstFlaggedVariant))
-          .then(function() {
-
-            self.toClickVariant = firstFlaggedVariant;
-            self.showLeftPanelWhenFlaggedVariants();
-            self.onFlaggedVariantSelected(firstFlaggedVariant, {}, function() {
-              resolve()
+            .then(function() {
+              self.toClickVariant = firstFlaggedVariant;
+              self.showLeftPanelWhenFlaggedVariants();
+              self.onFlaggedVariantSelected(firstFlaggedVariant, {}, function() {
+                resolve()
+              })
             })
+        }
+      
+        else if(firstFlaggedVariant){
+          self.toClickVariant = firstFlaggedVariant;
+          self.showLeftPanelWhenFlaggedVariants();
+          self.onFlaggedVariantSelected(firstFlaggedVariant, {}, function() {
+            resolve()
           })
+        }
 
-        } else {
+        else {
           setTimeout(function() {
             self.showLeftPanelForGenes();
           },1000)

@@ -317,6 +317,22 @@ export default {
         else{
           this.variants = this.data;
         }
+      },
+
+        data(){
+            if(this.showFilter){
+                this.intersectVariants();
+            }
+            else{
+                this.variants = this.data;
+            }
+        },
+
+      regionStart(){
+        this.update();
+      },
+      regionEnd(){
+        this.update();
       }
     }
 }
