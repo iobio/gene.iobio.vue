@@ -779,8 +779,6 @@ import FreebayesSettings  from  '../../models/FreebayesSettings.js'
 import Glyph              from '../../partials/Glyph.js'
 import VariantTooltip     from '../../partials/VariantTooltip.js'
 
-import allGenesData       from '../../../data/genes.json'
-import acmgBlacklist      from '../../../data/ACMG_blacklist.json'
 import SplitPane          from '../partials/SplitPane.vue'
 import ScrollButton       from '../partials/ScrollButton.vue'
 import OptionalTracksCard from '../partials/OptionalTracksCard.vue'
@@ -922,8 +920,8 @@ export default {
       },
 
 
-      allGenes: allGenesData,
-      acmgBlacklist: acmgBlacklist,
+      allGenes: null,
+      acmgBlacklist: null,
       blacklistedGeneSelected: false,
 
       selectedGene: {},
@@ -1070,6 +1068,40 @@ export default {
 
   created: function() {
     let self = this;
+    
+    fetch('/data/genes.json')
+    .then( response => response.json())
+      .then(allGenes => {
+        self.allGenes = allGenes; 
+        
+        // We are seeing problems with Blobs using the Safari browser.
+        // Warn user that Gene.iobio is supported on Chrome and Firefox
+        // browsers
+        if (self.utility.detectSafari()) {
+
+          alertify.confirm("Unsupported Browser",
+            "Gene.iobio is supported on Chrome and Firefox.  Please run on one of these browsers.",
+            function (e) {
+              // ok
+
+            },
+            function() {
+              // cancel
+              self.init()
+            }
+
+          ).set('labels', {ok:'OK', cancel:'Cancel'})
+        } else {
+          self.init();
+        }
+      })
+      
+    fetch('/data/ACMG_blacklist.json')
+    .then( response => response.json())
+      .then(acmgBlacklistGenes => {
+        self.acmgBlacklist = acmgBlacklistGenes; 
+      })  
+      
     if (self.paramLaunchedFromClin) {
       self.launchedFromClin = true;
     }
@@ -1090,30 +1122,6 @@ export default {
       var responseObject = {app: 'genefull', success: true, type: 'mounted', sender: 'gene.iobio.io'};
       window.parent.postMessage(JSON.stringify(responseObject), self.paramFrameSource);
     }
-
-
-    // We are seeing problems with Blobs using the Safari browser.
-    // Warn user that Gene.iobio is supported on Chrome and Firefox
-    // browsers
-    if (self.utility.detectSafari()) {
-
-      alertify.confirm("Unsupported Browser",
-        "Gene.iobio is supported on Chrome and Firefox.  Please run on one of these browsers.",
-        function (e) {
-          // ok
-
-        },
-        function() {
-          // cancel
-          self.init()
-        }
-
-      ).set('labels', {ok:'OK', cancel:'Cancel'})
-    } else {
-      self.init();
-    }
-
-
 
   },
 
