@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./build.sh
+./build.sh $1
 
 # upload to cloudfront
 if [[ $1 == "prod" ]]; then
