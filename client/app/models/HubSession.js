@@ -71,7 +71,6 @@ export default class HubSession {
 
         self.promiseGetSampleInfo(projectId, sampleId, isPedigree).then(data => {
 
-
           let promises = [];
 
           let foundPedigree = data.foundPedigree;
@@ -879,7 +878,9 @@ export default class HubSession {
 
 
   getVariantSet(projectId, variantSetId, build) {
-    let self = this;
+    const self = this;
+    const VAR_LIMIT = 500;  // Randomly chosen by
+
     let annotationUids = [];
     if(build === "GRCh38"){
       annotationUids.push('gene_symbol_GRCh38');
@@ -892,7 +893,7 @@ export default class HubSession {
     }
     return $.ajax({
       // url: 'https://mosaic.chpc.utah.edu/api/v1/projects/' + projectId + '/variants/sets/' + variantSetId + "?include_variant_data=true&include_genotype_data=true",
-      url: self.apiDepricated + '/projects/' + projectId + '/variants?variant_set_id=' + variantSetId,
+      url: self.apiDepricated + '/projects/' + projectId + '/variants?variant_set_id=' + variantSetId + '&limit=' + VAR_LIMIT,
       data: {
         annotation_uids: annotationUids,
       },

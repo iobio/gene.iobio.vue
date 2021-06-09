@@ -1446,10 +1446,13 @@ export default {
           if (self.variantSet && self.variantSet.variants) {
             let bypassedCount = 0;
             let bypassedMessages = [];
+            // todo sjg: do I need to apply limit here?
+
             self.variantSet.variants.filter(function(variant) {
               return variant.sample_ids.indexOf(parseInt(self.sampleId)) >= 0;
             })
             .forEach(function(variant) {
+              // if not >25 genes or variant in existing gene todo sjg
               let importedVariant = {};
               if (variant.gene_symbol && variant.gene_symbol.length > 0) {
                 importedVariant.gene  = variant.gene_symbol;
@@ -1470,6 +1473,8 @@ export default {
                 if (self.analysis.payload.genes.indexOf(importedVariant.gene) < 0) {
                   self.analysis.payload.genes.push(importedVariant.gene);
                 }
+                // else, add to list of genes we had to skip b/c too many targets todo sjg
+                // alertify warning variants bypassed because too many gene targets - manually investigate
               } else {
                 let message = "Bypassing variant chr " + variant.chr + ", position " + variant.pos + " because the gene symbol was not provided.";
                 bypassedMessages.push(message)
@@ -1516,6 +1521,7 @@ export default {
           }
         })
         .then(function() {
+          // todo sjg: is this where we apply 25 gene limit?
           if (self.analysis.payload.genes && self.analysis.payload.genes.length > 0) {
             let genePromises = [];
             let unknownGenes = [];
