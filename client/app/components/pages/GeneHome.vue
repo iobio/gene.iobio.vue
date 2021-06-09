@@ -1396,7 +1396,8 @@ export default {
     },
 
     promiseInitFromMosaic: function() {
-      let self = this;
+      const self = this;
+      const MAX_NUM_GENES = 100;
 
       return new Promise(function(resolve, reject) {
 
@@ -1446,50 +1447,79 @@ export default {
           if (self.variantSet && self.variantSet.variants) {
             let bypassedCount = 0;
             let bypassedMessages = [];
-            // todo sjg: do I need to apply limit here?
-
-            self.variantSet.variants.filter(function(variant) {
+            let unloadedGenes = [];
+            let filteredVars = self.variantSet.variants.filter(function(variant) {
               return variant.sample_ids.indexOf(parseInt(self.sampleId)) >= 0;
-            })
-            .forEach(function(variant) {
-              // if not >25 genes or variant in existing gene todo sjg
-              let importedVariant = {};
-              if (variant.gene_symbol && variant.gene_symbol.length > 0) {
-                importedVariant.gene  = variant.gene_symbol;
-                importedVariant.chrom = variant.chr;
-                importedVariant.start = variant.pos;
-                importedVariant.end   = variant.pos;
-                importedVariant.ref   = variant.ref;
-                importedVariant.alt   = variant.alt;
-                importedVariant.filtersPassed    = "notCategorized";
-                importedVariant.inheritance      = null;
-                importedVariant.afgnomAD         = variant.gnomad_allele_frequency;
-                importedVariant.highestImpact    = variant.gene_impact;
-                importedVariant.consequence      = variant.gene_consequence;
-                importedVariant.isImported       = true;
-                importedVariant.variantSet       = "notCategorized";
+            });
 
-                self.analysis.payload.variants.push(importedVariant);
-                if (self.analysis.payload.genes.indexOf(importedVariant.gene) < 0) {
-                  self.analysis.payload.genes.push(importedVariant.gene);
+            filteredVars.forEach(variant => {
+              if (variant.gene_symbol && variant.gene_symbol.length > 0) {
+                // We could have 100s of variants, only accept as many as belong to first MAX_NUM_GENES so we don't overwhelm gene calls
+                let geneInList = self.analysis.payload.genes.indexOf(variant.gene_symbol) > 0;
+                if (self.analysis.payload.genes.length < MAX_NUM_GENES || geneInList) {
+
+                  let importedVariant = {};
+                  importedVariant.gene  = variant.gene_symbol;
+                  importedVariant.chrom = variant.chr;
+                  importedVariant.start = variant.pos;
+                  importedVariant.end   = variant.pos;
+                  importedVariant.ref   = variant.ref;
+                  importedVariant.alt   = variant.alt;
+                  importedVariant.filtersPassed    = "notCategorized";
+                  importedVariant.inheritance      = null;
+                  importedVariant.afgnomAD         = variant.gnomad_allele_frequency;
+                  importedVariant.highestImpact    = variant.gene_impact;
+                  importedVariant.consequence      = variant.gene_consequence;
+                  importedVariant.isImported       = true;
+                  importedVariant.variantSet       = "notCategorized";
+                  self.analysis.payload.variants.push(importedVariant);
+
+                  // Add gene if we haven't already (may have multiple vars at same gene)
+                  if (!geneInList) {
+                    self.analysis.payload.genes.push(variant.gene_symbol);
+                  }
+                } else {
+                  // Otherwise add to list of targets we ran out of space to load - will inform user of these
+                  if (unloadedGenes.indexOf(variant.gene_symbol) < 0) {
+                    unloadedGenes.push(variant.gene_symbol);
+                  }
                 }
-                // else, add to list of genes we had to skip b/c too many targets todo sjg
-                // alertify warning variants bypassed because too many gene targets - manually investigate
               } else {
                 let message = "Bypassing variant chr " + variant.chr + ", position " + variant.pos + " because the gene symbol was not provided.";
                 bypassedMessages.push(message)
                 console.log(message)
                 bypassedCount++;
               }
-            })
+            });
+
             if (bypassedCount > 0) {
               if (bypassedCount === self.variantSet.variants.length) {
                 alertify.alert("Error", "None of the " + bypassedCount + " variants were loaded because the variants were missing gene name.", )
 
+              } else if (unloadedGenes.length > 0) {
+                const promisifyAlert = (title, message) => new Promise((resolve) => {
+                  alertify.alert(
+                      title,
+                      message,
+                      function() { resolve() }
+                  ).set('overflow', true)
+                  .set('resizable', true)
+                });
+                promisifyAlert('Bypassing variants', ("Warning " + bypassedCount + " variants bypassed." + "<br><br>" + bypassedMessages.join("<br>")))
+                .then(() => {
+                  alertify.alert('Bypassing genes', "Warning " + unloadedGenes.length + " genes bypassed due to memory concerns. These targets may be manually entered into the search bar: " + "<br><br>" + unloadedGenes.join("<br>"))
+                      .set('overflow', true)
+                      .set('resizable', true)
+                })
               } else {
-                alertify.alert("Warning", bypassedCount + " variants bypassed." + "<br><br>" + bypassedMessages.join("<br>"))
-
+                alertify.alert("Bypassing variants ", bypassedCount + " variants bypassed." + "<br><br>" + bypassedMessages.join("<br>"))
+                    .set('overflow', true)
+                    .set('resizable', true)
               }
+            } else if (unloadedGenes.length > 0) {
+              alertify.alert("Warning ", unloadedGenes.length, " genes bypassed due to memory concerns. These targets may be manually entered into the search bar: " + "<br><br>" + unloadedGenes.join("<br>"))
+                  .set('overflow', true)
+                  .set('resizable', true)
             }
           }
 
@@ -1521,7 +1551,6 @@ export default {
           }
         })
         .then(function() {
-          // todo sjg: is this where we apply 25 gene limit?
           if (self.analysis.payload.genes && self.analysis.payload.genes.length > 0) {
             let genePromises = [];
             let unknownGenes = [];
@@ -1533,7 +1562,7 @@ export default {
               }
             })
             if (unknownGenes.length > 0) {
-              alertify.alert( "Warning", "Bypassing unknown genes " + unknownGenes.join(", "))
+              alertify.alert( "Warning", "Bypassing unknown genes " + unknownGenes.join(", ")).set('overflow', true)
             }
             return Promise.all(genePromises);
           } else {

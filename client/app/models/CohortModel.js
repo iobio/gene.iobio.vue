@@ -2405,7 +2405,7 @@ class CohortModel {
           var promise = me.geneModel.promiseGetCachedGeneObject(ir.gene, true)
           .then(function(theGeneObject) {
             if (theGeneObject.notFound) {
-              me.geneModel.promiseAddGeneName(theGeneObject.geneName);
+              me.geneModel.promiseAddGeneName(theGeneObject.notFound);
             }
             else if(ir.gene && theGeneObject.notFound === undefined){
               me.geneModel.promiseAddGeneName(ir.gene);
@@ -2421,24 +2421,24 @@ class CohortModel {
     Promise.all(promises).then(function() {
       var genesToAnalyze = {load: [], call: []};
       var geneToAltTranscripts = {};
-      importRecords.forEach( function(variant) {
+      importRecords.forEach(function(variant) {
         var geneObject = me.geneModel.geneObjects[variant.gene];
+        if (geneObject) {
+          me.setImportedVariantGeneAndTranscript(variant, geneObject);
+          geneToAltTranscripts[geneObject.gene_name] = variant.transcript;
 
-        me.setImportedVariantGeneAndTranscript(variant, geneObject);
-        geneToAltTranscripts[geneObject.gene_name] = variant.transcript;
+          me.flaggedVariants.push(variant);
 
-        me.flaggedVariants.push(variant);
-
-        var analyzeKinds = variant.freebayesCalled == 'Y' ? ['call'] : ['load'];
-        analyzeKinds.forEach(function(analyzeKind) {
-          var theVariants = genesToAnalyze[analyzeKind][variant.gene.gene_name];
-          if (theVariants == null) {
-            theVariants = [];
-            genesToAnalyze[analyzeKind][variant.gene.gene_name] = theVariants;
-          }
-          theVariants.push(variant);
-        })
-
+          var analyzeKinds = variant.freebayesCalled == 'Y' ? ['call'] : ['load'];
+          analyzeKinds.forEach(function(analyzeKind) {
+            var theVariants = genesToAnalyze[analyzeKind][variant.gene.gene_name];
+            if (theVariants == null) {
+              theVariants = [];
+              genesToAnalyze[analyzeKind][variant.gene.gene_name] = theVariants;
+            }
+            theVariants.push(variant);
+          })
+        }
       });
       // First callback when flagged variants are now populated by imported records
       if (callbackPostImport) {
